@@ -90,12 +90,12 @@ Phát sinh sau Decision #20 (xác nhận có authentication). Mới biết "có 
 | 32 | Zustand: 1 store unit/feature (`features/{feature}/stores/{feature}.store.ts`), interface tiền tố `I`, luôn có `reset()`; nguyên tắc chung: không copy server state (TanStack Query) vào Zustand | Nhiều store rời rạc không theo feature; copy response server vào Zustand để "cache lại" | Nhất quán với Decision #24 và quy ước đặt tên #30; tránh 2 nguồn sự thật cho cùng dữ liệu — xem `state-management.md` |
 | 33 | Tổ chức class Tailwind trong component: **inline trong JSX + `cva` cho variant** làm mặc định; chỉ tách `{component}.styles.ts` khi component đủ phức tạp (rule-of-three) | Luôn co-locate mọi class ra file `{component}.styles.ts` riêng (mặc định của skill `frontend-architecture`) | Giữ lợi ích cốt lõi của Tailwind (markup + style cùng chỗ); nhất quán YAGNI/Foundation-first đã chọn (Decision #10) thay vì áp quy ước tách file cho toàn bộ design system ngay từ đầu — xem `design-system.md` |
 
-## 5. Khám phá hướng thiết kế (Design Approaches)
+## 5. So sánh hướng thiết kế (Design Approaches Comparison)
 
 Ba hướng đã so sánh trên complexity, extensibility, risk, và maintenance:
 
 - **Hướng A — Scaffold nhẹ, đào sâu theo chiều dọc** (khuyến nghị ban đầu, không được chọn): scaffold Turborepo tối thiểu, làm từng module hoàn chỉnh trên storefront trước, tách package theo rule-of-three.
-- **Hướng B — Foundation-first** ✅ (đã chọn): xây design system + core component + core function đầy đủ trước, theo `vision-sketch.md` + `nike-ui-ux-analysis.md`.
+- **Hướng B — Foundation-first** (đã chọn): xây design system + core component + core function đầy đủ trước, theo `vision-sketch.md` + `nike-ui-ux-analysis.md`.
 - **Hướng C — Song song 3 app, mỗi app một slice mỏng**: không chọn — rủi ro solo dev phải context-switch liên tục.
 
 ## 6. Thiết kế phần 1/6 — Kiến trúc tổng thể & cấu trúc thư mục monorepo (Design Part 1/6 — Overall Architecture & Monorepo Structure)

@@ -1,6 +1,6 @@
 # Phác thảo kiến trúc: Enterprise E-commerce Platform
 
-Mục tiêu: xây dựng một hệ thống E-commerce ngang tầm Nike, Apple hoặc Adidas. Quy mô đó vượt xa một website bán hàng thông thường và đòi hỏi thiết kế theo hướng **Enterprise E-commerce Platform**.
+Mục tiêu: xây dựng một hệ thống E-commerce ngang tầm Nike, Apple hoặc Adidas. Quy mô đó vượt xa một website bán hàng thông thường và đòi hỏi thiết kế theo hướng Enterprise E-commerce Platform.
 
 Các nền tảng như Nike hay Apple đều hội tụ bốn đặc điểm:
 
@@ -456,4 +456,4 @@ PostHog
 Turborepo
 ```
 
-Ngăn xếp này tạo ra một nền tảng E-commerce hiện đại, dễ mở rộng, đủ sức phục vụ từ vài nghìn đến hàng trăm nghìn người dùng mà không cần thay đổi kiến trúc front-end trong nhiều năm.
+Ngăn xếp này tạo ra một nền tảng E-commerce hiện đại, dễ mở rộng theo quy mô người dùng tăng dần mà không cần thay đổi kiến trúc front-end trong nhiều năm.

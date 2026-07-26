@@ -1,15 +1,15 @@
 # Solution Architect Workflow Template
 
-> 📌 **Không áp dụng cho repo này.** File mô tả quy trình "Solution Architect" tổng quát cho stack NestJS, PostgreSQL, Ant Design, AWS (xem "Prompt hoàn chỉnh" bên dưới). Stack thật của repo là Next.js, Django REST, Radix, Tailwind — xem [`architecture/tech-stack.md`](../../architecture/tech-stack.md). Phần còn dùng được: danh mục output của **Giai đoạn 2 — Front-end Architecture** (Module structure, Routing, State ownership, API client, Authentication UI flow, Authorization, Error handling, Design System integration, Performance, Front-end testing). Danh mục này làm khung cho [`architecture/frontend/`](../../architecture/frontend/README.md). Giai đoạn 1, 3, 4, 5 và mọi nội dung backend/cloud không áp dụng cho repo này.
+> Không áp dụng cho repo này. File mô tả quy trình "Solution Architect" tổng quát cho stack NestJS, PostgreSQL, Ant Design, AWS (xem "Prompt hoàn chỉnh" bên dưới). Stack thật của repo là Next.js, Django REST, Radix, Tailwind — xem [`architecture/tech-stack.md`](../../architecture/tech-stack.md). Phần còn dùng được: danh mục output của Giai đoạn 2 — Front-end Architecture (Module structure, Routing, State ownership, API client, Authentication UI flow, Authorization, Error handling, Design System integration, Performance, Front-end testing). Danh mục này làm khung cho [`architecture/frontend/`](../../architecture/frontend/README.md). Giai đoạn 1, 3, 4, 5 và mọi nội dung backend/cloud không áp dụng cho repo này.
 
 ## Giai đoạn 1 — Requirements & Solution Overview
 
-**Dùng:**
+Dùng:
 
 - architecture
 - docs-architect
 
-**Output:**
+Output:
 
 - Business context
 - Functional requirements
@@ -23,12 +23,12 @@
 
 ## Giai đoạn 2 — Front-end Architecture
 
-**Dùng:**
+Dùng:
 
 - frontend-architecture
 - nextjs-app-router-patterns
 
-**Output:**
+Output:
 
 - Module structure
 - Routing
@@ -43,13 +43,13 @@
 
 ## Giai đoạn 3 — Data & Back-end Architecture
 
-**Dùng:**
+Dùng:
 
 - database-architect
 - backend-architect
 - architecture-patterns
 
-**Output:**
+Output:
 
 - Domain model
 - Database model
@@ -67,13 +67,13 @@ architecture-patterns cung cấp Clean Architecture, Hexagonal Architecture và 
 
 ## Giai đoạn 4 — Cloud, Security & Operations
 
-**Dùng:**
+Dùng:
 
 - cloud-architect
 - threat-modeling-expert
 - observability-engineer
 
-**Output:**
+Output:
 
 - Deployment topology
 - Networking
@@ -91,14 +91,14 @@ architecture-patterns cung cấp Clean Architecture, Hexagonal Architecture và 
 
 ## Giai đoạn 5 — Documentation & Diagrams
 
-**Dùng:**
+Dùng:
 
 - docs-architect
 - c4-architecture-c4-architecture
 - architecture-decision-records
 - mermaid-expert
 
-**Output:**
+Output:
 
 - C4 Context
 - C4 Container

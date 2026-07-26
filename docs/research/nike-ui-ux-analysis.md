@@ -112,7 +112,7 @@ Header chiếm khoảng 90px.
 --------------------------------------------------
 ```
 
-### UX rất hay
+### Giới hạn menu chính ở 5 mục
 
 Nike giới hạn menu chính ở 5 mục, dưới ngưỡng 7 mục vốn được xem là giới hạn an toàn cho cognitive load:
 
@@ -122,7 +122,7 @@ Nike giới hạn menu chính ở 5 mục, dưới ngưỡng 7 mục vốn đư�
 - Sale
 - Sports
 
-Người dùng mất 1-2 giây để hiểu website đang bán gì.
+Người dùng nhận ra ngay website đang bán gì, không cần suy nghĩ nhiều.
 
 ## 4. Hero Section
 
@@ -149,7 +149,7 @@ Hero luôn dùng hai CTA:
 - Primary: Shop
 - Secondary: Explore
 
-Nike không bao giờ dừng ở một nút BUY NOW. Họ luôn ghép BUY với DISCOVER, để tăng CTR và engagement. ([Nike.com][1])
+Nike không bao giờ dừng ở một nút BUY NOW. Họ luôn ghép BUY với DISCOVER để vừa bán hàng vừa dẫn dắt câu chuyện thương hiệu. ([Nike.com][1])
 
 ## 5. Product Card
 
@@ -176,7 +176,7 @@ Women's Shoes
 
 Card gồm: image, badge (New / Sale / Best Seller / Member Product), name, category, colors, price.
 
-UX rất hay: hover đổi từ ảnh 1 sang ảnh 2, click mở PDP (Product Detail Page).
+Hover đổi từ ảnh 1 sang ảnh 2, click mở PDP (Product Detail Page).
 
 ## 6. Product Listing Page
 
@@ -218,7 +218,7 @@ Recent Search
 Trending Search
 ```
 
-Cơ chế này giảm thao tác về gần 0 click, trực tiếp tăng conversion.
+Cơ chế này giảm thao tác tìm kiếm gần như về 0 click.
 
 ## 8. Typography — Kích thước sử dụng trên site
 
@@ -311,7 +311,7 @@ src
 
 ## 12. Bài học rút ra từ Nike
 
-Công thức của Nike: 40% Branding + 40% UX + 20% Ecommerce.
+Công thức của Nike nghiêng về Branding và UX nhiều hơn phần Ecommerce thuần túy.
 
 Mười điểm mạnh nhất:
 
@@ -468,7 +468,7 @@ const semanticColors = {
 
 Ví dụ áp dụng: Button dùng token `primary`, không tham chiếu trực tiếp `black`. Card dùng token `border`, không tham chiếu trực tiếp `#CACACA`.
 
-Muốn bật Dark Mode chỉ cần đổi `primary: black` thành `primary: white` — toàn bộ Design System đổi theo.
+Muốn bật Dark Mode, chỉ cần đổi `primary: black` thành `primary: white`, toàn bộ Design System sẽ đổi theo.
 
 ## 17. Typography System — Nguyên tắc & Hierarchy
 
@@ -768,7 +768,7 @@ SHOP
 EXPLORE
 ```
 
-Nike bán EMOTION + LIFESTYLE + SPORT. Không bán SẢN PHẨM. Đây là lý do conversion của Nike rất cao.
+Nike bán EMOTION + LIFESTYLE + SPORT. Không bán SẢN PHẨM.
 
 ## 28. Clone Nike bằng Next.js 16 — Tech Stack & Quy mô Design System
 
@@ -792,7 +792,7 @@ Quy mô Design System ước tính:
 
 ### Kiến trúc đề xuất
 
-Nếu mục tiêu là xây một E-commerce tầm trung đến lớn (giống Nike, Adidas hay Uniqlo), không nên clone 100% giao diện Nike. Học cách Nike tổ chức **Design Token → Foundation → Components → Business Components → Pages** — đây là phần có giá trị lâu dài, vì nó giúp:
+Nếu mục tiêu là xây một E-commerce tầm trung đến lớn (giống Nike, Adidas hay Uniqlo), không nên clone 100% giao diện Nike. Học cách Nike tổ chức **Design Token → Foundation → Components → Business Components → Pages**. Đây là phần có giá trị lâu dài vì nó giúp:
 
 - Dễ mở rộng Design System khi sản phẩm phát triển.
 - Tái sử dụng component trên nhiều module (Product, Cart, Checkout, Account...).
@@ -817,7 +817,7 @@ features/modules
 pages
 ```
 
-Đây là cách tiếp cận mà nhiều hệ thống E-commerce lớn dùng để giữ codebase mở rộng và bảo trì tốt trong thời gian dài.
+Cách tiếp cận này giữ codebase dễ mở rộng và bảo trì tốt trong thời gian dài.
 
 ## 29. Mô hình vận hành tổng thể của Nike
 
@@ -1610,4 +1610,4 @@ Admin Dashboard
                    PWA
 ```
 
-Với quy mô này, dự án bao gồm khoảng **80–100 reusable components**, **20–30 business modules** và **40–60 bảng dữ liệu** cho các nghiệp vụ Product, Inventory, Order, Promotion, Membership và Analytics. Đây là một kiến trúc đủ linh hoạt để phục vụ cả website bán hàng, hệ thống quản trị nội dung (CMS) và khả năng mở rộng lên hàng trăm nghìn đến hàng triệu người dùng trong tương lai.
+Với quy mô này, dự án bao gồm khoảng **80–100 reusable components**, **20–30 business modules** và **40–60 bảng dữ liệu** cho các nghiệp vụ Product, Inventory, Order, Promotion, Membership và Analytics.

@@ -17,7 +17,7 @@ ADR 0003 yêu cầu một font bold/condensed phong cách thể thao, phủ đ�
 
 - **Self-host font** (không load từ Google Fonts runtime) — tránh round-trip DNS/TLS thêm tới domain bên thứ ba, kiểm soát được cache-control.
 - **Subset theo bộ ký tự thực dùng** (Latin + đầy đủ tổ hợp dấu tiếng Việt: `Ầ`, `Ộ`, `Ẫ`, `Ự`...) — giảm kích thước file so với bộ glyph đầy đủ của font gốc.
-- **`font-display: optional` hoặc `swap`** tuỳ đánh đổi giữa tránh FOIT và tránh layout shift khi font thật load xong — vì typography Nike-style dùng size lớn (48–72px ở Heading/Display), chênh lệch giữa fallback font và font thật ở các size này dễ gây CLS đáng kể; cần đo CLS thực tế với cả hai giá trị trước khi chốt.
+- **`font-display: optional` hoặc `swap`** tuỳ đánh đổi giữa tránh FOIT và tránh layout shift khi font thật load xong — vì typography Nike-style dùng size lớn (48–72px ở Heading/Display), chênh lệch giữa fallback font và font thật ở các size này dễ khiến CLS vượt ngưỡng đã chốt ở trên (< 0.1); cần đo CLS thực tế với cả hai giá trị trước khi chốt.
 - **Preload** file font chính (weight/style dùng ở above-the-fold: Hero, H1 PDP) bằng `<link rel="preload">`, không preload toàn bộ family nếu chỉ 1–2 weight xuất hiện above-the-fold.
 - Việc kiểm tra đủ glyph tiếng Việt (đã là acceptance criteria ở ADR 0003/`roadmap.md` Phase 1) và việc đo CLS khi font thật thay thế fallback là hai bước riêng — không coi "đủ glyph" đã bao hàm "không gây layout shift".
 

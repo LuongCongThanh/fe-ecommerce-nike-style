@@ -31,7 +31,7 @@
 **Mục tiêu**: `Container`/`Grid`/`Stack`/`Section` trong `packages/ui`; Header/Footer riêng từng app; routing skeleton (`[locale]` cho storefront theo Decision #18, không `[locale]` cho admin/cms theo Decision #17).
 
 **Exit criteria**:
-- Header hoạt động desktop/tablet/mobile, không gây CLS đáng kể.
+- Header hoạt động desktop/tablet/mobile, không vượt ngưỡng CLS đã chốt (xem `performance-seo.md`).
 - Chuyển đổi locale trên storefront không gây layout shift (xác nhận trực tiếp ADR 0003).
 - `admin`/`cms` xác nhận không có UI dịch đa ngôn ngữ (đúng ADR 0002).
 
@@ -83,7 +83,7 @@
 
 ## Phase 8 — Hardening
 
-**Mục tiêu**: performance pass toàn diện, accessibility audit, visual regression cho toàn bộ component/page đã có, mở rộng E2E ngoài critical path (Search, Wishlist, Admin, CMS).
+**Mục tiêu**: performance pass đầy đủ, accessibility audit, visual regression cho toàn bộ component/page đã có, mở rộng E2E ngoài critical path (Search, Wishlist, Admin, CMS).
 
 **Exit criteria**:
 - Lighthouse ≥ 95 trên mọi route public chính của `storefront` (Home, PLP, PDP, Search, Cart, Checkout).

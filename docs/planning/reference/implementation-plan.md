@@ -655,7 +655,7 @@ Network error
 * Header hoạt động trên desktop, tablet và mobile.
 * Mega menu hỗ trợ keyboard.
 * Search và cart drawer không xung đột focus.
-* Layout không gây CLS đáng kể.
+* Layout không gây CLS lớn.
 * Navigation hoạt động khi JavaScript tải chậm.
 
 ---
