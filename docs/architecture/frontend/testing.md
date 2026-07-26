@@ -1,6 +1,6 @@
 # Testing Strategy
 
-Công cụ [Đề xuất — cả 3 tài liệu tham khảo (`ideal.md`, `nike-ui-ux-analysis.md`, `FE-first.md`) đều đồng thuận, không có mâu thuẫn nào cần bạn quyết định]: **Vitest** (unit + component), **Playwright** (E2E), **MSW** (integration, dùng chung handler với dev), **Storybook** (visual states — xem [`design-system.md`](./design-system.md)).
+Công cụ [Đề xuất — cả 3 tài liệu tham khảo (`vision-sketch.md`, `nike-ui-ux-analysis.md`, `implementation-plan.md`) đều đồng thuận, không có mâu thuẫn nào cần bạn quyết định]: **Vitest** (unit + component), **Playwright** (E2E), **MSW** (integration, dùng chung handler với dev), **Storybook** (visual states — xem [`design-system.md`](./design-system.md)).
 
 **Visual regression** [Đã chốt — Decision #25, lấp khoảng trống với `roadmap.md` Phase 8]: dùng **Playwright screenshot comparison** (`toHaveScreenshot()`, built-in, không thêm dịch vụ trả phí) chụp story quan trọng của từng component trong `packages/ui`/`packages/commerce` và các trang critical path, chạy trên CI. Chọn Playwright thay vì Chromatic/Percy vì đã có sẵn trong stack cho E2E (không thêm công cụ mới), phù hợp solo dev không cần dashboard review cộng tác. Có thể cân nhắc Chromatic sau nếu cần review UI qua link chia sẻ (không phải nhu cầu hiện tại).
 
@@ -24,7 +24,7 @@ Unit (Vitest)                 → Pure function: price formatting, variant selec
 - **Storybook a11y addon** (`@storybook/addon-a11y`) chạy trên mọi story `packages/ui`/`packages/commerce`, fail CI nếu có lỗi mức critical/serious.
 - **`axe-core` qua Playwright** (`@axe-core/playwright`) chạy trên các trang thuộc Critical path bên dưới — không thay thế audit thủ công (contrast màu thật, screen reader thật) nhưng bắt được phần lớn lỗi phổ biến (missing alt, contrast, ARIA sai) sớm hơn Phase 8.
 
-## Critical path cho MVP [Đề xuất — điều chỉnh từ `FE-first.md`, bỏ bước payment gateway vì Decision #7: MVP chỉ COD]
+## Critical path cho MVP [Đề xuất — điều chỉnh từ `implementation-plan.md`, bỏ bước payment gateway vì Decision #7: MVP chỉ COD]
 
 ```
 Browse → PDP → Chọn variant → Add to cart → Checkout (COD) → Order success

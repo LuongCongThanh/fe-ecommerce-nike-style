@@ -26,7 +26,7 @@ ADR 0003 yêu cầu một font bold/condensed phong cách thể thao, phủ đ�
 - Image optimization (Next.js Image, đúng kích thước cho mỗi breakpoint đã chốt ở `design-system.md`).
 - Code splitting theo route group.
 - ISR cho trang có nội dung đổi chậm (Home, Category, PDP) — cụ thể route nào dùng ISR/SSR/CSR là quyết định khi implement từng page, không thuộc phạm vi tài liệu kiến trúc này.
-- Hero/Product Card không gây layout shift (nhất quán acceptance criteria đã có trong `FE-first.md` cho Application Shell/PLP, giữ vì hợp lý và đo được bằng CLS).
+- Hero/Product Card không gây layout shift (nhất quán acceptance criteria đã có trong `implementation-plan.md` cho Application Shell/PLP, giữ vì hợp lý và đo được bằng CLS).
 
 ## Lazy-load component nặng trong cùng route [Đề xuất]
 

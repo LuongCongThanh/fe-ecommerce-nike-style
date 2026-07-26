@@ -17,8 +17,8 @@ Theo brainstorm-session.md §1, các mục sau **không** nằm trong phạm vi 
 
 - Cổng thanh toán online (Stripe/VNPay/MoMo) — MVP chỉ COD (Decision #7).
 - Dashboard BI nâng cao.
-- Chốt framework backend thật (Modular Monolith NestJS trong `FE-first.md` chỉ là *tham khảo*, chưa phải quyết định — xem Decision #11).
-- Kiến trúc Microservices, Kafka, Kubernetes, multi-region — các ý này xuất hiện trong `ideal.md`/`nike-ui-ux-analysis.md` như định hướng dài hạn "nếu scale tới 1 triệu user", không áp dụng cho giai đoạn hiện tại.
+- Chốt framework backend thật (Modular Monolith NestJS trong `implementation-plan.md` chỉ là *tham khảo*, chưa phải quyết định — xem Decision #11).
+- Kiến trúc Microservices, Kafka, Kubernetes, multi-region — các ý này xuất hiện trong `vision-sketch.md`/`nike-ui-ux-analysis.md` như định hướng dài hạn "nếu scale tới 1 triệu user", không áp dụng cho giai đoạn hiện tại.
 
 ## Users
 
@@ -32,9 +32,9 @@ Theo brainstorm-session.md §1, các mục sau **không** nằm trong phạm vi 
 Bốn nguyên tắc dưới đây chi phối mọi quyết định kiến trúc trong bộ tài liệu này:
 
 1. **Foundation-first** [Đã chốt — Decision #10]. Xây design token → core UI component → core function trước, feature module sau. Chấp nhận rủi ro over-engineering đã được cảnh báo trong brainstorm, đổi lấy một nền tảng vững cho một dự án không deadline.
-2. **Mock-first, không phải Contract-first-nghiêm-ngặt** [Đã chốt — Decision #3, làm rõ thêm bởi Decision #13]. Dự án áp dụng *tinh thần* Contract-first của `FE-first.md` — schema (Zod) phải tồn tại trước khi component tiêu thụ nó — nhưng **không** áp dụng toàn bộ nghi thức review 43-tuần của `FE-first.md` (danh sách tài liệu tham khảo, không phải chuẩn bắt buộc — Decision #11). Chi tiết ở [`api-integration.md`](./api-integration.md).
+2. **Mock-first, không phải Contract-first-nghiêm-ngặt** [Đã chốt — Decision #3, làm rõ thêm bởi Decision #13]. Dự án áp dụng *tinh thần* Contract-first của `implementation-plan.md` — schema (Zod) phải tồn tại trước khi component tiêu thụ nó — nhưng **không** áp dụng toàn bộ nghi thức review 43-tuần của `implementation-plan.md` (danh sách tài liệu tham khảo, không phải chuẩn bắt buộc — Decision #11). Chi tiết ở [`api-integration.md`](./api-integration.md).
 3. **YAGNI có kỷ luật**. Không khai báo trước component token cho 30+ component chưa tồn tại (§8); không tách `layouts` thành package riêng khi chưa có nhu cầu thật (Decision #12); không xây `Market` domain khi chỉ có một market (Decision #14).
-4. **Một nguồn sự thật cho mọi khái niệm dễ lặp lỗi**. Danh sách locale (ADR 0001), domain glossary (`CONTEXT.md`) — tránh lặp lại lỗi hard-code rải rác đã thấy ở `ecommerce-next/middleware.ts`.
+4. **Một nguồn sự thật cho mọi khái niệm dễ lặp lỗi**. Danh sách locale (ADR 0001), domain glossary (`glossary.md`) — tránh lặp lại lỗi hard-code rải rác đã thấy ở `ecommerce-next/middleware.ts`.
 
 ## Observability & error handling [Mở]
 

@@ -2,7 +2,7 @@
 
 ## Nguyên tắc: Mock-first, với kỷ luật Contract-first ở tầng schema [Đã chốt — Decision #3 + #13]
 
-Chưa có backend thật (non-goal giai đoạn này). Toàn bộ tương tác dữ liệu đi qua `packages/api-sdk`, được mock bằng MSW. Điểm khác với "mock tuỳ ý" thuần tuý: **schema (Zod) trong `packages/schemas` phải tồn tại trước khi component tiêu thụ dữ liệu đó** — đây là lý do Decision #13 thêm hẳn một package `schemas` riêng, trích nguyên tắc Contract-first của `FE-first.md`, nhưng **không** áp dụng toàn bộ nghi thức review 43-tuần của tài liệu đó (chỉ là tham khảo — Decision #11).
+Chưa có backend thật (non-goal giai đoạn này). Toàn bộ tương tác dữ liệu đi qua `packages/api-sdk`, được mock bằng MSW. Điểm khác với "mock tuỳ ý" thuần tuý: **schema (Zod) trong `packages/schemas` phải tồn tại trước khi component tiêu thụ dữ liệu đó** — đây là lý do Decision #13 thêm hẳn một package `schemas` riêng, trích nguyên tắc Contract-first của `implementation-plan.md`, nhưng **không** áp dụng toàn bộ nghi thức review 43-tuần của tài liệu đó (chỉ là tham khảo — Decision #11).
 
 Luồng làm việc cho một entity mới (vd: `Product`):
 
@@ -24,7 +24,7 @@ Biến môi trường (`NEXT_PUBLIC_API_MOCKING=enabled/disabled`) đọc ở en
 
 Chưa có quyết định về việc validate biến môi trường (vd: dùng `@t3-oss/env-nextjs` hoặc tự viết bằng `packages/schemas`/Zod để fail-fast khi thiếu env bắt buộc) hay cách phân biệt config theo môi trường (dev/preview/prod) cho cả 3 app. Cần quyết định trước khi có biến môi trường thật đầu tiên cần dùng (vd: base URL API thật, feature flag mocking ở trên) — hiện tại giai đoạn mock-first thuần chưa cần biến môi trường nào, nên chưa chặn Phase 0–2.
 
-## Error envelope [Đề xuất — adopted from `FE-first.md`, không mâu thuẫn quyết định nào]
+## Error envelope [Đề xuất — adopted from `implementation-plan.md`, không mâu thuẫn quyết định nào]
 
 Định dạng lỗi thống nhất, định nghĩa trong `packages/schemas`, dùng bởi cả MSW handler và (sau này) API thật:
 
@@ -38,7 +38,7 @@ export const apiErrorSchema = z.object({
 });
 ```
 
-Danh sách error code khởi điểm (mở rộng dần theo feature, không cần định nghĩa hết trước — nhất quán YAGNI): `VALIDATION_ERROR`, `OUT_OF_STOCK`, `PRICE_CHANGED`, `COUPON_INVALID`. (Loại bỏ các code liên quan payment gateway thật như `PAYMENT_DECLINED` khỏi danh sách gốc của `FE-first.md`, vì MVP chỉ COD — Decision #7.)
+Danh sách error code khởi điểm (mở rộng dần theo feature, không cần định nghĩa hết trước — nhất quán YAGNI): `VALIDATION_ERROR`, `OUT_OF_STOCK`, `PRICE_CHANGED`, `COUPON_INVALID`. (Loại bỏ các code liên quan payment gateway thật như `PAYMENT_DECLINED` khỏi danh sách gốc của `implementation-plan.md`, vì MVP chỉ COD — Decision #7.)
 
 ## Pagination / filter / sort contract [Đề xuất]
 

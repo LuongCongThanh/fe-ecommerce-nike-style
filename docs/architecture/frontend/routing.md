@@ -4,7 +4,7 @@
 
 Dùng lại pattern `app/[locale]/...` với `next-intl`, đã được kiểm chứng ở `ecommerce-next`. `SUPPORTED_LOCALES` lấy từ `packages/utils` (nguồn sự thật duy nhất — xem [`i18n-locale.md`](./i18n-locale.md)), **không** tự thiết kế lại middleware locale detection từ đầu.
 
-Route groups đề xuất [Đề xuất — dựa trên `ideal.md` sitemap + phạm vi storefront MVP, **chưa** là quyết định chốt vì brainstorm chưa có Decision Log entry riêng cho sitemap]:
+Route groups đề xuất [Đề xuất — dựa trên `vision-sketch.md` sitemap + phạm vi storefront MVP, **chưa** là quyết định chốt vì brainstorm chưa có Decision Log entry riêng cho sitemap]:
 
 ```
 apps/storefront/src/app/[locale]/
@@ -43,7 +43,7 @@ apps/cms/src/app/
                     # Promotion Banner, SEO Metadata, Blog, Campaign — xem roadmap.md
 ```
 
-## URL-as-state cho filter/sort/pagination [Đề xuất — adopted from `FE-first.md`, không mâu thuẫn quyết định nào]
+## URL-as-state cho filter/sort/pagination [Đề xuất — adopted from `implementation-plan.md`, không mâu thuẫn quyết định nào]
 
 Trạng thái filter/sort/pagination của PLP đi vào query string, không lưu độc lập trong Zustand:
 

@@ -1,6 +1,6 @@
 # State Management
 
-Brainstorm chưa có Decision Log entry riêng cho state ownership — nội dung dưới đây là **[Đề xuất]**, dựa trên nguyên tắc FE tổng quát không mâu thuẫn với các quyết định đã chốt (đối chiếu `FE-first.md` §12, giữ lại vì hợp lý, không phải vì file đó là chuẩn).
+Brainstorm chưa có Decision Log entry riêng cho state ownership — nội dung dưới đây là **[Đề xuất]**, dựa trên nguyên tắc FE tổng quát không mâu thuẫn với các quyết định đã chốt (đối chiếu `implementation-plan.md` §12, giữ lại vì hợp lý, không phải vì file đó là chuẩn).
 
 ## Pattern data-fetching cho server state [Đã chốt]
 

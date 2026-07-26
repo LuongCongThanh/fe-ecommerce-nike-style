@@ -1,8 +1,8 @@
 # i18n & Locale Architecture
 
-Tài liệu này hình thức hoá kết quả phiên Grilling (brainstorm-session.md §9) thành kiến trúc cụ thể. Định nghĩa domain đầy đủ ở [`CONTEXT.md`](../../../CONTEXT.md); các quyết định gây tranh cãi ở `docs/adr/0001`–`0003`. Tài liệu này **không lặp lại** nội dung đó mà chỉ trả lời: *đặt ở đâu trong code, ai dùng, dùng thế nào*.
+Tài liệu này hình thức hoá kết quả phiên Grilling (brainstorm-session.md §9) thành kiến trúc cụ thể. Định nghĩa domain đầy đủ ở [`glossary.md`](../../glossary.md); các quyết định gây tranh cãi ở `docs/adr/0001`–`0003`. Tài liệu này **không lặp lại** nội dung đó mà chỉ trả lời: *đặt ở đâu trong code, ai dùng, dùng thế nào*.
 
-## Domain model (nhắc lại ngắn gọn — xem CONTEXT.md để đọc đầy đủ)
+## Domain model (nhắc lại ngắn gọn — xem glossary.md để đọc đầy đủ)
 
 - **Locale** — ngôn ngữ hiển thị. Danh sách đóng, một nguồn sự thật trong code (ADR 0001).
 - **Locale mặc định** — `vi`. Bắt buộc có giá trị cho mọi Localized Text.

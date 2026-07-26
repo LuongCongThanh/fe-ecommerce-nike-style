@@ -1,16 +1,16 @@
 # Frontend Architecture — Chỉ mục tài liệu
 
-> Đây là bản **thiết kế solution chính thức** cho phần Front-end của dự án FE (`E:\my-pj\FE`), tổng hợp và hình thức hoá các quyết định đã chốt trong [`brainstorm-session.md`](../../../brainstorm-session.md). Khác với brainstorm-session (nhật ký quá trình), các tài liệu trong `docs/architecture/frontend/` là **nguồn tham chiếu chính** cho việc triển khai từ nay trở đi.
+> Đây là bản **thiết kế solution chính thức** cho phần Front-end của dự án FE (`E:\my-pj\FE`), tổng hợp và hình thức hoá các quyết định đã chốt trong [`brainstorm-session.md`](../../planning/brainstorm-session.md). Khác với brainstorm-session (nhật ký quá trình), các tài liệu trong `docs/architecture/frontend/` là **nguồn tham chiếu chính** cho việc triển khai từ nay trở đi.
 
 ## Quan hệ với các tài liệu khác
 
 | Tài liệu | Vai trò | Có bị tài liệu này thay thế không? |
 |---|---|---|
-| [`brainstorm-session.md`](../../../brainstorm-session.md) | Nhật ký quyết định (Decision Log #1–19) | Không — vẫn là nguồn sự thật cho *lý do* đằng sau mỗi quyết định. Tài liệu kiến trúc này **không được mâu thuẫn** với Decision Log; nếu có sai khác, Decision Log thắng. |
-| [`CONTEXT.md`](../../../CONTEXT.md) | Domain glossary (Locale, Market, Localized Text...) | Không — vẫn là nguồn sự thật cho định nghĩa domain. |
+| [`brainstorm-session.md`](../../planning/brainstorm-session.md) | Nhật ký quyết định (Decision Log #1–19) | Không — vẫn là nguồn sự thật cho *lý do* đằng sau mỗi quyết định. Tài liệu kiến trúc này **không được mâu thuẫn** với Decision Log; nếu có sai khác, Decision Log thắng. |
+| [`glossary.md`](../../glossary.md) | Domain glossary (Locale, Market, Localized Text...) | Không — vẫn là nguồn sự thật cho định nghĩa domain. |
 | [`docs/adr/`](../../adr/) | ADR cho các quyết định gây tranh cãi/có trade-off rõ | Không — tài liệu này link tới ADR thay vì lặp lại nội dung. |
-| `ideal.md`, `nike-ui-ux-analysis.md`, `FE-first.md` | **Tham khảo thêm** (Decision #11) | Không áp dụng trực tiếp — chỉ được dùng làm gợi ý khi không mâu thuẫn với Decision Log. Mọi chỗ tài liệu này lấy ý tưởng từ 3 file trên đều được đánh dấu rõ "adopted from reference". |
-| `solution-architect-workflow-template.md` | Khung quy trình Solution Architect tổng quát | Chỉ mục **Giai đoạn 2 — Front-end Architecture** của file này được dùng làm khung sườn cho bộ tài liệu hiện tại. |
+| [`vision-sketch.md`](../../planning/reference/vision-sketch.md), [`nike-ui-ux-analysis.md`](../../research/nike-ui-ux-analysis.md), [`implementation-plan.md`](../../planning/reference/implementation-plan.md) | **Tham khảo thêm** (Decision #11) | Không áp dụng trực tiếp — chỉ được dùng làm gợi ý khi không mâu thuẫn với Decision Log. Mọi chỗ tài liệu này lấy ý tưởng từ 3 file trên đều được đánh dấu rõ "adopted from reference". |
+| [`solution-architect-workflow.md`](../../planning/reference/solution-architect-workflow.md) | Khung quy trình Solution Architect tổng quát | Chỉ mục **Giai đoạn 2 — Front-end Architecture** của file này được dùng làm khung sườn cho bộ tài liệu hiện tại. |
 
 ## Quy ước đọc tài liệu
 

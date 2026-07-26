@@ -2,7 +2,7 @@
 
 ## Nguyên tắc [Đã chốt — Decision #9 + #10]
 
-- **Không có mốc thời gian cụ thể** (Decision #9 — solo dev, ưu tiên chất lượng). Roadmap dưới đây chia theo **phase với exit criteria kiểm chứng được**, không phải tuần/tháng. Đây là điểm khác biệt rõ so với timeline 43-tuần chi tiết của `FE-first.md` — file đó chỉ là tham khảo (Decision #11), không phải cam kết.
+- **Không có mốc thời gian cụ thể** (Decision #9 — solo dev, ưu tiên chất lượng). Roadmap dưới đây chia theo **phase với exit criteria kiểm chứng được**, không phải tuần/tháng. Đây là điểm khác biệt rõ so với timeline 43-tuần chi tiết của `implementation-plan.md` — file đó chỉ là tham khảo (Decision #11), không phải cam kết.
 - **Foundation-first** (Decision #10): design token + core UI component + core function xong trước, feature module sau.
 - Mỗi phase có "exit criteria" thay vì deadline — nhất quán cách làm việc goal-driven: chuyển mỗi phase thành mục tiêu kiểm chứng được, không chuyển sang phase sau khi chưa xác minh xong phase hiện tại.
 
@@ -75,7 +75,7 @@
 
 ## Phase 7 — CMS
 
-**Mục tiêu** [Đã chốt phạm vi — Decision #21]: toàn bộ CMS MVP như liệt kê tham khảo trong `FE-first.md` — Hero Banner, Homepage Sections, Collection Landing Page, Promotion Banner, SEO Metadata, Blog, Campaign. Không thu hẹp thành lát cắt nhỏ hơn.
+**Mục tiêu** [Đã chốt phạm vi — Decision #21]: toàn bộ CMS MVP như liệt kê tham khảo trong `implementation-plan.md` — Hero Banner, Homepage Sections, Collection Landing Page, Promotion Banner, SEO Metadata, Blog, Campaign. Không thu hẹp thành lát cắt nhỏ hơn.
 
 **Hệ quả**: vì phạm vi rộng hơn một lát cắt tối thiểu, cân nhắc tách phase này thành các mốc kiểm chứng nhỏ hơn theo thứ tự giá trị kinh doanh — ví dụ Hero/Banner + SEO Metadata trước (tác động trực tiếp Homepage/PDP), Blog/Campaign sau (giá trị content-marketing, không chặn luồng mua hàng cốt lõi). Đây là gợi ý sắp xếp nội bộ trong phase, không phải thu hẹp phạm vi đã chốt.
 

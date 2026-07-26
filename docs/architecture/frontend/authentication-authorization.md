@@ -10,7 +10,7 @@ Authentication **có** trong MVP storefront: sign in/up, account, order history,
 
 - `packages/hooks` cần `use-auth` thật, không phải "để sẵn đó" — build ngay khi vào Phase 5 (Storefront Features) theo `roadmap.md`.
 - `routing.md` route group `(account)/` (profile, orders, wishlist) chính thức nằm trong scope MVP, không còn là route "dự phòng".
-- **[Mở — mới phát sinh]**: danh sách role cụ thể cho `admin`/`cms` (Super Admin, Catalog Manager, Order Operator, Content Editor... như liệt kê tham khảo trong `FE-first.md`) và ma trận phân quyền theo role **chưa được chốt** — chỉ mới xác nhận "có auth", chưa xác nhận độ chi tiết RBAC. Cần quyết định riêng trước khi implement Admin/CMS authorization guard chi tiết.
+- **[Mở — mới phát sinh]**: danh sách role cụ thể cho `admin`/`cms` (Super Admin, Catalog Manager, Order Operator, Content Editor... như liệt kê tham khảo trong `implementation-plan.md`) và ma trận phân quyền theo role **chưa được chốt** — chỉ mới xác nhận "có auth", chưa xác nhận độ chi tiết RBAC. Cần quyết định riêng trước khi implement Admin/CMS authorization guard chi tiết.
 
 ## Nguyên tắc bảo mật đã chốt [Đã chốt — Assumption #2: form OWASP-safe từ đầu]
 

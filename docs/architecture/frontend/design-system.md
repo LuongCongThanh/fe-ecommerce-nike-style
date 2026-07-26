@@ -17,7 +17,7 @@
 
 **Cơ chế hiện thực hoá token [Đã chốt — Decision #23]**: token 3 tầng ở trên định nghĩa **giá trị** (TypeScript object trong `packages/design-tokens`), không tự nói token compile ra runtime style bằng gì. **Tailwind CSS v4 (`@theme`)** — token TypeScript trong `packages/design-tokens` là nguồn sự thật duy nhất, một script build sinh ra CSS custom properties (`--color-*`, `--spacing-*`, `--font-size-*`...) từ đó, và `apps/*` import file CSS đó vào cấu hình Tailwind v4 (`@theme` đọc trực tiếp custom property, không cần file `tailwind.config.ts` riêng theo cách v3). Component dùng utility class Tailwind trỏ vào token (`bg-action-primary`, không `bg-[#111111]`) — khớp với acceptance criteria "không hex trực tiếp" bên dưới. Lý do chọn Tailwind thay vì CSS-in-JS (vanilla-extract, styled-components): nhất quán với `packages/ui` dùng Radix primitives (không styling sẵn) + `shadcn`-style component (vốn build trên Tailwind), tránh runtime CSS-in-JS overhead ảnh hưởng mục tiêu Lighthouse > 95.
 
-**Acceptance criteria** [Đã chốt, giữ từ `FE-first.md` vì hợp lý và không mâu thuẫn]: không dùng hex trực tiếp trong feature code; không dùng spacing tùy ý ngoài token.
+**Acceptance criteria** [Đã chốt, giữ từ `implementation-plan.md` vì hợp lý và không mâu thuẫn]: không dùng hex trực tiếp trong feature code; không dùng spacing tùy ý ngoài token.
 
 > Typography (line-height, letter-spacing): **một bộ duy nhất** cho mọi Locale — xem ADR 0003 và [`i18n-locale.md`](./i18n-locale.md). Ràng buộc: font phải có đầy đủ glyph tiếng Việt.
 
@@ -59,9 +59,9 @@ apps/*/Header, Footer  → cụ thể riêng từng app (KHÔNG dùng chung, KH�
 apps/*/features        → ghép ui + commerce + layout thành page thật
 ```
 
-Lý do Header/Footer không lên package (Decision #12): khác nhau nhiều giữa storefront/admin/cms (mega menu + locale switcher cho storefront, sidebar nav cho admin/cms) — ép chung sẽ tạo abstraction giả, và đối chiếu `FE-first.md` cũng không tách package `layouts` riêng.
+Lý do Header/Footer không lên package (Decision #12): khác nhau nhiều giữa storefront/admin/cms (mega menu + locale switcher cho storefront, sidebar nav cho admin/cms) — ép chung sẽ tạo abstraction giả, và đối chiếu `implementation-plan.md` cũng không tách package `layouts` riêng.
 
-## Hợp đồng Storybook mỗi component [Đề xuất — adopted from `FE-first.md`, không mâu thuẫn]
+## Hợp đồng Storybook mỗi component [Đề xuất — adopted from `implementation-plan.md`, không mâu thuẫn]
 
 Mỗi component trong `packages/ui` và `packages/commerce` phải có story cho:
 
