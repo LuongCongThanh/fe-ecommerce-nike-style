@@ -3,7 +3,7 @@
 Từ giờ, hãy coi **5 file dưới đây là bộ tài liệu chính**:
 
 1. [`SRS.md`](./SRS.md)
-2. [`FE.md`](./FE.md)
+2. [`FE/README.md`](./FE/README.md)
 3. [`BE.md`](./BE.md)
 4. [`TEST.md`](./TEST.md)
 5. [`DEVOPS.md`](./DEVOPS.md)
@@ -12,8 +12,8 @@ Nếu bạn mới vào dự án, chỉ cần đọc 5 file này trước.
 
 ## Đường đọc ngắn nhất
 
-- Mới vào dự án: `SRS.md` -> `FE.md` -> `BE.md` -> `TEST.md` -> `DEVOPS.md`
-- Chỉ làm FE: `SRS.md` -> `FE.md` -> `TEST.md`
+- Mới vào dự án: `SRS.md` -> `FE/README.md` -> `BE.md` -> `TEST.md` -> `DEVOPS.md`
+- Chỉ làm FE: `SRS.md` -> `FE/README.md` -> `TEST.md`
 - Chỉ làm BE: `SRS.md` -> `BE.md` -> `TEST.md` -> `DEVOPS.md`
 - Chỉ làm test: `SRS.md` -> `TEST.md`
 
@@ -34,7 +34,7 @@ File đó giải thích:
 3. `00-core/adr/`
 4. `00-core/decision-log.md`
 5. `SRS.md`
-6. `FE.md`
+6. `FE/FE.md`
 7. `BE.md`
 8. `TEST.md`
 9. `DEVOPS.md`

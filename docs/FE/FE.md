@@ -4,11 +4,29 @@
 
 Mục tiêu của file này là đủ cụ thể để bắt đầu scaffold và build FE thật, không chỉ dừng ở mức định hướng.
 
+Nếu cần xem riêng phần kiến trúc Frontend cho cả `storefront`, `admin`, `cms` và module chung, xem [`FE-ARCHITECTURE.md`](E:/my-pj/FE/docs/FE/FE-ARCHITECTURE.md).
+
+Nếu cần xem riêng phần design system đã được siết lại cho execution, xem [`FE-DESIGN-SYSTEM.md`](E:/my-pj/FE/docs/FE/FE-DESIGN-SYSTEM.md).
+
+Nếu cần xem riêng phần nền kỹ thuật phải hoàn thành trước mọi feature, xem [`FE-FOUNDATION.md`](E:/my-pj/FE/docs/FE/FE-FOUNDATION.md).
+
 ## 1. Trạng thái quyết định
 
-- `Đã chốt`: đã có trong `00-core/decision-log.md` hoặc ADR
-- `Đề xuất`: hợp lý để scaffold ngay, nhưng chưa thấy được chốt bằng decision riêng
-- `Mở`: còn phụ thuộc quyết định khác, không nên tự khẳng định là final
+- `Đã chốt`: đã được chấp nhận làm quyết định làm việc hiện hành cho FE
+- `Mở`: còn phụ thuộc spike kỹ thuật, backend, hoặc quyết định business khác
+
+## 1.1. Kết luận chốt FE ngày 29/07/2026
+
+Phạm vi của file này đã được chốt ở mức **đủ để scaffold và build Frontend thật**.
+
+Những quyết định chỉ ảnh hưởng FE foundation và không còn trade-off lớn đã được nâng lên `Đã chốt`.
+
+Những thứ vẫn giữ `Mở` là:
+
+- chi tiết RBAC cho `admin/cms`
+- spike kỹ thuật `MSW + Set-Cookie + Next.js middleware`
+- analytics implementation thật
+- package manifest và lockfile thực tế sau khi scaffold
 
 ## 2. Hiện trạng
 
@@ -34,14 +52,31 @@ và phải thỏa đồng thời các mục tiêu sau:
 - không rewrite component khi đổi từ mock API sang real API
 - giữ ranh giới rõ giữa shared package và feature-specific code
 
-## 4. Stack FE đề xuất
+## 3.1. Chốt phạm vi FE foundation
+
+Phần FE foundation của dự án này được coi là **bắt buộc hoàn thiện toàn bộ** trước khi đi sâu vào feature layer.
+
+Foundation bắt buộc gồm:
+
+1. Root workspace
+2. Shared config
+3. Design tokens
+4. Tailwind preset
+5. Schemas
+6. API SDK + MSW
+7. Shared UI
+8. App shell cho `storefront`, `admin`, `cms`
+
+Chi tiết và Definition of Done xem tại [`FE-FOUNDATION.md`](E:/my-pj/FE/docs/FE/FE-FOUNDATION.md).
+
+## 4. Stack FE đã chốt
 
 ## 4.1. Runtime và workspace
 
 - `Đã chốt` `Turborepo`
-- `Đề xuất` `pnpm workspace`
-- `Đề xuất` `Node.js LTS`
-- `Đề xuất` `TypeScript strict`
+- `Đã chốt` `pnpm workspace`
+- `Đã chốt` `Node.js LTS`
+- `Đã chốt` `TypeScript strict`
 
 Lý do:
 
@@ -51,8 +86,8 @@ Lý do:
 
 ## 4.2. Framework app
 
-- `Đề xuất` `Next.js App Router` cho cả `storefront`, `admin`, `cms`
-- `Đề xuất` `React`
+- `Đã chốt` `Next.js App Router` cho cả `storefront`, `admin`, `cms`
+- `Đã chốt` `React`
 
 Lý do:
 
@@ -65,10 +100,11 @@ Lý do:
 - `Đã chốt` `Tailwind CSS v4`
 - `Đã chốt` `CSS custom properties` sinh từ `packages/design-tokens`
 - `Đã chốt` `class-variance-authority`
-- `Đề xuất` `tailwind-merge`
-- `Đề xuất` `clsx`
+- `Đã chốt` `tailwind-merge`
+- `Đã chốt` `clsx`
+- `Đã chốt` `lucide-react`
 - `Đã chốt` `Radix UI primitives`
-- `Đề xuất` `shadcn/ui style approach` trên nền Radix + Tailwind
+- `Đã chốt` `shadcn/ui style approach` trên nền Radix + Tailwind
 
 Lý do:
 
@@ -80,7 +116,7 @@ Lý do:
 
 - `Đã chốt` `Zod` cho schema contract trong `packages/schemas`
 - `Đã chốt` `MSW` cho mock API
-- `Đề xuất` `TanStack Query` cho server state
+- `Đã chốt` `TanStack Query` cho server state
 - `Đã chốt` `Zustand` cho client state dùng chung
 - `Đã chốt` `next-intl` cho storefront locale routing
 
@@ -93,9 +129,9 @@ Lý do:
 
 ## 4.5. Forms
 
-- `Đề xuất` `react-hook-form`
-- `Đề xuất` `@hookform/resolvers`
-- `Đề xuất` dùng `zodResolver` với schema từ `packages/schemas` hoặc schema form riêng khi hợp lý
+- `Đã chốt` `react-hook-form`
+- `Đã chốt` `@hookform/resolvers`
+- `Đã chốt` dùng `zodResolver` với schema từ `packages/schemas` hoặc schema form riêng khi hợp lý
 
 Lý do:
 
@@ -104,19 +140,19 @@ Lý do:
 
 ## 4.6. Testing
 
-- `Đề xuất` `Vitest` cho unit/integration test frontend
-- `Đề xuất` `@testing-library/react`
-- `Đề xuất` `@testing-library/user-event`
+- `Đã chốt` `Vitest` cho unit/integration test frontend
+- `Đã chốt` `@testing-library/react`
+- `Đã chốt` `@testing-library/user-event`
 - `Đã chốt` `Playwright`
 - `Đã chốt` `Playwright toHaveScreenshot()` cho visual regression
-- `Đề xuất` `jsdom` cho test DOM-level
+- `Đã chốt` `jsdom` cho test DOM-level
 
 Lý do:
 
 - Playwright đã chốt ở Decision `#25`
 - unit/integration runner cụ thể chưa chốt, nhưng Vitest hợp với Vite ecosystem và React test hiện nay
 
-## 5. Danh sách thư viện FE nên dùng
+## 5. Danh sách thư viện FE đã chốt
 
 ## 5.1. Root workspace
 
@@ -156,6 +192,7 @@ tailwind-merge
 @radix-ui/react-tooltip
 @radix-ui/react-slot
 @radix-ui/react-label
+lucide-react
 ```
 
 Chỉ cài những primitive thật sự dùng tới, không cần cài cả họ ngay từ ngày đầu.
@@ -177,6 +214,51 @@ jsdom
 @playwright/test
 ```
 
+## 5.7. Version đã chốt để pin ngay từ đầu
+
+Các version dưới đây được chốt làm baseline scaffold FE, dựa trên npm registry vào **Thứ Tư, ngày 29 tháng 7 năm 2026**.
+
+| Nhóm | Package | Version đã chốt | Cài ở đâu | Ghi chú |
+|---|---|---|---|---|
+| Root tooling | `turbo` | `2.10.7` | root | task runner cho monorepo |
+| Root tooling | `typescript` | `7.0.2` | root | pin strict ngay từ đầu |
+| Root tooling | `eslint` | `10.8.0` | root | lint nền cho workspace |
+| Root tooling | `prettier` | `3.9.6` | root | format thống nhất |
+| App framework | `next` | `16.2.12` | `apps/*` | App Router |
+| App framework | `react` | `19.2.8` | `apps/*` | runtime FE |
+| App framework | `react-dom` | `19.2.8` | `apps/*` | DOM renderer |
+| App framework | `next-intl` | `4.13.4` | `apps/storefront` | locale routing storefront |
+| Data/state/contract | `@tanstack/react-query` | `5.101.4` | `apps/*`, `packages/hooks` | server state |
+| Data/state/contract | `zustand` | `5.0.14` | `apps/*`, `packages/hooks` | client state |
+| Data/state/contract | `zod` | `4.4.3` | `packages/schemas`, `packages/api-sdk` | schema contract |
+| Data/state/contract | `msw` | `2.15.0` | `packages/api-sdk` | mock-first |
+| Styling/UI | `tailwindcss` | `4.3.3` | root hoặc `packages/tailwind-config` | styling nền |
+| Styling/UI | `class-variance-authority` | `0.7.1` | `packages/ui` | variants |
+| Styling/UI | `clsx` | `2.1.1` | `packages/ui` | compose class |
+| Styling/UI | `tailwind-merge` | `3.6.0` | `packages/ui` | merge class Tailwind |
+| Styling/UI | `tailwindcss-motion` | `1.1.1` | `packages/tailwind-config` | Rombo/Tailwind Motion |
+| Styling/UI | `lucide-react` | `1.27.0` | `packages/ui` | icon library mặc định |
+| Styling/UI | `@radix-ui/react-dialog` | `1.1.23` | `packages/ui` | primitive |
+| Styling/UI | `@radix-ui/react-tabs` | `1.1.21` | `packages/ui` | primitive |
+| Styling/UI | `@radix-ui/react-tooltip` | `1.2.16` | `packages/ui` | primitive |
+| Forms | `react-hook-form` | `7.83.0` | `apps/*` | form state |
+| Forms | `@hookform/resolvers` | `5.5.7` | `apps/*` | Zod resolver |
+| Testing | `vitest` | `4.1.10` | root | unit/integration |
+| Testing | `jsdom` | `30.0.1` | root | DOM test env |
+| Testing | `@playwright/test` | `1.62.0` | root | E2E/visual regression |
+
+### Chính sách version đã chốt
+
+- pin exact version ở commit scaffold đầu tiên
+- không dùng `latest` trôi nổi trong docs hay command
+- sau này nếu upgrade, nâng có chủ đích theo batch:
+  - tooling
+  - app runtime
+  - state/data
+  - test
+- file ngắn gọn để theo dõi matrix version nằm ở [`FE-VERSIONS.md`](E:/my-pj/FE/docs/FE/FE-VERSIONS.md)
+- nếu scaffold thực tế gặp xung đột peer dependency, lockfile thật được quyền override file này và phải cập nhật ngược lại docs
+
 ## 5.6. Optional nhưng hữu ích
 
 ```text
@@ -188,7 +270,7 @@ cross-env
 
 `Optional` ở đây nghĩa là hữu ích cho local workflow, không phải requirement business.
 
-## 6. Kiến trúc monorepo mục tiêu
+## 6. Kiến trúc monorepo đã chốt
 
 ```text
 FE/
@@ -477,7 +559,7 @@ Nguyên tắc cứng:
 - Typography token dùng chung cho mọi locale
 - `SUPPORTED_LOCALES` là nguồn sự thật duy nhất trong code
 
-### 11.1. Vị trí đề xuất
+### 11.1. Vị trí đã chốt cho Phase 0
 
 ```text
 packages/utils/src/i18n/
@@ -486,7 +568,7 @@ packages/utils/src/i18n/
   fallback.ts
 ```
 
-hoặc một package riêng cho i18n nếu sau này đủ lớn. Hiện tại nên giữ gọn.
+Không tách package i18n riêng ở Phase 0. Nếu sau này đủ lớn mới tách.
 
 ## 12. Auth ở FE
 
@@ -495,7 +577,7 @@ hoặc một package riêng cho i18n nếu sau này đủ lớn. Hiện tại n�
 - Route guard ở FE chỉ là UX layer
 - Permission thật phải được backend enforce
 
-### 12.1. Điều cần spike sớm
+### 12.1. Điều vẫn còn mở và cần spike sớm
 
 Theo ADR `0004`, cần spike nhỏ để xác nhận:
 
@@ -529,11 +611,11 @@ Không nên build toàn bộ `use-auth` trước khi spike này pass.
 - giữ shared primitives gọn
 - tránh over-fetching
 
-## 14. Hướng dẫn cài đặt và scaffold
+## 14. Hướng dẫn cài đặt và scaffold đã chốt
 
 ## 14.1. Bước 1: tạo root workspace
 
-`Đề xuất`
+`Đã chốt cho scaffold Phase 0`
 
 ```bash
 pnpm init
@@ -546,7 +628,7 @@ Tạo:
 - `turbo.json`
 - root `package.json`
 
-### Root `pnpm-workspace.yaml` đề xuất
+### Root `pnpm-workspace.yaml` đã chốt
 
 ```yaml
 packages:
@@ -554,7 +636,7 @@ packages:
   - packages/*
 ```
 
-### Root `package.json` đề xuất
+### Root `package.json` đã chốt làm baseline
 
 ```json
 {
@@ -569,17 +651,24 @@ packages:
     "test": "turbo run test",
     "test:e2e": "turbo run test:e2e",
     "clean": "turbo run clean"
-  },
-  "devDependencies": {
-    "eslint": "workspace:*",
-    "prettier": "workspace:*",
-    "turbo": "workspace:*",
-    "typescript": "workspace:*"
   }
 }
 ```
 
-### Root `turbo.json` đề xuất
+Ghi chú:
+
+- `turbo`, `typescript`, `eslint`, `prettier` là package từ npm, không dùng `"workspace:*"` trong root `devDependencies`
+- chỉ dùng `"workspace:*"` khi tham chiếu package nội bộ như `@repo/ui`, `@repo/schemas`, `@repo/api-sdk`
+
+### Root `.npmrc` đã chốt
+
+```ini
+save-exact=true
+auto-install-peers=true
+strict-peer-dependencies=false
+```
+
+### Root `turbo.json` đã chốt làm baseline
 
 ```json
 {
@@ -633,7 +722,7 @@ packages/eslint-config
 packages/ts-config
 ```
 
-Lệnh PowerShell đề xuất:
+Lệnh PowerShell bootstrap:
 
 ```powershell
 New-Item -ItemType Directory -Force apps\storefront, apps\admin, apps\cms, packages\design-tokens, packages\tailwind-config, packages\ui, packages\commerce, packages\schemas, packages\api-sdk, packages\hooks, packages\utils, packages\eslint-config, packages\ts-config
@@ -641,16 +730,16 @@ New-Item -ItemType Directory -Force apps\storefront, apps\admin, apps\cms, packa
 
 ## 14.3. Bước 3: cài core deps cho app
 
-Ví dụ cho từng app Next.js:
+Lệnh cài app runtime core:
 
 ```bash
-pnpm add next react react-dom next-intl @tanstack/react-query zustand zod msw tailwindcss class-variance-authority clsx tailwind-merge react-hook-form @hookform/resolvers
+pnpm add next@16.2.12 react@19.2.8 react-dom@19.2.8 next-intl@4.13.4 @tanstack/react-query@5.101.4 zustand@5.0.14 react-hook-form@7.83.0 @hookform/resolvers@5.5.7
 ```
 
 Dev dependencies:
 
 ```bash
-pnpm add -D typescript vitest jsdom @testing-library/react @testing-library/user-event @playwright/test
+pnpm add -D typescript@7.0.2 vitest@4.1.10 jsdom@30.0.1 @testing-library/react @testing-library/user-event @playwright/test@1.62.0
 ```
 
 ### Phân bổ dependency theo nơi cài
@@ -745,14 +834,14 @@ jsdom
 Ví dụ:
 
 ```bash
-pnpm --filter ./apps/storefront add next react react-dom next-intl @tanstack/react-query zustand react-hook-form @hookform/resolvers
-pnpm --filter ./apps/admin add next react react-dom @tanstack/react-query zustand react-hook-form @hookform/resolvers
-pnpm --filter ./apps/cms add next react react-dom @tanstack/react-query zustand react-hook-form @hookform/resolvers
-pnpm --filter ./packages/schemas add zod
-pnpm --filter ./packages/api-sdk add zod msw
-pnpm --filter ./packages/ui add class-variance-authority clsx tailwind-merge
-pnpm --filter ./packages/hooks add @tanstack/react-query zustand
-pnpm add -D vitest jsdom @testing-library/react @testing-library/user-event @playwright/test
+pnpm --filter ./apps/storefront add next@16.2.12 react@19.2.8 react-dom@19.2.8 next-intl@4.13.4 @tanstack/react-query@5.101.4 zustand@5.0.14 react-hook-form@7.83.0 @hookform/resolvers@5.5.7
+pnpm --filter ./apps/admin add next@16.2.12 react@19.2.8 react-dom@19.2.8 @tanstack/react-query@5.101.4 zustand@5.0.14 react-hook-form@7.83.0 @hookform/resolvers@5.5.7
+pnpm --filter ./apps/cms add next@16.2.12 react@19.2.8 react-dom@19.2.8 @tanstack/react-query@5.101.4 zustand@5.0.14 react-hook-form@7.83.0 @hookform/resolvers@5.5.7
+pnpm --filter ./packages/schemas add zod@4.4.3
+pnpm --filter ./packages/api-sdk add zod@4.4.3 msw@2.15.0
+pnpm --filter ./packages/ui add class-variance-authority@0.7.1 clsx@2.1.1 tailwind-merge@3.6.0
+pnpm --filter ./packages/hooks add @tanstack/react-query@5.101.4 zustand@5.0.14
+pnpm add -D vitest@4.1.10 jsdom@30.0.1 @testing-library/react @testing-library/user-event @playwright/test@1.62.0
 ```
 
 ## 14.4. Bước 4: cài Radix theo nhu cầu
@@ -760,10 +849,30 @@ pnpm add -D vitest jsdom @testing-library/react @testing-library/user-event @pla
 Ví dụ:
 
 ```bash
-pnpm add @radix-ui/react-dialog @radix-ui/react-dropdown-menu @radix-ui/react-popover @radix-ui/react-select @radix-ui/react-tabs @radix-ui/react-tooltip @radix-ui/react-slot @radix-ui/react-label
+pnpm --filter ./packages/ui add @radix-ui/react-dialog@1.1.23 @radix-ui/react-dropdown-menu @radix-ui/react-popover @radix-ui/react-select @radix-ui/react-tabs@1.1.21 @radix-ui/react-tooltip@1.2.16 @radix-ui/react-slot @radix-ui/react-label
 ```
 
 Không cần cài full tất cả package Radix từ đầu.
+
+## 14.4.1. Cấu hình `tailwindcss-motion` nếu dùng Rombo
+
+Nếu quyết định dùng Rombo/Tailwind Motion cho `storefront`, cài ở `packages/tailwind-config`:
+
+```bash
+pnpm --filter ./packages/tailwind-config add -D tailwindcss-motion@1.1.1
+```
+
+Ví dụ preset config:
+
+```ts
+import motion from "tailwindcss-motion";
+
+export default {
+  plugins: [motion]
+};
+```
+
+Chỉ nên rollout animation mạnh ở `storefront`, không ưu tiên cho `admin/cms`.
 
 ## 14.5. Bước 5: dựng shared packages trước
 
@@ -777,7 +886,7 @@ Không cần cài full tất cả package Radix từ đầu.
 6. `packages/api-sdk`
 7. `packages/ui`
 
-### `packages/ts-config` nên có gì
+### `packages/ts-config` phải có gì
 
 - `base.json`
 - `nextjs.json`
@@ -790,7 +899,42 @@ Tối thiểu:
 - `verbatimModuleSyntax: true`
 - `moduleResolution` phù hợp với Next.js hiện đại
 
-### `packages/eslint-config` nên có gì
+### `packages/ts-config/base.json` đã chốt
+
+```json
+{
+  "$schema": "https://json.schemastore.org/tsconfig",
+  "compilerOptions": {
+    "target": "ES2022",
+    "lib": ["ES2022", "DOM", "DOM.Iterable"],
+    "module": "ESNext",
+    "moduleResolution": "Bundler",
+    "strict": true,
+    "noImplicitAny": true,
+    "verbatimModuleSyntax": true,
+    "jsx": "preserve",
+    "resolveJsonModule": true,
+    "allowJs": false,
+    "declaration": true,
+    "skipLibCheck": true,
+    "noEmit": true
+  }
+}
+```
+
+### `packages/ts-config/nextjs.json` đã chốt
+
+```json
+{
+  "extends": "./base.json",
+  "compilerOptions": {
+    "plugins": [{ "name": "next" }],
+    "incremental": true
+  }
+}
+```
+
+### `packages/eslint-config` phải có gì
 
 - base config
 - next config
@@ -799,7 +943,25 @@ Tối thiểu:
 - boundaries rules
 - cấm import ngược chiều package
 
-### `packages/design-tokens` nên có gì
+### `packages/eslint-config/base.js` đã chốt làm baseline
+
+```js
+module.exports = [
+  {
+    ignores: ["dist/**", ".next/**", "coverage/**", "test-results/**"]
+  }
+];
+```
+
+### Rule tối thiểu đã chốt
+
+- cấm `any` không giải thích
+- bắt buộc `import type` khi phù hợp
+- import order ổn định
+- không import xuyên feature bừa bãi
+- app không bypass `@repo/api-sdk` để gọi API trực tiếp
+
+### `packages/design-tokens` phải có gì
 
 ```text
 src/
@@ -813,7 +975,13 @@ src/
   index.ts
 ```
 
-### `packages/schemas` nên có gì
+### `packages/design-tokens/src/typography.ts` cần lưu ý
+
+- phải support glyph tiếng Việt
+- line-height đủ an toàn cho uppercase tiếng Việt
+- không override theo locale
+
+### `packages/schemas` phải có gì
 
 ```text
 src/
@@ -830,7 +998,7 @@ src/
   index.ts
 ```
 
-### `packages/api-sdk` nên có gì
+### `packages/api-sdk` phải có gì
 
 ```text
 src/
@@ -850,7 +1018,30 @@ Trong đó:
 - `adapters/`: chọn mock hoặc real
 - `env/`: đọc env và bootstrap
 
-### `packages/ui` nên có gì
+### `packages/api-sdk/src/env/index.ts` đã chốt làm baseline
+
+```ts
+export const IS_API_MOCKING = process.env.NEXT_PUBLIC_API_MOCKING === "true";
+```
+
+### `packages/api-sdk/src/client/fetcher.ts` đã chốt làm baseline
+
+```ts
+export async function fetcher<T>(input: RequestInfo, init?: RequestInit): Promise<T> {
+  const response = await fetch(input, {
+    ...init,
+    credentials: "include"
+  });
+
+  if (!response.ok) {
+    throw new Error(`Request failed: ${response.status}`);
+  }
+
+  return response.json() as Promise<T>;
+}
+```
+
+### `packages/ui` phải có gì
 
 ```text
 src/
@@ -878,7 +1069,7 @@ Sau đó mới mở rộng sang `admin` và `cms`.
 
 ## 14.7. Bootstrap từng app
 
-### `apps/storefront/package.json` tối thiểu
+### `apps/storefront/package.json` baseline
 
 ```json
 {
@@ -899,14 +1090,14 @@ Sau đó mới mở rộng sang `admin` và `cms`.
 
 `apps/admin` và `apps/cms` có thể dùng bộ scripts tương tự.
 
-### Providers tối thiểu nên có trong mỗi app
+### Providers tối thiểu đã chốt cho mỗi app
 
 - `QueryClientProvider`
 - global UI provider nếu cần
 - i18n provider cho `storefront`
 - auth/session bootstrap layer nếu có
 
-### `src/providers/` đề xuất
+### `src/providers/` đã chốt làm baseline
 
 ```text
 src/providers/
@@ -917,7 +1108,32 @@ src/providers/
 
 `intl-provider.tsx` chỉ cần ở `storefront`.
 
-## 14.8. Alias import đề xuất
+### `src/providers/query-provider.tsx` đã chốt làm baseline
+
+```tsx
+"use client";
+
+import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
+import { useState } from "react";
+
+export function AppQueryProvider({ children }: { children: React.ReactNode }) {
+  const [queryClient] = useState(
+    () =>
+      new QueryClient({
+        defaultOptions: {
+          queries: {
+            retry: 1,
+            refetchOnWindowFocus: false
+          }
+        }
+      })
+  );
+
+  return <QueryClientProvider client={queryClient}>{children}</QueryClientProvider>;
+}
+```
+
+## 14.8. Alias import đã chốt
 
 Theo Decision `#46`, nên khóa sớm alias import:
 
@@ -939,9 +1155,9 @@ Ví dụ:
 ### Dùng chung
 
 ```text
-NEXT_PUBLIC_API_MOCKING=
-NEXT_PUBLIC_APP_ENV=
-NEXT_PUBLIC_SITE_URL=
+NEXT_PUBLIC_API_MOCKING=true
+NEXT_PUBLIC_APP_ENV=local
+NEXT_PUBLIC_SITE_URL=http://localhost:3000
 ```
 
 ### Storefront
@@ -954,7 +1170,7 @@ NEXT_PUBLIC_SUPPORTED_LOCALES=vi,en
 ### Ghi chú
 
 - `NEXT_PUBLIC_API_MOCKING` đã có lineage từ Decision `#28`
-- exact env naming có thể tinh chỉnh, nhưng nên chốt sớm và dùng nhất quán
+- env naming trong file này được chốt làm baseline scaffold
 
 ## 14.10. Root file checklist
 
@@ -1004,15 +1220,15 @@ eslint.config.js
 
 ```bash
 pnpm init
-pnpm add -D turbo typescript eslint prettier
-pnpm --filter ./apps/storefront add next react react-dom next-intl @tanstack/react-query zustand react-hook-form @hookform/resolvers
-pnpm --filter ./apps/admin add next react react-dom @tanstack/react-query zustand react-hook-form @hookform/resolvers
-pnpm --filter ./apps/cms add next react react-dom @tanstack/react-query zustand react-hook-form @hookform/resolvers
-pnpm --filter ./packages/schemas add zod
-pnpm --filter ./packages/api-sdk add zod msw
-pnpm --filter ./packages/ui add class-variance-authority clsx tailwind-merge @radix-ui/react-slot @radix-ui/react-label @radix-ui/react-dialog @radix-ui/react-tabs @radix-ui/react-tooltip
-pnpm --filter ./packages/hooks add @tanstack/react-query zustand
-pnpm add -D tailwindcss vitest jsdom @testing-library/react @testing-library/user-event @playwright/test
+pnpm add -D turbo@2.10.7 typescript@7.0.2 eslint@10.8.0 prettier@3.9.6 tailwindcss@4.3.3 vitest@4.1.10 jsdom@30.0.1 @testing-library/react @testing-library/user-event @playwright/test@1.62.0
+pnpm --filter ./apps/storefront add next@16.2.12 react@19.2.8 react-dom@19.2.8 next-intl@4.13.4 @tanstack/react-query@5.101.4 zustand@5.0.14 react-hook-form@7.83.0 @hookform/resolvers@5.5.7
+pnpm --filter ./apps/admin add next@16.2.12 react@19.2.8 react-dom@19.2.8 @tanstack/react-query@5.101.4 zustand@5.0.14 react-hook-form@7.83.0 @hookform/resolvers@5.5.7
+pnpm --filter ./apps/cms add next@16.2.12 react@19.2.8 react-dom@19.2.8 @tanstack/react-query@5.101.4 zustand@5.0.14 react-hook-form@7.83.0 @hookform/resolvers@5.5.7
+pnpm --filter ./packages/schemas add zod@4.4.3
+pnpm --filter ./packages/api-sdk add zod@4.4.3 msw@2.15.0
+pnpm --filter ./packages/ui add class-variance-authority@0.7.1 clsx@2.1.1 tailwind-merge@3.6.0 @radix-ui/react-slot @radix-ui/react-label @radix-ui/react-dialog@1.1.23 @radix-ui/react-tabs@1.1.21 @radix-ui/react-tooltip@1.2.16
+pnpm --filter ./packages/hooks add @tanstack/react-query@5.101.4 zustand@5.0.14
+pnpm --filter ./packages/tailwind-config add -D tailwindcss-motion@1.1.1
 ```
 
 Lưu ý:
@@ -1043,10 +1259,10 @@ Thứ tự build FE nên là:
 - Chưa có file architecture FE chi tiết đầy đủ trong checkout hiện tại
 - Chưa có test file thật
 - Chưa có analytics implementation
-- Chưa chốt exact versions cho từng lib
+- Exact version đã được chốt cho baseline scaffold, nhưng chưa được chứng minh bằng package manifest và lockfile thật
 - Chưa chốt Storybook có dùng ngay từ Phase 0 hay để sau
 - Chưa có package manifest thật để xác nhận dependency graph
-- Chưa chốt chính thức `pnpm` bằng decision riêng, dù rất hợp lý cho monorepo này
+- Chưa có xác nhận thực thi từ repo code thật
 
 ## 17. Kết luận thực thi
 

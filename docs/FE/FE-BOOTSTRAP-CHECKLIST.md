@@ -2,7 +2,9 @@
 
 Mục tiêu của file này là giúp bắt đầu scaffold Frontend thật nhanh.
 
-File này không thay thế [`FE.md`](E:/my-pj/FE/docs/FE.md). Nó chỉ là runbook ngắn gọn để làm theo.
+File này không thay thế [`FE.md`](E:/my-pj/FE/docs/FE/FE.md). Nó chỉ là runbook ngắn gọn để làm theo.
+
+Trạng thái hiện tại: checklist này dùng các quyết định FE đã chốt làm baseline scaffold.
 
 ## 1. Mục tiêu bootstrap
 
@@ -35,8 +37,13 @@ Sau khi hoàn tất checklist này, dự án FE cần đạt:
 
 ```bash
 pnpm init
-pnpm add -D turbo typescript eslint prettier
+pnpm add -D turbo@2.10.7 typescript@7.0.2 eslint@10.8.0 prettier@3.9.6 tailwindcss@4.3.3 vitest@4.1.10 jsdom@30.0.1 @testing-library/react @testing-library/user-event @playwright/test@1.62.0
 ```
+
+Ghi chú:
+
+- đây là root dev tooling
+- không dùng `"workspace:*"` cho các package npm ngoài như `turbo`, `typescript`, `eslint`, `prettier`
 
 ### 3.2. Tạo thư mục
 
@@ -47,14 +54,26 @@ New-Item -ItemType Directory -Force apps\storefront, apps\admin, apps\cms, packa
 ### 3.3. Cài dependency theo workspace
 
 ```bash
-pnpm --filter ./apps/storefront add next react react-dom next-intl @tanstack/react-query zustand react-hook-form @hookform/resolvers
-pnpm --filter ./apps/admin add next react react-dom @tanstack/react-query zustand react-hook-form @hookform/resolvers
-pnpm --filter ./apps/cms add next react react-dom @tanstack/react-query zustand react-hook-form @hookform/resolvers
-pnpm --filter ./packages/schemas add zod
-pnpm --filter ./packages/api-sdk add zod msw
-pnpm --filter ./packages/ui add class-variance-authority clsx tailwind-merge @radix-ui/react-slot @radix-ui/react-label @radix-ui/react-dialog @radix-ui/react-tabs @radix-ui/react-tooltip
-pnpm --filter ./packages/hooks add @tanstack/react-query zustand
-pnpm add -D tailwindcss vitest jsdom @testing-library/react @testing-library/user-event @playwright/test
+pnpm --filter ./apps/storefront add next@16.2.12 react@19.2.8 react-dom@19.2.8 next-intl@4.13.4 @tanstack/react-query@5.101.4 zustand@5.0.14 react-hook-form@7.83.0 @hookform/resolvers@5.5.7
+pnpm --filter ./apps/admin add next@16.2.12 react@19.2.8 react-dom@19.2.8 @tanstack/react-query@5.101.4 zustand@5.0.14 react-hook-form@7.83.0 @hookform/resolvers@5.5.7
+pnpm --filter ./apps/cms add next@16.2.12 react@19.2.8 react-dom@19.2.8 @tanstack/react-query@5.101.4 zustand@5.0.14 react-hook-form@7.83.0 @hookform/resolvers@5.5.7
+pnpm --filter ./packages/schemas add zod@4.4.3
+pnpm --filter ./packages/api-sdk add zod@4.4.3 msw@2.15.0
+pnpm --filter ./packages/ui add class-variance-authority@0.7.1 clsx@2.1.1 tailwind-merge@3.6.0 @radix-ui/react-slot @radix-ui/react-label @radix-ui/react-dialog@1.1.23 @radix-ui/react-tabs@1.1.21 @radix-ui/react-tooltip@1.2.16
+pnpm --filter ./packages/hooks add @tanstack/react-query@5.101.4 zustand@5.0.14
+pnpm --filter ./packages/tailwind-config add -D tailwindcss-motion@1.1.1
+```
+
+## 3.4. Version đã chốt
+
+Xem bảng ngắn gọn tại [`FE-VERSIONS.md`](E:/my-pj/FE/docs/FE/FE-VERSIONS.md).
+
+## 3.5. `.npmrc` đề xuất
+
+```ini
+save-exact=true
+auto-install-peers=true
+strict-peer-dependencies=false
 ```
 
 ## 4. File tối thiểu cần có ở root
@@ -117,6 +136,29 @@ packages:
 }
 ```
 
+## 6.1. `tsconfig` base tối thiểu
+
+```json
+{
+  "$schema": "https://json.schemastore.org/tsconfig",
+  "compilerOptions": {
+    "target": "ES2022",
+    "lib": ["ES2022", "DOM", "DOM.Iterable"],
+    "module": "ESNext",
+    "moduleResolution": "Bundler",
+    "strict": true,
+    "noImplicitAny": true,
+    "verbatimModuleSyntax": true,
+    "jsx": "preserve",
+    "resolveJsonModule": true,
+    "allowJs": false,
+    "declaration": true,
+    "skipLibCheck": true,
+    "noEmit": true
+  }
+}
+```
+
 ## 7. Cây thư mục tối thiểu sau bootstrap
 
 ```text
@@ -174,11 +216,23 @@ FE/
 ## 10. Env tối thiểu
 
 ```text
-NEXT_PUBLIC_API_MOCKING=
-NEXT_PUBLIC_APP_ENV=
-NEXT_PUBLIC_SITE_URL=
+NEXT_PUBLIC_API_MOCKING=true
+NEXT_PUBLIC_APP_ENV=local
+NEXT_PUBLIC_SITE_URL=http://localhost:3000
 NEXT_PUBLIC_DEFAULT_LOCALE=vi
 NEXT_PUBLIC_SUPPORTED_LOCALES=vi,en
+```
+
+## 10.1. Config motion nếu dùng Rombo
+
+Nếu dùng motion plugin cho storefront:
+
+```ts
+import motion from "tailwindcss-motion";
+
+export default {
+  plugins: [motion]
+};
 ```
 
 ## 11. Scripts tối thiểu cho mỗi app
@@ -234,6 +288,6 @@ Nếu gặp các dấu hiệu sau thì nên dừng và chỉnh lại:
 
 ## 15. File tham chiếu chính
 
-- [`FE.md`](E:/my-pj/FE/docs/FE.md)
+- [`FE.md`](E:/my-pj/FE/docs/FE/FE.md)
 - [`SRS.md`](E:/my-pj/FE/docs/SRS.md)
 - [`TEST.md`](E:/my-pj/FE/docs/TEST.md)
