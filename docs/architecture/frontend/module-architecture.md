@@ -18,13 +18,18 @@ FE/
 │   ├── hooks/           # use-cart, use-auth, use-search... (logic dùng chung nhiều app)
 │   ├── utils/           # Pure helper functions + SUPPORTED_LOCALES (xem i18n-locale.md)
 │   ├── eslint-config/
-│   └── ts-config/
+│   ├── ts-config/
+│   └── tailwind-config/ # Preset Tailwind v4 dùng chung — import CSS custom properties từ design-tokens
 │
 ├── docs/
 └── turbo.json, package.json (root)
 ```
 
 **Đã chốt** (Decision #12): không tách `layouts` thành package riêng. `Header`/`Footer` cụ thể (khác nhau nhiều giữa 3 app) nằm trong từng `apps/*`; chỉ primitive bố cục thuần (`Container`, `Grid`, `Stack`, `Section`) nằm trong `packages/ui`.
+
+**Đã chốt** (Decision #34, hệ quả của Decision #23 — Tailwind v4): tách `packages/tailwind-config` làm preset Tailwind v4 dùng chung cho cả 3 `apps/*`, nhất quán với cách `eslint-config`/`ts-config` đã tách — mọi shared config đều là một package riêng, không có ngoại lệ "chỉ 1 dòng import thì không cần tách". Package này chứa file `@theme` preset import CSS custom properties sinh từ `packages/design-tokens`; mỗi `apps/*` chỉ cần import preset này thay vì tự lặp lại cấu hình.
+
+Về nội dung UI string đa ngôn ngữ (message catalog cho `next-intl`, vd `vi.json`/`en.json`): **không** tách package riêng — đặt trực tiếp trong `apps/storefront` (vd `apps/storefront/messages/{locale}.json`), vì chỉ `storefront` có đa Locale UI (ADR 0002); `admin`/`cms` không cần. Tách package dùng chung cho một app duy nhất tiêu thụ là abstraction thừa (YAGNI, nhất quán Decision #10) — chỉ tách khi có consumer thứ hai thật sự xuất hiện (vd `cms` cần preview theo locale).
 
 ## Trách nhiệm từng package
 
@@ -37,6 +42,7 @@ FE/
 | `api-sdk` | Hàm fetch có kiểu (dùng schema từ `schemas` để validate), MSW handlers dùng chung schema để mock | UI component |
 | `hooks` | React hook dùng chung nhiều app (`use-cart`, `use-auth`, `use-search`) — build trên `api-sdk` + TanStack Query | Component JSX |
 | `utils` | Pure function, `SUPPORTED_LOCALES` (nguồn sự thật duy nhất — ADR 0001) | Side-effect, React |
+| `tailwind-config` | Preset Tailwind v4 (`@theme`) import CSS custom properties từ `design-tokens` | Giá trị token thô (đã ở `design-tokens`), component |
 
 ## Quy tắc phụ thuộc [Đề xuất]
 
