@@ -13,7 +13,7 @@ Nếu bạn chỉ làm FE, hãy bắt đầu ở đây thay vì đọc toàn b�
 ## Vai trò từng file
 
 - [`FE.md`](./FE.md)
-  Tài liệu FE tổng thể: kiến trúc, stack, package responsibilities, setup baseline, và quyết định đã chốt.
+  Tài liệu FE tổng thể: mục tiêu, trạng thái quyết định, stack đã chốt, monorepo layout tổng quan, i18n, auth, performance baseline, và delivery order.
 
 - [`FE-ARCHITECTURE.md`](./FE-ARCHITECTURE.md)
   Tài liệu chốt riêng cho kiến trúc Frontend: vai trò 3 app, module contract, import boundary, routing/layout/provider/auth architecture, và design system (token matrix, component inventory, state matrix, a11y baseline, icon/media rules).
