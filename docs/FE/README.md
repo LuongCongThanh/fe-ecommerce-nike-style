@@ -10,8 +10,7 @@ Nếu bạn chỉ làm FE, hãy bắt đầu ở đây thay vì đọc toàn b�
 2. [`FE-ARCHITECTURE.md`](./FE-ARCHITECTURE.md)
 3. [`FE-DESIGN-SYSTEM.md`](./FE-DESIGN-SYSTEM.md)
 4. [`FE-FOUNDATION.md`](./FE-FOUNDATION.md)
-5. [`FE-BOOTSTRAP-CHECKLIST.md`](./FE-BOOTSTRAP-CHECKLIST.md)
-6. [`FE-EXECUTION.md`](./FE-EXECUTION.md)
+5. [`FE-EXECUTION.md`](./FE-EXECUTION.md)
 
 ## Vai trò từng file
 
@@ -27,9 +26,6 @@ Nếu bạn chỉ làm FE, hãy bắt đầu ở đây thay vì đọc toàn b�
 - [`FE-FOUNDATION.md`](./FE-FOUNDATION.md)
   Tài liệu chốt riêng cho phần FE foundation: phạm vi foundation, package checklist, app shell checklist, Definition of Done.
 
-- [`FE-BOOTSTRAP-CHECKLIST.md`](./FE-BOOTSTRAP-CHECKLIST.md)
-  Runbook ngắn gọn để bắt đầu scaffold FE thật nhanh.
-
 - [`FE-EXECUTION.md`](./FE-EXECUTION.md)
   Foundation checklist, bootstrap steps, dependency matrix, và Definition of Done cho FE.
 
@@ -39,8 +35,7 @@ Nếu bạn chỉ làm FE, hãy bắt đầu ở đây thay vì đọc toàn b�
 - Muốn chốt kiến trúc chuẩn cho 3 app và module chung: `FE-ARCHITECTURE.md`
 - Muốn chốt chuẩn design system để build component nhất quán: `FE-DESIGN-SYSTEM.md`
 - Muốn biết foundation gồm gì và khi nào pass: `FE-FOUNDATION.md`
-- Muốn bắt đầu scaffold ngay: `FE-BOOTSTRAP-CHECKLIST.md`
-- Muốn xem version/package matrix: `FE-EXECUTION.md`
+- Muốn bắt đầu scaffold ngay hoặc xem version/package matrix: `FE-EXECUTION.md`
 
 ## Quan hệ với tài liệu ngoài thư mục này
 
@@ -58,8 +53,7 @@ Nếu bạn chỉ làm FE, hãy bắt đầu ở đây thay vì đọc toàn b�
 6. [`FE-ARCHITECTURE.md`](./FE-ARCHITECTURE.md)
 7. [`FE-DESIGN-SYSTEM.md`](./FE-DESIGN-SYSTEM.md)
 8. [`FE-FOUNDATION.md`](./FE-FOUNDATION.md)
-9. [`FE-BOOTSTRAP-CHECKLIST.md`](./FE-BOOTSTRAP-CHECKLIST.md)
-10. [`FE-EXECUTION.md`](./FE-EXECUTION.md)
+9. [`FE-EXECUTION.md`](./FE-EXECUTION.md)
 
 ## Trạng thái hiện tại
 

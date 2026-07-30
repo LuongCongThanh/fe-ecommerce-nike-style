@@ -12,7 +12,7 @@ File này đi cùng:
 
 - [`FE.md`](./FE.md): kiến trúc FE tổng thể, stack, workspace, package responsibilities
 - [`FE-FOUNDATION.md`](./FE-FOUNDATION.md): foundation checklist để scaffold và boot các app
-- [`FE-BOOTSTRAP-CHECKLIST.md`](./FE-BOOTSTRAP-CHECKLIST.md): runbook thực thi nhanh
+- [`FE-EXECUTION.md`](./FE-EXECUTION.md): runbook thực thi nhanh
 
 ## 1. Kết luận hiện tại
 
