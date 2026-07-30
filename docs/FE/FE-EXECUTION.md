@@ -127,7 +127,7 @@ Phần này dùng như checklist nghiệm thu thật cho từng package.
 
 #### 1.6.3. `packages/design-tokens`
 
-- Bắt buộc: `colors.ts`, `spacing.ts`, `typography.ts`, `radius.ts`, `shadow.ts`, `motion.ts`, `breakpoints.ts`, `index.ts`
+- Bắt buộc: `colors.ts`, `spacing.ts`, `typography.ts`, `radius.ts`, `shadow.ts`, `motion.ts`, `breakpoints.ts`; không có `index.ts` (Decision `#57`), export qua `package.json` `"exports"` subpath
 - Rule bắt buộc: token export tập trung; typography support glyph tiếng Việt; line-height an toàn cho uppercase tiếng Việt; không có locale-specific typography override
 - Pass khi: `packages/ui` import được token; app render được style từ token; không hard-code spacing/color trong shared setup mẫu
 
@@ -139,38 +139,38 @@ Phần này dùng như checklist nghiệm thu thật cho từng package.
 
 #### 1.6.5. `packages/schemas`
 
-- Bắt buộc: `common/`, `auth/`, `catalog/`, `cart/`, `wishlist/`, `account/`, `checkout/`, `admin/`, `cms/`, `errors/`, `index.ts`
+- Bắt buộc: `common/`, `auth/`, `catalog/`, `cart/`, `wishlist/`, `account/`, `checkout/`, `admin/`, `cms/`, `errors/`; không có `index.ts`, export qua `package.json` `"exports"` subpath
 - Rule bắt buộc: error envelope có schema chung; request/response schema tách rõ; schema dùng lại được cho form validation khi hợp lý
 - Pass khi: app import được schema; `api-sdk` dùng được schema; mock handler bám theo schema
 
 #### 1.6.6. `packages/api-sdk`
 
-- Bắt buộc: `client/`, `endpoints/`, `mocks/`, `adapters/`, `env/`, `index.ts`
+- Bắt buộc: `client/`, `endpoints/`, `mocks/`, `adapters/`, `env/`; không có `index.ts`, export qua `package.json` `"exports"` subpath
 - Rule bắt buộc: fetch wrapper dùng `credentials: "include"`; có env switch mock/real; endpoint function typed; mock handlers nằm trong `api-sdk`; feature/app không gọi API trực tiếp bên ngoài package này
 - Pass khi: mock mode boot được; query function gọi qua `api-sdk`; `NEXT_PUBLIC_API_MOCKING=true` cho mock mode
 
 #### 1.6.7. `packages/ui`
 
-- Bắt buộc: `components/`, `primitives/`, `layout/`, `lib/`, `index.ts`
+- Bắt buộc: `components/`, `primitives/`, `layout/`, `lib/`; không có `index.ts`, export qua `package.json` `"exports"` subpath
 - Primitive tối thiểu nên có: `Button`, `Input`, `Label`, `Dialog/Modal`, `Tabs`, `Tooltip`, `Container`, `Grid`, `Stack`, `Section`
 - Rule bắt buộc: component dùng token chung; variant đi qua `cva`; class merge qua `clsx` + `tailwind-merge` khi cần; không nhét business logic vào `packages/ui`
 - Pass khi: `storefront`/`admin`/`cms` đều render được primitive đầu tiên
 
 #### 1.6.8. `packages/commerce`
 
-- Bắt buộc: package tồn tại, `index.ts`
+- Bắt buộc: package tồn tại; không có `index.ts`, export qua `package.json` `"exports"` subpath
 - Rule bắt buộc: chỉ đưa vào đây component nghiệp vụ có khả năng share thật; không chuyển toàn bộ storefront component vào package này từ đầu
 - Pass khi: package resolve được; chưa cần nhiều component, nhưng boundary phải rõ
 
 #### 1.6.9. `packages/hooks`
 
-- Bắt buộc: query key factories, shared hooks thật sự cross-app hoặc cross-feature, `index.ts`
+- Bắt buộc: query key factories, shared hooks thật sự cross-app hoặc cross-feature; không có `index.ts`, export qua `package.json` `"exports"` subpath
 - Rule bắt buộc: không biến package này thành nơi nhét mọi hook; hook nào chỉ dùng 1 feature thì giữ ở feature trước
 - Pass khi: app import được shared hook đầu tiên; query key pattern dùng được trong app
 
 #### 1.6.10. `packages/utils`
 
-- Bắt buộc: helper thuần, parser/formatter cơ bản, `index.ts`
+- Bắt buộc: helper thuần, parser/formatter cơ bản; không có `index.ts`, export qua `package.json` `"exports"` subpath
 - Rule bắt buộc: không chứa React hook; không chứa UI render logic; không chứa network call
 - Pass khi: app import được helper đầu tiên; test unit được helper thuần đầu tiên
 
@@ -580,9 +580,20 @@ module.exports = tseslint.config(
       }
     },
     plugins: { "import-x": importX, boundaries },
+    settings: {
+      "boundaries/elements": [
+        { type: "feature-public", pattern: "src/features/*/pages/**" },
+        { type: "feature-private", pattern: "src/features/*/{components,hooks,stores,utils}/**" }
+      ]
+    },
     rules: {
       "import-x/order": "warn",
-      "boundaries/no-unknown": "error"
+      "import-x/no-relative-parent-imports": "error",
+      "boundaries/no-unknown": "error",
+      "boundaries/element-types": [
+        "error",
+        { default: "disallow", rules: [{ from: "feature-public", allow: ["feature-public"] }] }
+      ]
     }
   }
 );
@@ -611,8 +622,9 @@ src/
   shadow.ts
   motion.ts
   breakpoints.ts
-  index.ts
 ```
+
+Không có `index.ts` (Decision `#57`) — `package.json` `"exports"` map từng subpath, ví dụ `@repo/design-tokens/colors`.
 
 `packages/design-tokens/src/typography.ts` cần lưu ý:
 
@@ -634,8 +646,9 @@ src/
   admin/
   cms/
   errors/
-  index.ts
 ```
+
+Không có `index.ts` — `package.json` `"exports"` map từng subpath, ví dụ `@repo/schemas/catalog`.
 
 #### `packages/api-sdk` phải có gì
 
@@ -646,7 +659,6 @@ src/
   mocks/
   adapters/
   env/
-  index.ts
 ```
 
 Trong đó:
@@ -657,7 +669,9 @@ Trong đó:
 - `adapters/`: chọn mock hoặc real
 - `env/`: đọc env và bootstrap
 
-##### `packages/api-sdk/src/env/index.ts` đã chốt làm baseline
+Không có `index.ts` — `package.json` `"exports"` map từng subpath, ví dụ `@repo/api-sdk/client`, `@repo/api-sdk/endpoints`.
+
+##### `packages/api-sdk/src/env/config.ts` đã chốt làm baseline
 
 ```ts
 export const IS_API_MOCKING = process.env.NEXT_PUBLIC_API_MOCKING === "true";
@@ -688,8 +702,9 @@ src/
   primitives/
   layout/
   lib/
-  index.ts
 ```
+
+Không có `index.ts` — `package.json` `"exports"` map từng subpath, ví dụ `@repo/ui/button`, `@repo/ui/container` (xem [`FE-ARCHITECTURE.md`](./FE-ARCHITECTURE.md) §6.9).
 
 ### 2.8. Dựng app `storefront` trước
 

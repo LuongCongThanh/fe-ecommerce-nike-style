@@ -35,7 +35,7 @@ Những phần vẫn còn mở sau file này không còn là câu hỏi kiến t
 | ARC-005 | Shared UI giữ thuần UI | Đã chốt | Nghiệp vụ chỉ vào `packages/commerce` khi thật sự share |
 | ARC-006 | Server state, client state, URL state tách riêng | Đã chốt | Không dùng Zustand làm server cache |
 | ARC-007 | Route guard ở FE chỉ là UX layer | Đã chốt | Authz thật do backend enforce |
-| ARC-008 | Mỗi feature phải có public API rõ | Đã chốt | Chỉ export qua `index.ts` |
+| ARC-008 | Mỗi feature phải có public API rõ | Đã chốt | Không dùng barrel `index.ts` (Decision `#57`) — chỉ `pages/` là public, còn lại private theo path |
 
 ## 3. Kiến trúc tổng thể
 
@@ -199,6 +199,22 @@ Chứa: pure helpers, formatter, parser, guard helpers.
 
 Không chứa: React hooks, network call, UI render logic.
 
+### 6.9. Export package: subpath, không barrel `index.ts`
+
+Theo Decision `#57`, không package nào có `src/index.ts` làm barrel tổng. `package.json` mỗi package dùng `"exports"` map để khai từng subpath — ví dụ:
+
+```json
+{
+  "name": "@repo/ui",
+  "exports": {
+    "./button": "./src/components/button.tsx",
+    "./container": "./src/layout/container.tsx"
+  }
+}
+```
+
+App import trực tiếp đúng file: `import { Button } from "@repo/ui/button"`, không `import { Button } from "@repo/ui"`. Lý do: tránh chi phí barrel file re-export lớn (Next.js/bundler dev-mode chậm khi barrel gom quá nhiều export), và mỗi import đã tự nhiên là một "alias" rõ nghĩa, khớp quy tắc "mọi import phải dùng alias" ở [§7.4](#74-quy-ước-code-đã-chốt).
+
 ## 7. Kiến trúc module chung
 
 ## 7.1. Mẫu module chuẩn
@@ -216,38 +232,28 @@ src/features/{feature}/
   hooks/
   stores/
   utils/
-  index.ts
 ```
 
-Không phải feature nào cũng bắt buộc có đủ mọi thư mục. Chỉ tạo khi cần thật.
+Không phải feature nào cũng bắt buộc có đủ mọi thư mục. Chỉ tạo khi cần thật. **Không có `index.ts`** (Decision `#57`, thay thế phần barrel của Decision `#29`) — import trực tiếp vào đúng file bằng alias, không qua barrel.
 
 ## 7.2. Ý nghĩa từng phần trong feature
 
 | Thư mục | Dùng cho | Không dùng cho |
 |---|---|---|
-| `pages/` | page-level composition của feature | reusable shared UI |
-| `components/` | component riêng của feature | primitive dùng chung toàn app |
-| `hooks/` | hook nghiệp vụ hoặc orchestration của feature | fetch trực tiếp bỏ qua `api-sdk` |
-| `stores/` | client state ngắn hạn, UI state có ý nghĩa trong feature | server cache |
-| `utils/` | helper thuần của feature | business logic bị chia vụn bừa bãi |
-| `index.ts` | public API của feature | export mọi file private |
+| `pages/` | page-level composition của feature; điểm duy nhất mà bên ngoài feature (route trong `app/*`) được import | reusable shared UI |
+| `components/` | component riêng của feature, **private** — chỉ file trong cùng feature được import | primitive dùng chung toàn app |
+| `hooks/` | hook nghiệp vụ hoặc orchestration của feature, **private** | fetch trực tiếp bỏ qua `api-sdk` |
+| `stores/` | client state ngắn hạn, UI state có ý nghĩa trong feature, **private** | server cache |
+| `utils/` | helper thuần của feature, **private** | business logic bị chia vụn bừa bãi |
 
-## 7.3. Public API của feature
+## 7.3. Public API của feature (không dùng barrel)
 
-Mỗi feature chỉ được expose ra ngoài qua `index.ts`.
+Không có `index.ts` để khai báo public API. Thay vào đó, ranh giới public/private được định nghĩa **theo đường dẫn thư mục**, enforce bằng `eslint-plugin-boundaries` (Decision `#51`):
 
-Được export:
+- **Public** (import được từ ngoài feature): chỉ `features/{feature}/pages/**` — vì đây là nơi route trong `app/*` mount vào.
+- **Private** (chỉ file trong cùng feature import được): `features/{feature}/components/**`, `hooks/**`, `stores/**`, `utils/**`.
 
-- page-level entrypoints
-- component entrypoints thật sự cần dùng ngoài feature
-- hooks được coi là public
-- type public của feature nếu cần
-
-Không export:
-
-- file helper private
-- selector/internal constants không cần reuse
-- component thử nghiệm hoặc WIP
+Nếu feature B thật sự cần dùng lại component/hook/logic đang nằm trong `components/`/`hooks/`/`utils/` của feature A, đó là dấu hiệu logic đó nên chuyển lên `packages/*` (theo [decision matrix §8.3](#83-decision-matrix-đặt-code-ở-đâu)), không phải import chéo feature vào file private.
 
 ## 7.4. Quy ước code đã chốt
 
@@ -256,7 +262,8 @@ Không export:
 - Thư mục page dùng `kebab-case`
 - Hook có tiền tố `use`
 - Store dùng tên `{feature}.store.ts`
-- `index.ts` là barrel import chính của feature
+- **Không dùng barrel `index.ts`** — ở cả cấp feature và cấp package (Decision `#57`); package export qua `package.json` `"exports"` subpath (xem [§6](#6-shared-package-architecture))
+- **Mọi import phải dùng alias** (`@/*`, `@/features/{feature}`, `@repo/*`) — cấm import tương đối leo cấp cha (`../`); import cùng cấp/con trong 1 file (`./foo`) vẫn cho phép vì không có alias hợp lý để thay
 - Không tạo `services/` riêng trong feature; API đi qua `packages/api-sdk`
 - Không tạo `constants/` folder mặc định; chỉ tách `constants.ts` khi đủ nhu cầu
 - Biến, hàm dùng `camelCase`
@@ -279,8 +286,8 @@ Không export:
 
 ## 8.2. Cấm
 
-- import xuyên vào file private của feature khác
-- app import từ đường dẫn sâu khó kiểm soát nếu feature đã có `index.ts`
+- import xuyên vào file private của feature khác (`components/`, `hooks/`, `stores/`, `utils/` — chỉ `pages/` là public, xem §7.3)
+- import tương đối leo cấp cha (`../`) — bắt buộc dùng alias (`@/*`, `@repo/*`)
 - `packages/ui` import `packages/commerce`
 - feature import trực tiếp từ backend endpoint URL constants bên ngoài `api-sdk`
 
@@ -340,8 +347,7 @@ apps/storefront/
 │   │   │   ├── components/
 │   │   │   ├── hooks/
 │   │   │   ├── stores/
-│   │   │   ├── utils/
-│   │   │   └── index.ts
+│   │   │   └── utils/
 │   │   ├── search/
 │   │   ├── cart/
 │   │   ├── wishlist/
