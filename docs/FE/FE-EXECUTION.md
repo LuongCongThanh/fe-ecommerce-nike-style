@@ -993,6 +993,9 @@ Các version dưới đây đã được **chốt làm baseline scaffold FE**.
 | Lint config | `eslint-plugin-react-hooks` | `6.1.0` | `packages/eslint-config` |
 | Lint config | `eslint-plugin-jsx-a11y` | `6.10.2` | `packages/eslint-config` |
 | App framework | `@next/bundle-analyzer` | `16.2.12` | `apps/*` |
+| 3D | `three` | `0.182.0` | `apps/storefront` |
+| 3D | `@react-three/fiber` | `9.3.0` | `apps/storefront` |
+| 3D | `@react-three/drei` | `10.4.0` | `apps/storefront` |
 | App framework | `next` | `16.2.12` | `apps/*` |
 | App framework | `react` | `19.2.8` | `apps/*` |
 | App framework | `react-dom` | `19.2.8` | `apps/*` |

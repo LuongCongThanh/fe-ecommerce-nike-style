@@ -150,6 +150,17 @@ Lý do:
 - Playwright đã chốt ở Decision `#25`
 - unit/integration runner cụ thể chưa chốt, nhưng Vitest hợp với Vite ecosystem và React test hiện nay
 
+## 4.7. 3D visualization (chỉ `storefront`, chỉ PDP)
+
+- `Đã chốt` `three`
+- `Đã chốt` `@react-three/fiber`
+- `Đã chốt` `@react-three/drei`
+
+Lý do:
+
+- Decision `#58`: PDP product viewer 3D xoay 360°, đồng bộ màu theo Variant đang chọn — vị trí duy nhất dùng Three.js trong FE, lazy-load bắt buộc để không ảnh hưởng Lighthouse > 95 của các trang khác
+- chi tiết kiến trúc và ràng buộc lazy-load xem [`FE-ARCHITECTURE.md`](E:/my-pj/FE/docs/FE/FE-ARCHITECTURE.md) §4.1.1
+
 ## 5. Danh sách thư viện FE đã chốt
 
 ## 5.1. Root workspace
