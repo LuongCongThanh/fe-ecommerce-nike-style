@@ -22,4 +22,4 @@
 - Cần biết feature có đáng xem là thành công không: xem [`success-metrics.md`](success-metrics.md).
 - Gặp câu hỏi chưa chốt: xem [`open-decisions.md`](open-decisions.md).
 - Cần biết scope nào đã nối sang design/test và scope nào còn hở: xem [`../traceability/requirements-traceability-matrix.md`](../traceability/requirements-traceability-matrix.md).
-- Cần thứ tự build kỹ thuật: quay lại [`../architecture/frontend/11-roadmap.md`](../architecture/frontend/11-roadmap.md).
+- Cần thứ tự build kỹ thuật: quay lại [`../FE/FE.md`](../FE/FE.md) §10.

@@ -18,6 +18,6 @@ Generated on July 29, 2026.
 ## Known Gaps
 
 - `GAP-001` Detailed endpoint-level API contracts are referenced by existing traceability docs but are not fully present in this checkout.
-- `GAP-002` Granular frontend and backend architecture files linked by existing docs are missing from the repository; current architecture is summarized only.
+- `GAP-002` Granular backend architecture files linked by existing docs are missing from the repository; backend architecture is summarized only. (Frontend side resolved: detailed FE architecture now lives in `docs/FE/FE-ARCHITECTURE.md` and `docs/FE/FE-EXECUTION.md`, not as separate numbered files.)
 - `GAP-003` Detailed RBAC beyond the baseline remains open and therefore cannot be traced more deeply without inventing requirements.
 - `GAP-004` Real backend technology choices remain open, so backend task execution order after scaffold is still partly conditional.

@@ -9,8 +9,8 @@ File này gợi ý lộ trình đọc ngắn nhất theo từng mục đích. M�
 1. [`README.md`](../README.md)
 2. [`requirements/functional-requirements.md`](../00-core/requirements/functional-requirements.md)
 3. [`product/release-slicing.md`](product/release-slicing.md)
-4. [`architecture/frontend/README.md`](architecture/frontend/README.md)
-5. [`architecture/frontend/01-frontend-overview.md`](architecture/frontend/01-frontend-overview.md)
+4. [`FE/README.md`](../FE/README.md)
+5. [`FE/FE.md`](../FE/FE.md)
 6. [`planning/brainstorm-summary.md`](../99-reference/planning/brainstorm-summary.md)
 
 Sau 6 file này, bạn đủ để hiểu sản phẩm là gì, MVP gồm gì, Launch 1 ưu tiên gì, và kiến trúc FE chính đang nằm ở đâu. Không cần mở `brainstorm-session.md` hay `planning/reference/` ở vòng đầu.
@@ -21,20 +21,20 @@ Sau 6 file này, bạn đủ để hiểu sản phẩm là gì, MVP gồm gì, L
 
 1. [`requirements/functional-requirements.md`](../00-core/requirements/functional-requirements.md)
 2. [`glossary.md`](../00-core/glossary.md)
-3. [`planning/decision-log.md`](../00-core/decision-log.md)
-4. [`architecture/frontend/README.md`](architecture/frontend/README.md)
-5. [`architecture/frontend/02-module-architecture.md`](architecture/frontend/02-module-architecture.md)
-6. [`architecture/frontend/07-api-integration.md`](architecture/frontend/07-api-integration.md)
-7. [`architecture/frontend/11-roadmap.md`](architecture/frontend/11-roadmap.md)
+3. [`decision-log.md`](../00-core/decision-log.md)
+4. [`FE/README.md`](../FE/README.md)
+5. [`FE/FE-ARCHITECTURE.md`](../FE/FE-ARCHITECTURE.md)
+6. [`FE/FE-EXECUTION.md`](../FE/FE-EXECUTION.md)
+7. [`FE/FE.md`](../FE/FE.md) §10 (delivery order)
 8. [`traceability/requirements-traceability-matrix.md`](traceability/requirements-traceability-matrix.md)
 9. [`traceability/test-traceability-matrix.md`](traceability/test-traceability-matrix.md)
 
 Đọc thêm theo chủ đề:
 
-- i18n: [`architecture/frontend/05-i18n-locale.md`](architecture/frontend/05-i18n-locale.md)
-- auth: [`architecture/frontend/08-authentication-authorization.md`](architecture/frontend/08-authentication-authorization.md)
+- i18n: [`FE/FE.md`](../FE/FE.md) §7
+- auth: [`FE/FE-ARCHITECTURE.md`](../FE/FE-ARCHITECTURE.md) §11
 - security baseline: [`security/security-baseline.md`](security/security-baseline.md)
-- testing: [`architecture/frontend/09-testing.md`](architecture/frontend/09-testing.md)
+- testing: [`FE/FE.md`](../FE/FE.md) §4.6
 
 Sau đường đọc này, bạn đủ để bắt đầu implement mà không phải đoán lại scope, boundary kỹ thuật, hay coverage hiện có.
 
@@ -57,7 +57,7 @@ Sau đường đọc này, bạn đủ để bắt đầu implement mà không p
 Đọc theo thứ tự:
 
 1. [`planning/brainstorm-summary.md`](../99-reference/planning/brainstorm-summary.md)
-2. [`planning/decision-log.md`](../00-core/decision-log.md)
+2. [`decision-log.md`](../00-core/decision-log.md)
 3. [`adr/0001-closed-locale-list.md`](../00-core/adr/0001-closed-locale-list.md)
 4. [`adr/0002-locale-scope-storefront-only.md`](../00-core/adr/0002-locale-scope-storefront-only.md)
 5. [`adr/0003-single-typography-token-set-across-locales.md`](../00-core/adr/0003-single-typography-token-set-across-locales.md)

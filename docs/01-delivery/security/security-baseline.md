@@ -106,7 +106,7 @@
 
 ## Quan hệ với các tài liệu khác
 
-- Scope auth và mock strategy: [`../architecture/frontend/08-authentication-authorization.md`](../architecture/frontend/08-authentication-authorization.md)
+- Scope auth và mock strategy: [`../FE/FE-ARCHITECTURE.md`](../FE/FE-ARCHITECTURE.md) §11
 - API error contract: [`../architecture/backend/api-contracts.md`](../architecture/backend/api-contracts.md)
 - Backend rollout: [`../architecture/backend/roadmap.md`](../architecture/backend/roadmap.md)
 - Traceability: [`../traceability/requirements-traceability-matrix.md`](../traceability/requirements-traceability-matrix.md)

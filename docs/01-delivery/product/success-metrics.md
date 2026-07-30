@@ -2,7 +2,7 @@
 
 ## Mục đích
 
-Tài liệu này bổ sung lớp đo lường ở cấp sản phẩm cho bộ `docs/`. Các metric kỹ thuật như LCP, CLS, INP, Lighthouse vẫn giữ ở [`../architecture/frontend/10-performance-seo.md`](../architecture/frontend/10-performance-seo.md). File này chỉ tập trung vào việc trả lời: sau khi phát hành, làm sao biết sản phẩm đang tạo giá trị.
+Tài liệu này bổ sung lớp đo lường ở cấp sản phẩm cho bộ `docs/`. Các metric kỹ thuật như LCP, CLS, INP, Lighthouse vẫn giữ ở [`../FE/FE.md`](../FE/FE.md) §9. File này chỉ tập trung vào việc trả lời: sau khi phát hành, làm sao biết sản phẩm đang tạo giá trị.
 
 ## Nguyên tắc
 

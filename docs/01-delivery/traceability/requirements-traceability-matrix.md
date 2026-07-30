@@ -33,6 +33,26 @@ Các ID dưới đây là ID làm việc đầu tiên cho bộ tài liệu hiệ
 - `Conflict`: có tài liệu đang nói không khớp nhau
 - `Gap`: chưa có coverage đủ dùng
 
+## Ghi chú: ánh xạ file kiến trúc FE cũ
+
+Cột `Design refs`/`Test refs` dưới đây còn nhiều chỗ trỏ theo tên file kiến trúc FE dự kiến ban đầu (`01-frontend-overview.md` → `11-roadmap.md`) — các file đó **chưa từng được viết**, nội dung tương ứng đã nằm ở [`docs/FE/`](../../FE/README.md). Việc rewrite từng cell của bảng dưới sang đúng section chưa làm (khối lượng lớn, giá trị thấp so với việc chỉ tra bảng này); dùng bảng ánh xạ sau khi gặp một trong các tên file cũ:
+
+| Tên file cũ (không tồn tại) | Xem tại |
+|---|---|
+| `01-frontend-overview.md` | [`FE/FE.md`](../../FE/FE.md) |
+| `02-module-architecture.md` | [`FE/FE-ARCHITECTURE.md`](../../FE/FE-ARCHITECTURE.md) §6–§8 |
+| `03-routing.md` | [`FE/FE-ARCHITECTURE.md`](../../FE/FE-ARCHITECTURE.md) §9 |
+| `04-design-system.md` | [`FE/FE-ARCHITECTURE.md`](../../FE/FE-ARCHITECTURE.md) §16 |
+| `05-i18n-locale.md` | [`FE/FE.md`](../../FE/FE.md) §7 |
+| `06-state-management.md` | [`FE/FE-ARCHITECTURE.md`](../../FE/FE-ARCHITECTURE.md) §13 |
+| `07-api-integration.md` | [`FE/FE-ARCHITECTURE.md`](../../FE/FE-ARCHITECTURE.md) §6.5–§6.6 |
+| `08-authentication-authorization.md` | [`FE/FE-ARCHITECTURE.md`](../../FE/FE-ARCHITECTURE.md) §11 |
+| `09-testing.md` | [`FE/FE.md`](../../FE/FE.md) §4.6 |
+| `10-performance-seo.md` | [`FE/FE.md`](../../FE/FE.md) §9 |
+| `11-roadmap.md` | [`FE/FE.md`](../../FE/FE.md) §10 |
+
+Link `architecture/backend/*` (`api-contracts.md`, `domain-model.md`, `rbac-matrix.md`, `backend-overview.md`) là gap riêng của backend docs, chưa xử lý ở đây.
+
 ## Storefront
 
 | Req ID | Requirement | Source | Release refs | Design refs | Domain / API refs | Test refs | Metric refs | Gap / status |

@@ -1,6 +1,6 @@
 # Test Traceability Matrix
 
-> File này nối requirement và security baseline sang các test case làm việc. Nó không thay thế [`../architecture/frontend/09-testing.md`](../architecture/frontend/09-testing.md); nó chỉ biến chiến lược test thành danh sách coverage có thể theo dõi.
+> File này nối requirement và security baseline sang các test case làm việc. Nó không thay thế [`../FE/FE.md`](../FE/FE.md) §4.6; nó chỉ biến chiến lược test thành danh sách coverage có thể theo dõi.
 
 ## Mục đích
 
@@ -98,6 +98,6 @@
 ## Quan hệ với các tài liệu khác
 
 - Requirement coverage: [`./requirements-traceability-matrix.md`](requirements-traceability-matrix.md)
-- Testing strategy tổng quát: [`../architecture/frontend/09-testing.md`](../architecture/frontend/09-testing.md)
+- Testing strategy tổng quát: [`../FE/FE.md`](../FE/FE.md) §4.6
 - Security baseline: [`../security/security-baseline.md`](../security/security-baseline.md)
 - RBAC baseline: [`../architecture/backend/rbac-matrix.md`](../architecture/backend/rbac-matrix.md)

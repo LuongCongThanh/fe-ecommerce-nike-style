@@ -287,14 +287,7 @@ Trong `01-delivery/architecture/`, hiện chỉ có 2 file tóm tắt:
 - `frontend`
 - `backend`
 
-Nhiều tài liệu traceability hiện tại đang trỏ đến các file kiến trúc chi tiết kiểu:
-
-- `01-frontend-overview.md`
-- `07-api-integration.md`
-- `09-testing.md`
-- `11-roadmap.md`
-
-nhưng trong checkout hiện tại các file đó chưa có mặt.
+Nhiều tài liệu traceability đã trỏ đến các file kiến trúc chi tiết kiểu `01-frontend-overview.md`, `07-api-integration.md`, `09-testing.md`, `11-roadmap.md` — các file đó **chưa từng được viết** và đã được xác nhận không viết thêm. Nội dung tương ứng nằm ở [`docs/FE/`](../../FE/README.md) (`FE.md`, `FE-ARCHITECTURE.md`, `FE-EXECUTION.md`) — các link FE-related trong `open-decisions.md`, `reading-paths.md`, `security-baseline.md`, `decision-log.md`, `functional-requirements.md`, và `test-traceability-matrix.md` đã được cập nhật để trỏ đúng vào đó. `requirements-traceability-matrix.md` vẫn còn nhiều cell trỏ theo tên file cũ (xem ghi chú ánh xạ ở đầu file đó) — coverage-level rewrite cho từng dòng chưa làm, chỉ mới có bảng tra nhanh.
 
 Kết luận:
 

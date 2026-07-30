@@ -46,7 +46,7 @@ Các mục sau **không** thuộc MVP, dù `implementation-plan.md` có đề c�
 Bắt buộc có trong MVP:
 
 - `SF-01` — Duyệt sản phẩm theo Category (Shoes/Apparel/Accessories, có cây con) và filter theo Gender (men/women/kids/unisex) — xem `glossary.md` (Category, Gender).
-- `SF-02` — Product Listing Page: filter, sort, pagination, trạng thái URL-as-state (Decision liên quan ở `architecture/frontend/03-routing.md`).
+- `SF-02` — Product Listing Page: filter, sort, pagination, trạng thái URL-as-state (Decision liên quan ở [`FE/FE-ARCHITECTURE.md`](../../FE/FE-ARCHITECTURE.md) §9).
 - `SF-03` — Product Detail Page: chọn Variant (Color/Size) tới đúng một SKU, hiển thị giá/tồn kho theo SKU (xem `glossary.md` — Product/Variant/SKU).
 - `SF-04` — Tìm kiếm sản phẩm cơ bản.
 - `SF-05` — Giỏ hàng: thêm/sửa/xoá, giỏ khách (guest) và merge sau khi đăng nhập.
@@ -100,7 +100,7 @@ Không được coi mô tả tham khảo trong `implementation-plan.md` là đã
 
 ## 5. Ràng buộc phi chức năng (tóm tắt)
 
-Chi tiết đầy đủ nằm ở `architecture/frontend/10-performance-seo.md` và `architecture/frontend/09-testing.md`. Tóm tắt:
+Chi tiết đầy đủ nằm ở [`FE/FE.md`](../../FE/FE.md) §9 (performance) và §4.6 (testing stack). Tóm tắt:
 
 - `NFR-01` — `storefront`: LCP < 2.5s, CLS < 0.1, INP < 200ms, Lighthouse > 95 (Decision liên quan #26, brainstorm-session §2.1).
 - `NFR-02` — `admin`/`cms`: LCP < 4s, INP < 500ms, không áp Lighthouse budget nghiêm ngặt — app nội bộ, không traffic công khai (Decision #27).
@@ -110,6 +110,6 @@ Chi tiết đầy đủ nằm ở `architecture/frontend/10-performance-seo.md` 
 ## 6. Quan hệ với các tài liệu khác
 
 - Tài liệu này không thay thế `glossary.md`/`adr/`/`decision-log.md`. Nó giữ vai trò chốt phạm vi chức năng mà các tài liệu đó phải tôn trọng.
-- `architecture/frontend/11-roadmap.md` là kế hoạch triển khai (theo phase, không theo tuần) cho phần Front-end của phạm vi này.
+- [`FE/FE.md`](../../FE/FE.md) §10 (delivery order) và [`FE/FE-EXECUTION.md`](../../FE/FE-EXECUTION.md) §1.9 là kế hoạch triển khai (theo phase, không theo tuần) cho phần Front-end của phạm vi này.
 - `architecture/backend/roadmap.md` là kế hoạch triển khai tương ứng cho phần Back-end, khi bắt đầu triển khai thật.
 - `planning/reference/implementation-plan.md` chỉ được dùng để tham khảo domain model/API contract nháp — **không** được dùng để suy ra phạm vi MVP hay timeline (xem §2).
