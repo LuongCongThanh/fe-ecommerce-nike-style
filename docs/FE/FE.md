@@ -8,7 +8,7 @@ Nếu cần xem riêng phần kiến trúc Frontend cho cả `storefront`, `admi
 
 Nếu cần xem riêng phần design system đã được siết lại cho execution, xem [`FE-DESIGN-SYSTEM.md`](E:/my-pj/FE/docs/FE/FE-DESIGN-SYSTEM.md).
 
-Nếu cần xem riêng phần nền kỹ thuật phải hoàn thành trước mọi feature, xem [`FE-FOUNDATION.md`](E:/my-pj/FE/docs/FE/FE-FOUNDATION.md).
+Nếu cần xem riêng phần nền kỹ thuật phải hoàn thành trước mọi feature, xem [`FE-EXECUTION.md`](E:/my-pj/FE/docs/FE/FE-EXECUTION.md).
 
 ## 1. Trạng thái quyết định
 
@@ -67,7 +67,7 @@ Foundation bắt buộc gồm:
 7. Shared UI
 8. App shell cho `storefront`, `admin`, `cms`
 
-Chi tiết và Definition of Done xem tại [`FE-FOUNDATION.md`](E:/my-pj/FE/docs/FE/FE-FOUNDATION.md).
+Chi tiết và Definition of Done xem tại [`FE-EXECUTION.md`](E:/my-pj/FE/docs/FE/FE-EXECUTION.md).
 
 ## 4. Stack FE đã chốt
 

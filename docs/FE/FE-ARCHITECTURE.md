@@ -12,7 +12,7 @@ File này đi cùng:
 
 - [`FE.md`](./FE.md): tài liệu FE tổng thể
 - [`FE-DESIGN-SYSTEM.md`](./FE-DESIGN-SYSTEM.md): chuẩn design system
-- [`FE-FOUNDATION.md`](./FE-FOUNDATION.md): foundation checklist
+- [`FE-EXECUTION.md`](./FE-EXECUTION.md): foundation checklist
 
 ## 1. Kết luận hiện tại
 
@@ -412,7 +412,7 @@ Sau file này:
 
 - `FE.md` giữ vai trò master doc tổng quan
 - `FE-DESIGN-SYSTEM.md` chốt chuẩn UI/design
-- `FE-FOUNDATION.md` chốt foundation
+- `FE-EXECUTION.md` chốt foundation
 - `FE-ARCHITECTURE.md` chốt kiến trúc chạy thật cho 3 app và module chung
 
 Như vậy bộ FE docs hiện đã có đủ 4 lớp tài liệu chính để bắt đầu scaffold và build Frontend theo cùng một kiến trúc, thay vì để mỗi app tự phát triển theo một kiểu khác nhau.

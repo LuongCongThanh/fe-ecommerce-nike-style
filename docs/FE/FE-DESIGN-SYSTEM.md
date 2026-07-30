@@ -11,7 +11,7 @@ Mục tiêu của file này là:
 File này đi cùng:
 
 - [`FE.md`](./FE.md): kiến trúc FE tổng thể, stack, workspace, package responsibilities
-- [`FE-FOUNDATION.md`](./FE-FOUNDATION.md): foundation checklist để scaffold và boot các app
+- [`FE-EXECUTION.md`](./FE-EXECUTION.md): foundation checklist để scaffold và boot các app
 - [`FE-EXECUTION.md`](./FE-EXECUTION.md): runbook thực thi nhanh
 
 ## 1. Kết luận hiện tại
