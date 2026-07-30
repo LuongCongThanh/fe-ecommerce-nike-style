@@ -216,36 +216,7 @@ jsdom
 
 ## 5.7. Version đã chốt để pin ngay từ đầu
 
-Các version dưới đây được chốt làm baseline scaffold FE, dựa trên npm registry vào **Thứ Tư, ngày 29 tháng 7 năm 2026**.
-
-| Nhóm | Package | Version đã chốt | Cài ở đâu | Ghi chú |
-|---|---|---|---|---|
-| Root tooling | `turbo` | `2.10.7` | root | task runner cho monorepo |
-| Root tooling | `typescript` | `7.0.2` | root | pin strict ngay từ đầu |
-| Root tooling | `eslint` | `10.8.0` | root | lint nền cho workspace |
-| Root tooling | `prettier` | `3.9.6` | root | format thống nhất |
-| App framework | `next` | `16.2.12` | `apps/*` | App Router |
-| App framework | `react` | `19.2.8` | `apps/*` | runtime FE |
-| App framework | `react-dom` | `19.2.8` | `apps/*` | DOM renderer |
-| App framework | `next-intl` | `4.13.4` | `apps/storefront` | locale routing storefront |
-| Data/state/contract | `@tanstack/react-query` | `5.101.4` | `apps/*`, `packages/hooks` | server state |
-| Data/state/contract | `zustand` | `5.0.14` | `apps/*`, `packages/hooks` | client state |
-| Data/state/contract | `zod` | `4.4.3` | `packages/schemas`, `packages/api-sdk` | schema contract |
-| Data/state/contract | `msw` | `2.15.0` | `packages/api-sdk` | mock-first |
-| Styling/UI | `tailwindcss` | `4.3.3` | root hoặc `packages/tailwind-config` | styling nền |
-| Styling/UI | `class-variance-authority` | `0.7.1` | `packages/ui` | variants |
-| Styling/UI | `clsx` | `2.1.1` | `packages/ui` | compose class |
-| Styling/UI | `tailwind-merge` | `3.6.0` | `packages/ui` | merge class Tailwind |
-| Styling/UI | `tailwindcss-motion` | `1.1.1` | `packages/tailwind-config` | Rombo/Tailwind Motion |
-| Styling/UI | `lucide-react` | `1.27.0` | `packages/ui` | icon library mặc định |
-| Styling/UI | `@radix-ui/react-dialog` | `1.1.23` | `packages/ui` | primitive |
-| Styling/UI | `@radix-ui/react-tabs` | `1.1.21` | `packages/ui` | primitive |
-| Styling/UI | `@radix-ui/react-tooltip` | `1.2.16` | `packages/ui` | primitive |
-| Forms | `react-hook-form` | `7.83.0` | `apps/*` | form state |
-| Forms | `@hookform/resolvers` | `5.5.7` | `apps/*` | Zod resolver |
-| Testing | `vitest` | `4.1.10` | root | unit/integration |
-| Testing | `jsdom` | `30.0.1` | root | DOM test env |
-| Testing | `@playwright/test` | `1.62.0` | root | E2E/visual regression |
+Dependency/version matrix đầy đủ nằm ở [`FE-EXECUTION.md`](E:/my-pj/FE/docs/FE/FE-EXECUTION.md), không lặp lại ở đây.
 
 ### Chính sách version đã chốt
 
@@ -256,7 +227,7 @@ Các version dưới đây được chốt làm baseline scaffold FE, dựa trê
   - app runtime
   - state/data
   - test
-- file ngắn gọn để theo dõi matrix version nằm ở [`FE-VERSIONS.md`](E:/my-pj/FE/docs/FE/FE-VERSIONS.md)
+- dependency/version matrix đầy đủ nằm ở [`FE-EXECUTION.md`](E:/my-pj/FE/docs/FE/FE-EXECUTION.md)
 - nếu scaffold thực tế gặp xung đột peer dependency, lockfile thật được quyền override file này và phải cập nhật ngược lại docs
 
 ## 5.6. Optional nhưng hữu ích

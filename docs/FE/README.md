@@ -11,7 +11,7 @@ Nếu bạn chỉ làm FE, hãy bắt đầu ở đây thay vì đọc toàn b�
 3. [`FE-DESIGN-SYSTEM.md`](./FE-DESIGN-SYSTEM.md)
 4. [`FE-FOUNDATION.md`](./FE-FOUNDATION.md)
 5. [`FE-BOOTSTRAP-CHECKLIST.md`](./FE-BOOTSTRAP-CHECKLIST.md)
-6. [`FE-VERSIONS.md`](./FE-VERSIONS.md)
+6. [`FE-EXECUTION.md`](./FE-EXECUTION.md)
 
 ## Vai trò từng file
 
@@ -30,8 +30,8 @@ Nếu bạn chỉ làm FE, hãy bắt đầu ở đây thay vì đọc toàn b�
 - [`FE-BOOTSTRAP-CHECKLIST.md`](./FE-BOOTSTRAP-CHECKLIST.md)
   Runbook ngắn gọn để bắt đầu scaffold FE thật nhanh.
 
-- [`FE-VERSIONS.md`](./FE-VERSIONS.md)
-  Dependency matrix và upgrade policy cho FE.
+- [`FE-EXECUTION.md`](./FE-EXECUTION.md)
+  Foundation checklist, bootstrap steps, dependency matrix, và Definition of Done cho FE.
 
 ## Đường đọc theo mục đích
 
@@ -40,7 +40,7 @@ Nếu bạn chỉ làm FE, hãy bắt đầu ở đây thay vì đọc toàn b�
 - Muốn chốt chuẩn design system để build component nhất quán: `FE-DESIGN-SYSTEM.md`
 - Muốn biết foundation gồm gì và khi nào pass: `FE-FOUNDATION.md`
 - Muốn bắt đầu scaffold ngay: `FE-BOOTSTRAP-CHECKLIST.md`
-- Muốn xem version/package matrix: `FE-VERSIONS.md`
+- Muốn xem version/package matrix: `FE-EXECUTION.md`
 
 ## Quan hệ với tài liệu ngoài thư mục này
 
@@ -59,7 +59,7 @@ Nếu bạn chỉ làm FE, hãy bắt đầu ở đây thay vì đọc toàn b�
 7. [`FE-DESIGN-SYSTEM.md`](./FE-DESIGN-SYSTEM.md)
 8. [`FE-FOUNDATION.md`](./FE-FOUNDATION.md)
 9. [`FE-BOOTSTRAP-CHECKLIST.md`](./FE-BOOTSTRAP-CHECKLIST.md)
-10. [`FE-VERSIONS.md`](./FE-VERSIONS.md)
+10. [`FE-EXECUTION.md`](./FE-EXECUTION.md)
 
 ## Trạng thái hiện tại
 

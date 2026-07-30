@@ -66,7 +66,7 @@ pnpm --filter ./packages/tailwind-config add -D tailwindcss-motion@1.1.1
 
 ## 3.4. Version đã chốt
 
-Xem bảng ngắn gọn tại [`FE-VERSIONS.md`](E:/my-pj/FE/docs/FE/FE-VERSIONS.md).
+Xem bảng ngắn gọn tại [`FE-EXECUTION.md`](E:/my-pj/FE/docs/FE/FE-EXECUTION.md).
 
 ## 3.5. `.npmrc` đề xuất
 
