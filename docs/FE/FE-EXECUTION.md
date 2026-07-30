@@ -16,7 +16,197 @@ File này đi cùng:
 
 ## 1. Foundation checklist
 
-_(sẽ điền ở commit gộp `FE-FOUNDATION.md`)_
+### 1.1. Định nghĩa FE foundation
+
+`FE foundation` là toàn bộ lớp nền kỹ thuật phải tồn tại trước khi bắt đầu làm feature nghiệp vụ lớn như: catalog browse, PDP, search, cart, wishlist, auth/account, checkout, admin flows, cms flows.
+
+Nói ngắn gọn:
+
+- foundation không phải business feature
+- foundation là hạ tầng FE để business feature có thể được build nhanh, nhất quán, và không phải đập đi làm lại
+
+### 1.2. FE foundation gồm 8 khối
+
+Phần foundation **bắt buộc phải hoàn thiện** gồm 8 khối sau:
+
+1. Monorepo workspace foundation
+2. Shared TypeScript + ESLint + formatting foundation
+3. Design token foundation
+4. Tailwind preset foundation
+5. Contract foundation (`schemas`)
+6. API foundation (`api-sdk` + mock adapter + MSW)
+7. Shared UI foundation
+8. App shell foundation cho `storefront`, `admin`, `cms`
+
+### 1.3. Những gì không thuộc FE foundation
+
+Các phần sau **không** được coi là foundation, mà là **feature layer** làm sau khi foundation pass: Product list thật, Product detail thật, Search thật, Cart thật, Wishlist thật, Auth flow hoàn chỉnh, Checkout flow hoàn chỉnh, Admin CRUD hoàn chỉnh, CMS content workflow hoàn chỉnh.
+
+### 1.4. Đầu ra bắt buộc của từng khối foundation
+
+#### 1.4.1. Monorepo workspace foundation
+
+Phải có: root `package.json`, `pnpm-workspace.yaml`, `turbo.json`, thư mục `apps/*`, thư mục `packages/*`.
+
+Pass khi: `pnpm install` chạy được; `turbo` nhận ra apps và packages.
+
+#### 1.4.2. Shared config foundation
+
+Phải có: `packages/ts-config`, `packages/eslint-config`, `.npmrc`, file format cơ bản.
+
+Pass khi: `pnpm typecheck` chạy được; `pnpm lint` chạy được; app/package có thể extend config dùng chung.
+
+#### 1.4.3. Design token foundation
+
+Phải có: color tokens, spacing tokens, typography tokens, radius, shadow, motion, breakpoints.
+
+Pass khi: token export được từ `packages/design-tokens`; typography token support tiếng Việt; không có hard-coded design value trong shared setup mẫu.
+
+#### 1.4.4. Tailwind foundation
+
+Phải có: `packages/tailwind-config`, preset dùng chung cho 3 app, mapping từ token sang Tailwind/CSS vars, plugin motion nếu dùng.
+
+Pass khi: 3 app dùng chung preset được; class utility và token chạy thống nhất; không cần mỗi app tự định nghĩa theme riêng.
+
+#### 1.4.5. Contract foundation
+
+Phải có: `packages/schemas` với common/auth/catalog/cart/wishlist/account/checkout/admin/cms/errors schemas.
+
+Pass khi: app import được schema; schema dùng lại được cho form validation và API contract.
+
+#### 1.4.6. API foundation
+
+Phải có: `packages/api-sdk`, fetch wrapper, env switch mock/real, MSW handlers, typed endpoint functions.
+
+Pass khi: mock mode boot được; request path đi qua `api-sdk`; feature không gọi `fetch` trực tiếp ra ngoài hợp đồng chung.
+
+#### 1.4.7. Shared UI foundation
+
+Phải có: `packages/ui`, primitive UI components đầu tiên, layout primitives, helper class utilities, variant pattern qua `cva`.
+
+Pass khi: app render được vài component nền; component dùng chung token và Tailwind preset; không rò business logic vào `packages/ui`.
+
+#### 1.4.8. App shell foundation
+
+Phải có cho cả `apps/storefront`, `apps/admin`, `apps/cms`: app directory chạy được, global styles, provider layer, base layout, script `dev/build/lint/typecheck/test`. Riêng `storefront` cần thêm locale routing foundation và `next-intl` bootstrap.
+
+Pass khi: 3 app boot được local; `storefront` route locale chạy được; provider shell không vỡ.
+
+### 1.5. Thứ tự hoàn thành foundation đã chốt
+
+1. Root workspace
+2. `packages/ts-config`
+3. `packages/eslint-config`
+4. `packages/design-tokens`
+5. `packages/tailwind-config`
+6. `packages/schemas`
+7. `packages/api-sdk`
+8. `packages/ui`
+9. `apps/storefront` shell
+10. `apps/admin` shell
+11. `apps/cms` shell
+12. Foundation verification
+
+Không đảo ngược thứ tự này trừ khi có lý do rất rõ.
+
+### 1.6. Checklist chi tiết theo package
+
+Phần này dùng như checklist nghiệm thu thật cho từng package.
+
+#### 1.6.1. `packages/ts-config`
+
+- Bắt buộc: `base.json`, `nextjs.json`, `react-library.json`
+- Rule bắt buộc: `strict: true`, `noImplicitAny: true`, `verbatimModuleSyntax: true`, `moduleResolution: Bundler`, `noEmit: true`
+- Pass khi: app Next.js extend được config; package library extend được config; `pnpm typecheck` không fail vì config nền
+
+#### 1.6.2. `packages/eslint-config`
+
+- Bắt buộc: base config, ignore cho `.next`/`dist`/`coverage`/`test-results`, import/order rules, boundaries rules
+- Rule bắt buộc: không cho feature gọi API trực tiếp ngoài `@repo/api-sdk`; không import xuyên feature bừa bãi; ưu tiên `import type`; cấm `any` không có lý do
+- Pass khi: app/package dùng được config lint chung; `pnpm lint` chạy được ở toàn workspace
+
+#### 1.6.3. `packages/design-tokens`
+
+- Bắt buộc: `colors.ts`, `spacing.ts`, `typography.ts`, `radius.ts`, `shadow.ts`, `motion.ts`, `breakpoints.ts`, `index.ts`
+- Rule bắt buộc: token export tập trung; typography support glyph tiếng Việt; line-height an toàn cho uppercase tiếng Việt; không có locale-specific typography override
+- Pass khi: `packages/ui` import được token; app render được style từ token; không hard-code spacing/color trong shared setup mẫu
+
+#### 1.6.4. `packages/tailwind-config`
+
+- Bắt buộc: shared preset, mapping token → theme, plugin motion nếu dùng
+- Rule bắt buộc: 3 app dùng chung một preset; không tạo theme tách rời cho từng app ở Phase 0; motion nếu dùng thì ưu tiên `storefront`
+- Pass khi: `storefront`/`admin`/`cms` đều nhận được preset; utility class và CSS vars hoạt động thống nhất
+
+#### 1.6.5. `packages/schemas`
+
+- Bắt buộc: `common/`, `auth/`, `catalog/`, `cart/`, `wishlist/`, `account/`, `checkout/`, `admin/`, `cms/`, `errors/`, `index.ts`
+- Rule bắt buộc: error envelope có schema chung; request/response schema tách rõ; schema dùng lại được cho form validation khi hợp lý
+- Pass khi: app import được schema; `api-sdk` dùng được schema; mock handler bám theo schema
+
+#### 1.6.6. `packages/api-sdk`
+
+- Bắt buộc: `client/`, `endpoints/`, `mocks/`, `adapters/`, `env/`, `index.ts`
+- Rule bắt buộc: fetch wrapper dùng `credentials: "include"`; có env switch mock/real; endpoint function typed; mock handlers nằm trong `api-sdk`; feature/app không gọi API trực tiếp bên ngoài package này
+- Pass khi: mock mode boot được; query function gọi qua `api-sdk`; `NEXT_PUBLIC_API_MOCKING=true` cho mock mode
+
+#### 1.6.7. `packages/ui`
+
+- Bắt buộc: `components/`, `primitives/`, `layout/`, `lib/`, `index.ts`
+- Primitive tối thiểu nên có: `Button`, `Input`, `Label`, `Dialog/Modal`, `Tabs`, `Tooltip`, `Container`, `Grid`, `Stack`, `Section`
+- Rule bắt buộc: component dùng token chung; variant đi qua `cva`; class merge qua `clsx` + `tailwind-merge` khi cần; không nhét business logic vào `packages/ui`
+- Pass khi: `storefront`/`admin`/`cms` đều render được primitive đầu tiên
+
+#### 1.6.8. `packages/commerce`
+
+- Bắt buộc: package tồn tại, `index.ts`
+- Rule bắt buộc: chỉ đưa vào đây component nghiệp vụ có khả năng share thật; không chuyển toàn bộ storefront component vào package này từ đầu
+- Pass khi: package resolve được; chưa cần nhiều component, nhưng boundary phải rõ
+
+#### 1.6.9. `packages/hooks`
+
+- Bắt buộc: query key factories, shared hooks thật sự cross-app hoặc cross-feature, `index.ts`
+- Rule bắt buộc: không biến package này thành nơi nhét mọi hook; hook nào chỉ dùng 1 feature thì giữ ở feature trước
+- Pass khi: app import được shared hook đầu tiên; query key pattern dùng được trong app
+
+#### 1.6.10. `packages/utils`
+
+- Bắt buộc: helper thuần, parser/formatter cơ bản, `index.ts`
+- Rule bắt buộc: không chứa React hook; không chứa UI render logic; không chứa network call
+- Pass khi: app import được helper đầu tiên; test unit được helper thuần đầu tiên
+
+### 1.7. Checklist chi tiết theo app shell
+
+#### 1.7.1. `apps/storefront`
+
+- Bắt buộc: `app/[locale]/`, `globals.css`, `src/providers/`, `src/features/`, `package.json`
+- Foundation bắt buộc: locale routing boot được; `QueryClientProvider` boot được; mock mode boot được; app render được shared UI primitive đầu tiên; app import được schema đầu tiên; app gọi được endpoint mock đầu tiên qua `api-sdk`
+- Pass khi: `pnpm --filter ./apps/storefront dev`; route locale như `/vi` hoặc `/en` chạy được; app không vỡ khi dùng provider shell
+
+#### 1.7.2. `apps/admin`
+
+- Bắt buộc: `app/(protected)/`, `globals.css`, `src/providers/`, `src/features/`, `package.json`
+- Foundation bắt buộc: provider shell boot được; app render được shared UI primitive đầu tiên; app import được schema đầu tiên; app gọi được endpoint mock đầu tiên qua `api-sdk`
+- Pass khi: `pnpm --filter ./apps/admin dev`; protected shell boot được ở mức khung
+
+#### 1.7.3. `apps/cms`
+
+- Bắt buộc: `app/(protected)/`, `globals.css`, `src/providers/`, `src/features/`, `package.json`
+- Foundation bắt buộc: provider shell boot được; app render được shared UI primitive đầu tiên; app import được schema đầu tiên; app gọi được endpoint mock đầu tiên qua `api-sdk`
+- Pass khi: `pnpm --filter ./apps/cms dev`; protected shell boot được ở mức khung
+
+### 1.8. Foundation completion gate
+
+Chỉ được nói "FE foundation hoàn thiện toàn bộ" khi:
+
+- mọi checklist package ở [§1.6](#16-checklist-chi-tiết-theo-package) đã pass
+- mọi checklist app shell ở [§1.7](#17-checklist-chi-tiết-theo-app-shell) đã pass
+- checklist verification ở [§4.2](#42-verification-checklist) đã pass
+
+Nếu thiếu bất kỳ mục nào ở trên, trạng thái đúng là `Foundation đang triển khai` hoặc `Foundation mới hoàn thiện một phần`.
+
+### 1.9. Mốc chuyển sang feature layer
+
+Chỉ sau khi foundation pass mới bắt đầu: storefront catalog browse → storefront PDP → storefront search → cart/wishlist → auth/account → checkout → admin feature → cms feature.
 
 ## 2. Bootstrap steps
 
@@ -742,4 +932,62 @@ Các version dưới đây đã được **chốt làm baseline scaffold FE**.
 
 ## 4. Definition of Done
 
-_(sẽ điền ở commit gộp `FE-FOUNDATION.md`)_
+### 4.1. Definition of Done cho FE foundation
+
+FE foundation chỉ được coi là **hoàn thiện toàn bộ** khi tất cả điều kiện sau đều đúng:
+
+- root workspace chạy được
+- 3 app tồn tại và boot local được
+- shared config dùng được
+- shared token dùng được
+- Tailwind preset dùng được
+- contract schemas dùng được
+- api-sdk mock mode dùng được
+- ui primitives đầu tiên dùng được
+- storefront locale routing chạy được
+- test runner boot được
+- Playwright boot được
+- không có feature gọi API ngoài `packages/api-sdk`
+- không có server state bị copy vào Zustand như cache phụ
+
+### 4.2. Verification checklist
+
+Workspace:
+
+- [ ] `pnpm install`
+- [ ] `pnpm build`
+- [ ] `pnpm lint`
+- [ ] `pnpm typecheck`
+
+Apps:
+
+- [ ] `storefront` chạy local
+- [ ] `admin` chạy local
+- [ ] `cms` chạy local
+
+Foundation packages:
+
+- [ ] `design-tokens` export được
+- [ ] `tailwind-config` được app dùng lại
+- [ ] `schemas` import được
+- [ ] `api-sdk` mock mode chạy được
+- [ ] `ui` render được primitive đầu tiên
+
+Test harness:
+
+- [ ] `pnpm test`
+- [ ] `pnpm test:e2e` boot được
+
+### 4.3. Gaps còn mở
+
+Foundation xong **không có nghĩa** các câu hỏi sau đã xong — chúng không chặn foundation, nhưng chặn một số feature hoặc hardening sau đó:
+
+- RBAC chi tiết cho `admin/cms`
+- auth mock spike với middleware (`MSW + Set-Cookie + Next.js middleware`, theo ADR `0004`)
+- analytics thật
+- backend integration thật
+- Chưa có code scaffold thật cho `apps/*` và `packages/*`
+- Chưa có test file thật
+- Exact version đã chốt cho baseline scaffold, nhưng chưa được chứng minh bằng package manifest và lockfile thật
+- Chưa chốt Storybook có dùng ngay từ Phase 0 hay để sau
+- Chưa có xác nhận thực thi từ repo code thật
