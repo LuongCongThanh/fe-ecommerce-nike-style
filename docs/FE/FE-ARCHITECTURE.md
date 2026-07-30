@@ -529,6 +529,18 @@ Nguyên tắc cứng:
 - data fetch phải đi qua `api-sdk`
 - query key phải có cấu trúc ổn định
 
+### 13.1. Zustand devtools
+
+Mỗi store `{feature}.store.ts` (Decision `#32`) bọc bằng middleware `devtools` có sẵn trong package `zustand` (`import { devtools } from "zustand/middleware"`), không cần cài package riêng — chỉ bật ở `development`:
+
+```ts
+export const useCartStore = create<ICartState>()(
+  devtools((set) => ({ ... }), { enabled: process.env.NODE_ENV === "development", name: "cart" })
+);
+```
+
+Dùng cùng Redux DevTools browser extension để xem lịch sử thay đổi state lúc dev. Không bật ở production build (tránh leak state qua devtools).
+
 ## 14. Module implementation checklist
 
 Một feature được coi là đúng kiến trúc khi:

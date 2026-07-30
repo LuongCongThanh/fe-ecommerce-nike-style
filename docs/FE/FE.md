@@ -231,13 +231,11 @@ Dependency/version matrix đầy đủ nằm ở [`FE-EXECUTION.md`](E:/my-pj/FE
 ## 5.6. Optional nhưng hữu ích
 
 ```text
-lint-staged
-husky
 dotenv
 cross-env
 ```
 
-`Optional` ở đây nghĩa là hữu ích cho local workflow, không phải requirement business.
+`Optional` ở đây nghĩa là hữu ích cho local workflow, không phải requirement business. `husky`/`lint-staged`/`commitlint`/`@next/bundle-analyzer` đã chốt dùng (Decision `#52`, `#54`) — xem [`FE-EXECUTION.md`](E:/my-pj/FE/docs/FE/FE-EXECUTION.md) §2.16–§2.17, không còn là optional.
 
 ## 6. Kiến trúc monorepo đã chốt
 

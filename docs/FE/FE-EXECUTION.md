@@ -121,8 +121,8 @@ Phần này dùng như checklist nghiệm thu thật cho từng package.
 
 #### 1.6.2. `packages/eslint-config`
 
-- Bắt buộc: base config, ignore cho `.next`/`dist`/`coverage`/`test-results`, import/order rules, boundaries rules
-- Rule bắt buộc: không cho feature gọi API trực tiếp ngoài `@repo/api-sdk`; không import xuyên feature bừa bãi; ưu tiên `import type`; cấm `any` không có lý do
+- Bắt buộc: base config, ignore cho `.next`/`dist`/`coverage`/`test-results`, import/order rules (`eslint-plugin-import-x`), boundaries rules (`eslint-plugin-boundaries`), TypeScript rules (`typescript-eslint`), Next.js rules (`eslint-config-next`), React rules (`eslint-plugin-react` + `eslint-plugin-react-hooks`), a11y rules (`eslint-plugin-jsx-a11y`)
+- Rule bắt buộc: không cho feature gọi API trực tiếp ngoài `@repo/api-sdk` (`boundaries`); không import xuyên feature bừa bãi (`boundaries`); ưu tiên `import type`; cấm `any` không có lý do (`typescript-eslint`)
 - Pass khi: app/package dùng được config lint chung; `pnpm lint` chạy được ở toàn workspace
 
 #### 1.6.3. `packages/design-tokens`
@@ -227,7 +227,7 @@ Sau khi hoàn tất phần này, dự án FE cần đạt:
 
 ```bash
 pnpm init
-pnpm add -D turbo typescript eslint prettier
+pnpm add -D turbo typescript eslint prettier husky lint-staged @commitlint/cli @commitlint/config-conventional
 ```
 
 Tạo:
@@ -562,12 +562,26 @@ Tối thiểu:
 ##### `packages/eslint-config/base.js` đã chốt làm baseline
 
 ```js
-module.exports = [
+const tseslint = require("typescript-eslint");
+const importX = require("eslint-plugin-import-x");
+const boundaries = require("eslint-plugin-boundaries");
+
+module.exports = tseslint.config(
   {
     ignores: ["dist/**", ".next/**", "coverage/**", "test-results/**"]
+  },
+  ...tseslint.configs.recommended,
+  {
+    plugins: { "import-x": importX, boundaries },
+    rules: {
+      "import-x/order": "warn",
+      "boundaries/no-unknown": "error"
+    }
   }
-];
+);
 ```
+
+`packages/eslint-config/next.js` và `packages/eslint-config/react.js` extend từ `base.js`, thêm `eslint-config-next`, `eslint-plugin-react`, `eslint-plugin-react-hooks`, `eslint-plugin-jsx-a11y` — chỉ dùng ở `apps/*`, không cần ở package thuần TypeScript (`packages/schemas`, `packages/utils`).
 
 Rule tối thiểu đã chốt:
 
@@ -799,6 +813,9 @@ pnpm-workspace.yaml
 turbo.json
 .gitignore
 .editorconfig
+.husky/
+lint-staged.config.js
+commitlint.config.js
 ```
 
 Nếu muốn local workflow tốt hơn:
@@ -825,6 +842,7 @@ eslint.config.js
 - `pnpm build`, `pnpm lint`, `pnpm typecheck` chạy được
 - test runner chạy được dù chưa có nhiều test
 - Playwright boot được
+- commit thử với message sai Conventional Commits bị `commitlint` chặn; commit với file `.ts` lỗi format bị `lint-staged` tự fix hoặc chặn
 
 ### 2.14. Chưa cần làm ngay / red flags
 
@@ -853,7 +871,7 @@ Dừng và chỉnh lại nếu thấy các dấu hiệu (red flags) sau:
 
 ```bash
 pnpm init
-pnpm add -D turbo@2.10.7 typescript@7.0.2 eslint@10.8.0 prettier@3.9.6 tailwindcss@4.3.3 vitest@4.1.10 jsdom@30.0.1 @testing-library/react @testing-library/user-event @playwright/test@1.62.0
+pnpm add -D turbo@2.10.7 typescript@7.0.2 eslint@10.8.0 prettier@3.9.6 husky@9.1.7 lint-staged@16.1.2 @commitlint/cli@20.0.0 @commitlint/config-conventional@20.0.0 tailwindcss@4.3.3 vitest@4.1.10 jsdom@30.0.1 @testing-library/react @testing-library/user-event @playwright/test@1.62.0
 pnpm --filter ./apps/storefront add next@16.2.12 react@19.2.8 react-dom@19.2.8 next-intl@4.13.4 @tanstack/react-query@5.101.4 zustand@5.0.14 react-hook-form@7.83.0 @hookform/resolvers@5.5.7
 pnpm --filter ./apps/admin add next@16.2.12 react@19.2.8 react-dom@19.2.8 @tanstack/react-query@5.101.4 zustand@5.0.14 react-hook-form@7.83.0 @hookform/resolvers@5.5.7
 pnpm --filter ./apps/cms add next@16.2.12 react@19.2.8 react-dom@19.2.8 @tanstack/react-query@5.101.4 zustand@5.0.14 react-hook-form@7.83.0 @hookform/resolvers@5.5.7
@@ -870,6 +888,61 @@ Lưu ý:
 - exact versions chưa được docs gốc chốt
 - khi bắt đầu thật nên pin version trong lockfile ngay từ commit đầu tiên
 
+### 2.16. Git hooks + commit lint setup
+
+```bash
+pnpm husky init
+```
+
+`.husky/pre-commit` đã chốt làm baseline:
+
+```bash
+pnpm lint-staged
+```
+
+`.husky/commit-msg` đã chốt làm baseline:
+
+```bash
+pnpm commitlint --edit "$1"
+```
+
+Root `lint-staged.config.js` đã chốt làm baseline:
+
+```js
+module.exports = {
+  "*.{ts,tsx}": ["eslint --fix", "prettier --write"],
+  "*.{md,json,yaml,yml}": ["prettier --write"]
+};
+```
+
+Root `commitlint.config.js` đã chốt làm baseline:
+
+```js
+module.exports = { extends: ["@commitlint/config-conventional"] };
+```
+
+Quy tắc: commit message theo Conventional Commits (`feat:`, `fix:`, `docs:`, `chore:`...); `pre-commit` chỉ lint/format file staged, không chạy full test suite (giữ commit nhanh, test đầy đủ chạy ở `turbo run test` riêng hoặc CI sau này).
+
+### 2.17. Bundle analyzer
+
+Chỉ cần ở `apps/*`, không cần root:
+
+```bash
+pnpm --filter ./apps/storefront add -D @next/bundle-analyzer
+```
+
+`next.config.js` đã chốt làm baseline (áp dụng tương tự cho `admin`/`cms`):
+
+```js
+const withBundleAnalyzer = require("@next/bundle-analyzer")({
+  enabled: process.env.ANALYZE === "true"
+});
+
+module.exports = withBundleAnalyzer({});
+```
+
+Chạy `ANALYZE=true pnpm --filter ./apps/storefront build` khi cần soi bundle size, không chạy mặc định mỗi lần build.
+
 ## 3. Version matrix
 
 Nguồn kiểm tra version: npm registry tại **Thứ Tư, ngày 29 tháng 7 năm 2026**.
@@ -884,6 +957,18 @@ Các version dưới đây đã được **chốt làm baseline scaffold FE**.
 | Root tooling | `typescript` | `7.0.2` | root |
 | Root tooling | `eslint` | `10.8.0` | root |
 | Root tooling | `prettier` | `3.9.6` | root |
+| Root tooling | `husky` | `9.1.7` | root |
+| Root tooling | `lint-staged` | `16.1.2` | root |
+| Root tooling | `@commitlint/cli` | `20.0.0` | root |
+| Root tooling | `@commitlint/config-conventional` | `20.0.0` | root |
+| Lint config | `typescript-eslint` | `9.4.0` | `packages/eslint-config` |
+| Lint config | `eslint-plugin-import-x` | `5.2.0` | `packages/eslint-config` |
+| Lint config | `eslint-plugin-boundaries` | `5.0.3` | `packages/eslint-config` |
+| Lint config | `eslint-config-next` | `16.2.12` | `packages/eslint-config` |
+| Lint config | `eslint-plugin-react` | `7.38.0` | `packages/eslint-config` |
+| Lint config | `eslint-plugin-react-hooks` | `6.1.0` | `packages/eslint-config` |
+| Lint config | `eslint-plugin-jsx-a11y` | `6.10.2` | `packages/eslint-config` |
+| App framework | `@next/bundle-analyzer` | `16.2.12` | `apps/*` |
 | App framework | `next` | `16.2.12` | `apps/*` |
 | App framework | `react` | `19.2.8` | `apps/*` |
 | App framework | `react-dom` | `19.2.8` | `apps/*` |
