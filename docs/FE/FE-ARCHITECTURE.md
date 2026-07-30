@@ -259,6 +259,12 @@ Không export:
 - `index.ts` là barrel import chính của feature
 - Không tạo `services/` riêng trong feature; API đi qua `packages/api-sdk`
 - Không tạo `constants/` folder mặc định; chỉ tách `constants.ts` khi đủ nhu cầu
+- Biến, hàm dùng `camelCase`
+- Constant module-level (immutable/config, VD `SUPPORTED_LOCALES`) dùng `SCREAMING_SNAKE_CASE`
+- `type` alias dùng `PascalCase`, không tiền tố — dùng `interface` cho object shape có thể extend, dùng `type` cho union/intersection/primitive alias
+- Boolean (biến, prop) có tiền tố `is`/`has`/`should` (`isLoading`, `hasError`, `shouldRedirect`)
+- Event handler prop có tiền tố `on` (`onSubmit`); handler nội bộ gọi nó có tiền tố `handle` (`handleSubmit`)
+- Không dùng TypeScript `enum` — dùng union string literal type hoặc object `as const`
 
 ## 8. Import boundary đã chốt
 

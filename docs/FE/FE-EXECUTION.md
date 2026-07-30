@@ -570,8 +570,15 @@ module.exports = tseslint.config(
   {
     ignores: ["dist/**", ".next/**", "coverage/**", "test-results/**"]
   },
-  ...tseslint.configs.recommended,
+  ...tseslint.configs.strictTypeChecked,
+  ...tseslint.configs.stylisticTypeChecked,
   {
+    languageOptions: {
+      parserOptions: {
+        project: true,
+        tsconfigRootDir: __dirname
+      }
+    },
     plugins: { "import-x": importX, boundaries },
     rules: {
       "import-x/order": "warn",
@@ -580,6 +587,8 @@ module.exports = tseslint.config(
   }
 );
 ```
+
+Dùng `strictTypeChecked` + `stylisticTypeChecked` (type-aware, cần `parserOptions.project`) thay vì `recommended` thường — khớp mức "TypeScript strict" đã chốt (Decision `#46`), bắt thêm lỗi như floating promise, unnecessary type assertion. Đánh đổi: lint chạy chậm hơn (cần type-check), chấp nhận được ở quy mô monorepo hiện tại.
 
 `packages/eslint-config/next.js` và `packages/eslint-config/react.js` extend từ `base.js`, thêm `eslint-config-next`, `eslint-plugin-react`, `eslint-plugin-react-hooks`, `eslint-plugin-jsx-a11y` — chỉ dùng ở `apps/*`, không cần ở package thuần TypeScript (`packages/schemas`, `packages/utils`).
 
