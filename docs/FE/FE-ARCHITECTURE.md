@@ -93,11 +93,15 @@ Không nên chứa:
 
 #### 4.1.1. PDP 3D product viewer
 
-`storefront` PDP (Decision `#58`) có 3D product viewer (xoay 360°) dùng `@react-three/fiber` + `@react-three/drei` (React renderer cho `three.js`, không viết imperative three.js thuần). Đây là **vị trí duy nhất** dùng Three.js trong toàn bộ FE — không dùng ở Hero Banner/Homepage/Collection landing (rủi ro trực tiếp tới Lighthouse > 95 đã chốt) và không dùng ở `admin`/`cms`.
+`storefront` PDP (Decision `#59`) có 3D product viewer (xoay 360°) dùng `@react-three/fiber` + `@react-three/drei` (React renderer cho `three.js`, không viết imperative three.js thuần). Đây là **vị trí duy nhất** dùng Three.js trong toàn bộ FE — không dùng ở Hero Banner/Homepage/Collection landing (rủi ro trực tiếp tới Lighthouse > 95 đã chốt) và không dùng ở `admin`/`cms`.
 
 Đồng bộ với Variant selection: model 3D **phải đổi màu/material theo Color đang chọn** ở SKU selector (không phải viewer trang trí tách biệt) — đọc state từ cùng nguồn Variant/SKU selection đã chốt ở domain model (`glossary.md`), không tự quản lý state màu riêng.
 
 Ràng buộc bắt buộc: component 3D viewer **phải lazy-load** qua `next/dynamic` với `{ ssr: false }`, chỉ tải khi user thực sự vào route PDP — không import `three`/`@react-three/*` ở bất kỳ route/layout cấp cao hơn PDP, để không ảnh hưởng LCP/Lighthouse của catalog/PLP.
+
+#### 4.1.2. PWA (production only)
+
+`storefront` dùng `@ducanh2912/next-pwa` (Decision `#58`) để installable + offline-capable. **Chỉ bật service worker PWA ở production build** (`disable: process.env.NODE_ENV === "development"` trong config) — vì MSW (Decision #28) đã đăng ký service worker riêng cho browser-mode mock ở dev, hai service worker không thể cùng kiểm soát 1 scope. Không dùng cho `admin`/`cms`.
 
 ### 4.2. `admin`
 

@@ -996,6 +996,7 @@ Các version dưới đây đã được **chốt làm baseline scaffold FE**.
 | 3D | `three` | `0.182.0` | `apps/storefront` |
 | 3D | `@react-three/fiber` | `9.3.0` | `apps/storefront` |
 | 3D | `@react-three/drei` | `10.4.0` | `apps/storefront` |
+| PWA | `@ducanh2912/next-pwa` | `10.2.7` | `apps/storefront` |
 | App framework | `next` | `16.2.12` | `apps/*` |
 | App framework | `react` | `19.2.8` | `apps/*` |
 | App framework | `react-dom` | `19.2.8` | `apps/*` |

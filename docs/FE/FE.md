@@ -158,8 +158,17 @@ Lý do:
 
 Lý do:
 
-- Decision `#58`: PDP product viewer 3D xoay 360°, đồng bộ màu theo Variant đang chọn — vị trí duy nhất dùng Three.js trong FE, lazy-load bắt buộc để không ảnh hưởng Lighthouse > 95 của các trang khác
+- Decision `#59`: PDP product viewer 3D xoay 360°, đồng bộ màu theo Variant đang chọn — vị trí duy nhất dùng Three.js trong FE, lazy-load bắt buộc để không ảnh hưởng Lighthouse > 95 của các trang khác
 - chi tiết kiến trúc và ràng buộc lazy-load xem [`FE-ARCHITECTURE.md`](E:/my-pj/FE/docs/FE/FE-ARCHITECTURE.md) §4.1.1
+
+## 4.8. PWA (chỉ `storefront`, chỉ production)
+
+- `Đã chốt` `@ducanh2912/next-pwa`
+
+Lý do:
+
+- Decision `#58`: installable + offline-capable cho `storefront`; chỉ bật ở production build để tránh xung đột scope với service worker của MSW (Decision #28, chỉ chạy ở dev/mock mode)
+- không dùng cho `admin`/`cms` (app nội bộ, không cần installable)
 
 ## 5. Danh sách thư viện FE đã chốt
 
