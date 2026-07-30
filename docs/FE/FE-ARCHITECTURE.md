@@ -171,15 +171,166 @@ Chứa: color tokens, spacing tokens, typography tokens, radius, shadow, motion,
 
 Không chứa: business logic, component implementation.
 
+Cây thư mục đề xuất:
+
+```text
+packages/design-tokens/
+├── package.json
+├── src/
+│   ├── colors.ts
+│   ├── spacing.ts
+│   ├── typography.ts
+│   ├── radius.ts
+│   ├── shadow.ts
+│   ├── motion.ts
+│   ├── breakpoints.ts
+│   └── semantic.ts
+└── tsconfig.json
+```
+
+Public subpath nên export:
+
+- `@repo/design-tokens/colors`
+- `@repo/design-tokens/spacing`
+- `@repo/design-tokens/typography`
+- `@repo/design-tokens/radius`
+- `@repo/design-tokens/shadow`
+- `@repo/design-tokens/motion`
+- `@repo/design-tokens/breakpoints`
+- `@repo/design-tokens/semantic`
+
+Internal-only:
+
+- không cần thư mục `internal/`; mọi file trong package này về bản chất đều có thể public vì đây là package token source-of-truth
+- nếu sau này có script generate token, đặt ở `scripts/` và không export qua subpath package
+
 ### 6.2. `packages/tailwind-config`
 
 Chứa: preset Tailwind dùng chung, shared theme mapping, plugin config dùng chung nếu có.
+
+Cây thư mục đề xuất:
+
+```text
+packages/tailwind-config/
+├── package.json
+├── src/
+│   ├── preset.ts
+│   ├── theme.ts
+│   ├── plugins.ts
+│   └── content.ts
+└── tsconfig.json
+```
+
+Public subpath nên export:
+
+- `@repo/tailwind-config/preset`
+- `@repo/tailwind-config/theme`
+- `@repo/tailwind-config/plugins`
+- `@repo/tailwind-config/content`
+
+Internal-only:
+
+- nếu có helper build theme phục vụ riêng package, giữ trong `src/internal/*` và không export
+- app chỉ consume preset/theme/plugin đã chốt, không import sâu vào helper private của package
 
 ### 6.3. `packages/ui`
 
 Chứa: primitive UI components, layout primitives như `Container`, `Grid`, `Stack`, `Section`, component thuần UI không gắn domain commerce.
 
 Ví dụ: `Button`, `Input`, `Modal`, `Tabs`, `Tooltip`.
+
+Cây thư mục đề xuất:
+
+```text
+packages/ui/
+├── package.json
+├── src/
+│   ├── components/
+│   │   ├── Button.tsx
+│   │   ├── Input.tsx
+│   │   ├── Modal.tsx
+│   │   ├── Tabs.tsx
+│   │   ├── Tooltip.tsx
+│   │   ├── Spinner.tsx
+│   │   └── EmptyState.tsx
+│   ├── layout/
+│   │   ├── Container.tsx
+│   │   ├── Section.tsx
+│   │   ├── Stack.tsx
+│   │   ├── Inline.tsx
+│   │   ├── Grid.tsx
+│   │   └── Cluster.tsx
+│   ├── hooks/
+│   │   └── useLockBodyScroll.ts
+│   ├── lib/
+│   │   ├── cn.ts
+│   │   └── focusRing.ts
+│   └── styles/
+│       └── globals.css
+└── tsconfig.json
+```
+
+Public subpath nên export:
+
+- `@repo/ui/button`
+- `@repo/ui/input`
+- `@repo/ui/modal`
+- `@repo/ui/tabs`
+- `@repo/ui/tooltip`
+- `@repo/ui/spinner`
+- `@repo/ui/empty-state`
+- `@repo/ui/container`
+- `@repo/ui/section`
+- `@repo/ui/stack`
+- `@repo/ui/inline`
+- `@repo/ui/grid`
+- `@repo/ui/cluster`
+
+Internal-only:
+
+- `src/hooks/*` như `useLockBodyScroll.ts` là implementation detail của UI internals, không export trừ khi có nhu cầu reuse thật giữa nhiều component/app
+- `src/lib/*` như `cn.ts`, `focusRing.ts` giữ private; app không import trực tiếp helper styling nội bộ của `packages/ui`
+- `src/styles/globals.css` chỉ được import tại điểm bootstrap đã chốt, không dùng như một API tiện tay cho feature
+
+Mẫu `package.json` scaffold-ready cho `packages/ui`:
+
+```json
+{
+  "name": "@repo/ui",
+  "version": "0.0.0",
+  "private": true,
+  "type": "module",
+  "sideEffects": [
+    "./src/styles/globals.css"
+  ],
+  "exports": {
+    "./button": "./src/components/Button.tsx",
+    "./input": "./src/components/Input.tsx",
+    "./modal": "./src/components/Modal.tsx",
+    "./tabs": "./src/components/Tabs.tsx",
+    "./tooltip": "./src/components/Tooltip.tsx",
+    "./spinner": "./src/components/Spinner.tsx",
+    "./empty-state": "./src/components/EmptyState.tsx",
+    "./container": "./src/layout/Container.tsx",
+    "./section": "./src/layout/Section.tsx",
+    "./stack": "./src/layout/Stack.tsx",
+    "./inline": "./src/layout/Inline.tsx",
+    "./grid": "./src/layout/Grid.tsx",
+    "./cluster": "./src/layout/Cluster.tsx",
+    "./styles.css": "./src/styles/globals.css"
+  },
+  "peerDependencies": {
+    "react": "^19.0.0",
+    "react-dom": "^19.0.0"
+  }
+}
+```
+
+Ghi chú:
+
+- không export `./index`
+- không export `src/lib/*` và `src/hooks/*` ngay từ đầu
+- nếu sau này cần public thêm một primitive mới, thêm đúng 1 subpath mới thay vì mở rộng barrel tổng
 
 ### 6.4. `packages/commerce`
 
@@ -189,11 +340,91 @@ Ví dụ: `ProductCard`, `ProductGallery`, `SizeSelector`, `ColorSelector`, `Ord
 
 Không nhét mọi thứ của storefront vào đây chỉ vì "có thể share sau".
 
+Cây thư mục đề xuất:
+
+```text
+packages/commerce/
+├── package.json
+├── src/
+│   ├── product/
+│   │   ├── ProductCard.tsx
+│   │   ├── ProductGallery.tsx
+│   │   ├── ProductPrice.tsx
+│   │   ├── SizeSelector.tsx
+│   │   └── ColorSelector.tsx
+│   ├── cart/
+│   │   └── QuantitySelector.tsx
+│   ├── order/
+│   │   └── OrderTimeline.tsx
+│   └── lib/
+│       └── price.ts
+└── tsconfig.json
+```
+
+Public subpath nên export:
+
+- `@repo/commerce/product-card`
+- `@repo/commerce/product-gallery`
+- `@repo/commerce/product-price`
+- `@repo/commerce/size-selector`
+- `@repo/commerce/color-selector`
+- `@repo/commerce/quantity-selector`
+- `@repo/commerce/order-timeline`
+
+Internal-only:
+
+- `src/lib/price.ts` mặc định private; chỉ export nếu có reuse thật ngoài chính các component commerce
+- không export component chỉ hợp lệ trong một flow hẹp của `storefront`; nếu chưa có reuse thật thì giữ ở feature local thay vì đẩy vào package
+
 ### 6.5. `packages/schemas`
 
 Chứa: request schemas, response schemas, error envelope schemas, domain DTO schemas.
 
 Đây là nguồn contract-first quan trọng nhất của FE.
+
+Cây thư mục đề xuất:
+
+```text
+packages/schemas/
+├── package.json
+├── src/
+│   ├── auth/
+│   │   ├── signIn.schema.ts
+│   │   └── session.schema.ts
+│   ├── catalog/
+│   │   ├── product.schema.ts
+│   │   ├── productList.schema.ts
+│   │   └── variant.schema.ts
+│   ├── cart/
+│   │   ├── cart.schema.ts
+│   │   └── addToCart.schema.ts
+│   ├── common/
+│   │   ├── pagination.schema.ts
+│   │   └── errorEnvelope.schema.ts
+│   └── cms/
+│       ├── heroBanner.schema.ts
+│       └── seoMetadata.schema.ts
+└── tsconfig.json
+```
+
+Public subpath nên export:
+
+- `@repo/schemas/auth/sign-in`
+- `@repo/schemas/auth/session`
+- `@repo/schemas/catalog/product`
+- `@repo/schemas/catalog/product-list`
+- `@repo/schemas/catalog/variant`
+- `@repo/schemas/cart/cart`
+- `@repo/schemas/cart/add-to-cart`
+- `@repo/schemas/common/pagination`
+- `@repo/schemas/common/error-envelope`
+- `@repo/schemas/cms/hero-banner`
+- `@repo/schemas/cms/seo-metadata`
+
+Internal-only:
+
+- không tạo barrel domain-level; import đúng schema file cần dùng
+- nếu có fixture/test-only schema helper thì giữ ở `src/testing/*` hoặc `tests/*`, không export cho runtime app
 
 ### 6.6. `packages/api-sdk`
 
@@ -201,15 +432,165 @@ Chứa: typed fetch layer, mock adapter, MSW handlers, environment-aware API ent
 
 Mọi network call đi qua đây theo Decision `#49`.
 
+Cây thư mục đề xuất:
+
+```text
+packages/api-sdk/
+├── package.json
+├── src/
+│   ├── client/
+│   │   ├── httpClient.ts
+│   │   ├── serverClient.ts
+│   │   └── browserClient.ts
+│   ├── auth/
+│   │   ├── auth.api.ts
+│   │   └── auth.mapper.ts
+│   ├── catalog/
+│   │   ├── catalog.api.ts
+│   │   └── catalog.mapper.ts
+│   ├── cart/
+│   │   ├── cart.api.ts
+│   │   └── cart.mapper.ts
+│   ├── cms/
+│   │   ├── cms.api.ts
+│   │   └── cms.mapper.ts
+│   ├── mocks/
+│   │   ├── browser.ts
+│   │   ├── server.ts
+│   │   └── handlers/
+│   │       ├── auth.handlers.ts
+│   │       ├── catalog.handlers.ts
+│   │       ├── cart.handlers.ts
+│   │       └── cms.handlers.ts
+│   └── config/
+│       ├── env.ts
+│       └── endpoints.ts
+└── tsconfig.json
+```
+
+Public subpath nên export:
+
+- `@repo/api-sdk/auth`
+- `@repo/api-sdk/catalog`
+- `@repo/api-sdk/cart`
+- `@repo/api-sdk/cms`
+
+Internal-only:
+
+- `src/client/*` là hạ tầng HTTP private; app/feature không import trực tiếp `httpClient.ts`, `serverClient.ts`, `browserClient.ts`
+- `src/config/*` là private package config; endpoint/env mapping không bị feature layer consume trực tiếp
+- `src/*.mapper.ts` là private nếu chỉ phục vụ API module tương ứng
+- `src/mocks/*` chỉ export ở subpath riêng khi thật sự cần cho test/dev bootstrap, ví dụ `@repo/api-sdk/testing/msw-browser`; không để app production import nhầm
+
+Mẫu `package.json` scaffold-ready cho `packages/api-sdk`:
+
+```json
+{
+  "name": "@repo/api-sdk",
+  "version": "0.0.0",
+  "private": true,
+  "type": "module",
+  "exports": {
+    "./auth": "./src/auth/auth.api.ts",
+    "./catalog": "./src/catalog/catalog.api.ts",
+    "./cart": "./src/cart/cart.api.ts",
+    "./cms": "./src/cms/cms.api.ts",
+    "./testing/msw-browser": "./src/mocks/browser.ts",
+    "./testing/msw-server": "./src/mocks/server.ts"
+  },
+  "peerDependencies": {
+    "zod": "^4.0.0"
+  }
+}
+```
+
+Ghi chú:
+
+- app chỉ import module API mức domain như `@repo/api-sdk/catalog`
+- không export `client`, `config`, `mapper` như public contract mặc định
+- subpath `testing/*` tách riêng để tránh app runtime import nhầm mock bootstrap
+
 ### 6.7. `packages/hooks`
 
 Chứa: shared hooks đa app, query key factories, auth/cart/search hook dùng chung khi thực sự dùng chung.
+
+Cây thư mục đề xuất:
+
+```text
+packages/hooks/
+├── package.json
+├── src/
+│   ├── query/
+│   │   ├── queryKeys.ts
+│   │   └── usePagination.ts
+│   ├── auth/
+│   │   └── useSession.ts
+│   ├── commerce/
+│   │   ├── useCurrency.ts
+│   │   └── usePriceFormatter.ts
+│   └── browser/
+│       └── useMediaQuery.ts
+└── tsconfig.json
+```
+
+Public subpath nên export:
+
+- `@repo/hooks/query/query-keys`
+- `@repo/hooks/query/use-pagination`
+- `@repo/hooks/auth/use-session`
+- `@repo/hooks/commerce/use-currency`
+- `@repo/hooks/commerce/use-price-formatter`
+- `@repo/hooks/browser/use-media-query`
+
+Internal-only:
+
+- nếu hook chỉ là helper cho một hook public khác, giữ ở `src/internal/*` hoặc colocate cạnh hook public nhưng không export
+- không đưa hook lên package này chỉ vì “có thể dùng lại”; chỉ public hook đã có reuse thật giữa app/feature
 
 ### 6.8. `packages/utils`
 
 Chứa: pure helpers, formatter, parser, guard helpers.
 
 Không chứa: React hooks, network call, UI render logic.
+
+Cây thư mục đề xuất:
+
+```text
+packages/utils/
+├── package.json
+├── src/
+│   ├── format/
+│   │   ├── currency.ts
+│   │   ├── date.ts
+│   │   └── number.ts
+│   ├── guards/
+│   │   ├── isDefined.ts
+│   │   └── invariant.ts
+│   ├── object/
+│   │   ├── omit.ts
+│   │   └── pick.ts
+│   └── string/
+│       ├── slugify.ts
+│       └── normalizeWhitespace.ts
+└── tsconfig.json
+```
+
+Public subpath nên export:
+
+- `@repo/utils/format/currency`
+- `@repo/utils/format/date`
+- `@repo/utils/format/number`
+- `@repo/utils/guards/is-defined`
+- `@repo/utils/guards/invariant`
+- `@repo/utils/object/omit`
+- `@repo/utils/object/pick`
+- `@repo/utils/string/slugify`
+- `@repo/utils/string/normalize-whitespace`
+
+Internal-only:
+
+- không export helper tạm phục vụ migration/one-off script
+- không đặt React-aware helper vào package này; nếu helper bắt đầu phụ thuộc React hoặc app runtime, đó là dấu hiệu package placement đang sai
 
 ### 6.9. Export package: subpath, không barrel `index.ts`
 
@@ -226,6 +607,13 @@ Theo Decision `#57`, không package nào có `src/index.ts` làm barrel tổng. 
 ```
 
 App import trực tiếp đúng file: `import { Button } from "@repo/ui/button"`, không `import { Button } from "@repo/ui"`. Lý do: tránh chi phí barrel file re-export lớn (Next.js/bundler dev-mode chậm khi barrel gom quá nhiều export), và mỗi import đã tự nhiên là một "alias" rõ nghĩa, khớp quy tắc "mọi import phải dùng alias" ở [§7.4](#74-quy-ước-code-đã-chốt).
+
+Nguyên tắc scaffold-ready cho shared packages:
+
+- mỗi package chỉ public những subpath thật sự là contract ổn định
+- file nào chỉ phục vụ implementation nội bộ thì giữ private, kể cả khi technically có thể export
+- app/feature không import sâu vào `src/*` của package; chỉ import qua subpath đã khai báo trong `package.json`
+- test fixture, mock bootstrap, codegen helper, build helper không được lẫn vào runtime public API mặc định
 
 ## 7. Kiến trúc module chung
 
@@ -271,13 +659,16 @@ Nếu feature B thật sự cần dùng lại component/hook/logic đang nằm t
 
 - Interface có tiền tố `I`
 - Component dùng `PascalCase`
-- Thư mục page dùng `kebab-case`
+- File React component dùng `PascalCase` (ví dụ `ProductViewer3D.tsx`, `SignInPage.tsx`)
+- Thư mục route/page dùng `kebab-case`
 - Hook có tiền tố `use`
+- File hook dùng `camelCase` theo tên hook (ví dụ `useProductDetail.ts`)
 - Store dùng tên `{feature}.store.ts`
 - **Không dùng barrel `index.ts`** — ở cả cấp feature và cấp package (Decision `#57`); package export qua `package.json` `"exports"` subpath (xem [§6](#6-shared-package-architecture))
 - **Mọi import phải dùng alias** (`@/*`, `@/features/{feature}`, `@repo/*`) — cấm import tương đối leo cấp cha (`../`); import cùng cấp/con trong 1 file (`./foo`) vẫn cho phép vì không có alias hợp lý để thay
 - Không tạo `services/` riêng trong feature; API đi qua `packages/api-sdk`
 - Không tạo `constants/` folder mặc định; chỉ tách `constants.ts` khi đủ nhu cầu
+- File utility/helper/config/middleware dùng `camelCase`
 - Biến, hàm dùng `camelCase`
 - Constant module-level (immutable/config, VD `SUPPORTED_LOCALES`) dùng `SCREAMING_SNAKE_CASE`
 - `type` alias dùng `PascalCase`, không tiền tố — dùng `interface` cho object shape có thể extend, dùng `type` cho union/intersection/primitive alias
@@ -342,36 +733,235 @@ Cây thư mục đầy đủ đề xuất:
 ```text
 apps/storefront/
 ├── app/
+│   ├── layout.tsx
 │   ├── [locale]/
+│   │   ├── layout.tsx
 │   │   ├── (public)/
+│   │   │   ├── layout.tsx
+│   │   │   ├── page.tsx
+│   │   │   ├── products/
+│   │   │   │   ├── page.tsx
+│   │   │   │   ├── [slug]/
+│   │   │   │   │   └── page.tsx
+│   │   │   │   └── category/
+│   │   │   │       └── [slug]/
+│   │   │   │           └── page.tsx
+│   │   │   ├── collections/
+│   │   │   │   └── [slug]/
+│   │   │   │       └── page.tsx
+│   │   │   ├── search/
+│   │   │   │   └── page.tsx
+│   │   │   ├── blog/
+│   │   │   │   ├── page.tsx
+│   │   │   │   └── [slug]/
+│   │   │   │       └── page.tsx
+│   │   │   └── brands/
+│   │   │       └── [slug]/
+│   │   │           └── page.tsx
 │   │   ├── account/
+│   │   │   ├── layout.tsx
+│   │   │   ├── profile/
+│   │   │   │   └── page.tsx
+│   │   │   ├── orders/
+│   │   │   │   ├── page.tsx
+│   │   │   │   └── [orderId]/
+│   │   │   │       └── page.tsx
+│   │   │   ├── addresses/
+│   │   │   │   └── page.tsx
+│   │   │   └── wishlist/
+│   │   │       └── page.tsx
+│   │   ├── auth/
+│   │   │   ├── sign-in/
+│   │   │   │   └── page.tsx
+│   │   │   ├── sign-up/
+│   │   │   │   └── page.tsx
+│   │   │   └── forgot-password/
+│   │   │       └── page.tsx
 │   │   ├── cart/
+│   │   │   └── page.tsx
 │   │   ├── checkout/
+│   │   │   ├── layout.tsx
+│   │   │   ├── page.tsx
+│   │   │   ├── shipping/
+│   │   │   │   └── page.tsx
+│   │   │   ├── payment/
+│   │   │   │   └── page.tsx
+│   │   │   ├── review/
+│   │   │   │   └── page.tsx
+│   │   │   └── success/
+│   │   │       └── page.tsx
 │   │   └── wishlist/
+│   │       └── page.tsx
 │   ├── api/
+│   │   └── revalidate/
+│   │       └── route.ts
+│   ├── not-found.tsx
+│   └── error.tsx
 │   └── globals.css
 ├── src/
 │   ├── features/
+│   │   ├── home/
+│   │   │   ├── pages/
+│   │   │   │   └── home/
+│   │   │   │       └── HomePage.tsx
+│   │   │   ├── components/
+│   │   │   │   ├── HeroBanner.tsx
+│   │   │   │   ├── FeaturedCollection.tsx
+│   │   │   │   └── PromotionStrip.tsx
+│   │   │   ├── hooks/
+│   │   │   │   └── useHomeContent.ts
+│   │   │   ├── stores/
+│   │   │   └── utils/
 │   │   ├── catalog/
 │   │   │   ├── pages/
 │   │   │   │   ├── product-list/
+│   │   │   │   │   └── ProductListPage.tsx
+│   │   │   │   ├── category-list/
+│   │   │   │   │   └── CategoryListPage.tsx
+│   │   │   │   ├── collection-list/
+│   │   │   │   │   └── CollectionListPage.tsx
 │   │   │   │   └── product-detail/
+│   │   │   │       └── ProductDetailPage.tsx
 │   │   │   ├── components/
+│   │   │   │   ├── ProductCardGrid.tsx
+│   │   │   │   ├── ProductFilters.tsx
+│   │   │   │   ├── ProductSort.tsx
+│   │   │   │   ├── ProductMediaGallery.tsx
+│   │   │   │   ├── ProductVariantPicker.tsx
+│   │   │   │   ├── ProductStickyBuyBar.tsx
+│   │   │   │   └── ProductViewer3D.tsx
 │   │   │   ├── hooks/
+│   │   │   │   ├── useProductList.ts
+│   │   │   │   ├── useProductFilters.ts
+│   │   │   │   └── useProductDetail.ts
 │   │   │   ├── stores/
+│   │   │   │   └── catalog.store.ts
 │   │   │   └── utils/
+│   │   │       ├── catalogFilters.ts
+│   │   │       └── productAvailability.ts
 │   │   ├── search/
+│   │   │   ├── pages/
+│   │   │   │   └── search-results/
+│   │   │   │       └── SearchResultsPage.tsx
+│   │   │   ├── components/
+│   │   │   │   ├── SearchFilters.tsx
+│   │   │   │   ├── SearchInput.tsx
+│   │   │   │   └── SearchResultsSummary.tsx
+│   │   │   ├── hooks/
+│   │   │   │   ├── useRecentSearches.ts
+│   │   │   │   └── useSearch.ts
+│   │   │   ├── stores/
+│   │   │   │   └── search.store.ts
+│   │   │   └── utils/
+│   │   │       └── searchParams.ts
 │   │   ├── cart/
+│   │   │   ├── pages/
+│   │   │   │   └── cart/
+│   │   │   │       └── CartPage.tsx
+│   │   │   ├── components/
+│   │   │   │   ├── CartItemList.tsx
+│   │   │   │   ├── CartOrderSummary.tsx
+│   │   │   │   └── CartPromoCodeForm.tsx
+│   │   │   ├── hooks/
+│   │   │   │   └── useCart.ts
+│   │   │   ├── stores/
+│   │   │   │   └── cart.store.ts
+│   │   │   └── utils/
+│   │   │       └── cartTotals.ts
 │   │   ├── wishlist/
+│   │   │   ├── pages/
+│   │   │   │   └── wishlist/
+│   │   │   │       └── WishlistPage.tsx
+│   │   │   ├── components/
+│   │   │   │   ├── WishlistGrid.tsx
+│   │   │   │   └── WishlistMoveToCartButton.tsx
+│   │   │   ├── hooks/
+│   │   │   │   └── useWishlist.ts
+│   │   │   ├── stores/
+│   │   │   │   └── wishlist.store.ts
+│   │   │   └── utils/
+│   │   │       └── wishlistAnalytics.ts
 │   │   ├── auth/
+│   │   │   ├── pages/
+│   │   │   │   ├── sign-in/
+│   │   │   │   │   └── SignInPage.tsx
+│   │   │   │   ├── sign-up/
+│   │   │   │   │   └── SignUpPage.tsx
+│   │   │   │   └── forgot-password/
+│   │   │   │       └── ForgotPasswordPage.tsx
+│   │   │   ├── components/
+│   │   │   │   ├── AuthFormShell.tsx
+│   │   │   │   ├── PasswordField.tsx
+│   │   │   │   └── SocialSignInButtons.tsx
+│   │   │   ├── hooks/
+│   │   │   │   └── useAuth.ts
+│   │   │   ├── stores/
+│   │   │   │   └── auth.store.ts
+│   │   │   └── utils/
+│   │   │       └── authRedirect.ts
 │   │   ├── account/
+│   │   │   ├── pages/
+│   │   │   │   ├── profile/
+│   │   │   │   │   └── ProfilePage.tsx
+│   │   │   │   ├── order-history/
+│   │   │   │   │   └── OrderHistoryPage.tsx
+│   │   │   │   ├── order-detail/
+│   │   │   │   │   └── OrderDetailPage.tsx
+│   │   │   │   └── addresses/
+│   │   │   │       └── AddressesPage.tsx
+│   │   │   ├── components/
+│   │   │   │   ├── AccountNav.tsx
+│   │   │   │   ├── AddressForm.tsx
+│   │   │   │   └── OrderHistoryTable.tsx
+│   │   │   ├── hooks/
+│   │   │   │   ├── useAddresses.ts
+│   │   │   │   └── useOrders.ts
+│   │   │   ├── stores/
+│   │   │   │   └── account.store.ts
+│   │   │   └── utils/
+│   │   │       └── accountTabs.ts
 │   │   └── checkout/
+│   │       ├── pages/
+│   │       │   ├── checkout/
+│   │       │   │   └── CheckoutPage.tsx
+│   │       │   ├── shipping-step/
+│   │       │   │   └── ShippingStepPage.tsx
+│   │       │   ├── payment-step/
+│   │       │   │   └── PaymentStepPage.tsx
+│   │       │   ├── review-step/
+│   │       │   │   └── ReviewStepPage.tsx
+│   │       │   └── success/
+│   │       │       └── CheckoutSuccessPage.tsx
+│   │       ├── components/
+│   │       │   ├── CheckoutStepper.tsx
+│   │       │   ├── ShippingAddressForm.tsx
+│   │       │   ├── PaymentMethodForm.tsx
+│   │       │   └── OrderReview.tsx
+│   │       ├── hooks/
+│   │       │   ├── useCheckout.ts
+│   │       │   └── useCheckoutSteps.ts
+│   │       ├── stores/
+│   │       │   └── checkout.store.ts
+│   │       └── utils/
+│   │           ├── checkoutGuards.ts
+│   │           └── paymentMethods.ts
 │   ├── providers/
+│   │   ├── AppProviders.tsx
+│   │   ├── QueryProvider.tsx
+│   │   └── IntlProvider.tsx
 │   ├── lib/
+│   │   ├── seo.ts
+│   │   ├── analytics.ts
+│   │   └── currency.ts
 │   ├── config/
+│   │   ├── navConfig.ts
+│   │   └── storefrontConfig.ts
 │   └── middleware/
+│       └── authGuard.ts
 └── package.json
 ```
+
+Mọi `pages/{page}/` chỉ chứa 1 file component `PascalCase` (ví dụ `ProductListPage.tsx`) — route Next.js dưới `app/` chỉ mount component này (Decision `#29`), không chứa logic riêng. Với `storefront`, có thể nghĩ theo cụm flow chính: `home`, `catalog`, `search`, `cart`, `wishlist`, `auth`, `account`, `checkout`; mỗi cụm chỉ tách thêm `components/`, `hooks/`, `stores/`, `utils/` khi thực sự có logic riêng cần giữ private.
 
 ## 9.2. `admin`
 
@@ -397,22 +987,116 @@ Cây thư mục đầy đủ đề xuất:
 apps/admin/
 ├── app/
 │   ├── (protected)/
+│   │   ├── layout.tsx
+│   │   ├── page.tsx
 │   │   ├── products/
+│   │   │   ├── page.tsx
+│   │   │   ├── create/
+│   │   │   │   └── page.tsx
+│   │   │   └── [productId]/
+│   │   │       ├── page.tsx
+│   │   │       └── edit/
+│   │   │           └── page.tsx
 │   │   ├── categories/
+│   │   │   ├── page.tsx
+│   │   │   ├── create/
+│   │   │   │   └── page.tsx
+│   │   │   └── [categoryId]/
+│   │   │       └── edit/
+│   │   │           └── page.tsx
 │   │   ├── inventory/
+│   │   │   ├── page.tsx
+│   │   │   ├── adjustments/
+│   │   │   │   └── page.tsx
+│   │   │   └── [sku]/
+│   │   │       └── page.tsx
 │   │   └── orders/
+│   │       ├── page.tsx
+│   │       └── [orderId]/
+│   │           └── page.tsx
+│   ├── layout.tsx
+│   └── not-found.tsx
 │   └── globals.css
 ├── src/
 │   ├── features/
+│   │   ├── dashboard/
+│   │   │   ├── pages/
+│   │   │   │   └── dashboard/
+│   │   │   │       └── DashboardPage.tsx
+│   │   │   ├── components/
+│   │   │   ├── hooks/
+│   │   │   ├── stores/
+│   │   │   └── utils/
 │   │   ├── products/
+│   │   │   ├── pages/
+│   │   │   │   ├── product-list/
+│   │   │   │   │   └── ProductListPage.tsx
+│   │   │   │   ├── product-create/
+│   │   │   │   │   └── ProductCreatePage.tsx
+│   │   │   │   ├── product-detail/
+│   │   │   │   │   └── ProductDetailPage.tsx
+│   │   │   │   └── product-edit/
+│   │   │   │       └── ProductEditPage.tsx
+│   │   │   ├── components/
+│   │   │   │   ├── ProductForm.tsx
+│   │   │   │   ├── ProductFilters.tsx
+│   │   │   │   └── ProductTable.tsx
+│   │   │   ├── hooks/
+│   │   │   │   ├── useProductFilters.ts
+│   │   │   │   └── useProductMutations.ts
+│   │   │   ├── stores/
+│   │   │   │   └── products.store.ts
+│   │   │   └── utils/
+│   │   │       └── productForm.ts
 │   │   ├── categories/
+│   │   │   ├── pages/
+│   │   │   │   ├── category-list/
+│   │   │   │   │   └── CategoryListPage.tsx
+│   │   │   │   ├── category-create/
+│   │   │   │   │   └── CategoryCreatePage.tsx
+│   │   │   │   └── category-edit/
+│   │   │   │       └── CategoryEditPage.tsx
+│   │   │   ├── components/
+│   │   │   ├── hooks/
+│   │   │   ├── stores/
+│   │   │   └── utils/
 │   │   ├── inventory/
+│   │   │   ├── pages/
+│   │   │   │   ├── inventory-list/
+│   │   │   │   │   └── InventoryListPage.tsx
+│   │   │   │   ├── inventory-detail/
+│   │   │   │   │   └── InventoryDetailPage.tsx
+│   │   │   │   └── inventory-adjustment/
+│   │   │   │       └── InventoryAdjustmentPage.tsx
+│   │   │   ├── components/
+│   │   │   ├── hooks/
+│   │   │   ├── stores/
+│   │   │   └── utils/
 │   │   └── orders/
+│   │       ├── pages/
+│   │       │   ├── order-list/
+│   │       │   │   └── OrderListPage.tsx
+│   │       │   └── order-detail/
+│   │       │       └── OrderDetailPage.tsx
+│   │       ├── components/
+│   │       ├── hooks/
+│   │       ├── stores/
+│   │       └── utils/
 │   ├── providers/
+│   │   ├── AppProviders.tsx
+│   │   ├── QueryProvider.tsx
+│   │   └── AdminShellProvider.tsx
 │   ├── lib/
-│   └── config/
+│   │   ├── rbac.ts
+│   │   └── table.ts
+│   ├── config/
+│   │   └── navConfig.ts
+│   └── middleware/
+│       └── authGuard.ts
 └── package.json
 ```
+
+Route trong `app/(protected)/*` chỉ làm nhiệm vụ mount page component từ `src/features/*/pages/**`, không nhét business logic vào route file.
 
 ## 9.3. `cms`
 
@@ -441,28 +1125,152 @@ Cây thư mục đầy đủ đề xuất:
 apps/cms/
 ├── app/
 │   ├── (protected)/
+│   │   ├── layout.tsx
+│   │   ├── page.tsx
 │   │   ├── hero-banner/
+│   │   │   ├── page.tsx
+│   │   │   └── [bannerId]/
+│   │   │       └── edit/
+│   │   │           └── page.tsx
 │   │   ├── homepage-sections/
+│   │   │   ├── page.tsx
+│   │   │   └── [sectionId]/
+│   │   │       └── edit/
+│   │   │           └── page.tsx
 │   │   ├── collection-landing/
+│   │   │   ├── page.tsx
+│   │   │   └── [slug]/
+│   │   │       └── edit/
+│   │   │           └── page.tsx
 │   │   ├── promotion-banner/
+│   │   │   ├── page.tsx
+│   │   │   └── [bannerId]/
+│   │   │       └── edit/
+│   │   │           └── page.tsx
 │   │   ├── seo-metadata/
+│   │   │   ├── page.tsx
+│   │   │   └── [pageKey]/
+│   │   │       └── edit/
+│   │   │           └── page.tsx
 │   │   ├── blog/
+│   │   │   ├── page.tsx
+│   │   │   ├── create/
+│   │   │   │   └── page.tsx
+│   │   │   └── [postId]/
+│   │   │       └── edit/
+│   │   │           └── page.tsx
 │   │   └── campaign/
+│   │       ├── page.tsx
+│   │       ├── create/
+│   │       │   └── page.tsx
+│   │       └── [campaignId]/
+│   │           └── edit/
+│   │               └── page.tsx
+│   ├── layout.tsx
+│   └── not-found.tsx
 │   └── globals.css
 ├── src/
 │   ├── features/
+│   │   ├── dashboard/
+│   │   │   ├── pages/
+│   │   │   │   └── dashboard/
+│   │   │   │       └── DashboardPage.tsx
+│   │   │   ├── components/
+│   │   │   ├── hooks/
+│   │   │   ├── stores/
+│   │   │   └── utils/
 │   │   ├── hero-banner/
+│   │   │   ├── pages/
+│   │   │   │   ├── hero-banner-list/
+│   │   │   │   │   └── HeroBannerListPage.tsx
+│   │   │   │   └── hero-banner-edit/
+│   │   │   │       └── HeroBannerEditPage.tsx
+│   │   │   ├── components/
+│   │   │   │   ├── HeroBannerForm.tsx
+│   │   │   │   └── HeroBannerPreview.tsx
+│   │   │   ├── hooks/
+│   │   │   │   └── useHeroBannerMutations.ts
+│   │   │   ├── stores/
+│   │   │   └── utils/
 │   │   ├── homepage-sections/
+│   │   │   ├── pages/
+│   │   │   │   ├── homepage-sections-list/
+│   │   │   │   │   └── HomepageSectionsListPage.tsx
+│   │   │   │   └── homepage-section-edit/
+│   │   │   │       └── HomepageSectionEditPage.tsx
+│   │   │   ├── components/
+│   │   │   ├── hooks/
+│   │   │   ├── stores/
+│   │   │   └── utils/
 │   │   ├── collection-landing/
+│   │   │   ├── pages/
+│   │   │   │   ├── collection-landing-list/
+│   │   │   │   │   └── CollectionLandingListPage.tsx
+│   │   │   │   └── collection-landing-edit/
+│   │   │   │       └── CollectionLandingEditPage.tsx
+│   │   │   ├── components/
+│   │   │   ├── hooks/
+│   │   │   ├── stores/
+│   │   │   └── utils/
 │   │   ├── promotion-banner/
+│   │   │   ├── pages/
+│   │   │   │   ├── promotion-banner-list/
+│   │   │   │   │   └── PromotionBannerListPage.tsx
+│   │   │   │   └── promotion-banner-edit/
+│   │   │   │       └── PromotionBannerEditPage.tsx
+│   │   │   ├── components/
+│   │   │   ├── hooks/
+│   │   │   ├── stores/
+│   │   │   └── utils/
 │   │   ├── seo-metadata/
+│   │   │   ├── pages/
+│   │   │   │   ├── seo-metadata-list/
+│   │   │   │   │   └── SeoMetadataListPage.tsx
+│   │   │   │   └── seo-metadata-edit/
+│   │   │   │       └── SeoMetadataEditPage.tsx
+│   │   │   ├── components/
+│   │   │   ├── hooks/
+│   │   │   ├── stores/
+│   │   │   └── utils/
 │   │   ├── blog/
+│   │   │   ├── pages/
+│   │   │   │   ├── blog-post-list/
+│   │   │   │   │   └── BlogPostListPage.tsx
+│   │   │   │   ├── blog-post-create/
+│   │   │   │   │   └── BlogPostCreatePage.tsx
+│   │   │   │   └── blog-post-edit/
+│   │   │   │       └── BlogPostEditPage.tsx
+│   │   │   ├── components/
+│   │   │   ├── hooks/
+│   │   │   ├── stores/
+│   │   │   └── utils/
 │   │   └── campaign/
+│   │       ├── pages/
+│   │       │   ├── campaign-list/
+│   │       │   │   └── CampaignListPage.tsx
+│   │       │   ├── campaign-create/
+│   │       │   │   └── CampaignCreatePage.tsx
+│   │       │   └── campaign-edit/
+│   │       │       └── CampaignEditPage.tsx
+│   │       ├── components/
+│   │       ├── hooks/
+│   │       ├── stores/
+│   │       └── utils/
 │   ├── providers/
+│   │   ├── AppProviders.tsx
+│   │   ├── QueryProvider.tsx
+│   │   └── CmsEditorProvider.tsx
 │   ├── lib/
-│   └── config/
+│   │   ├── preview.ts
+│   │   └── richText.ts
+│   ├── config/
+│   │   └── navConfig.ts
+│   └── middleware/
+│       └── authGuard.ts
 └── package.json
 ```
+
+Với `cms`, page component nên thiên về composition + editor shell; phần preview/editor-specific widget vẫn giữ private trong feature tương ứng, chỉ đẩy lên `packages/ui` nếu nó thực sự là primitive thuần UI.
 
 ## 10. Provider architecture
 
