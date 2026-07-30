@@ -6,7 +6,7 @@ Mục tiêu của file này là đủ cụ thể để bắt đầu scaffold và
 
 Nếu cần xem riêng phần kiến trúc Frontend cho cả `storefront`, `admin`, `cms` và module chung, xem [`FE-ARCHITECTURE.md`](E:/my-pj/FE/docs/FE/FE-ARCHITECTURE.md).
 
-Nếu cần xem riêng phần design system đã được siết lại cho execution, xem [`FE-DESIGN-SYSTEM.md`](E:/my-pj/FE/docs/FE/FE-DESIGN-SYSTEM.md).
+Nếu cần xem riêng phần design system đã được siết lại cho execution, xem [`FE-ARCHITECTURE.md`](E:/my-pj/FE/docs/FE/FE-ARCHITECTURE.md).
 
 Nếu cần xem riêng phần nền kỹ thuật phải hoàn thành trước mọi feature, xem [`FE-EXECUTION.md`](E:/my-pj/FE/docs/FE/FE-EXECUTION.md).
 

@@ -8,8 +8,7 @@ Nếu bạn chỉ làm FE, hãy bắt đầu ở đây thay vì đọc toàn b�
 
 1. [`FE.md`](./FE.md)
 2. [`FE-ARCHITECTURE.md`](./FE-ARCHITECTURE.md)
-3. [`FE-DESIGN-SYSTEM.md`](./FE-DESIGN-SYSTEM.md)
-4. [`FE-EXECUTION.md`](./FE-EXECUTION.md)
+3. [`FE-EXECUTION.md`](./FE-EXECUTION.md)
 
 ## Vai trò từng file
 
@@ -17,10 +16,7 @@ Nếu bạn chỉ làm FE, hãy bắt đầu ở đây thay vì đọc toàn b�
   Tài liệu FE tổng thể: kiến trúc, stack, package responsibilities, setup baseline, và quyết định đã chốt.
 
 - [`FE-ARCHITECTURE.md`](./FE-ARCHITECTURE.md)
-  Tài liệu chốt riêng cho kiến trúc Frontend: vai trò 3 app, module contract, import boundary, routing/layout/provider/auth architecture.
-
-- [`FE-DESIGN-SYSTEM.md`](./FE-DESIGN-SYSTEM.md)
-  Tài liệu chốt riêng cho design system: token matrix, component inventory, state matrix, a11y baseline, icon/media rules.
+  Tài liệu chốt riêng cho kiến trúc Frontend: vai trò 3 app, module contract, import boundary, routing/layout/provider/auth architecture, và design system (token matrix, component inventory, state matrix, a11y baseline, icon/media rules).
 
 - [`FE-EXECUTION.md`](./FE-EXECUTION.md)
   Foundation checklist, bootstrap steps, dependency matrix, và Definition of Done cho FE.
@@ -28,8 +24,7 @@ Nếu bạn chỉ làm FE, hãy bắt đầu ở đây thay vì đọc toàn b�
 ## Đường đọc theo mục đích
 
 - Muốn hiểu FE tổng thể: `FE.md`
-- Muốn chốt kiến trúc chuẩn cho 3 app và module chung: `FE-ARCHITECTURE.md`
-- Muốn chốt chuẩn design system để build component nhất quán: `FE-DESIGN-SYSTEM.md`
+- Muốn chốt kiến trúc chuẩn cho 3 app và module chung, hoặc chuẩn design system để build component nhất quán: `FE-ARCHITECTURE.md`
 - Muốn biết foundation gồm gì, khi nào pass, bắt đầu scaffold ngay, hoặc xem version/package matrix: `FE-EXECUTION.md`
 
 ## Quan hệ với tài liệu ngoài thư mục này
@@ -46,8 +41,7 @@ Nếu bạn chỉ làm FE, hãy bắt đầu ở đây thay vì đọc toàn b�
 4. `../00-core/decision-log.md`
 5. [`FE.md`](./FE.md)
 6. [`FE-ARCHITECTURE.md`](./FE-ARCHITECTURE.md)
-7. [`FE-DESIGN-SYSTEM.md`](./FE-DESIGN-SYSTEM.md)
-8. [`FE-EXECUTION.md`](./FE-EXECUTION.md)
+7. [`FE-EXECUTION.md`](./FE-EXECUTION.md)
 
 ## Trạng thái hiện tại
 
