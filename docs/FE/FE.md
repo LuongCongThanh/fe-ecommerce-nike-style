@@ -22,7 +22,7 @@ Những quyết định chỉ ảnh hưởng FE foundation và không còn trade
 Những thứ vẫn giữ `Mở` là:
 
 - chi tiết RBAC cho `admin/cms`
-- spike kỹ thuật `MSW + Set-Cookie + Next.js middleware`
+- spike kỹ thuật refresh/retry concurrency + protected-route bootstrapping
 - analytics implementation thật
 - package manifest và lockfile thực tế sau khi scaffold
 
@@ -112,7 +112,7 @@ Lý do:
 
 ## 4.4. Data, contract và state
 
-- `Đã chốt` `Zod` cho schema contract trong `packages/schemas`
+- `Đã chốt` `Zod` cho runtime validation trong `packages/schemas`; transport schemas chuyển sang generated/adapted từ OpenAPI version đã pin sau API v1 handshake
 - `Đã chốt` `MSW` cho mock API
 - `Đã chốt` `TanStack Query` cho server state
 - `Đã chốt` `Zustand` cho client state dùng chung
@@ -121,6 +121,7 @@ Lý do:
 Lý do:
 
 - Decision `#13`: `packages/schemas` dùng Zod
+- Decision `#64`: versioned OpenAPI artifact từ BE là canonical transport contract sau API v1 handshake
 - Decision `#24`: Zustand
 - Decision `#18`: routing pattern `app/[locale]/...` theo `next-intl`
 - Decision `#31`: query key factory cho TanStack Query
@@ -369,5 +370,5 @@ File này tổng hợp từ:
 - `01-delivery/specification/technical-design.md`
 - `01-delivery/specification/implementation-plan.md`
 - `00-core/decision-log.md`
-- `00-core/adr/0004-authentication-mechanism.md`
+- `00-core/adr/0010-jwt-access-with-rotating-refresh.md` (thay thế ADR 0004)
 - `01-delivery/security/security-baseline.md`

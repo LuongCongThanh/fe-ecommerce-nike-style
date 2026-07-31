@@ -41,7 +41,7 @@ Generated from the current documentation set on July 29, 2026.
 
 - `PRD-F021` Online payment gateways are out of scope; MVP is COD-only.
 - `PRD-F022` Third-party headless CMS is out of scope; CMS is custom-built.
-- `PRD-F023` Final backend framework, database, and production infrastructure are not yet committed.
+- `PRD-F023` Backend uses Node.js LTS + TypeScript strict + NestJS modular monolith, PostgreSQL, and Prisma with controlled raw-SQL escape hatches; production infrastructure is not yet committed.
 - `PRD-F024` Advanced RBAC beyond the current baseline is out of scope until later phases.
 - `PRD-F025` Advanced recommendations, AI search, loyalty, gift cards, multi-currency, multi-warehouse, and microservices are out of scope.
 
@@ -55,7 +55,7 @@ Generated from the current documentation set on July 29, 2026.
 
 ## 8. Dependencies
 
-- `PRD-F031` Depends on a future monorepo scaffold with `apps/*` and `packages/*`, which is documented but not yet present in the repository.
+- `PRD-F031` Depends on a future FE Turborepo scaffold with `apps/*` and `packages/*`, plus an independently versioned Backend repository connected through a compatible API contract.
 - `PRD-F032` Depends on schema contracts, MSW mocking, and API envelope alignment between frontend and future backend.
 - `PRD-F033` Depends on unresolved catalog truth, SKU seed data, analytics tooling, logging strategy, and detailed RBAC decisions.
 
@@ -63,7 +63,7 @@ Generated from the current documentation set on July 29, 2026.
 
 - `PRD-F034` The repository currently contains documentation only, so architecture details referenced by many links are not yet backed by implementation artifacts.
 - `PRD-F035` The architecture index points to detailed frontend and backend files that are not present in this checkout, which creates design-document drift risk.
-- `PRD-F036` Authentication depends on a cookie-based flow that still needs a technical spike to prove the mock-first strategy works with middleware.
+- `PRD-F036` Authentication uses short-lived JWT access tokens plus rotating opaque refresh cookies and needs a technical spike for refresh concurrency, reuse detection, and protected-route bootstrapping.
 - `PRD-F037` Search, locale fallback coverage, and backend contract-test completeness have partial traceability today.
 - `PRD-F038` Solo-developer throughput increases the risk of over-scaffolding before business-critical flows are proven.
 

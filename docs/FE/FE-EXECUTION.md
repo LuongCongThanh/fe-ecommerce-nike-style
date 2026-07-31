@@ -1096,7 +1096,7 @@ Test harness:
 Foundation xong **không có nghĩa** các câu hỏi sau đã xong — chúng không chặn foundation, nhưng chặn một số feature hoặc hardening sau đó:
 
 - RBAC chi tiết cho `admin/cms`
-- auth mock spike với middleware (`MSW + Set-Cookie + Next.js middleware`, theo ADR `0004`)
+- auth spike cho refresh/retry concurrency và protected-route bootstrapping (Decision `#65`, ADR `0010`)
 - analytics thật
 - backend integration thật
 - Chưa có code scaffold thật cho `apps/*` và `packages/*`

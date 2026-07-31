@@ -42,7 +42,7 @@ MVP ưu tiên:
 - PLP có `filter`, `sort`, `pagination`, `URL-as-state`
 - PDP chọn `Variant` để ra đúng `SKU`
 - Hiển thị giá và tồn kho theo `SKU`
-- Search cơ bản
+- Search cơ bản theo tên/mô tả/category, không phân biệt dấu và chịu được sai chính tả nhẹ; backend dùng PostgreSQL FTS + `unaccent` + `pg_trgm`
 - Cart cho guest và authenticated user
 - Wishlist cho guest và authenticated user
 - Merge cart sau login
@@ -133,8 +133,8 @@ MVP ưu tiên:
 - Catalog thật và SKU seed ban đầu
 - RBAC chi tiết cho Admin/CMS
 - Analytics tool
-- Monitoring/logging stack
-- Backend framework/database/infra chính thức
+- Monitoring/tracing vendor và dashboard/alert ownership; runtime logging đã chốt ở Decision #70
+- Backend infra chính thức; runtime/framework, PostgreSQL và Prisma đã chốt ở Decision #60–62
 
 ## 10. Nguồn gốc nội dung
 

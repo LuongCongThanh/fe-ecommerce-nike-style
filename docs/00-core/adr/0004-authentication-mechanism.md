@@ -1,6 +1,6 @@
 # Cơ chế Authentication: httpOnly session cookie, không dùng provider ngoài
 
-Status: accepted — xem Decision #22 (`brainstorm-session.md`)
+Status: superseded by ADR-0010 — xem Decision #65
 
 [`../../FE/FE-ARCHITECTURE.md`](../../FE/FE-ARCHITECTURE.md) §11 đã chốt phạm vi (auth có trong MVP — Decision #20) và nguyên tắc bảo mật (không lưu token dài hạn ở `localStorage`, guard ở tầng route), nhưng chưa chọn cơ chế cụ thể. Đây là quyết định ảnh hưởng rộng: chạm cả 3 app, mọi route guard, `packages/hooks/use-auth`, và là nền cho `packages/api-sdk` giai đoạn mock-first lẫn khi có backend thật.
 

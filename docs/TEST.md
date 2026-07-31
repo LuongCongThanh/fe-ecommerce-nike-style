@@ -21,6 +21,8 @@ Chứng minh rằng:
 - `Security test`
 - `Contract parity test`
 
+Backend baseline: Jest + Supertest + Testcontainers PostgreSQL. Backend integration test không dùng database mock; FE Playwright chịu trách nhiệm journey xuyên FE → API.
+
 ## 3. P0 Test Coverage
 
 ### Storefront
@@ -119,7 +121,6 @@ Không nên coi "đã viết code" là bằng chứng đủ.
 
 ## 9. Open Questions
 
-- Chọn test runner chi tiết cho backend/security
 - Chọn cách chạy contract parity suite
 - Chưa có performance-test plan đủ sâu
 

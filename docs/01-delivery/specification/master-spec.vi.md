@@ -21,7 +21,7 @@ File này là bản tổng hợp để đọc nhanh. Nguồn chi tiết vẫn n�
 
 ## 1. Bức tranh tổng quan
 
-Đây là dự án xây một nền tảng e-commerce thời trang và giày thể thao thật, theo hướng business thực tế chứ không phải portfolio hay bài tập. Dự án được thiết kế như một monorepo gồm 3 ứng dụng:
+Đây là dự án xây một nền tảng e-commerce thời trang và giày thể thao thật, theo hướng business thực tế chứ không phải portfolio hay bài tập. Front-end được thiết kế như một Turborepo gồm 3 ứng dụng; Backend modular monolith nằm trong repository riêng:
 
 - `storefront`: ứng dụng khách hàng cuối để duyệt sản phẩm và mua hàng
 - `admin`: ứng dụng vận hành nội bộ
@@ -147,7 +147,6 @@ Các mục sau hiện không nằm trong MVP:
 
 - payment gateway online
 - headless CMS bên thứ ba
-- chốt backend framework thật ngay bây giờ
 - chốt infra production thật ngay bây giờ
 - RBAC chi tiết nhiều role vượt baseline hiện tại
 - recommendation engine
@@ -344,7 +343,7 @@ Frontend target design có các điểm nổi bật:
 Backend hiện chưa được chốt công nghệ thật, nhưng hướng thiết kế đã có một số điểm ràng buộc:
 
 - cần theo shared schema contract
-- cần hỗ trợ auth bằng `httpOnly` session cookie
+- cần hỗ trợ JWT access token ngắn hạn + rotating opaque refresh cookie theo Decision #65
 - cần error envelope nhất quán
 - cần enforce authorization ở server
 - cần audit trail cho inventory, order status, publish
@@ -356,7 +355,9 @@ Backend hiện chưa được chốt công nghệ thật, nhưng hướng thiế
 Ý tưởng cốt lõi của dự án là:
 
 - contract phải được định nghĩa trước
-- FE code dựa trên schema
+- `packages/schemas` là baseline chuyển tiếp để thống nhất API v1
+- sau handshake, versioned OpenAPI artifact do BE phát hành là canonical transport contract
+- FE pin contract version rồi generate client/Zod adapters
 - mock và real API phải cùng shape
 
 Các contract quan trọng cần có:
@@ -381,7 +382,9 @@ Security là phần đã được định nghĩa tương đối rõ trong docs h
 
 Các baseline chính:
 
-- session cookie phải `HttpOnly`
+- refresh cookie phải `HttpOnly`/`Secure`/`SameSite`; token không được lưu trong `localStorage`/`sessionStorage`
+- mỗi app có domain độc lập nhưng browser gọi same-origin `/api/*`; hosting/reverse proxy chuyển tiếp sang Backend
+- refresh cookie là first-party, host-only theo từng app; không phụ thuộc third-party cookie
 - `Secure` khi có HTTPS
 - `SameSite` phù hợp
 - session phải có timeout
@@ -389,7 +392,7 @@ Các baseline chính:
 - password có policy tối thiểu
 - reset token có TTL và one-time use
 - auth endpoint cần rate limit
-- mutation dùng cookie auth phải có CSRF strategy trước soft launch
+- endpoint dùng refresh cookie phải có CSRF strategy trước soft launch
 - backend phải enforce permission
 - public CMS content phải sanitize
 - analytics và logs không được chứa PII/raw secret
@@ -432,10 +435,8 @@ Storefront bị ràng buộc chặt hơn vì là public-facing và có SEO.
 - ai sở hữu dashboard/event
 - logging/monitoring production-like cụ thể ra sao
 
-### 17.4. Backend tech choice
+### 17.4. Phần Backend tech còn mở
 
-- framework backend
-- database
 - infra
 
 ## 18. Kế hoạch triển khai đề xuất

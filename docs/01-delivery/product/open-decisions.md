@@ -12,7 +12,7 @@ File này gom các quyết định còn mở từ `planning/`, `requirements/`, 
 
 | Decision | Bối cảnh | Owner | Need by | Fallback tạm thời |
 |---|---|---|---|---|
-| Logging/monitoring runtime | Ảnh hưởng error handling production-like | Engineering | Trước Phase 5 | `console.error` + endpoint log nội bộ tối thiểu |
+| Monitoring/tracing vendor | Runtime logging đã chốt Pino + correlation ID + PostgreSQL audit trail ở Decision `#70`; còn vendor ingest/dashboard/alerting | Engineering | Trước staging | Giữ log JSON vendor-neutral, chưa thêm OpenTelemetry/Sentry/Datadog ở Phase 0 |
 | Validation env đầy đủ | Ảnh hưởng fail-fast config ngoài mocking flag | Engineering | Trước khi có API thật | Chuẩn hoá `NEXT_PUBLIC_API_MOCKING` trước, env khác thêm dần |
 | Analytics tool và event ownership | Ảnh hưởng đo success metrics | Product + Engineering | Trước soft launch | Giữ event list làm contract tạm, chưa gắn vendor cụ thể |
 | Release definition cho Launch 1 | Ảnh hưởng ưu tiên và kỳ vọng stakeholder | Product / Founder | Trước khi bắt đầu Phase 5 | Dùng `Launch-blocking` trong [`release-slicing.md`](release-slicing.md) làm mốc tạm |

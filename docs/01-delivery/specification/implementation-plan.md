@@ -165,8 +165,8 @@ This plan assumes the future implementation will be added under `E:\my-pj\FE` an
 - Detailed changes:
   - implement sign up, sign in, forgot password, reset password
   - implement account profile, address, and order history views
-  - implement cookie-based session integration
-  - run the documented auth spike if not already proven
+  - implement JWT access + rotating opaque refresh integration
+  - run the documented refresh/retry and protected-route bootstrap spike if not already proven
 - Unit tests: auth helpers and guard utilities
 - Integration tests: auth form flows and account data loading
 - E2E tests: sign in, sign up, and protected-route access
@@ -174,8 +174,8 @@ This plan assumes the future implementation will be added under `E:\my-pj\FE` an
   - auth unit and integration suite
   - Playwright auth or account suite
 - Expected result: authenticated customer journey works without violating the security baseline
-- Risk: mock cookie and middleware strategy may fail and force a technical adjustment
-- Definition of Done: auth flows pass tests and the chosen cookie strategy is technically proven
+- Risk: concurrent refresh or retry behavior may produce token-family false positives or inconsistent auth state
+- Definition of Done: auth flows pass tests and refresh rotation/reuse detection are technically proven
 
 ## Task TSK-007
 

@@ -16,7 +16,8 @@ Không tự bịa thêm pipeline hay hạ tầng cụ thể khi source docs chư
 
 ## 2. Những gì đã biết
 
-- Dự án là monorepo hướng tới `storefront`, `admin`, `cms`
+- FE là monorepo hướng tới `storefront`, `admin`, `cms`; Backend nằm ở repository/deployment riêng
+- Mỗi FE app có registrable domain độc lập và expose same-origin `/api/*` proxy tới Backend
 - Hiện chưa có backend thật
 - Hiện chưa có infra production thật
 - Hiện chưa chốt CI/CD stack
@@ -43,6 +44,13 @@ Khi dự án bước sang giai đoạn code thật, DevOps tối thiểu phải 
   - test/staging nếu có
   - production
 - Có flag rõ cho mock API và real API
+- Local Backend: NestJS chạy trên host; Docker Compose chạy PostgreSQL + Mailpit
+- Dependency image phải pin version, có health check; PostgreSQL dùng named volume
+- Integration test dùng database container riêng, không dùng development database
+- Background jobs V1 dùng PostgreSQL transactional outbox/job table; chưa thêm Redis/BullMQ vì workload hiện tại chưa cần queue service riêng
+- Chưa triển khai Elasticsearch/OpenSearch/Meilisearch; PostgreSQL extensions `unaccent` và `pg_trgm` phải được migration/bootstrap nhất quán giữa local, test và production
+- CI Backend chạy Jest + Supertest; Testcontainers cung cấp PostgreSQL thật cho integration test
+- Contract job kiểm versioned OpenAPI compatibility trước khi phát hành artifact
 
 ### 4.2. Build & CI
 
@@ -59,14 +67,20 @@ Khi dự án bước sang giai đoạn code thật, DevOps tối thiểu phải 
 ### 4.4. Deploy
 
 - Storefront/Admin/CMS cần chiến lược deploy rõ
-- Backend về sau cũng cần deploy độc lập hoặc bán-độc-lập theo kiến trúc được chốt
+- Backend deploy độc lập; mỗi FE hosting/CDN phải có reverse proxy/rewrite `/api/*` tới Backend, giữ nguyên business path `/api/v1/*`
+- Production không dùng local disk cho Product/CMS media; cấu hình S3-compatible bucket và CDN nằm ngoài source, quyền upload/read tuân theo least privilege
+- Giới hạn request/body timeout phải phù hợp streaming upload V1; metric bandwidth/size/error dùng làm bằng chứng trước khi chuyển sang presigned direct upload
 - Cần rollback path tối thiểu
 
 ### 4.5. Observability
 
-- Logging tối thiểu
-- Request correlation cho flow critical
-- Audit trail cho action nhạy cảm
+- Pino structured JSON logging; pretty output chỉ ở development
+- Request/correlation ID xuyên proxy → Backend → response/log
+- Redaction bắt buộc cho credential, token và PII không cần thiết
+- PostgreSQL audit trail riêng cho action nhạy cảm
+- Version-neutral liveness/readiness endpoints tại `/health/live` và `/health/ready`
+- Monitoring/tracing vendor chốt trước staging, không chặn Phase 0
+- Readiness phải phản ánh khả năng truy cập job table; metric tối thiểu gồm pending/oldest-job age, retry/dead-letter count và processing duration
 
 ## 5. Liên hệ với Security
 
@@ -74,6 +88,7 @@ DevOps phải hỗ trợ tối thiểu:
 
 - HTTPS ở môi trường phù hợp
 - cookie `Secure` khi có HTTPS
+- first-party host-only refresh cookie qua same-origin API proxy; không phụ thuộc third-party cookie
 - logging không lộ PII hoặc secret
 - audit trail persistence
 
@@ -90,7 +105,7 @@ DevOps phải hỗ trợ:
 - Hosting/platform cho frontend
 - Hosting/platform cho backend
 - CI/CD tool nào
-- Monitoring/logging stack nào
+- Monitoring/tracing vendor nào trước staging
 - Có staging environment hay không
 - Chiến lược rollout/rollback cụ thể
 

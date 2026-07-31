@@ -16,7 +16,7 @@ Generated from the repository state on July 29, 2026.
 
 ## 2. Proposed Architecture
 
-- Target architecture is a Turborepo monorepo with:
+- Target FE architecture is a Turborepo monorepo with:
   - `apps/storefront`
   - `apps/admin`
   - `apps/cms`
@@ -46,7 +46,9 @@ Generated from the repository state on July 29, 2026.
   - commerce-specific components shared where justified
   - URL state for PLP browse flows
   - TanStack Query-style server-state ownership and lightweight client-state ownership
-- `[Assumption]` The eventual implementation will follow the monorepo structure documented in the brainstorm session and decision log because no code scaffold exists yet.
+- `[Assumption]` The FE implementation will follow the documented Turborepo structure; the NestJS modular monolith will live in a separate repository and integrate through a versioned API contract (Decision #63).
+- `[Decision]` Local Backend runs NestJS on the host; Docker Compose provides pinned PostgreSQL and Mailpit services. Integration tests use an isolated database container; Redis/BullMQ remain deferred because V1 background work uses the PostgreSQL outbox/job queue (Decisions #68, #77).
+- `[Decision]` Backend tests use Jest, Supertest, and Testcontainers PostgreSQL; database integration is never proven with mocks. FE Playwright owns cross-repository user journeys (Decision #69).
 
 ## 4. Backend Design
 
@@ -61,21 +63,30 @@ Generated from the repository state on July 29, 2026.
   - Admin and CMS APIs
   - testing, security, observability
   - frontend integration
-- Proposed backend shape is still open at the technology level.
+- The Backend technology foundation is confirmed in Decisions #60–#75; remaining infrastructure vendors and selected module policies are still open.
 - Confirmed backend-level constraints:
-  - auth should align to `httpOnly` session-cookie strategy
+  - auth uses an in-memory JWT access token plus rotating opaque refresh token in a first-party `HttpOnly` cookie (Decision #65)
   - API responses should follow a shared envelope
   - server should enforce permissions, CSRF strategy, rate limits, audit trails, and sanitize public content
 
 ## 5. API Contracts
 
-- API contracts are expected to be defined first in `packages/schemas`.
+- `packages/schemas` is the transitional baseline for the API v1 handshake.
+- After that handshake, the Backend publishes the canonical versioned OpenAPI artifact; FE pins a version and generates its TypeScript client and Zod adapters.
+- Backend transport types use Nest DTO classes, `class-validator`/`class-transformer`, global `ValidationPipe`, and `@nestjs/swagger`; no manually duplicated Zod transport schemas live in the Backend (Decision #71, ADR 0012).
+- Business endpoints use NestJS URI versioning at `/api/v1`; `/health/live` and `/health/ready` are version-neutral. OpenAPI artifact SemVer is independent from the URI major version (Decision #73).
+- NestJS uses the default Express adapter for the initial Backend. Native Express request/response types remain at the HTTP edge and do not leak into application or domain services (Decision #74).
+- Catalog search uses PostgreSQL Full-Text Search, `unaccent`, and `pg_trgm`; Prisma remains the default data access while extension/index migrations and specialized search queries may use parameterized raw SQL (Decision #75).
+- Product and CMS media use an S3-compatible `ObjectStorage` port. V1 streams Backend-mediated multipart uploads to storage while PostgreSQL persists only `Asset` metadata; public CDN delivery is gated by publish state (Decision #76).
+- Background effects use a PostgreSQL transactional outbox/durable job table with `SKIP LOCKED` claims, at-least-once delivery, idempotent handlers, retry/backoff, and dead-letter state. The V1 worker runs in-process behind a separable boundary (Decision #77).
 - Contract properties already documented:
   - stable request and response shapes
   - stable error envelope
   - support for filter, sort, pagination
   - auth and authorization responses aligned with FE expectations
   - real API and mock API must preserve the same contract
+  - breaking changes require a new contract version and CI compatibility evidence
+  - unknown/non-whitelisted request fields are rejected and validation errors preserve the stable error envelope
 - `[Question]` Exact endpoint inventory is referenced by traceability docs but not fully present in this checkout.
 
 ## 6. Data Model
@@ -105,15 +116,20 @@ Generated from the repository state on July 29, 2026.
 ## 8. Authentication And Authorization
 
 - Chosen direction:
-  - `httpOnly` session cookie
-  - `Secure` over HTTPS
-  - `SameSite=Lax` or stricter if supported by the final flow
+  - short-lived JWT access token held in browser memory and sent as a Bearer token
+  - rotating opaque refresh token in an `HttpOnly`, `Secure`, `SameSite` cookie
+  - hashed refresh-token family state in PostgreSQL for revocation and reuse detection
+  - no auth tokens in `localStorage` or `sessionStorage`
+  - `storefront` TTL: 10-minute access, 7-day refresh idle, 30-day absolute family lifetime
+  - `admin`/`cms` TTL: 5-minute access, 8-hour refresh idle, 24-hour absolute family lifetime
+  - each FE app has an independent registrable domain and calls same-origin `/api/*`; hosting proxies to the separate Backend deployment
+  - refresh cookies remain first-party and host-only per app; no direct cross-site credentialed refresh flow
   - FE route guards for UX only
   - backend enforcement for true authorization
 - Open design item:
   - detailed Admin and CMS RBAC matrix beyond the current baseline
 - Technical risk:
-  - the mock-first cookie strategy still needs a spike to verify middleware and MSW behavior together
+  - refresh/retry concurrency, token-family reuse detection, and protected-route bootstrapping need a focused spike before auth feature implementation
 
 ## 9. Loading, Empty, And Error States
 
@@ -129,7 +145,7 @@ Generated from the repository state on July 29, 2026.
 ## 10. Security
 
 - Baseline controls already defined:
-  - password policy
+  - password policy and Argon2id hashing (`m=19456 KiB`, `t=2`, `p=1` minimum), production benchmark, and rehash-on-login
   - reset-token TTL and one-time use
   - auth rate limiting
   - CSRF strategy before soft launch
@@ -150,13 +166,13 @@ Generated from the repository state on July 29, 2026.
 
 ## 12. Observability
 
-- Observability is still partially open.
-- Known required elements:
-  - runtime logging
-  - request or trace correlation on critical flows
-  - analytics event contract
-  - audit trails
-- `[Question]` Vendor choice, dashboard ownership, and production monitoring stack are not yet decided.
+- Pino/`nestjs-pino` structured JSON logs in production and pretty output in development.
+- Request/correlation ID propagates through proxy, Backend, response headers, and logs.
+- Credentials, tokens, cookies, and unnecessary PII are redacted.
+- Inventory, order status, Admin, and CMS publish actions write a separate PostgreSQL audit trail.
+- Liveness and readiness health endpoints are required.
+- Analytics event contracts remain separate from operational logs and audit records.
+- `[Question]` Monitoring/tracing vendor, dashboard ownership, and alert routing must be chosen before staging; Phase 0 remains vendor-neutral (Decision #70).
 
 ## 13. Migration
 
@@ -189,9 +205,18 @@ Generated from the repository state on July 29, 2026.
 - Chosen: custom CMS over third-party headless CMS.
   - Benefit: full control.
   - Risk: larger implementation surface for a solo developer.
-- Chosen: cookie-based auth over hosted provider or localStorage token storage.
-  - Benefit: safer baseline and stable future backend contract.
-  - Risk: higher implementation and mocking complexity now.
-- Deferred: backend framework and infrastructure.
-  - Benefit: avoids premature commitment.
-  - Risk: some contract and delivery decisions remain provisional.
+- Chosen: short-lived JWT access token plus rotating opaque refresh token over a server-side session or browser-stored long-lived JWT (Decision #65, ADR 0010).
+  - Benefit: JWT-based API authorization while retaining refresh revocation and reuse detection.
+  - Risk: higher refresh, retry, and browser bootstrapping complexity than an opaque session.
+- Chosen: Node.js LTS + TypeScript strict + NestJS modular monolith for the backend (Decision #60, ADR 0005).
+  - Benefit: one TypeScript ecosystem, explicit module boundaries, and a conventional path for a first-time Backend developer.
+  - Risk: Backend fundamentals such as transactions, concurrency, and security still require deliberate learning and testing.
+- Chosen: PostgreSQL as the Backend primary database (Decision #61, ADR 0006).
+  - Benefit: relational constraints and transaction semantics fit the commerce domain and inventory concurrency requirements.
+  - Risk: critical transactions still require explicit isolation, locking, retry, and integration tests.
+- Chosen: Prisma as the default data-access layer, with controlled raw SQL for exceptional transaction, locking, or query needs (Decision #62, ADR 0007).
+  - Benefit: type-safe queries, migrations, and accessible tooling without giving up PostgreSQL-specific control on critical paths.
+  - Risk: developers must avoid assuming Prisma removes the need to understand SQL and transaction semantics.
+- Deferred: backend infrastructure.
+  - Benefit: infrastructure can be evaluated against the confirmed application and persistence stack.
+  - Risk: some persistence and delivery decisions remain provisional.

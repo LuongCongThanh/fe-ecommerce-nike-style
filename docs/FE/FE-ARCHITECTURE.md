@@ -21,7 +21,7 @@ Sau file này, phần kiến trúc FE được coi là **đủ chuẩn để exe
 Những phần vẫn còn mở sau file này không còn là câu hỏi kiến trúc lớn, mà chủ yếu là:
 
 - chi tiết RBAC thật cho `admin/cms`
-- auth spike với `MSW + Set-Cookie + Next.js middleware`
+- auth spike cho refresh/retry concurrency và protected-route bootstrapping
 - package manifest thật sau khi scaffold code
 
 ## 2. Nguyên tắc kiến trúc đã chốt
@@ -191,9 +191,9 @@ Không nhét mọi thứ của storefront vào đây chỉ vì "có thể share 
 
 ### 6.5. `packages/schemas`
 
-Chứa: request schemas, response schemas, error envelope schemas, domain DTO schemas.
+Chứa: request schemas, response schemas, error envelope schemas, domain DTO schemas; trước API v1 handshake đây là baseline chuyển tiếp, sau đó các transport schema phải được generate hoặc đối chiếu từ OpenAPI version đã pin.
 
-Đây là nguồn contract-first quan trọng nhất của FE.
+Đây là runtime validation/form schema boundary của FE. Sau API v1 handshake, canonical transport contract nằm ở versioned OpenAPI artifact do BE phát hành (Decision `#64`); không duy trì transport DTO thủ công song song với OpenAPI.
 
 ### 6.6. `packages/api-sdk`
 
@@ -485,7 +485,13 @@ Nguyên tắc:
 
 ## 11.1. Auth baseline
 
-- FE phụ thuộc `httpOnly` session-cookie
+- FE giữ JWT access token ngắn hạn trong memory và gửi bằng Bearer header
+- opaque refresh token nằm trong cookie `HttpOnly`/`Secure`/`SameSite`; FE không đọc trực tiếp
+- không lưu access/refresh token trong `localStorage`/`sessionStorage`
+- `storefront`: access 10 phút; refresh idle 7 ngày; absolute 30 ngày
+- `admin`/`cms`: access 5 phút; refresh idle 8 giờ; absolute 24 giờ
+- mỗi app có registrable domain độc lập nhưng chỉ gọi same-origin `/api/*`; hosting/reverse proxy chuyển tiếp tới Backend
+- refresh cookie là first-party, host-only theo app; không gọi trực tiếp cross-site Backend bằng cookie
 - middleware và protected layout là UX gate
 - backend là nơi enforce permission thật
 
@@ -493,7 +499,7 @@ Nguyên tắc:
 
 | App | Baseline auth |
 |---|---|
-| `storefront` | session cho account/checkout nếu có |
+| `storefront` | JWT access + refresh flow cho account/checkout |
 | `admin` | protected shell bắt buộc |
 | `cms` | protected shell bắt buộc |
 
@@ -501,7 +507,7 @@ Nguyên tắc:
 
 - RBAC thật cho `admin/cms`
 - mapping role -> route visibility
-- spike xác nhận `MSW + Set-Cookie + Next.js middleware`
+- spike xác nhận refresh/retry concurrency và protected-route bootstrapping
 
 Vì vậy phần auth architecture hiện đã đủ khung, nhưng chưa được coi là fully closed ở mức permission detail.
 

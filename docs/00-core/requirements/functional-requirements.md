@@ -25,8 +25,8 @@ ID trong file này là ID gốc. Các matrix traceability phải tham chiếu ng
 
 - Nền tảng e-commerce thời trang/giày thể thao thật, hướng kinh doanh (kiểu Nike), không phải portfolio/học tập (Decision #2).
 - Solo dev, không có deadline cố định — ưu tiên chất lượng và nhịp độ bền vững hơn tốc độ (Decision #9).
-- Mock-first: chưa có backend thật, chưa chọn framework backend (Decision #3). Toàn bộ Front-end build trên MSW + `packages/schemas` (Contract-first ở tầng schema — Decision #13).
-- Ba ứng dụng trong một monorepo: `storefront`, `admin`, `cms` (Decision #4, #5).
+- Mock-first: chưa có backend thật; runtime/framework đã chốt là Node.js LTS + TypeScript strict + NestJS modular monolith (Decision #60), primary database là PostgreSQL (Decision #61), Prisma là data-access mặc định (Decision #62), nhưng infra vẫn để ngỏ. Front-end ban đầu build trên MSW + `packages/schemas`; sau API v1 handshake, versioned OpenAPI artifact từ BE là canonical transport contract và FE generate client/Zod adapters theo phiên bản đã pin (Decision #13, #64).
+- Ba ứng dụng FE trong một Turborepo: `storefront`, `admin`, `cms` (Decision #4, #5). Backend là modular monolith trong repository riêng, độc lập về source/lifecycle/deployment (Decision #63).
 
 ## 2. Non-goals của MVP
 
@@ -34,7 +34,7 @@ Các mục sau **không** thuộc MVP, dù `implementation-plan.md` có đề c�
 
 - Payment gateway online (Stripe/VNPay/MoMo...) — MVP chỉ **COD** (Decision #7).
 - Headless CMS bên thứ ba — CMS tự xây (Decision #6).
-- Chọn/chốt framework backend thật, database thật, hạ tầng deploy thật — để giai đoạn sau, sau khi FE ổn định (Decision #3, brainstorm-session §3.1).
+- Chọn/chốt hạ tầng deploy thật — runtime/framework, PostgreSQL và Prisma đã được chốt ở Decision #60–62.
 - Timeline cam kết theo tuần/tháng — roadmap chỉ có phase + exit criteria, không có mốc thời gian (Decision #9).
 - RBAC nhiều vai trò phức tạp (Super Admin/Catalog Manager/Order Operator/Content Editor/Marketing Manager/Read-only Analyst) — đây là danh sách tham khảo từ `implementation-plan.md`, **chưa** được xác nhận là quyết định; số vai trò thật và quyền hạn cụ thể còn là open question (brainstorm-session §3.3).
 - Recommendation engine, AI Search, multi-warehouse, loyalty nâng cao, gift card, multi-currency, microservices — ngoài phạm vi MVP và giai đoạn kế tiếp gần.

@@ -117,5 +117,5 @@ Derived from the current documentation set on July 29, 2026.
 
 - `[Question]` Analytics event schema, observability tooling, and release-governance ownership remain open.
 - `[Question]` Detailed RBAC roles and permissions for Admin and CMS remain open.
-- `[Question]` Final backend framework, database choice, and infrastructure remain open.
+- `[Question]` Final backend infrastructure remains open; runtime/framework, PostgreSQL, and Prisma are fixed by Decision #60–62.
 - `[Assumption]` Requirements not explicitly present in the source docs are intentionally left unspecified here.

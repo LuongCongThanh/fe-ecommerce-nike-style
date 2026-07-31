@@ -70,8 +70,10 @@
 |---|---|---|---|---|---|---|
 | SEC-001 | SEC-01, SF-08 | Backend integration / security | Login brute-force vượt ngưỡng rate limit bị throttle | P0 | Nhận lỗi throttle, không leak account existence | Planned |
 | SEC-002 | SEC-01, SF-08 | Backend integration / security | Reset token dùng lại lần 2 bị từ chối | P0 | Token one-time only được enforce | Planned |
-| SEC-003 | SEC-01 | Backend integration / security | Session cookie có `HttpOnly`, `Secure`, `SameSite` đúng môi trường | P0 | Header/cookie attribute đúng | Planned |
-| SEC-004 | SEC-01 | Backend integration / security | Mutation auth cookie có CSRF guard theo strategy đã chọn | P1 | Request thiếu bảo vệ bị từ chối | Planned |
+| SEC-003 | SEC-01 | Backend integration / security | Refresh cookie có `HttpOnly`, `Secure`, `SameSite` đúng môi trường; access token không nằm trong browser storage | P0 | Header/cookie attribute và storage assertion đúng | Planned |
+| SEC-004 | SEC-01 | Backend integration / security | Refresh endpoint có CSRF guard theo strategy đã chọn; token rotation/reuse detection hoạt động | P1 | Request thiếu bảo vệ hoặc reuse token bị từ chối | Planned |
+| SEC-009 | SEC-01 | Backend integration / security | Access, idle và absolute TTL đúng profile `storefront` so với `admin`/`cms` | P0 | Token/family hết hạn đúng boundary và bắt đăng nhập lại | Planned |
+| SEC-010 | SEC-01 | Backend integration / security | Password mới được lưu dưới dạng Argon2id PHC string đúng baseline; hash dùng parameters cũ được rehash sau login thành công | P0 | Không có plaintext/reversible password; verify và lazy migration đều pass | Planned |
 | SEC-005 | SEC-02 | Unit / contract review | Analytics payload không chứa email, phone, address, token | P0 | Event schema hoặc runtime assertion pass | Planned |
 | SEC-006 | CMS-X1, SEC-01 | Integration / security | CMS content nguy hiểm bị sanitize trước khi render public | P0 | Payload chứa script/html nguy hiểm không execute/render raw | Planned |
 | SEC-007 | AD-06, CMS-X1 | Backend integration / authorization | Permission check server-side theo RBAC matrix | P0 | `403` cho role sai, success cho role đúng | Planned |
@@ -86,6 +88,14 @@
 | BE-INT-003 | NFR-03, SF-07 | Backend integration | Place order idempotency: retry không tạo duplicate | P0 | Cùng idempotency key chỉ tạo 1 order | Planned |
 | BE-INT-004 | SF-08, SF-09 | Backend integration | Auth/account endpoint trả `401/403/validation` đúng envelope | P0 | Error envelope + status code đúng | Planned |
 | BE-INT-005 | AD-06, CMS-X1 | Backend integration | Admin/CMS mutation trả `403` đúng khi role không đủ quyền | P0 | Permission contract đúng | Planned |
+| BE-INT-006 | NFR-03 | Backend contract / routing | Business routes chỉ expose qua `/api/v1`; health routes version-neutral; OpenAPI artifact SemVer không tự tạo URI major mới | P0 | Routing assertions và generated OpenAPI paths/version metadata pass | Planned |
+| BE-INT-007 | NFR-03 | Backend smoke / architecture | Express adapter bootstrap cùng global validation, error filter và logging; application/domain service không phụ thuộc native Express types | P0 | Smoke test pass và architecture lint/import rule pass | Planned |
+| BE-INT-008 | SF-04, NFR-03 | Backend integration / database | Search catalog khớp có dấu/không dấu, typo nhẹ và partial query; kết quả relevance/pagination ổn định | P0 | PostgreSQL FTS/`unaccent`/`pg_trgm` assertions pass trên database thật | Planned |
+| BE-PERF-001 | SF-04, NFR-01 | Backend performance / query plan | Search trên dataset đại diện dùng index và đạt budget được lượng hóa trước staging | P1 | `EXPLAIN (ANALYZE, BUFFERS)` evidence; không regression sang full table scan ngoài case đã chấp nhận | Planned |
+| BE-INT-009 | AD-01, CMS-X1, SEC-01 | Backend integration / storage | Authorized multipart upload stream tới object storage và chỉ lưu `Asset` metadata; wrong type/size/content bị từ chối | P0 | Storage adapter + PostgreSQL assertions pass; process không buffer toàn file | Planned |
+| SEC-011 | CMS-X1, SEC-01 | Backend integration / authorization | Draft/preview asset không public; publish cần đúng quyền, mở CDN delivery và tạo audit record | P0 | Unauthorized/private read bị từ chối; authorized publish transition pass | Planned |
+| BE-INT-010 | SF-08, SF-07 | Backend integration / jobs | Domain mutation và outbox job cùng commit/rollback; process restart không làm mất pending job | P0 | PostgreSQL transaction/restart assertions pass | Planned |
+| BE-INT-011 | SF-07, NFR-03 | Backend concurrency / jobs | Nhiều worker claim bằng `SKIP LOCKED`; retry/dead-letter đúng policy và duplicate delivery không nhân đôi side effect | P0 | Concurrent Testcontainers suite + idempotency evidence pass | Planned |
 
 ## Coverage Gaps Còn Lại
 
@@ -93,7 +103,7 @@
 |---|---|---|
 | TT-01 | Chưa có ID test case thực thi trong repo vì chưa tới giai đoạn code/test thật | Khi bắt đầu viết test, giữ nguyên `Test ID` này và map sang file test thật |
 | TT-02 | Security test hiện mới ở mức plan, chưa có runner/framework riêng mô tả chi tiết | Khi backend thật bắt đầu, bổ sung strategy cho security/integration runner |
-| TT-03 | Chưa có performance test case cụ thể cho search, checkout, admin/cms | Khi performance budget được lượng hoá sâu hơn, thêm section performance test coverage |
+| TT-03 | Đã có query-plan case cho search nhưng chưa lượng hóa latency/dataset budget; checkout, admin/cms vẫn chưa có performance case cụ thể | Trước staging, chốt dataset/latency budget cho search và thêm performance coverage cho các critical flow còn lại |
 
 ## Quan hệ với các tài liệu khác
 

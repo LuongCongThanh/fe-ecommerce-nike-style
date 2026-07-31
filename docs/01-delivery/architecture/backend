@@ -4,7 +4,7 @@
 
 Cùng nguyên tắc với [`../frontend/11-roadmap.md`](../frontend/11-roadmap.md): **không có mốc thời gian cụ thể** (Decision #9 — solo dev, ưu tiên chất lượng). Chia theo phase với exit criteria kiểm chứng được, không theo tuần/tháng — khác với timeline 43-tuần của `implementation-plan.md` (chỉ tham khảo, Decision #11).
 
-Backend chỉ bắt đầu triển khai thật sau khi Front-end đủ ổn định để biết chắc contract cần gì (xem `planning/brainstorm-session.md` §3.1 — chưa cần trả lời framework backend cho tới giai đoạn này).
+Backend là NestJS modular monolith trong repository riêng, độc lập với FE Turborepo về source, lifecycle và deployment (Decision #60, #63). Hai repository tích hợp qua versioned OpenAPI artifact do BE phát hành sau API v1 handshake; Backend không import trực tiếp source từ `packages/schemas` (Decision #64).
 
 ## Phase 0 — Quyết định nền tảng
 
@@ -13,7 +13,7 @@ Backend chỉ bắt đầu triển khai thật sau khi Front-end đủ ổn đ�
 **Exit criteria**:
 
 - Đã chọn framework/ngôn ngữ, database, kiến trúc tổng thể (modular monolith hay khác) — mỗi lựa chọn có lý do chọn, phương án khác đã cân nhắc.
-- Đã đối chiếu `packages/schemas` thật với domain model nháp ở `domain-model.md`, chạy phiên grilling cho Cart/Order/Inventory nếu chưa có trong `glossary.md`.
+- Đã đối chiếu `packages/schemas` baseline với domain model, thống nhất OpenAPI v1 và chạy phiên grilling cho Cart/Order/Inventory nếu chưa có trong `glossary.md`.
 
 ## Phase 1 — Project Foundation
 
@@ -22,8 +22,15 @@ Backend chỉ bắt đầu triển khai thật sau khi Front-end đủ ổn đ�
 **Exit criteria**:
 
 - Local environment khởi động bằng một lệnh.
+- `docker compose up -d` khởi động PostgreSQL + Mailpit có health check; NestJS chạy host bằng `pnpm start:dev`.
+- Application bootstrap dùng `@nestjs/platform-express`; smoke test chứng minh HTTP adapter, global pipes, exception filter và logging hoạt động cùng nhau (Decision #74).
 - API trả error envelope đúng shape đã chốt ở [`api-contracts.md`](./api-contracts.md).
-- Có OpenAPI spec khớp `packages/schemas`.
+- Có versioned OpenAPI artifact khớp baseline v1; CI kiểm tra compatibility và FE có thể generate client/Zod adapters từ artifact đã pin.
+- Global `ValidationPipe` dùng DTO + `class-validator`/`class-transformer`, từ chối unknown fields; request và response đều được mô tả trong `@nestjs/swagger`.
+- NestJS URI versioning phục vụ business routes dưới `/api/v1`; health routes `/health/live` và `/health/ready` là version-neutral (Decision #73).
+- OpenAPI artifact dùng SemVer độc lập; compatible change không tạo URI major mới, breaking change mới mở `/api/v2`.
+- Native Express request/response không đi vào application/domain layer; chỉ HTTP/infrastructure edge được phép phụ thuộc platform API khi Nest abstraction không đủ.
+- PostgreSQL transactional outbox/job table có migration, poller, retry/backoff, dead-letter và health/metrics baseline; worker V1 chạy cùng application nhưng không gắn business handler vào HTTP controller (Decision #77).
 
 ## Phase 2 — Identity & Customer
 
@@ -31,9 +38,10 @@ Backend chỉ bắt đầu triển khai thật sau khi Front-end đủ ổn đ�
 
 **Exit criteria**:
 
-- Password hash an toàn; session/refresh strategy nhất quán với cơ chế cookie `httpOnly` đã chốt phía FE (Decision #22, ADR 0004).
+- Password hash dùng Argon2id đúng baseline Decision #72, có verify/rehash-on-login; JWT access + rotating opaque refresh strategy nhất quán Decision #65 và ADR 0010, bao gồm revoke/reuse detection.
 - Authorization guard enforce ở server, không chỉ ẩn UI.
 - Password policy, reset token TTL, rate limiting, session timeout và auth error wording đạt baseline ở [`../../security/security-baseline.md`](../../security/security-baseline.md).
+- Forgot/reset và notification email được enqueue atomically qua outbox; API không chờ mail provider và không mất job nếu process dừng sau commit.
 
 ## Phase 3 — Catalog
 
@@ -44,6 +52,8 @@ Backend chỉ bắt đầu triển khai thật sau khi Front-end đủ ổn đ�
 - Slug và SKU unique.
 - Không hard-delete Product đã xuất hiện trong Order.
 - API hỗ trợ filter/sort/pagination đúng contract đã chốt.
+- Search catalog dùng PostgreSQL FTS + `unaccent` + `pg_trgm`, có index và relevance ordering; không cần external search service ở MVP (Decision #75).
+- Integration test cover accent-insensitive query, typo nhẹ, partial match, empty query/result và deterministic pagination; query plan kiểm chứng index trên dataset đại diện.
 
 ## Phase 4 — Inventory
 
@@ -53,6 +63,7 @@ Backend chỉ bắt đầu triển khai thật sau khi Front-end đủ ổn đ�
 
 - Không oversell trong transaction cạnh tranh (test cụ thể, không chỉ code review).
 - Stock movement có audit trail.
+- Reservation expiry sweep idempotent, claim job an toàn khi nhiều application instance cùng chạy.
 
 ## Phase 5 — Cart & Wishlist
 
@@ -81,6 +92,7 @@ Backend chỉ bắt đầu triển khai thật sau khi Front-end đủ ổn đ�
 
 - API enforce authorization ở server (không dựa vào việc ẩn UI).
 - CMS có draft/published state, storefront chỉ đọc content đã publish.
+- Product/CMS upload qua Backend và stream tới `ObjectStorage`; persistence chỉ giữ `Asset` metadata. Draft/preview object private, public CDN delivery chỉ sau publish (Decision #76).
 - Permission mapping khớp [`rbac-matrix.md`](./rbac-matrix.md), không còn endpoint mutation nào dùng quy tắc "bất kỳ admin nào cũng được".
 
 ## Phase 8 — Testing, Security, Observability
@@ -90,8 +102,10 @@ Backend chỉ bắt đầu triển khai thật sau khi Front-end đủ ổn đ�
 **Exit criteria**:
 
 - Domain rule quan trọng có unit test.
-- API chính có integration test dùng database thật (container).
-- Có log/metric tối thiểu cho các luồng critical (checkout, order).
+- Unit/module test dùng Jest; HTTP integration/e2e dùng Supertest.
+- API chính có integration test dùng Testcontainers PostgreSQL, không mock database.
+- Có Pino structured logs, redaction và request/correlation ID cho các luồng critical (checkout, order).
+- Sensitive mutation tạo PostgreSQL audit record riêng; liveness/readiness health endpoints hoạt động.
 - Security baseline trong [`../../security/security-baseline.md`](../../security/security-baseline.md) đã có bằng chứng kiểm tra cho auth, CMS publish/preview, và audit trail.
 
 ## Phase 9 — Integration với Front-end

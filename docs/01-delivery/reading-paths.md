@@ -61,7 +61,7 @@ Sau đường đọc này, bạn đủ để bắt đầu implement mà không p
 3. [`adr/0001-closed-locale-list.md`](../00-core/adr/0001-closed-locale-list.md)
 4. [`adr/0002-locale-scope-storefront-only.md`](../00-core/adr/0002-locale-scope-storefront-only.md)
 5. [`adr/0003-single-typography-token-set-across-locales.md`](../00-core/adr/0003-single-typography-token-set-across-locales.md)
-6. [`adr/0004-authentication-mechanism.md`](../00-core/adr/0004-authentication-mechanism.md)
+6. [`adr/0010-jwt-access-with-rotating-refresh.md`](../00-core/adr/0010-jwt-access-with-rotating-refresh.md) (ADR 0004 đã bị thay thế)
 
 Đường đọc này giúp tách rất rõ ba lớp: bối cảnh ban đầu, quyết định đã chốt, và tài liệu chỉ nên xem như tham khảo.
 

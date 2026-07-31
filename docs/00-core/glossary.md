@@ -1,6 +1,6 @@
 # FE — E-commerce Platform
 
-Nền tảng e-commerce thời trang/giày thể thao (kiểu Nike), monorepo gồm Storefront, Admin, CMS. Dự án mới, độc lập, đang ở giai đoạn brainstorming/thiết kế.
+Nền tảng e-commerce thời trang/giày thể thao (kiểu Nike). FE Turborepo gồm Storefront, Admin, CMS; Backend modular monolith nằm trong repository riêng. Dự án mới, đang ở giai đoạn thiết kế.
 
 Tài liệu này là từ điển thuật ngữ domain (ubiquitous language): mỗi thuật ngữ có một định nghĩa duy nhất, dùng thống nhất trong code, tài liệu và trao đổi của dự án.
 
@@ -45,6 +45,10 @@ _Avoid_: Danh mục (khi ý muốn nói riêng khái niệm domain này, phân b
 **Gender**:
 Thuộc tính trên Product (`men | women | kids | unisex`), dùng làm **filter**, không phải một node trong cây Category. URL dạng `/men/shoes` là kết quả filter `gender=men` áp trên Category `Shoes`, không phải một Category thật — tránh một Product unisex phải gán trùng vào nhiều Category.
 _Avoid_: Category, danh mục giới tính (khi ý muốn nói riêng khái niệm domain này)
+
+**Asset**:
+Metadata của một media object dùng cho Product hoặc CMS content. `Asset` lưu object key, MIME type đã xác minh, byte size, checksum, width/height, lifecycle status và actor/timestamp; binary thật nằm trong object storage. Draft/preview asset là private, chỉ asset đã publish mới được phân phối public qua CDN.
+_Avoid_: lưu binary trong PostgreSQL; coi filename hoặc MIME do browser gửi là dữ liệu đáng tin
 
 ## Cart & Order
 
