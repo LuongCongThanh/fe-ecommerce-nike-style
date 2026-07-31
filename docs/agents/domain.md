@@ -39,6 +39,13 @@ or boundaries are resolved.
 Do not create a second `docs/adr/` tree. The canonical ADR location for this
 repository is `docs/00-core/adr/`.
 
+Supporting implementation-oriented guidance then continues in:
+
+- `docs/FE/FE.md`
+- `docs/BE.md`
+- `docs/TEST.md`
+- `docs/DEVOPS.md`
+
 ## Use canonical vocabulary
 
 When naming a domain concept in an issue, plan, test, or implementation, use

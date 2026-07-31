@@ -2,11 +2,11 @@
 
 ### Issue tracker
 
-Issues and PRDs are tracked in GitHub Issues; external pull requests are not a triage surface. See `docs/agents/issue-tracker.md`.
+Issues and PRDs for this repo are tracked in GitHub Issues, and external pull requests are also treated as a triage surface. See `docs/agents/issue-tracker.md`.
 
 ### Triage labels
 
-Use the default triage labels: `needs-triage`, `needs-info`, `ready-for-agent`, `ready-for-human`, and `wontfix`. See `docs/agents/triage-labels.md`.
+This repo uses the default five-label triage vocabulary: `needs-triage`, `needs-info`, `ready-for-agent`, `ready-for-human`, and `wontfix`. See `docs/agents/triage-labels.md`.
 
 ### Domain docs
 
