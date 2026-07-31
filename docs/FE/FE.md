@@ -367,8 +367,6 @@ Thứ tự build FE nên là:
 File này tổng hợp từ:
 
 - `01-delivery/architecture/frontend`
-- `01-delivery/specification/technical-design.md`
-- `01-delivery/specification/implementation-plan.md`
 - `00-core/decision-log.md`
 - `00-core/adr/0010-jwt-access-with-rotating-refresh.md` (thay thế ADR 0004)
 - `01-delivery/security/security-baseline.md`

@@ -143,4 +143,3 @@ File này rút gọn từ:
 - `00-core/requirements/functional-requirements.md`
 - `00-core/glossary.md`
 - `00-core/decision-log.md`
-- `01-delivery/specification/srs.md`

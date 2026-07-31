@@ -131,4 +131,3 @@ File này rút gọn từ:
 - `01-delivery/traceability/test-traceability-matrix.md`
 - `01-delivery/traceability/requirements-traceability-matrix.md`
 - `01-delivery/security/security-baseline.md`
-- `01-delivery/specification/traceability-matrix.md`

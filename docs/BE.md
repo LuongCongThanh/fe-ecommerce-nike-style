@@ -196,7 +196,7 @@ Thứ tự hợp lý cho Backend:
 
 File này rút gọn từ:
 
-- `01-delivery/architecture/backend`
-- `01-delivery/specification/technical-design.md`
+- `01-delivery/architecture/backend/roadmap.md`
+- `01-delivery/architecture/backend/rbac-matrix.md`
 - `00-core/glossary.md`
 - `00-core/decision-log.md`

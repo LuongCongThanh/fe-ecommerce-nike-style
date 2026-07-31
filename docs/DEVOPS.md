@@ -124,4 +124,3 @@ File này rút gọn từ:
 
 - `01-delivery/product/open-decisions.md`
 - `01-delivery/security/security-baseline.md`
-- `01-delivery/specification/technical-design.md`

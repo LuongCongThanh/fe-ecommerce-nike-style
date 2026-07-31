@@ -38,12 +38,10 @@ Dùng khi bạn cần:
 
 - xem traceability matrix chi tiết
 - xem security baseline chi tiết
-- xem spec chi tiết hơn 5 file chính
 - xem các tài liệu planning hoặc implementation breakdown cũ
 
 Các vùng đáng chú ý:
 
-- `01-delivery/specification/`
 - `01-delivery/traceability/`
 - `01-delivery/security/`
 
