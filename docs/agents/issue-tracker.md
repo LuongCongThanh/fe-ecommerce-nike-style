@@ -1,17 +1,18 @@
 # Issue tracker: GitHub
 
-Issues and PRDs for this repo live as GitHub issues. Use the `gh` CLI for all operations.
+Issues and PRDs for this repository live as GitHub issues in
+`LuongCongThanh/fe-ecommerce-nike-style`. Use the `gh` CLI for all operations.
 
 ## Conventions
 
-- **Create an issue**: `gh issue create --title "..." --body "..."`. Use a heredoc for multi-line bodies.
-- **Read an issue**: `gh issue view <number> --comments`, filtering comments by `jq` and also fetching labels.
-- **List issues**: `gh issue list --state open --json number,title,body,labels,comments --jq '[.[] | {number, title, body, labels: [.labels[].name], comments: [.comments[].body]}]'` with appropriate `--label` and `--state` filters.
+- **Create an issue**: `gh issue create --title "..." --body "..."`. Use a heredoc for multi-line bodies when needed.
+- **Read an issue**: `gh issue view <number> --comments`, and include labels when triage state matters.
+- **List issues**: `gh issue list` with appropriate `--label`, `--state`, and `--json` filters.
 - **Comment on an issue**: `gh issue comment <number> --body "..."`
-- **Apply / remove labels**: `gh issue edit <number> --add-label "..."` / `--remove-label "..."`
-- **Close**: `gh issue close <number> --comment "..."`
+- **Apply or remove labels**: `gh issue edit <number> --add-label "..."` or `--remove-label "..."`
+- **Close an issue**: `gh issue close <number> --comment "..."`
 
-Infer the repo from `git remote -v` — `gh` does this automatically when run inside a clone.
+Infer the repository from `git remote -v`; `gh` does this automatically when run inside this clone.
 
 ## Pull requests as a triage surface
 
@@ -31,4 +32,4 @@ Create a GitHub issue.
 
 ## When a skill says "fetch the relevant ticket"
 
-Run `gh issue view <number> --comments` for issues and `gh pr view <number> --comments` for PRs when the item is a pull request.
+Run `gh issue view <number> --comments` for issues and `gh pr view <number> --comments` for PRs when the item is a pull request. Before creating or changing remote items, confirm that `gh` is authenticated for the repository.

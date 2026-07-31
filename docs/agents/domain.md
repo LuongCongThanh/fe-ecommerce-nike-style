@@ -1,18 +1,43 @@
-# Domain Docs
+# Domain docs
 
-How the engineering skills should consume this repo's domain documentation when exploring the codebase.
+This repository uses a **single-context** domain layout.
 
-## Repo layout for this project
+## Before exploring
 
-This repo is configured as a **single-context** project.
+Read the following sources in priority order:
 
-There is not yet a root `CONTEXT.md` or `CONTEXT-MAP.md`. Until one is created, the shared domain source for this repo is the documentation set under `docs/`, with the highest-priority domain and architecture decisions in:
+1. `docs/00-core/requirements/functional-requirements.md`
+2. `docs/00-core/glossary.md`
+3. Relevant ADRs under `docs/00-core/adr/`
+4. `docs/00-core/decision-log.md`
+5. `CONTEXT.md`, if it exists
 
-- `docs/README.md`
-- `docs/00-core/requirements/functional-requirements.md`
-- `docs/00-core/glossary.md`
-- `docs/00-core/adr/`
-- `docs/00-core/decision-log.md`
+Use `docs/README.md` and `docs/01-delivery/reading-paths.md` to select the
+additional delivery documents relevant to the task.
+
+If `CONTEXT.md` does not exist, proceed silently. Skills such as
+`grill-with-docs` and `domain-modeling` may create it lazily when domain terms
+or boundaries are resolved.
+
+## Layout
+
+```text
+/
+├── CONTEXT.md                         # Created lazily when needed
+├── docs/
+│   ├── 00-core/
+│   │   ├── requirements/
+│   │   │   └── functional-requirements.md
+│   │   ├── glossary.md
+│   │   ├── decision-log.md
+│   │   └── adr/
+│   ├── 01-delivery/
+│   └── agents/
+└── src/                               # Added when implementation begins
+```
+
+Do not create a second `docs/adr/` tree. The canonical ADR location for this
+repository is `docs/00-core/adr/`.
 
 Supporting implementation-oriented guidance then continues in:
 
@@ -21,22 +46,18 @@ Supporting implementation-oriented guidance then continues in:
 - `docs/TEST.md`
 - `docs/DEVOPS.md`
 
-## Before exploring, read these
+## Use canonical vocabulary
 
-- `docs/README.md` for the reading order and precedence rules
-- `docs/00-core/requirements/functional-requirements.md` for system behavior
-- `docs/00-core/glossary.md` for domain language
-- `docs/00-core/adr/` for architectural decisions relevant to the current topic
-- `docs/00-core/decision-log.md` when a topic depends on recently closed choices
+When naming a domain concept in an issue, plan, test, or implementation, use
+the term defined in `docs/00-core/glossary.md`. Do not introduce a synonym when
+the glossary already defines the concept.
 
-If a future `CONTEXT.md` is added at the repo root, prefer it as the single-context glossary entrypoint. If a future `CONTEXT-MAP.md` is added, treat that as a layout migration to multi-context.
+If a required concept is absent, note the gap for domain modeling instead of
+silently inventing permanent terminology.
 
-## Use the glossary's vocabulary
+## Respect existing decisions
 
-When naming a domain concept in output, use the term defined in `docs/00-core/glossary.md`. Avoid inventing synonyms if the glossary already defines the preferred term.
-
-If a concept needed for current work is missing, note that as a glossary gap instead of silently creating new domain language.
-
-## Flag ADR conflicts
-
-If a proposal or plan contradicts an ADR in `docs/00-core/adr/`, call it out explicitly rather than silently overriding it.
+Surface any conflict with an ADR or `docs/00-core/decision-log.md` explicitly.
+Do not silently override an accepted decision. Requirements under
+`docs/00-core/requirements/` remain the highest-priority source when documents
+conflict.
