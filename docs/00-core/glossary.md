@@ -50,6 +50,30 @@ _Avoid_: Category, danh mục giới tính (khi ý muốn nói riêng khái ni�
 Metadata của một media object dùng cho Product hoặc CMS content. `Asset` lưu object key, MIME type đã xác minh, byte size, checksum, width/height, lifecycle status và actor/timestamp; binary thật nằm trong object storage. Draft/preview asset là private, chỉ asset đã publish mới được phân phối public qua CDN.
 _Avoid_: lưu binary trong PostgreSQL; coi filename hoặc MIME do browser gửi là dữ liệu đáng tin
 
+## Identity & Access
+
+> Kết quả phiên `grilling` + `domain-modeling` cho mô hình authorization `admin`/`cms`.
+
+**Customer**:
+Định danh của người mua ở `storefront`. Tự đăng ký qua sign up công khai; không có `Role`/`Permission` — mọi authorization của Customer là kiểm tra "đã đăng nhập" (`JwtAuthGuard`) cộng với kiểm tra ownership tài nguyên (ví dụ chỉ xem Order của chính mình) ở tầng application/domain service, không đi qua hệ thống Role/Permission dùng cho Staff.
+_Avoid_: User (khi ý muốn nói riêng khái niệm domain này — dùng Customer cho storefront, Staff cho admin/cms)
+
+**Staff**:
+Định danh nhân sự nội bộ vận hành `admin`/`cms` (ví dụ Order Operator, Content Editor). Không tự đăng ký công khai — được tạo bởi người có quyền quản trị. Có `Role`; là entity hoàn toàn tách biệt với `Customer`, không dùng chung một bảng.
+_Avoid_: User, Admin User (khi ý muốn nói riêng khái niệm domain này)
+
+**Role**:
+Một nhãn gán cho `Staff`, ánh xạ tới một tập `Permission` cố định định nghĩa trong code (version-controlled, không lưu database, không cấu hình runtime). Một `Staff` có thể được gán **nhiều** Role đồng thời (many-to-many); permission hiệu lực là **hợp (union)** permission của tất cả Role đang gán. Danh sách Role thật (bao nhiêu, tên gì) chưa chốt ở phiên này — xem `open-decisions.md`.
+_Avoid_: gán Role cho Customer; check Role trực tiếp trong code nghiệp vụ (`if role === 'x'`) — dùng `Permission` qua `RequirePermissions(...)`
+
+**Permission**:
+Một khả năng hành động cụ thể trên một resource, đặt tên theo quy ước `resource:action` (ví dụ `order:read`, `content:publish`). Action dùng từ vựng cố định (`read`, `write`, `create`, `update`, `delete`, cộng action nghiệp vụ rõ nghĩa khi CRUD không đủ diễn đạt, ví dụ `publish`, `approve`). Controller khai báo Permission cần bằng `RequirePermissions(...)`; nhiều Permission trong một khai báo là AND (yêu cầu đủ tất cả).
+_Avoid_: tên permission tự do không theo `resource:action`; dùng Permission để diễn đạt rule theo phạm vi dữ liệu (ví dụ "chỉ đơn của chính mình") — loại rule đó kiểm tra ở domain service, không phải Permission tĩnh
+
+**PermissionsGuard**:
+Guard toàn cục (global) enforce `Permission` ở Backend cho `admin`/`cms`. Fail-closed: endpoint thiếu `RequirePermissions(...)` bị từ chối, không mặc định cho qua. Route công khai thật phải khai báo rõ bằng `@Public()`. Không có role bypass-all ngầm định trong guard — role kiểu `Super Admin` chỉ là một `Role` liệt kê đủ mọi `Permission`.
+_Avoid_: coi thiếu decorator là "chỉ cần authenticated"; hard-code exception cho một role cụ thể trong guard
+
 ## Cart & Order
 
 > Kết quả phiên grilling `grilling` + `domain-modeling` cho Cart/Order/Inventory, chốt thay thế phần "chưa chốt" ở `docs/architecture/backend/domain-model.md`.
@@ -105,7 +129,7 @@ Khách chỉ được tạo `RETURN_REQUESTED` trong vòng **7 ngày** kể từ
 _Avoid_: cho phép return không giới hạn thời gian
 
 **Return approval** (duyệt yêu cầu trả hàng):
-`RETURN_REQUESTED` không tự động thành `RETURNED` — cần nhân viên (Order Operator) kiểm tra hàng trả về thực tế trước khi duyệt. Có hai kết quả:
+`RETURN_REQUESTED` không tự động thành `RETURNED` — cần nhân viên (`ADMIN_STAFF`) kiểm tra hàng trả về thực tế trước khi duyệt. Có hai kết quả:
 - **Duyệt**: chuyển `RETURNED`, tồn kho SKU liên quan được giải phóng lại `available` (đã chốt ở Decision #38/39).
 - **Từ chối** (hàng không đủ điều kiện — đã qua sử dụng, thiếu phụ kiện...): Order quay lại `DELIVERED`, không có trạng thái `RETURNED` nào được tạo, tồn kho không thay đổi.
 _Avoid_: coi RETURN_REQUESTED tự động dẫn tới RETURNED mà không qua bước kiểm tra hàng thực tế

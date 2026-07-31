@@ -36,7 +36,7 @@ Các mục sau **không** thuộc MVP, dù `implementation-plan.md` có đề c�
 - Headless CMS bên thứ ba — CMS tự xây (Decision #6).
 - Chọn/chốt hạ tầng deploy thật — runtime/framework, PostgreSQL và Prisma đã được chốt ở Decision #60–62.
 - Timeline cam kết theo tuần/tháng — roadmap chỉ có phase + exit criteria, không có mốc thời gian (Decision #9).
-- RBAC nhiều vai trò phức tạp (Super Admin/Catalog Manager/Order Operator/Content Editor/Marketing Manager/Read-only Analyst) — đây là danh sách tham khảo từ `implementation-plan.md`, **chưa** được xác nhận là quyết định; số vai trò thật và quyền hạn cụ thể còn là open question (brainstorm-session §3.3).
+- RBAC nhiều vai trò phức tạp theo danh sách tham khảo cũ từ `implementation-plan.md` (Super Admin/Catalog Manager/Order Operator/Content Editor/Marketing Manager/Read-only Analyst) — không đưa vào MVP. Baseline RBAC MVP thật (3 role: `SUPER_ADMIN`/`ADMIN_STAFF`/`CMS_EDITOR`) đã chốt ở Decision `#78` — xem `architecture/backend/rbac-matrix.md`.
 - Recommendation engine, AI Search, multi-warehouse, loyalty nâng cao, gift card, multi-currency, microservices — ngoài phạm vi MVP và giai đoạn kế tiếp gần.
 
 ## 3. Phạm vi chức năng theo ứng dụng
@@ -65,7 +65,7 @@ Bắt buộc có trong MVP (tối thiểu — brainstorm-session §2.4):
 - `AD-03` — Quản lý tồn kho ở mức cơ bản.
 - `AD-04` — Quản lý trạng thái đơn hàng.
 - `AD-05` — Chỉ tiếng Việt, không có UI đa ngôn ngữ (Decision #17).
-- `AD-06` — Authorization tồn tại và tối thiểu phải đạt baseline RBAC hiện hành; mở rộng role/capability sau này phải cập nhật thêm. Không được coi danh sách 6 role của `implementation-plan.md` là đã chốt.
+- `AD-06` — Authorization tồn tại và tối thiểu phải đạt baseline RBAC hiện hành — xem `architecture/backend/rbac-matrix.md` (Decision `#78`); mở rộng role/capability sau này phải cập nhật thêm. Không được coi danh sách 6 role của `implementation-plan.md` là đã chốt.
 
 ### 3.3 CMS (biên tập nội dung)
 

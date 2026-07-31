@@ -1313,8 +1313,8 @@ Nguyên tắc:
 
 ## 11.3. Điều còn mở
 
-- RBAC thật cho `admin/cms`
-- mapping role -> route visibility
+- ~~RBAC thật cho `admin/cms`~~ — đã chốt: permission-based guard, 3 role MVP (`SUPER_ADMIN`/`ADMIN_STAFF`/`CMS_EDITOR`) — xem [`ADR 0013`](../00-core/adr/0013-permission-based-authorization-admin-cms.md) và `01-delivery/architecture/backend/rbac-matrix.md` (Decision `#78`).
+- mapping role -> route visibility (FE đọc permission đã resolve qua endpoint kiểu `/staff/me`, chỉ dùng cho UX-layer show/hide — chưa map cụ thể route nào cần permission nào)
 - spike xác nhận refresh/retry concurrency và protected-route bootstrapping
 
 Vì vậy phần auth architecture hiện đã đủ khung, nhưng chưa được coi là fully closed ở mức permission detail.
