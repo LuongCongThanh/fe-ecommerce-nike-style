@@ -1,5 +1,7 @@
 # FE Execution
 
+> **SUPERSEDED (một phần) — xem [`00-core/decision-log.md`](../00-core/decision-log.md) Decision `#80`.** Toàn bộ phần dưới đây (§2 Root workspace init, `pnpm-workspace.yaml`, root `turbo.json`, `packages/ts-config`, `packages/eslint-config` sống chung 1 Turborepo) mô tả kiến trúc monorepo 3 app đã bị đảo ngược. FE hiện là 4 repo riêng (`storefront`, `admin`, `cms`, `packages`); `packages/ts-config` và `packages/eslint-config` chuyển sang sống ở repo `packages`, 3 repo app cài qua git dependency thay vì `workspace:*`/`turbo run`. Nội dung §2 vẫn còn giá trị tham khảo cho *cấu trúc bên trong* từng package (ví dụ `base.json`/`nextjs.json` của `ts-config`), chỉ phần "tất cả trong 1 workspace" là không còn đúng.
+
 Đây là tài liệu chốt riêng cho phần **thực thi FE**: những gì phải làm-theo-bước để scaffold, bootstrap, và biết khi nào một phần đã "xong".
 
 Mục tiêu của file này là:
