@@ -1,0 +1,3 @@
+# Giữ single-repo, không tách Turborepo monorepo
+
+Tài liệu tham khảo `docs/ideal.md` đề xuất kiến trúc Turborepo monorepo với 3 app riêng (storefront/admin/cms) và các package dùng chung. Chúng tôi quyết định **không** tách monorepo ở giai đoạn này — tiếp tục refactor lũy tiến trong repo Next.js đơn hiện có, dùng route group (`(shop)`, `(admin)`) để phân tách Storefront/Admin. Lý do: quy mô solo/small team hiện tại không đủ lợi ích để bù chi phí setup và vận hành monorepo; phần lớn stack kỹ thuật đề xuất (Next.js 16, Tailwind v4, shadcn/ui, Zustand, TanStack Query, Framer Motion, Vitest, Playwright, Sentry) đã có sẵn trong repo đơn. Có thể tách monorepo sau nếu team và quy mô sản phẩm lớn hơn.
