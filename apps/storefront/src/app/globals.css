@@ -1,0 +1,212 @@
+@import 'tailwindcss';
+
+/* Cap `container` at 1280px (2xl) to match the max-w-7xl used by Header/Footer/checkout — Tailwind's
+   default container grows to 1536px at 2xl, which misaligned page content against them on very wide screens. */
+@utility container {
+  margin-inline: auto;
+  max-width: 100%;
+
+  @variant sm {
+    max-width: 640px;
+  }
+  @variant md {
+    max-width: 768px;
+  }
+  @variant lg {
+    max-width: 1024px;
+  }
+  @variant xl {
+    max-width: 1280px;
+  }
+  @variant 2xl {
+    max-width: 1280px;
+  }
+}
+
+@theme {
+  /* ── Brand: Cam-đỏ — chỉ dùng cho giá, sale, badge khuyến mãi ──────── */
+  --color-brand-50: oklch(0.97 0.02 25);
+  --color-brand-100: oklch(0.93 0.05 25);
+  --color-brand-200: oklch(0.87 0.09 25);
+  --color-brand-300: oklch(0.79 0.14 25);
+  --color-brand-400: oklch(0.7 0.19 25);
+  --color-brand-500: oklch(0.62 0.23 25);
+  --color-brand-600: oklch(0.54 0.22 25);
+  --color-brand-700: oklch(0.45 0.19 25);
+  --color-brand-800: oklch(0.35 0.15 25);
+  --color-brand-900: oklch(0.26 0.1 25);
+  --color-brand-950: oklch(0.16 0.06 25);
+
+  /* ── Secondary: Xanh dương tin cậy (hue ~220°) — tương phản với Primary ── */
+  --color-secondary-50: oklch(0.97 0.02 220);
+  --color-secondary-100: oklch(0.93 0.04 220);
+  --color-secondary-200: oklch(0.87 0.08 220);
+  --color-secondary-300: oklch(0.78 0.13 220);
+  --color-secondary-400: oklch(0.68 0.17 220);
+  --color-secondary-500: oklch(0.57 0.2 220);
+  --color-secondary-600: oklch(0.48 0.18 220);
+  --color-secondary-700: oklch(0.39 0.15 220);
+  --color-secondary-800: oklch(0.3 0.11 220);
+  --color-secondary-900: oklch(0.22 0.07 220);
+  --color-secondary-950: oklch(0.14 0.04 220);
+
+  /* ── Accent: Vàng-cam (hue ~55°) ───────────────────────────────────── */
+  --color-accent-50: oklch(0.98 0.02 55);
+  --color-accent-100: oklch(0.95 0.05 55);
+  --color-accent-200: oklch(0.9 0.1 55);
+  --color-accent-300: oklch(0.84 0.15 55);
+  --color-accent-400: oklch(0.78 0.19 55);
+  --color-accent-500: oklch(0.72 0.22 55);
+  --color-accent-600: oklch(0.63 0.2 55);
+  --color-accent-700: oklch(0.53 0.17 55);
+  --color-accent-800: oklch(0.42 0.13 55);
+  --color-accent-900: oklch(0.31 0.09 55);
+  --color-accent-950: oklch(0.2 0.05 55);
+
+  /* ── Neutral: Xám ấm (hue ~30°) ────────────────────────────────────── */
+  --color-neutral-50: oklch(0.98 0.004 30);
+  --color-neutral-100: oklch(0.96 0.006 30);
+  --color-neutral-200: oklch(0.92 0.008 30);
+  --color-neutral-300: oklch(0.85 0.01 30);
+  --color-neutral-400: oklch(0.72 0.01 30);
+  --color-neutral-500: oklch(0.58 0.01 30);
+  --color-neutral-600: oklch(0.45 0.008 30);
+  --color-neutral-700: oklch(0.35 0.007 30);
+  --color-neutral-800: oklch(0.25 0.006 30);
+  --color-neutral-900: oklch(0.16 0.004 30);
+  --color-neutral-950: oklch(0.1 0.003 30);
+
+  /* ── Semantic ───────────────────────────────────────────────────────── */
+  --color-success-50: oklch(0.97 0.03 145);
+  --color-success-500: oklch(0.6 0.18 145);
+  --color-success-700: oklch(0.42 0.14 145);
+
+  /* warning-500 chỉ dùng cho backgrounds/icons — dùng warning-700 cho text (WCAG AA) */
+  --color-warning-50: oklch(0.98 0.03 80);
+  --color-warning-500: oklch(0.78 0.18 80);
+  --color-warning-700: oklch(0.52 0.16 80);
+
+  --color-error-50: oklch(0.97 0.02 10);
+  --color-error-500: oklch(0.58 0.24 10);
+  --color-error-700: oklch(0.42 0.2 10);
+
+  --color-info-50: oklch(0.97 0.02 250);
+  --color-info-500: oklch(0.58 0.18 250);
+  --color-info-700: oklch(0.42 0.15 250);
+
+  /* ── Typography ─────────────────────────────────────────────────────── */
+  --font-sans: var(--font-inter), 'Inter Variable', sans-serif;
+  --font-mono: 'JetBrains Mono', monospace;
+  --font-display: var(--font-be-vietnam-pro), var(--font-sans);
+
+  /* ── Transition tokens ──────────────────────────────────────────────── */
+  --ease-out: cubic-bezier(0, 0, 0.2, 1);
+  --ease-spring: cubic-bezier(0.34, 1.56, 0.64, 1);
+  --duration-fast: 120ms;
+  --duration-normal: 200ms;
+  --duration-slow: 350ms;
+
+  /* ── Z-index scale (shop feature code only — shadcn base components own z-50) ── */
+  --z-header: 30;
+  --z-dropdown: 40;
+
+  /* ── Shadcn/UI Theme Mapping ────────────────────────────────────────── */
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --color-card: var(--card);
+  --color-card-foreground: var(--card-foreground);
+  --color-popover: var(--popover);
+  --color-popover-foreground: var(--popover-foreground);
+  --color-primary: var(--primary);
+  --color-primary-foreground: var(--primary-foreground);
+  --color-secondary: var(--secondary);
+  --color-secondary-foreground: var(--secondary-foreground);
+  --color-muted: var(--muted);
+  --color-muted-foreground: var(--muted-foreground);
+  --color-accent: var(--accent);
+  --color-accent-foreground: var(--accent-foreground);
+  --color-destructive: var(--destructive);
+  --color-destructive-foreground: var(--destructive-foreground);
+  --color-border: var(--border);
+  --color-input: var(--input);
+  --color-ring: var(--ring);
+  --radius-sm: calc(var(--radius) - 4px);
+  --radius-md: calc(var(--radius) - 2px);
+  --radius-lg: var(--radius);
+  --radius-xl: calc(var(--radius) + 4px);
+}
+
+/* ── Shadcn/UI CSS Variables ────────────────────────────────────────── */
+@layer base {
+  :root {
+    --background: oklch(1 0 0);
+    --foreground: oklch(0.16 0.004 30);
+    --primary: oklch(0.16 0.004 30);
+    --primary-foreground: oklch(0.98 0.004 30);
+    --secondary: oklch(0.96 0.006 30);
+    --secondary-foreground: oklch(0.3 0.11 220);
+    --muted: oklch(0.96 0.006 30);
+    --muted-foreground: oklch(0.55 0.01 30); /* WCAG AA 4.5:1 on white — was 0.58 (~4.3:1) */
+    /* accent = vàng-cam nhạt — dùng cho hover highlights, badges */
+    --accent: oklch(0.95 0.06 55);
+    --accent-foreground: oklch(0.38 0.15 55);
+    --destructive: oklch(0.58 0.24 10);
+    --destructive-foreground: oklch(1 0 0);
+    --border: oklch(0.92 0.008 30);
+    --input: oklch(0.92 0.008 30);
+    --ring: oklch(0.16 0.004 30);
+    --radius: 0.5rem;
+    --card: oklch(1 0 0);
+    --card-foreground: oklch(0.16 0.004 30);
+    --popover: oklch(1 0 0);
+    --popover-foreground: oklch(0.16 0.004 30);
+  }
+
+  .dark {
+    --background: oklch(0.13 0.004 30);
+    --foreground: oklch(0.96 0.006 30);
+    --primary: oklch(0.96 0.006 30);
+    --primary-foreground: oklch(0.16 0.004 30);
+    --secondary: oklch(0.22 0.006 30);
+    --secondary-foreground: oklch(0.8 0.1 220);
+    --muted: oklch(0.22 0.006 30);
+    --muted-foreground: oklch(0.65 0.01 30);
+    /* accent dark mode = vàng-cam tối */
+    --accent: oklch(0.26 0.07 55);
+    --accent-foreground: oklch(0.88 0.08 55);
+    --destructive: oklch(0.65 0.22 10);
+    --destructive-foreground: oklch(0.96 0.006 30);
+    --border: oklch(0.25 0.008 30);
+    --input: oklch(0.25 0.008 30);
+    --ring: oklch(0.96 0.006 30);
+    --card: oklch(0.2 0.005 30);
+    --card-foreground: oklch(0.96 0.006 30);
+    --popover: oklch(0.2 0.005 30);
+    --popover-foreground: oklch(0.96 0.006 30);
+  }
+
+  *,
+  ::after,
+  ::before {
+    border-color: var(--color-border, currentColor);
+  }
+
+  body {
+    background-color: var(--color-background);
+    color: var(--color-foreground);
+    min-height: 100vh;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    *,
+    ::before,
+    ::after {
+      animation-duration: 0.01ms !important;
+      animation-iteration-count: 1 !important;
+      transition-duration: 0.01ms !important;
+      scroll-behavior: auto !important;
+    }
+  }
+}
