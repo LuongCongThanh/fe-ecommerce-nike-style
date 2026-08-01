@@ -1,0 +1,18 @@
+{
+  "loading": "Loading...",
+  "error": "Something went wrong",
+  "retry": "Try again",
+  "cancel": "Cancel",
+  "confirm": "Confirm",
+  "save": "Save",
+  "delete": "Delete",
+  "edit": "Edit",
+  "search": "Search",
+  "closeSearch": "Close search",
+  "back": "Back",
+  "viewAll": "View all",
+  "errorTitle": "Something went wrong",
+  "errorDescription": "We couldn't load the data right now. Please try again later.",
+  "emptyTitle": "No data found",
+  "emptyDescription": "There are no items to display at the moment."
+}

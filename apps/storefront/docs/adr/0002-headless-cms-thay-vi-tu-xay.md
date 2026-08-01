@@ -1,0 +1,3 @@
+# Dùng headless CMS bên thứ ba thay vì tự xây CMS
+
+`docs/ideal.md` mô tả một module CMS tự xây (Landing Page Builder, Blog, Content Block, Campaign) như một trong ba trụ cột ngang hàng với Storefront/Admin. Chúng tôi quyết định **không** tự xây trình soạn thảo nội dung — tích hợp một headless CMS có sẵn (Sanity/Strapi/Contentful, lựa chọn cụ thể sẽ chốt khi bắt đầu module CMS) và để Storefront/Admin tiêu thụ nội dung qua API. Lý do: tự xây page builder/content editor tốn công sức không tương xứng với giá trị ở giai đoạn đầu, trong khi các headless CMS trưởng thành đã giải quyết tốt bài toán này.

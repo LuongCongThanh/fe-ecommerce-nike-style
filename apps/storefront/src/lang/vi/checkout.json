@@ -1,0 +1,29 @@
+{
+  "title": "Thanh toán",
+  "shippingAddress": "Địa chỉ giao hàng",
+  "fullName": "Họ và tên",
+  "phoneNumber": "Số điện thoại",
+  "address": "Địa chỉ cụ thể",
+  "city": "Tỉnh / Thành phố",
+  "district": "Quận / Huyện",
+  "ward": "Phường / Xã",
+  "shippingMethod": "Phương thức vận chuyển",
+  "standard": "Giao hàng tiêu chuẩn",
+  "express": "Giao hàng hỏa tốc",
+  "paymentMethod": "Phương thức thanh toán",
+  "cod": "Thanh toán khi nhận hàng (COD)",
+  "bankTransfer": "Chuyển khoản ngân hàng",
+  "placeOrder": "Đặt hàng ngay",
+  "placeOrderDesc": "Bằng cách đặt hàng, bạn đồng ý với các điều khoản của chúng tôi.",
+  "backToCart": "Quay lại giỏ hàng",
+  "errors": {
+    "required": "Trường này là bắt buộc",
+    "invalidPhone": "Số điện thoại không hợp lệ",
+    "invalidEmail": "Email không hợp lệ"
+  },
+  "cart": {
+    "summary": "Tóm tắt đơn hàng",
+    "subtotal": "Tạm tính",
+    "total": "Tổng cộng"
+  }
+}

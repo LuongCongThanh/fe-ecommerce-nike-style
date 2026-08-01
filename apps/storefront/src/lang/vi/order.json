@@ -1,0 +1,10 @@
+{
+  "title": "Đơn hàng",
+  "myOrders": "Đơn hàng của tôi",
+  "orderCode": "Mã đơn",
+  "status": "Trạng thái",
+  "total": "Tổng tiền",
+  "cancel": "Huỷ đơn",
+  "success": "Đặt hàng thành công!",
+  "detail": "Chi tiết đơn hàng"
+}

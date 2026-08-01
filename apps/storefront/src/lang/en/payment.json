@@ -1,0 +1,7 @@
+{
+  "method": "Payment Method",
+  "cod": "Cash on Delivery",
+  "vnpay": "VNPay",
+  "momo": "MoMo Wallet",
+  "zalopay": "ZaloPay"
+}

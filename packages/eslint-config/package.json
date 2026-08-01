@@ -1,0 +1,23 @@
+{
+  "name": "@repo/eslint-config",
+  "version": "0.0.0",
+  "private": true,
+  "license": "UNLICENSED",
+  "exports": {
+    "./base": "./base.js",
+    "./next": "./next.js",
+    "./react": "./react.js"
+  },
+  "dependencies": {
+    "typescript-eslint": "8.65.0",
+    "eslint-plugin-import-x": "4.17.1",
+    "eslint-plugin-boundaries": "7.1.0",
+    "eslint-config-next": "16.2.12",
+    "eslint-plugin-react": "7.37.5",
+    "eslint-plugin-react-hooks": "7.1.1",
+    "eslint-plugin-jsx-a11y": "6.10.2"
+  },
+  "peerDependencies": {
+    "eslint": "^9"
+  }
+}

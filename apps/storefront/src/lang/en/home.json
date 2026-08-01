@@ -1,0 +1,22 @@
+{
+  "hero": {
+    "badge": "New in 2026",
+    "title": "Shop smart, save more",
+    "subtitle": "Thousands of authentic products, fast nationwide delivery.",
+    "cta": "Shop Now",
+    "ctaSale": "View Flash Sale"
+  },
+  "categories": {
+    "title": "Featured Categories"
+  },
+  "flashSale": {
+    "badge": "Limited time",
+    "title": "Flash Sale — Up to 50% off",
+    "subtitle": "Today only, while stocks last!",
+    "cta": "Shop Now"
+  },
+  "featured": {
+    "title": "Featured Products",
+    "viewAll": "View all"
+  }
+}

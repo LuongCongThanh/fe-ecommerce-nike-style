@@ -1,0 +1,29 @@
+{
+  "title": "Checkout",
+  "shippingAddress": "Shipping Address",
+  "fullName": "Full Name",
+  "phoneNumber": "Phone Number",
+  "address": "Detail Address",
+  "city": "City",
+  "district": "District",
+  "ward": "Ward",
+  "shippingMethod": "Shipping Method",
+  "standard": "Standard Shipping",
+  "express": "Express Shipping",
+  "paymentMethod": "Payment Method",
+  "cod": "Cash on Delivery (COD)",
+  "bankTransfer": "Bank Transfer",
+  "placeOrder": "Place Order",
+  "placeOrderDesc": "By placing an order, you agree to our terms and conditions.",
+  "backToCart": "Back to Cart",
+  "errors": {
+    "required": "This field is required",
+    "invalidPhone": "Invalid phone number",
+    "invalidEmail": "Invalid email"
+  },
+  "cart": {
+    "summary": "Order Summary",
+    "subtotal": "Subtotal",
+    "total": "Total"
+  }
+}
