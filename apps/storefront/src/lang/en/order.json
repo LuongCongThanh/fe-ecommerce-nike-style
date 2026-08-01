@@ -1,0 +1,10 @@
+{
+  "title": "Orders",
+  "myOrders": "My Orders",
+  "orderCode": "Order #",
+  "status": "Status",
+  "total": "Total",
+  "cancel": "Cancel Order",
+  "success": "Order placed successfully!",
+  "detail": "Order Details"
+}

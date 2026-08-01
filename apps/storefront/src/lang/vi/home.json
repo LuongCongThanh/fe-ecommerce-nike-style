@@ -1,0 +1,22 @@
+{
+  "hero": {
+    "badge": "Mới nhất 2026",
+    "title": "Mua sắm thông minh, tiết kiệm hơn",
+    "subtitle": "Hàng ngàn sản phẩm chính hãng, giao hàng nhanh toàn quốc.",
+    "cta": "Mua ngay",
+    "ctaSale": "Xem Flash Sale"
+  },
+  "categories": {
+    "title": "Danh mục nổi bật"
+  },
+  "flashSale": {
+    "badge": "Giới hạn thời gian",
+    "title": "Flash Sale — Giảm đến 50%",
+    "subtitle": "Ưu đãi chỉ có hôm nay, số lượng có hạn!",
+    "cta": "Xem ngay"
+  },
+  "featured": {
+    "title": "Sản phẩm nổi bật",
+    "viewAll": "Xem tất cả"
+  }
+}

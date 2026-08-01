@@ -1,0 +1,18 @@
+{
+  "loading": "Đang tải...",
+  "error": "Đã có lỗi xảy ra",
+  "retry": "Thử lại",
+  "cancel": "Huỷ",
+  "confirm": "Xác nhận",
+  "save": "Lưu",
+  "delete": "Xoá",
+  "edit": "Chỉnh sửa",
+  "search": "Tìm kiếm",
+  "closeSearch": "Đóng tìm kiếm",
+  "back": "Quay lại",
+  "viewAll": "Xem tất cả",
+  "errorTitle": "Đã có lỗi xảy ra",
+  "errorDescription": "Chúng tôi không thể tải dữ liệu lúc này. Vui lòng thử lại sau.",
+  "emptyTitle": "Không có dữ liệu",
+  "emptyDescription": "Hiện tại chưa có mục nào để hiển thị."
+}

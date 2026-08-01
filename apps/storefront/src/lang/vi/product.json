@@ -1,0 +1,10 @@
+{
+  "addToCart": "Thêm vào giỏ",
+  "buyNow": "Mua ngay",
+  "outOfStock": "Hết hàng",
+  "inStock": "Còn hàng",
+  "lowStock": "Còn {count} sản phẩm",
+  "price": "Giá",
+  "category": "Danh mục",
+  "description": "Mô tả"
+}
