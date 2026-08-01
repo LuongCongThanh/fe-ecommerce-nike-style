@@ -28,7 +28,7 @@ Những phần vẫn còn mở sau file này không còn là câu hỏi kiến t
 
 | ID | Nguyên tắc | Trạng thái | Ghi chú |
 |---|---|---|---|
-| ARC-001 | ~~Monorepo 3 app, shared packages dùng chung~~ **SUPERSEDED — xem Decision `#80`** | Đã đảo ngược | 4 repo riêng: `storefront` (tái dùng `E-commerce-platforms-FE`), `admin`, `cms`, `packages` (cài qua git dependency, không `workspace:*`) |
+| ARC-001 | Monorepo 3 app, shared packages dùng chung | Đã chốt | `storefront`, `admin`, `cms` (xem Decision `#4`/`#5`, tái xác nhận ở Decision `#81` sau khi thử multi-repo ở Decision `#80`) |
 | ARC-002 | App Router cho cả 3 app | Đã chốt | Không trộn Pages Router |
 | ARC-003 | Feature-first trong từng app | Đã chốt | Không tổ chức theo technical folders toàn cục |
 | ARC-004 | API access chỉ đi qua `packages/api-sdk` | Đã chốt | Không `fetch` trực tiếp từ feature |
