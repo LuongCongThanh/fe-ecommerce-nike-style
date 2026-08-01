@@ -15,6 +15,9 @@
     "typecheck": {
       "dependsOn": ["^typecheck"]
     },
+    "format:check": {
+      "dependsOn": ["^format:check"]
+    },
     "test": {
       "dependsOn": ["^test"],
       "outputs": ["coverage/**"]
