@@ -1,0 +1,23 @@
+{
+  "name": "@repo/tailwind-config",
+  "version": "0.0.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "typecheck": "tsc --noEmit"
+  },
+  "exports": {
+    "./preset.css": "./src/preset.css",
+    "./theme.css": "./src/theme.css",
+    "./content": "./src/content.ts",
+    "./plugins": "./src/plugins.ts"
+  },
+  "dependencies": {
+    "@repo/design-tokens": "workspace:*"
+  },
+  "devDependencies": {
+    "@repo/ts-config": "workspace:*",
+    "tailwindcss": "^4",
+    "typescript": "^5"
+  }
+}
