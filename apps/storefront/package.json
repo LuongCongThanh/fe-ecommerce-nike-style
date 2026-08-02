@@ -75,7 +75,9 @@
     "postcss": ">=8.5.10"
   },
   "devDependencies": {
+    "@repo/eslint-config": "workspace:*",
     "@repo/tailwind-config": "workspace:*",
+    "@repo/ts-config": "workspace:*",
     "@eslint/js": "^9.39.5",
     "@next/bundle-analyzer": "^16.2.10",
     "@next/eslint-plugin-next": "^16.2.10",
