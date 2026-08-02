@@ -24,6 +24,7 @@ module.exports = function createBaseConfig(options = {}) {
       },
       plugins: { 'import-x': importX },
       rules: {
+        'import-x/order': 'warn',
         'import-x/no-relative-parent-imports': 'error',
       },
     },
