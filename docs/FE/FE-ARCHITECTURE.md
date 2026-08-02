@@ -651,6 +651,8 @@ Không có `index.ts` để khai báo public API. Thay vào đó, ranh giới pu
 - **Public** (import được từ ngoài feature): chỉ `features/{feature}/pages/**` — vì đây là nơi route trong `app/*` mount vào.
 - **Private** (chỉ file trong cùng feature import được): `features/{feature}/components/**`, `hooks/**`, `stores/**`, `utils/**`.
 
+`apps/storefront` thật (tái dùng từ `ecommerce-next`, Decision `#80`/`#81`) không theo đúng convention `features/{feature}/pages` này — nó dùng route-group convention riêng (`src/app/[locale]/(group)/_lib/**`) và đã tự định nghĩa boundaries model tương đương trực tiếp trong `eslint.config.mjs` của nó. Theo Decision `#83`, `packages/eslint-config` không còn hard-code settings `feature-public`/`feature-private` ở trên nữa — enforce boundaries là trách nhiệm của từng app. Convention `features/{feature}/pages` ở mục này chỉ còn là gợi ý cho `admin`/`cms` nếu team chọn theo khi scaffold.
+
 Nếu feature B thật sự cần dùng lại component/hook/logic đang nằm trong `components/`/`hooks/`/`utils/` của feature A, đó là dấu hiệu logic đó nên chuyển lên `packages/*` (theo [decision matrix §8.3](#83-decision-matrix-đặt-code-ở-đâu)), không phải import chéo feature vào file private.
 
 ## 7.4. Quy ước code đã chốt
