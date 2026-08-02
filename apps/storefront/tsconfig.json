@@ -1,24 +1,13 @@
 {
+  "extends": "@repo/ts-config/nextjs.json",
   "compilerOptions": {
-    "target": "ESNext",
-    "lib": ["dom", "dom.iterable", "esnext", "webworker"],
+    "lib": ["ES2022", "DOM", "DOM.Iterable", "webworker"],
     "allowJs": true,
-    "skipLibCheck": true,
-    "strict": true,
     "noUncheckedIndexedAccess": true,
-    "noEmit": true,
+    "declaration": false,
     "esModuleInterop": true,
-    "module": "esnext",
-    "moduleResolution": "bundler",
-    "resolveJsonModule": true,
     "isolatedModules": true,
     "jsx": "react-jsx",
-    "incremental": true,
-    "plugins": [
-      {
-        "name": "next"
-      }
-    ],
     "types": ["@serwist/next/typings"],
     "paths": {
       "@/*": ["./src/*"]
