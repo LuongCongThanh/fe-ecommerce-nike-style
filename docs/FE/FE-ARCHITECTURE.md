@@ -26,16 +26,16 @@ Những phần vẫn còn mở sau file này không còn là câu hỏi kiến t
 
 ## 2. Nguyên tắc kiến trúc đã chốt
 
-| ID | Nguyên tắc | Trạng thái | Ghi chú |
-|---|---|---|---|
-| ARC-001 | Monorepo 3 app, shared packages dùng chung | Đã chốt | `storefront`, `admin`, `cms` (xem Decision `#4`/`#5`, tái xác nhận ở Decision `#81` sau khi thử multi-repo ở Decision `#80`) |
-| ARC-002 | App Router cho cả 3 app | Đã chốt | Không trộn Pages Router |
-| ARC-003 | Feature-first trong từng app | Đã chốt | Không tổ chức theo technical folders toàn cục |
-| ARC-004 | API access chỉ đi qua `packages/api-sdk` | Đã chốt | Không `fetch` trực tiếp từ feature |
-| ARC-005 | Shared UI giữ thuần UI | Đã chốt | Nghiệp vụ chỉ vào `packages/commerce` khi thật sự share |
-| ARC-006 | Server state, client state, URL state tách riêng | Đã chốt | Không dùng Zustand làm server cache |
-| ARC-007 | Route guard ở FE chỉ là UX layer | Đã chốt | Authz thật do backend enforce |
-| ARC-008 | Mỗi feature phải có public API rõ | Đã chốt | Không dùng barrel `index.ts` (Decision `#57`) — chỉ `pages/` là public, còn lại private theo path |
+| ID      | Nguyên tắc                                       | Trạng thái | Ghi chú                                                                                                                      |
+| ------- | ------------------------------------------------ | ---------- | ---------------------------------------------------------------------------------------------------------------------------- |
+| ARC-001 | Monorepo 3 app, shared packages dùng chung       | Đã chốt    | `storefront`, `admin`, `cms` (xem Decision `#4`/`#5`, tái xác nhận ở Decision `#81` sau khi thử multi-repo ở Decision `#80`) |
+| ARC-002 | App Router cho cả 3 app                          | Đã chốt    | Không trộn Pages Router                                                                                                      |
+| ARC-003 | Feature-first trong từng app                     | Đã chốt    | Không tổ chức theo technical folders toàn cục                                                                                |
+| ARC-004 | API access chỉ đi qua `packages/api-sdk`         | Đã chốt    | Không `fetch` trực tiếp từ feature                                                                                           |
+| ARC-005 | Shared UI giữ thuần UI                           | Đã chốt    | Nghiệp vụ chỉ vào `packages/commerce` khi thật sự share                                                                      |
+| ARC-006 | Server state, client state, URL state tách riêng | Đã chốt    | Không dùng Zustand làm server cache                                                                                          |
+| ARC-007 | Route guard ở FE chỉ là UX layer                 | Đã chốt    | Authz thật do backend enforce                                                                                                |
+| ARC-008 | Mỗi feature phải có public API rõ                | Đã chốt    | Không dùng barrel `index.ts` (Decision `#57`) — chỉ `pages/` là public, còn lại private theo path                            |
 
 ## 3. Kiến trúc tổng thể
 
@@ -142,28 +142,28 @@ Không nên chứa:
 
 ## 5. So sánh kiến trúc 3 app
 
-| Chủ đề | `storefront` | `admin` | `cms` |
-|---|---|---|---|
-| Audience | khách mua hàng | vận hành nội bộ | content/marketing team |
-| Route type | public + account/checkout | protected | protected |
-| i18n UI | có | chưa bắt buộc | chưa bắt buộc |
-| SEO pressure | rất cao | thấp | thấp |
-| Performance pressure | cao nhất | trung bình | trung bình |
-| Commerce UI | chính | phụ | hầu như không |
-| CMS editing | không | không | chính |
+| Chủ đề               | `storefront`              | `admin`         | `cms`                  |
+| -------------------- | ------------------------- | --------------- | ---------------------- |
+| Audience             | khách mua hàng            | vận hành nội bộ | content/marketing team |
+| Route type           | public + account/checkout | protected       | protected              |
+| i18n UI              | có                        | chưa bắt buộc   | chưa bắt buộc          |
+| SEO pressure         | rất cao                   | thấp            | thấp                   |
+| Performance pressure | cao nhất                  | trung bình      | trung bình             |
+| Commerce UI          | chính                     | phụ             | hầu như không          |
+| CMS editing          | không                     | không           | chính                  |
 
 ## 6. Shared package architecture
 
-| Package | Vai trò kiến trúc | Ai được dùng |
-|---|---|---|
-| `packages/design-tokens` | token source of truth | cả 3 app + shared UI |
-| `packages/tailwind-config` | theme/preset chung | cả 3 app |
-| `packages/ui` | primitive UI + layout helpers | cả 3 app |
-| `packages/commerce` | reusable commerce components | chủ yếu `storefront`, có thể `admin` khi hợp lý |
-| `packages/schemas` | typed contract và validation schemas | cả app và `api-sdk` |
-| `packages/api-sdk` | network entrypoint duy nhất | cả 3 app |
-| `packages/hooks` | hook thật sự cross-app hoặc cross-feature | cả 3 app khi hợp lý |
-| `packages/utils` | helper thuần, không phụ thuộc app | cả 3 app |
+| Package                    | Vai trò kiến trúc                         | Ai được dùng                                    |
+| -------------------------- | ----------------------------------------- | ----------------------------------------------- |
+| `packages/design-tokens`   | token source of truth                     | cả 3 app + shared UI                            |
+| `packages/tailwind-config` | theme/preset chung                        | cả 3 app                                        |
+| `packages/ui`              | primitive UI + layout helpers             | cả 3 app                                        |
+| `packages/commerce`        | reusable commerce components              | chủ yếu `storefront`, có thể `admin` khi hợp lý |
+| `packages/schemas`         | typed contract và validation schemas      | cả app và `api-sdk`                             |
+| `packages/api-sdk`         | network entrypoint duy nhất               | cả 3 app                                        |
+| `packages/hooks`           | hook thật sự cross-app hoặc cross-feature | cả 3 app khi hợp lý                             |
+| `packages/utils`           | helper thuần, không phụ thuộc app         | cả 3 app                                        |
 
 ### 6.1. `packages/design-tokens`
 
@@ -300,9 +300,7 @@ Mẫu `package.json` scaffold-ready cho `packages/ui`:
   "version": "0.0.0",
   "private": true,
   "type": "module",
-  "sideEffects": [
-    "./src/styles/globals.css"
-  ],
+  "sideEffects": ["./src/styles/globals.css"],
   "exports": {
     "./button": "./src/components/Button.tsx",
     "./input": "./src/components/Input.tsx",
@@ -638,13 +636,13 @@ Không phải feature nào cũng bắt buộc có đủ mọi thư mục. Chỉ 
 
 ## 7.2. Ý nghĩa từng phần trong feature
 
-| Thư mục | Dùng cho | Không dùng cho |
-|---|---|---|
-| `pages/` | page-level composition của feature; điểm duy nhất mà bên ngoài feature (route trong `app/*`) được import | reusable shared UI |
-| `components/` | component riêng của feature, **private** — chỉ file trong cùng feature được import | primitive dùng chung toàn app |
-| `hooks/` | hook nghiệp vụ hoặc orchestration của feature, **private** | fetch trực tiếp bỏ qua `api-sdk` |
-| `stores/` | client state ngắn hạn, UI state có ý nghĩa trong feature, **private** | server cache |
-| `utils/` | helper thuần của feature, **private** | business logic bị chia vụn bừa bãi |
+| Thư mục       | Dùng cho                                                                                                 | Không dùng cho                     |
+| ------------- | -------------------------------------------------------------------------------------------------------- | ---------------------------------- |
+| `pages/`      | page-level composition của feature; điểm duy nhất mà bên ngoài feature (route trong `app/*`) được import | reusable shared UI                 |
+| `components/` | component riêng của feature, **private** — chỉ file trong cùng feature được import                       | primitive dùng chung toàn app      |
+| `hooks/`      | hook nghiệp vụ hoặc orchestration của feature, **private**                                               | fetch trực tiếp bỏ qua `api-sdk`   |
+| `stores/`     | client state ngắn hạn, UI state có ý nghĩa trong feature, **private**                                    | server cache                       |
+| `utils/`      | helper thuần của feature, **private**                                                                    | business logic bị chia vụn bừa bãi |
 
 ## 7.3. Public API của feature (không dùng barrel)
 
@@ -680,11 +678,11 @@ Nếu feature B thật sự cần dùng lại component/hook/logic đang nằm t
 
 ## 8.1. Luật import
 
-| Từ đâu | Được import gì |
-|---|---|
-| `app/*` | `src/features/*`, `src/providers/*`, shared packages |
-| feature A | shared packages, file private trong chính feature A |
-| feature A | public API của feature B nếu có nhu cầu thật |
+| Từ đâu          | Được import gì                                          |
+| --------------- | ------------------------------------------------------- |
+| `app/*`         | `src/features/*`, `src/providers/*`, shared packages    |
+| feature A       | shared packages, file private trong chính feature A     |
+| feature A       | public API của feature B nếu có nhu cầu thật            |
 | shared packages | shared packages khác nếu hợp lý và không vòng phụ thuộc |
 
 ## 8.2. Cấm
@@ -696,16 +694,16 @@ Nếu feature B thật sự cần dùng lại component/hook/logic đang nằm t
 
 ## 8.3. Decision matrix đặt code ở đâu
 
-| Nếu code là... | Đặt ở đâu |
-|---|---|
-| primitive thuần UI | `packages/ui` |
-| component commerce có reuse thật | `packages/commerce` |
-| logic gọi API typed | `packages/api-sdk` |
-| schema contract | `packages/schemas` |
-| helper thuần đa app | `packages/utils` |
-| hook thật sự dùng đa app | `packages/hooks` |
+| Nếu code là...                       | Đặt ở đâu                |
+| ------------------------------------ | ------------------------ |
+| primitive thuần UI                   | `packages/ui`            |
+| component commerce có reuse thật     | `packages/commerce`      |
+| logic gọi API typed                  | `packages/api-sdk`       |
+| schema contract                      | `packages/schemas`       |
+| helper thuần đa app                  | `packages/utils`         |
+| hook thật sự dùng đa app             | `packages/hooks`         |
 | page/business logic riêng một domain | `src/features/{feature}` |
-| route/layout/provider riêng app | app tương ứng |
+| route/layout/provider riêng app      | app tương ứng            |
 
 ## 9. Routing và layout architecture
 
@@ -1305,11 +1303,11 @@ Nguyên tắc:
 
 ## 11.2. App-specific auth
 
-| App | Baseline auth |
-|---|---|
+| App          | Baseline auth                                  |
+| ------------ | ---------------------------------------------- |
 | `storefront` | JWT access + refresh flow cho account/checkout |
-| `admin` | protected shell bắt buộc |
-| `cms` | protected shell bắt buộc |
+| `admin`      | protected shell bắt buộc                       |
+| `cms`        | protected shell bắt buộc                       |
 
 ## 11.3. Điều còn mở
 
@@ -1346,20 +1344,20 @@ Quy tắc:
 
 ## 12.3. App-specific emphasis
 
-| App | Ưu tiên |
-|---|---|
-| `storefront` | skeleton và optimistic UX hợp lý |
-| `admin` | table empty/error states rõ ràng |
-| `cms` | form save/error/preview states rõ ràng |
+| App          | Ưu tiên                                |
+| ------------ | -------------------------------------- |
+| `storefront` | skeleton và optimistic UX hợp lý       |
+| `admin`      | table empty/error states rõ ràng       |
+| `cms`        | form save/error/preview states rõ ràng |
 
 ## 13. State ownership architecture
 
-| Loại state | Công cụ chính | Ví dụ |
-|---|---|---|
-| URL state | route/search params | filter, sort, pagination |
-| Server state | TanStack Query | product list, orders, CMS data |
-| Client state | Zustand | modal state, step state, UI-only flows |
-| Local component state | React state | input interaction ngắn hạn |
+| Loại state            | Công cụ chính       | Ví dụ                                  |
+| --------------------- | ------------------- | -------------------------------------- |
+| URL state             | route/search params | filter, sort, pagination               |
+| Server state          | TanStack Query      | product list, orders, CMS data         |
+| Client state          | Zustand             | modal state, step state, UI-only flows |
+| Local component state | React state         | input interaction ngắn hạn             |
 
 Nguyên tắc cứng:
 
@@ -1412,158 +1410,157 @@ Không bao gồm: business flow chi tiết của catalog/cart/checkout, copywrit
 
 ### 16.1. Nguyên tắc chốt
 
-| ID | Nguyên tắc | Trạng thái | Ghi chú |
-|---|---|---|---|
-| DS-001 | Token là nguồn sự thật duy nhất cho style dùng chung | Đã chốt | Không hard-code design value trong shared layer |
-| DS-002 | Shared UI chỉ chứa component thuần UI | Đã chốt | Nghiệp vụ commerce để ở `packages/commerce` khi thật sự share |
-| DS-003 | Component variants đi qua `cva` | Đã chốt | Không tạo nhiều class rời rạc khó kiểm soát |
-| DS-004 | Styling theo Tailwind v4 + CSS vars | Đã chốt | Mapping từ token qua `packages/tailwind-config` |
-| DS-005 | A11y là baseline, không phải optional | Đã chốt | Keyboard, focus, contrast, aria |
-| DS-006 | Design system ưu tiên phục vụ `storefront`, nhưng không phá `admin` và `cms` | Đã chốt | Layout và primitives dùng chung cho 3 app |
-| DS-007 | `lucide-react` là icon library mặc định cho shared UI | Đã chốt | Không trộn nhiều icon set ở Phase 0 |
+| ID     | Nguyên tắc                                                                   | Trạng thái | Ghi chú                                                       |
+| ------ | ---------------------------------------------------------------------------- | ---------- | ------------------------------------------------------------- |
+| DS-001 | Token là nguồn sự thật duy nhất cho style dùng chung                         | Đã chốt    | Không hard-code design value trong shared layer               |
+| DS-002 | Shared UI chỉ chứa component thuần UI                                        | Đã chốt    | Nghiệp vụ commerce để ở `packages/commerce` khi thật sự share |
+| DS-003 | Component variants đi qua `cva`                                              | Đã chốt    | Không tạo nhiều class rời rạc khó kiểm soát                   |
+| DS-004 | Styling theo Tailwind v4 + CSS vars                                          | Đã chốt    | Mapping từ token qua `packages/tailwind-config`               |
+| DS-005 | A11y là baseline, không phải optional                                        | Đã chốt    | Keyboard, focus, contrast, aria                               |
+| DS-006 | Design system ưu tiên phục vụ `storefront`, nhưng không phá `admin` và `cms` | Đã chốt    | Layout và primitives dùng chung cho 3 app                     |
+| DS-007 | `lucide-react` là icon library mặc định cho shared UI                        | Đã chốt    | Không trộn nhiều icon set ở Phase 0                           |
 
 ### 16.2. Token matrix
 
 #### 16.2.1. Cấu trúc token bắt buộc
 
-| Nhóm token | Bắt buộc | Dùng cho | Ghi chú |
-|---|---|---|---|
-| Color | Có | text, surface, border, action, feedback | Tách base và semantic |
-| Spacing | Có | margin, padding, gap, section spacing | Dùng scale thống nhất |
-| Typography | Có | font family, size, line-height, weight, tracking | Phải support tiếng Việt |
-| Radius | Có | button, input, card, modal | Không hard-code theo component |
-| Shadow | Có | card, popover, modal, dropdown | Dùng theo elevation level |
-| Motion | Có | transition duration, easing, enter/exit | Nhẹ, ưu tiên storefront |
-| Breakpoints | Có | responsive layout | Dùng chung cho 3 app |
-| Opacity | Nên có | disabled, overlay, skeleton | Có thể để cùng color/motion phase đầu |
-| Z-index | Nên có | sticky, dropdown, modal, toast | Tránh z-index tự phát |
+| Nhóm token  | Bắt buộc | Dùng cho                                         | Ghi chú                               |
+| ----------- | -------- | ------------------------------------------------ | ------------------------------------- |
+| Color       | Có       | text, surface, border, action, feedback          | Tách base và semantic                 |
+| Spacing     | Có       | margin, padding, gap, section spacing            | Dùng scale thống nhất                 |
+| Typography  | Có       | font family, size, line-height, weight, tracking | Phải support tiếng Việt               |
+| Radius      | Có       | button, input, card, modal                       | Không hard-code theo component        |
+| Shadow      | Có       | card, popover, modal, dropdown                   | Dùng theo elevation level             |
+| Motion      | Có       | transition duration, easing, enter/exit          | Nhẹ, ưu tiên storefront               |
+| Breakpoints | Có       | responsive layout                                | Dùng chung cho 3 app                  |
+| Opacity     | Nên có   | disabled, overlay, skeleton                      | Có thể để cùng color/motion phase đầu |
+| Z-index     | Nên có   | sticky, dropdown, modal, toast                   | Tránh z-index tự phát                 |
 
 ##### Breakpoint scale đã chốt
 
-| Token | Min width | Ghi chú |
-|---|---|---|
-| `xs` | `0px` | mobile mặc định |
-| `sm` | `480px` | mobile lớn |
-| `md` | `768px` | tablet dọc / small laptop bắt đầu rõ layout |
-| `lg` | `1024px` | desktop cơ bản |
-| `xl` | `1280px` | desktop rộng |
-| `2xl` | `1440px` | desktop lớn |
+| Token | Min width | Ghi chú                                     |
+| ----- | --------- | ------------------------------------------- |
+| `sm`  | `640px`   | mobile lớn (Tailwind v4 default)            |
+| `md`  | `768px`   | tablet dọc / small laptop bắt đầu rõ layout |
+| `lg`  | `1024px`  | desktop cơ bản                              |
+| `xl`  | `1280px`  | desktop rộng                                |
+| `2xl` | `1536px`  | desktop lớn (Tailwind v4 default)           |
 
-Quy tắc: không tạo breakpoint riêng cho từng app ở Phase 0; mọi responsive rule trong `storefront`, `admin`, `cms` phải bám cùng một scale này; utility có thể khác nhau giữa app, nhưng token breakpoint không đổi.
+Quy tắc: không tạo breakpoint riêng cho từng app ở Phase 0; mọi responsive rule trong `storefront`, `admin`, `cms` phải bám cùng một scale này; utility có thể khác nhau giữa app, nhưng token breakpoint không đổi. Không override `--breakpoint-*` của Tailwind — xem Decision `#82`.
 
 #### 16.2.2. Cấu trúc color token
 
-| Tầng | Ví dụ | Mục đích |
-|---|---|---|
-| Base token | `gray-100`, `gray-900`, `blue-600` | Giá trị nền |
-| Semantic token | `surface-default`, `text-primary`, `border-subtle`, `action-primary-bg` | Ánh xạ để component dùng |
-| Component alias | `button-primary-bg`, `input-border-focus` | Chỉ tạo khi semantic chưa đủ rõ |
+| Tầng            | Ví dụ                                                                   | Mục đích                        |
+| --------------- | ----------------------------------------------------------------------- | ------------------------------- |
+| Base token      | `gray-100`, `gray-900`, `blue-600`                                      | Giá trị nền                     |
+| Semantic token  | `surface-default`, `text-primary`, `border-subtle`, `action-primary-bg` | Ánh xạ để component dùng        |
+| Component alias | `button-primary-bg`, `input-border-focus`                               | Chỉ tạo khi semantic chưa đủ rõ |
 
 Quy tắc: component ưu tiên dùng `semantic token`; chỉ tạo `component alias` khi nhiều component cần cùng một nghĩa đặc thù; không cho feature layer gọi trực tiếp base token nếu đang ở shared layer.
 
 #### 16.2.3. Semantic token tối thiểu
 
-| Nhóm | Token tối thiểu cần có |
-|---|---|
-| Surface | `surface-default`, `surface-subtle`, `surface-inverse`, `surface-overlay` |
-| Text | `text-primary`, `text-secondary`, `text-muted`, `text-inverse`, `text-disabled` |
-| Border | `border-default`, `border-subtle`, `border-strong`, `border-focus`, `border-error` |
-| Action | `action-primary-bg`, `action-primary-fg`, `action-primary-bg-hover`, `action-secondary-bg`, `action-secondary-fg` |
-| Feedback | `success`, `warning`, `danger`, `info` cùng foreground/background/border tương ứng |
+| Nhóm     | Token tối thiểu cần có                                                                                            |
+| -------- | ----------------------------------------------------------------------------------------------------------------- |
+| Surface  | `surface-default`, `surface-subtle`, `surface-inverse`, `surface-overlay`                                         |
+| Text     | `text-primary`, `text-secondary`, `text-muted`, `text-inverse`, `text-disabled`                                   |
+| Border   | `border-default`, `border-subtle`, `border-strong`, `border-focus`, `border-error`                                |
+| Action   | `action-primary-bg`, `action-primary-fg`, `action-primary-bg-hover`, `action-secondary-bg`, `action-secondary-fg` |
+| Feedback | `success`, `warning`, `danger`, `info` cùng foreground/background/border tương ứng                                |
 
 ### 16.3. Typography rules
 
-| Hạng mục | Quy định |
-|---|---|
-| Font family | `Be Vietnam Pro` cho body và heading mặc định |
-| Font scale | Dùng scale cố định cho `xs` đến `5xl` |
-| Line height | Phải an toàn cho tiếng Việt, nhất là uppercase |
-| Letter spacing | Chỉ dùng có chủ đích cho heading hoặc badge |
-| Font weight | Chuẩn hóa các mốc `regular`, `medium`, `semibold`, `bold` |
-| Locale | Không tạo typography token riêng theo locale ở Phase 0 |
+| Hạng mục       | Quy định                                                  |
+| -------------- | --------------------------------------------------------- |
+| Font family    | `Be Vietnam Pro` cho body và heading mặc định             |
+| Font scale     | Dùng scale cố định cho `xs` đến `5xl`                     |
+| Line height    | Phải an toàn cho tiếng Việt, nhất là uppercase            |
+| Letter spacing | Chỉ dùng có chủ đích cho heading hoặc badge               |
+| Font weight    | Chuẩn hóa các mốc `regular`, `medium`, `semibold`, `bold` |
+| Locale         | Không tạo typography token riêng theo locale ở Phase 0    |
 
 #### Typography baseline đã chốt
 
-| Token | Font size | Line height | Weight mặc định |
-|---|---|---|---|
-| `body-sm` | `14px` | `20px` | `400` |
-| `body-md` | `16px` | `24px` | `400` |
-| `body-lg` | `18px` | `28px` | `400` |
-| `label-sm` | `12px` | `16px` | `500` |
-| `label-md` | `14px` | `20px` | `500` |
-| `title-sm` | `20px` | `28px` | `600` |
-| `title-md` | `24px` | `32px` | `600` |
-| `title-lg` | `30px` | `38px` | `700` |
-| `display-sm` | `36px` | `44px` | `700` |
+| Token        | Font size | Line height | Weight mặc định |
+| ------------ | --------- | ----------- | --------------- |
+| `body-sm`    | `14px`    | `20px`      | `400`           |
+| `body-md`    | `16px`    | `24px`      | `400`           |
+| `body-lg`    | `18px`    | `28px`      | `400`           |
+| `label-sm`   | `12px`    | `16px`      | `500`           |
+| `label-md`   | `14px`    | `20px`      | `500`           |
+| `title-sm`   | `20px`    | `28px`      | `600`           |
+| `title-md`   | `24px`    | `32px`      | `600`           |
+| `title-lg`   | `30px`    | `38px`      | `700`           |
+| `display-sm` | `36px`    | `44px`      | `700`           |
 
 ### 16.4. Layout và responsive rules
 
 #### 16.4.1. Layout primitives bắt buộc
 
-| Primitive | Mục đích | Thuộc package |
-|---|---|---|
+| Primitive   | Mục đích                             | Thuộc package |
+| ----------- | ------------------------------------ | ------------- |
 | `Container` | khống chế max-width và padding ngang | `packages/ui` |
-| `Section` | nhịp dọc cho page sections | `packages/ui` |
-| `Stack` | xếp dọc có gap thống nhất | `packages/ui` |
-| `Inline` | xếp ngang đơn giản | `packages/ui` |
-| `Grid` | layout lưới responsive | `packages/ui` |
-| `Cluster` | nhóm tag, badge, action nhỏ | `packages/ui` |
+| `Section`   | nhịp dọc cho page sections           | `packages/ui` |
+| `Stack`     | xếp dọc có gap thống nhất            | `packages/ui` |
+| `Inline`    | xếp ngang đơn giản                   | `packages/ui` |
+| `Grid`      | layout lưới responsive               | `packages/ui` |
+| `Cluster`   | nhóm tag, badge, action nhỏ          | `packages/ui` |
 
 #### 16.4.2. Responsive baseline
 
-| Hạng mục | Quy định chốt |
-|---|---|
-| Breakpoint source | Lấy từ `packages/design-tokens` |
-| Container behavior | `storefront` dùng container rõ theo viewport, `admin/cms` ưu tiên fluid layout |
-| Grid usage | Product grid, collection grid, dashboard cards phải dùng primitive hoặc utility chuẩn |
-| Spacing scale | Tăng theo viewport nhưng không tạo scale riêng cho từng app |
-| Mobile-first | Bắt buộc |
+| Hạng mục           | Quy định chốt                                                                         |
+| ------------------ | ------------------------------------------------------------------------------------- |
+| Breakpoint source  | Lấy từ `packages/design-tokens`                                                       |
+| Container behavior | `storefront` dùng container rõ theo viewport, `admin/cms` ưu tiên fluid layout        |
+| Grid usage         | Product grid, collection grid, dashboard cards phải dùng primitive hoặc utility chuẩn |
+| Spacing scale      | Tăng theo viewport nhưng không tạo scale riêng cho từng app                           |
+| Mobile-first       | Bắt buộc                                                                              |
 
 #### 16.4.3. Container width đã chốt
 
 | Breakpoint | Max width container | Horizontal padding |
-|---|---|---|
-| `xs` | `100%` | `16px` |
-| `sm` | `100%` | `20px` |
-| `md` | `720px` | `24px` |
-| `lg` | `960px` | `24px` |
-| `xl` | `1200px` | `32px` |
-| `2xl` | `1280px` | `32px` |
+| ---------- | ------------------- | ------------------ |
+| `xs`       | `100%`              | `16px`             |
+| `sm`       | `100%`              | `20px`             |
+| `md`       | `720px`             | `24px`             |
+| `lg`       | `960px`             | `24px`             |
+| `xl`       | `1200px`            | `32px`             |
+| `2xl`      | `1280px`            | `32px`             |
 
 Quy tắc: `storefront` dùng `Container` với bảng trên làm baseline; `admin`/`cms` có thể fluid, nhưng spacing ngang vẫn đi theo token tương ứng; không tạo container width ngẫu hứng ở từng page.
 
 #### 16.4.4. Grid baseline cho storefront
 
-| Use case | Mobile | Tablet | Desktop |
-|---|---|---|---|
-| Product list grid | `2 cột` | `3 cột` | `4 cột` |
+| Use case               | Mobile  | Tablet  | Desktop        |
+| ---------------------- | ------- | ------- | -------------- |
+| Product list grid      | `2 cột` | `3 cột` | `4 cột`        |
 | Collection hero blocks | `1 cột` | `2 cột` | `2 hoặc 3 cột` |
-| CMS content cards | `1 cột` | `2 cột` | `3 cột` |
-| Admin summary cards | `1 cột` | `2 cột` | `4 cột` |
+| CMS content cards      | `1 cột` | `2 cột` | `3 cột`        |
+| Admin summary cards    | `1 cột` | `2 cột` | `4 cột`        |
 
 ### 16.5. Component inventory
 
 #### 16.5.1. Primitive UI tối thiểu phải có
 
-| Nhóm | Component tối thiểu |
-|---|---|
-| Actions | `Button`, `IconButton` |
+| Nhóm            | Component tối thiểu                                                        |
+| --------------- | -------------------------------------------------------------------------- |
+| Actions         | `Button`, `IconButton`                                                     |
 | Form foundation | `Label`, `Input`, `Textarea`, `Checkbox`, `RadioGroup`, `Switch`, `Select` |
-| Overlay | `Dialog`, `Drawer` hoặc `Sheet`, `Popover`, `Tooltip` |
-| Feedback | `Alert`, `InlineError`, `Spinner`, `Skeleton`, `EmptyState` |
-| Navigation | `Tabs`, `Breadcrumb`, `Pagination` |
-| Surfaces | `Card`, `Divider`, `Badge` |
-| Layout helpers | `Container`, `Section`, `Stack`, `Grid` |
+| Overlay         | `Dialog`, `Drawer` hoặc `Sheet`, `Popover`, `Tooltip`                      |
+| Feedback        | `Alert`, `InlineError`, `Spinner`, `Skeleton`, `EmptyState`                |
+| Navigation      | `Tabs`, `Breadcrumb`, `Pagination`                                         |
+| Surfaces        | `Card`, `Divider`, `Badge`                                                 |
+| Layout helpers  | `Container`, `Section`, `Stack`, `Grid`                                    |
 
 #### 16.5.2. Commerce-shared component nên có sau primitive
 
-| Component | Thuộc package | Ghi chú |
-|---|---|---|
-| `ProductCard` | `packages/commerce` | dùng ở storefront là chính |
-| `ProductPrice` | `packages/commerce` | format price thống nhất |
-| `ProductGallery` | `packages/commerce` | chỉ share nếu thật sự tái dùng |
-| `QuantitySelector` | `packages/commerce` | tránh duplicate ở cart/PDP |
-| `RatingDisplay` | `packages/commerce` | nếu business có review/rating |
+| Component          | Thuộc package       | Ghi chú                        |
+| ------------------ | ------------------- | ------------------------------ |
+| `ProductCard`      | `packages/commerce` | dùng ở storefront là chính     |
+| `ProductPrice`     | `packages/commerce` | format price thống nhất        |
+| `ProductGallery`   | `packages/commerce` | chỉ share nếu thật sự tái dùng |
+| `QuantitySelector` | `packages/commerce` | tránh duplicate ở cart/PDP     |
+| `RatingDisplay`    | `packages/commerce` | nếu business có review/rating  |
 
 #### 16.5.3. Không nên đưa vào shared quá sớm
 
@@ -1574,121 +1571,121 @@ Quy tắc: `storefront` dùng `Container` với bảng trên làm baseline; `adm
 
 ### 16.6. Component state matrix
 
-| State | Bắt buộc cho | Ghi chú |
-|---|---|---|
-| `default` | tất cả component | trạng thái nền |
-| `hover` | desktop interactive components | không dùng như nguồn thông tin duy nhất |
-| `active` | button, tabs, item selectable | phản hồi khi tương tác |
-| `focus-visible` | tất cả interactive components | bắt buộc cho keyboard |
-| `disabled` | input, button, select | phải có cả visual và semantic |
-| `loading` | button, async blocks, list/table | không làm layout nhảy quá mạnh |
-| `error` | form controls, async blocks | gắn với message rõ ràng |
-| `selected` | tabs, radio, selectable cards | tách với hover |
-| `empty` | list/table/result areas | có guidance phù hợp |
+| State           | Bắt buộc cho                     | Ghi chú                                 |
+| --------------- | -------------------------------- | --------------------------------------- |
+| `default`       | tất cả component                 | trạng thái nền                          |
+| `hover`         | desktop interactive components   | không dùng như nguồn thông tin duy nhất |
+| `active`        | button, tabs, item selectable    | phản hồi khi tương tác                  |
+| `focus-visible` | tất cả interactive components    | bắt buộc cho keyboard                   |
+| `disabled`      | input, button, select            | phải có cả visual và semantic           |
+| `loading`       | button, async blocks, list/table | không làm layout nhảy quá mạnh          |
+| `error`         | form controls, async blocks      | gắn với message rõ ràng                 |
+| `selected`      | tabs, radio, selectable cards    | tách với hover                          |
+| `empty`         | list/table/result areas          | có guidance phù hợp                     |
 
 Quy tắc: `focus-visible` phải có token riêng hoặc semantic token đủ rõ; `disabled` không chỉ giảm opacity mù quáng nếu làm giảm contrast quá mức; `loading`, `empty`, `error` phải được coi là một phần của component contract.
 
 ### 16.7. Accessibility baseline
 
-| Chủ đề | Chuẩn tối thiểu |
-|---|---|
-| Keyboard | mọi interactive component dùng được bằng bàn phím |
-| Focus | có `focus-visible` rõ ràng, không bị cắt |
-| Contrast | text và control states phải đạt contrast phù hợp |
-| Aria | dùng aria khi native semantic chưa đủ |
-| Labeling | input/select/checkbox/radio phải có label rõ |
-| Error announcement | form error nên có liên kết với field |
-| Modal behavior | trap focus, close bằng keyboard, restore focus |
-| Tooltip/popover | không che mất luồng keyboard chính |
+| Chủ đề             | Chuẩn tối thiểu                                   |
+| ------------------ | ------------------------------------------------- |
+| Keyboard           | mọi interactive component dùng được bằng bàn phím |
+| Focus              | có `focus-visible` rõ ràng, không bị cắt          |
+| Contrast           | text và control states phải đạt contrast phù hợp  |
+| Aria               | dùng aria khi native semantic chưa đủ             |
+| Labeling           | input/select/checkbox/radio phải có label rõ      |
+| Error announcement | form error nên có liên kết với field              |
+| Modal behavior     | trap focus, close bằng keyboard, restore focus    |
+| Tooltip/popover    | không che mất luồng keyboard chính                |
 
 #### Focus ring baseline đã chốt
 
-| Hạng mục | Giá trị chốt |
-|---|---|
-| Kích thước ring | `2px` |
-| Offset | `2px` trên surface sáng, `1px` nếu control quá nhỏ |
-| Màu | semantic token `border-focus` hoặc `focus-ring` |
-| Trigger | dùng `:focus-visible`, không style mọi `:focus` giống nhau |
-| Cấm | không bỏ focus ring mà không có thay thế tương đương |
+| Hạng mục        | Giá trị chốt                                               |
+| --------------- | ---------------------------------------------------------- |
+| Kích thước ring | `2px`                                                      |
+| Offset          | `2px` trên surface sáng, `1px` nếu control quá nhỏ         |
+| Màu             | semantic token `border-focus` hoặc `focus-ring`            |
+| Trigger         | dùng `:focus-visible`, không style mọi `:focus` giống nhau |
+| Cấm             | không bỏ focus ring mà không có thay thế tương đương       |
 
 #### Contrast baseline đã chốt
 
-| Loại | Chuẩn làm việc |
-|---|---|
-| Body text | tối thiểu theo mức AA thông thường |
-| Interactive control text | phải đọc rõ ở mọi state quan trọng |
-| Disabled state | không dùng opacity quá thấp làm mất khả năng nhận biết |
-| Focus state | phải nhìn ra ngay trên cả nền sáng và nền ảnh |
+| Loại                     | Chuẩn làm việc                                         |
+| ------------------------ | ------------------------------------------------------ |
+| Body text                | tối thiểu theo mức AA thông thường                     |
+| Interactive control text | phải đọc rõ ở mọi state quan trọng                     |
+| Disabled state           | không dùng opacity quá thấp làm mất khả năng nhận biết |
+| Focus state              | phải nhìn ra ngay trên cả nền sáng và nền ảnh          |
 
 ### 16.8. Icon và media rules
 
-| Hạng mục | Quy định |
-|---|---|
-| Icon library | `lucide-react` là nguồn icon mặc định cho `packages/ui` và `apps/*` |
-| Icon size | Dùng 3 mốc chuẩn `16`, `20`, `24` |
-| Icon usage | Icon không thay thế hoàn toàn label nếu hành động không hiển nhiên |
-| Product image ratio | Chốt ratio chuẩn theo card/PDP để tránh layout shift |
-| Placeholder | Có placeholder thống nhất cho image loading/error |
-| Empty illustration | Chỉ dùng khi thực sự giúp hiểu trạng thái, không lạm dụng |
+| Hạng mục            | Quy định                                                            |
+| ------------------- | ------------------------------------------------------------------- |
+| Icon library        | `lucide-react` là nguồn icon mặc định cho `packages/ui` và `apps/*` |
+| Icon size           | Dùng 3 mốc chuẩn `16`, `20`, `24`                                   |
+| Icon usage          | Icon không thay thế hoàn toàn label nếu hành động không hiển nhiên  |
+| Product image ratio | Chốt ratio chuẩn theo card/PDP để tránh layout shift                |
+| Placeholder         | Có placeholder thống nhất cho image loading/error                   |
+| Empty illustration  | Chỉ dùng khi thực sự giúp hiểu trạng thái, không lạm dụng           |
 
 #### Quy tắc icon đã chốt
 
-| Hạng mục | Giá trị chốt |
-|---|---|
-| Package | `lucide-react` |
-| Stroke width | giữ mặc định của lib, không custom bừa ở từng component |
-| Size `sm` | `16px` |
-| Size `md` | `20px` |
-| Size `lg` | `24px` |
-| Color source | lấy từ semantic token của text hoặc action |
-| Nơi wrap icon | nếu cần wrapper chung thì đặt ở `packages/ui` |
+| Hạng mục      | Giá trị chốt                                            |
+| ------------- | ------------------------------------------------------- |
+| Package       | `lucide-react`                                          |
+| Stroke width  | giữ mặc định của lib, không custom bừa ở từng component |
+| Size `sm`     | `16px`                                                  |
+| Size `md`     | `20px`                                                  |
+| Size `lg`     | `24px`                                                  |
+| Color source  | lấy từ semantic token của text hoặc action              |
+| Nơi wrap icon | nếu cần wrapper chung thì đặt ở `packages/ui`           |
 
 #### Image ratio baseline đã chốt
 
-| Use case | Ratio | Ghi chú |
-|---|---|---|
-| Product card image | `4:5` | ưu tiên ecommerce fashion/general merchandise |
-| PDP main gallery image | `4:5` | thống nhất với card để giảm lệch ảnh |
-| PDP thumbnail | `1:1` | dễ sắp thumbnail strip |
-| Collection/banner image | `16:9` | cho hero và promo section |
-| Category tile | `1:1` | ổn định grid nhỏ |
+| Use case                | Ratio  | Ghi chú                                       |
+| ----------------------- | ------ | --------------------------------------------- |
+| Product card image      | `4:5`  | ưu tiên ecommerce fashion/general merchandise |
+| PDP main gallery image  | `4:5`  | thống nhất với card để giảm lệch ảnh          |
+| PDP thumbnail           | `1:1`  | dễ sắp thumbnail strip                        |
+| Collection/banner image | `16:9` | cho hero và promo section                     |
+| Category tile           | `1:1`  | ổn định grid nhỏ                              |
 
 Quy tắc: dùng ratio box hoặc `next/image` container ổn định để tránh layout shift; nếu business sau này là điện máy hoặc furniture và ratio khác rõ rệt, update ở một quyết định riêng thay vì tự sửa từng màn.
 
 #### Placeholder và empty media baseline
 
-| Hạng mục | Quy định chốt |
-|---|---|
-| Image loading | dùng skeleton theo ratio thật của vùng ảnh |
-| Image error | fallback nền trung tính + icon ảnh + label ngắn |
+| Hạng mục           | Quy định chốt                                     |
+| ------------------ | ------------------------------------------------- |
+| Image loading      | dùng skeleton theo ratio thật của vùng ảnh        |
+| Image error        | fallback nền trung tính + icon ảnh + label ngắn   |
 | Empty illustration | chỉ dùng cho trạng thái cấp trang hoặc module lớn |
-| Inline empty | ưu tiên icon + heading + body text ngắn |
+| Inline empty       | ưu tiên icon + heading + body text ngắn           |
 
 #### Z-index scale đã chốt
 
-| Token | Giá trị |
-|---|---|
-| `z.base` | `0` |
-| `z.sticky` | `10` |
-| `z.dropdown` | `20` |
-| `z.popover` | `20` |
-| `z.overlay` | `30` |
-| `z.drawer` | `40` |
-| `z.modal` | `40` |
-| `z.toast` | `50` |
-| `z.debug` | `60` |
+| Token        | Giá trị |
+| ------------ | ------- |
+| `z.base`     | `0`     |
+| `z.sticky`   | `10`    |
+| `z.dropdown` | `20`    |
+| `z.popover`  | `20`    |
+| `z.overlay`  | `30`    |
+| `z.drawer`   | `40`    |
+| `z.modal`    | `40`    |
+| `z.toast`    | `50`    |
+| `z.debug`    | `60`    |
 
 Quy tắc: không set `z-[9999]` tùy tiện trong app layer; dropdown/popover không được vượt modal; toast được phép nổi trên modal overlay nhưng không che nút đóng modal.
 
 ### 16.9. Usage rules theo layer
 
-| Layer | Được phép | Không được phép |
-|---|---|---|
-| `packages/design-tokens` | token definitions | component, business logic |
-| `packages/tailwind-config` | theme mapping, plugin config | business styling đặc thù |
-| `packages/ui` | primitives, layout, UI-only patterns | commerce flow logic |
-| `packages/commerce` | reusable commerce components | API call trực tiếp, page logic nặng |
-| `apps/*` | page composition, feature-specific styling | bypass shared contract bừa bãi |
+| Layer                      | Được phép                                  | Không được phép                     |
+| -------------------------- | ------------------------------------------ | ----------------------------------- |
+| `packages/design-tokens`   | token definitions                          | component, business logic           |
+| `packages/tailwind-config` | theme mapping, plugin config               | business styling đặc thù            |
+| `packages/ui`              | primitives, layout, UI-only patterns       | commerce flow logic                 |
+| `packages/commerce`        | reusable commerce components               | API call trực tiếp, page logic nặng |
+| `apps/*`                   | page composition, feature-specific styling | bypass shared contract bừa bãi      |
 
 ### 16.10. Tài liệu prove component
 

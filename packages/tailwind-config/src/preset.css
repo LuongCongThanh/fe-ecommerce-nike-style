@@ -1,0 +1,102 @@
+@import 'tailwindcss';
+@import './theme.css';
+
+/* Container max-width per breakpoint — FE-ARCHITECTURE.md §16.4.3. admin/cms may go fluid instead of using this utility. */
+@utility container {
+  margin-inline: auto;
+  max-width: 100%;
+  padding-inline: 16px;
+
+  @variant sm {
+    max-width: 100%;
+    padding-inline: 20px;
+  }
+  @variant md {
+    max-width: 720px;
+    padding-inline: 24px;
+  }
+  @variant lg {
+    max-width: 960px;
+    padding-inline: 24px;
+  }
+  @variant xl {
+    max-width: 1200px;
+    padding-inline: 32px;
+  }
+  @variant 2xl {
+    max-width: 1280px;
+    padding-inline: 32px;
+  }
+}
+
+@layer base {
+  :root {
+    --background: oklch(1 0 0);
+    --foreground: oklch(0.16 0.004 30);
+    --primary: oklch(0.16 0.004 30);
+    --primary-foreground: oklch(0.98 0.004 30);
+    --secondary: oklch(0.96 0.006 30);
+    --secondary-foreground: oklch(0.3 0.11 220);
+    --muted: oklch(0.96 0.006 30);
+    --muted-foreground: oklch(0.55 0.01 30);
+    --accent: oklch(0.95 0.06 55);
+    --accent-foreground: oklch(0.38 0.15 55);
+    --destructive: oklch(0.58 0.24 10);
+    --destructive-foreground: oklch(1 0 0);
+    --border: oklch(0.92 0.008 30);
+    --input: oklch(0.92 0.008 30);
+    --ring: oklch(0.16 0.004 30);
+    --radius: 0.5rem;
+    --card: oklch(1 0 0);
+    --card-foreground: oklch(0.16 0.004 30);
+    --popover: oklch(1 0 0);
+    --popover-foreground: oklch(0.16 0.004 30);
+  }
+
+  .dark {
+    --background: oklch(0.13 0.004 30);
+    --foreground: oklch(0.96 0.006 30);
+    --primary: oklch(0.96 0.006 30);
+    --primary-foreground: oklch(0.16 0.004 30);
+    --secondary: oklch(0.22 0.006 30);
+    --secondary-foreground: oklch(0.8 0.1 220);
+    --muted: oklch(0.22 0.006 30);
+    --muted-foreground: oklch(0.65 0.01 30);
+    --accent: oklch(0.26 0.07 55);
+    --accent-foreground: oklch(0.88 0.08 55);
+    --destructive: oklch(0.65 0.22 10);
+    --destructive-foreground: oklch(0.96 0.006 30);
+    --border: oklch(0.25 0.008 30);
+    --input: oklch(0.25 0.008 30);
+    --ring: oklch(0.96 0.006 30);
+    --card: oklch(0.2 0.005 30);
+    --card-foreground: oklch(0.96 0.006 30);
+    --popover: oklch(0.2 0.005 30);
+    --popover-foreground: oklch(0.96 0.006 30);
+  }
+
+  *,
+  ::after,
+  ::before {
+    border-color: var(--color-border, currentColor);
+  }
+
+  body {
+    background-color: var(--color-background);
+    color: var(--color-foreground);
+    min-height: 100vh;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    *,
+    ::before,
+    ::after {
+      animation-duration: 0.01ms !important;
+      animation-iteration-count: 1 !important;
+      transition-duration: 0.01ms !important;
+      scroll-behavior: auto !important;
+    }
+  }
+}

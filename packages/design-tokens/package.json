@@ -1,0 +1,24 @@
+{
+  "name": "@repo/design-tokens",
+  "version": "0.0.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "typecheck": "tsc --noEmit"
+  },
+  "exports": {
+    "./colors": "./src/colors.ts",
+    "./semantic": "./src/semantic.ts",
+    "./spacing": "./src/spacing.ts",
+    "./typography": "./src/typography.ts",
+    "./radius": "./src/radius.ts",
+    "./shadow": "./src/shadow.ts",
+    "./motion": "./src/motion.ts",
+    "./breakpoints": "./src/breakpoints.ts",
+    "./z-index": "./src/z-index.ts"
+  },
+  "devDependencies": {
+    "@repo/ts-config": "workspace:*",
+    "typescript": "^5"
+  }
+}
