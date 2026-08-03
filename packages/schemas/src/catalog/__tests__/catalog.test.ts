@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest';
 
-import { ProductListRequestSchema, ProductListResponseSchema } from '../catalog';
+import { CatalogErrorSchema, ProductListRequestSchema, ProductListResponseSchema } from '../catalog';
 
 describe('ProductListRequestSchema', () => {
   it('accepts an optional search term alongside pagination', () => {
@@ -30,5 +30,13 @@ describe('ProductListResponseSchema', () => {
     });
 
     expect(result.success).toBe(false);
+  });
+});
+
+describe('CatalogErrorSchema', () => {
+  it('is the shared error envelope, re-exported for this domain', () => {
+    const result = CatalogErrorSchema.safeParse({ error: { code: 'NOT_FOUND', message: 'Product not found' } });
+
+    expect(result.success).toBe(true);
   });
 });

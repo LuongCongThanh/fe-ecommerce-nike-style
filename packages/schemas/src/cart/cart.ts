@@ -1,5 +1,8 @@
 import { z } from 'zod';
 
+export { ErrorEnvelopeSchema as CartErrorSchema } from '../errors/envelope';
+export type { ErrorEnvelope as CartError } from '../errors/envelope';
+
 export const CartItemSchema = z.object({
   productId: z.string(),
   sku: z.string(),

@@ -1,5 +1,8 @@
 import { z } from 'zod';
 
+export { ErrorEnvelopeSchema as CheckoutErrorSchema } from '../errors/envelope';
+export type { ErrorEnvelope as CheckoutError } from '../errors/envelope';
+
 export const PlaceOrderRequestSchema = z.object({
   cartId: z.string(),
   shippingAddress: z.object({

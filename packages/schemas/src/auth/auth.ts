@@ -1,5 +1,8 @@
 import { z } from 'zod';
 
+export { ErrorEnvelopeSchema as AuthErrorSchema } from '../errors/envelope';
+export type { ErrorEnvelope as AuthError } from '../errors/envelope';
+
 export const LoginRequestSchema = z.object({
   email: z.email(),
   password: z.string().min(8),

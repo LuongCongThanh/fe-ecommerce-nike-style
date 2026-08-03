@@ -1,5 +1,8 @@
 import { z } from 'zod';
 
+export { ErrorEnvelopeSchema as AccountErrorSchema } from '../errors/envelope';
+export type { ErrorEnvelope as AccountError } from '../errors/envelope';
+
 export const ProfileResponseSchema = z.object({
   id: z.string(),
   email: z.email(),

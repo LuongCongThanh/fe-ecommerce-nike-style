@@ -1,5 +1,8 @@
 import { z } from 'zod';
 
+export { ErrorEnvelopeSchema as WishlistErrorSchema } from '../errors/envelope';
+export type { ErrorEnvelope as WishlistError } from '../errors/envelope';
+
 export const WishlistItemSchema = z.object({
   productId: z.string(),
 });

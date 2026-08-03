@@ -2,6 +2,9 @@ import { z } from 'zod';
 
 import { PaginationMetaSchema, PaginationQuerySchema } from '../common/pagination';
 
+export { ErrorEnvelopeSchema as AdminErrorSchema } from '../errors/envelope';
+export type { ErrorEnvelope as AdminError } from '../errors/envelope';
+
 export const StaffSchema = z.object({
   id: z.string(),
   email: z.email(),

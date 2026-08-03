@@ -2,6 +2,9 @@ import { z } from 'zod';
 
 import { PaginationMetaSchema, PaginationQuerySchema } from '../common/pagination';
 
+export { ErrorEnvelopeSchema as CatalogErrorSchema } from '../errors/envelope';
+export type { ErrorEnvelope as CatalogError } from '../errors/envelope';
+
 export const ProductSchema = z.object({
   id: z.string(),
   slug: z.string(),

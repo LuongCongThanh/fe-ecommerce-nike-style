@@ -1,5 +1,8 @@
 import { z } from 'zod';
 
+export { ErrorEnvelopeSchema as CmsErrorSchema } from '../errors/envelope';
+export type { ErrorEnvelope as CmsError } from '../errors/envelope';
+
 export const CmsPageRequestSchema = z.object({
   slug: z.string(),
 });
