@@ -1,0 +1,31 @@
+{
+  "name": "@repo/schemas",
+  "version": "0.0.0",
+  "private": true,
+  "type": "module",
+  "sideEffects": false,
+  "scripts": {
+    "typecheck": "tsc --noEmit",
+    "test": "vitest run"
+  },
+  "exports": {
+    "./common": "./src/common/pagination.ts",
+    "./errors": "./src/errors/envelope.ts",
+    "./auth": "./src/auth/auth.ts",
+    "./catalog": "./src/catalog/catalog.ts",
+    "./cart": "./src/cart/cart.ts",
+    "./wishlist": "./src/wishlist/wishlist.ts",
+    "./account": "./src/account/account.ts",
+    "./checkout": "./src/checkout/checkout.ts",
+    "./admin": "./src/admin/admin.ts",
+    "./cms": "./src/cms/cms.ts"
+  },
+  "dependencies": {
+    "zod": "^4.4.3"
+  },
+  "devDependencies": {
+    "@repo/ts-config": "workspace:*",
+    "typescript": "^5",
+    "vitest": "^4.1.10"
+  }
+}
