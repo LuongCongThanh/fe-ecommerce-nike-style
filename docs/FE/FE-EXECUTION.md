@@ -121,8 +121,9 @@ Phần này dùng như checklist nghiệm thu thật cho từng package.
 
 #### 1.6.2. `packages/eslint-config`
 
-- Bắt buộc: base config, ignore cho `.next`/`dist`/`coverage`/`test-results`, import/order rules (`eslint-plugin-import-x`), boundaries rules (`eslint-plugin-boundaries`), TypeScript rules (`typescript-eslint`), Next.js rules (`eslint-config-next`), React rules (`eslint-plugin-react` + `eslint-plugin-react-hooks`), a11y rules (`eslint-plugin-jsx-a11y`)
-- Rule bắt buộc: không cho feature gọi API trực tiếp ngoài `@repo/api-sdk` (`boundaries`); không import xuyên feature bừa bãi (`boundaries`); ưu tiên `import type`; cấm `any` không có lý do (`typescript-eslint`)
+- Bắt buộc: base config, ignore cho `.next`/`dist`/`coverage`/`test-results`, import/order rules (`eslint-plugin-import-x`), TypeScript rules (`typescript-eslint`), Next.js rules (`eslint-config-next`), React rules (`eslint-plugin-react` + `eslint-plugin-react-hooks`), a11y rules (`eslint-plugin-jsx-a11y`)
+- Rule bắt buộc: ưu tiên `import type`; cấm `any` không có lý do (`typescript-eslint`)
+- Boundaries (`eslint-plugin-boundaries`: không cho feature gọi API trực tiếp ngoài `@repo/api-sdk`; không import xuyên feature bừa bãi) **không còn nằm trong package chia sẻ này** (Decision `#83`) — settings `boundaries/elements` phụ thuộc cấu trúc thư mục riêng của từng app nên mỗi app tự đăng ký plugin và rule trong `eslint.config.mjs` của nó; xem ví dụ thật ở `apps/storefront/eslint.config.mjs`
 - Pass khi: app/package dùng được config lint chung; `pnpm lint` chạy được ở toàn workspace
 
 #### 1.6.3. `packages/design-tokens`
@@ -489,10 +490,10 @@ pnpm --filter ./packages/tailwind-config add -D tailwindcss-motion@1.1.1
 Ví dụ preset config:
 
 ```ts
-import motion from "tailwindcss-motion";
+import motion from 'tailwindcss-motion';
 
 export default {
-  plugins: [motion]
+  plugins: [motion],
 };
 ```
 
@@ -562,13 +563,13 @@ Tối thiểu:
 ##### `packages/eslint-config/base.js` đã chốt làm baseline
 
 ```js
-const tseslint = require("typescript-eslint");
-const importX = require("eslint-plugin-import-x");
-const boundaries = require("eslint-plugin-boundaries");
+const tseslint = require('typescript-eslint');
+const importX = require('eslint-plugin-import-x');
+const boundaries = require('eslint-plugin-boundaries');
 
 module.exports = tseslint.config(
   {
-    ignores: ["dist/**", ".next/**", "coverage/**", "test-results/**"]
+    ignores: ['dist/**', '.next/**', 'coverage/**', 'test-results/**'],
   },
   ...tseslint.configs.strictTypeChecked,
   ...tseslint.configs.stylisticTypeChecked,
@@ -576,26 +577,23 @@ module.exports = tseslint.config(
     languageOptions: {
       parserOptions: {
         project: true,
-        tsconfigRootDir: __dirname
-      }
+        tsconfigRootDir: __dirname,
+      },
     },
-    plugins: { "import-x": importX, boundaries },
+    plugins: { 'import-x': importX, boundaries },
     settings: {
-      "boundaries/elements": [
-        { type: "feature-public", pattern: "src/features/*/pages/**" },
-        { type: "feature-private", pattern: "src/features/*/{components,hooks,stores,utils}/**" }
-      ]
+      'boundaries/elements': [
+        { type: 'feature-public', pattern: 'src/features/*/pages/**' },
+        { type: 'feature-private', pattern: 'src/features/*/{components,hooks,stores,utils}/**' },
+      ],
     },
     rules: {
-      "import-x/order": "warn",
-      "import-x/no-relative-parent-imports": "error",
-      "boundaries/no-unknown": "error",
-      "boundaries/element-types": [
-        "error",
-        { default: "disallow", rules: [{ from: "feature-public", allow: ["feature-public"] }] }
-      ]
-    }
-  }
+      'import-x/order': 'warn',
+      'import-x/no-relative-parent-imports': 'error',
+      'boundaries/no-unknown': 'error',
+      'boundaries/element-types': ['error', { default: 'disallow', rules: [{ from: 'feature-public', allow: ['feature-public'] }] }],
+    },
+  },
 );
 ```
 
@@ -674,7 +672,7 @@ Không có `index.ts` — `package.json` `"exports"` map từng subpath, ví d�
 ##### `packages/api-sdk/src/env/config.ts` đã chốt làm baseline
 
 ```ts
-export const IS_API_MOCKING = process.env.NEXT_PUBLIC_API_MOCKING === "true";
+export const IS_API_MOCKING = process.env.NEXT_PUBLIC_API_MOCKING === 'true';
 ```
 
 ##### `packages/api-sdk/src/client/fetcher.ts` đã chốt làm baseline
@@ -683,7 +681,7 @@ export const IS_API_MOCKING = process.env.NEXT_PUBLIC_API_MOCKING === "true";
 export async function fetcher<T>(input: RequestInfo, init?: RequestInit): Promise<T> {
   const response = await fetch(input, {
     ...init,
-    credentials: "include"
+    credentials: 'include',
   });
 
   if (!response.ok) {
@@ -768,10 +766,10 @@ src/providers/
 ##### `src/providers/query-provider.tsx` đã chốt làm baseline
 
 ```tsx
-"use client";
+'use client';
 
-import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import { useState } from "react";
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
+import { useState } from 'react';
 
 export function AppQueryProvider({ children }: { children: React.ReactNode }) {
   const [queryClient] = useState(
@@ -780,10 +778,10 @@ export function AppQueryProvider({ children }: { children: React.ReactNode }) {
         defaultOptions: {
           queries: {
             retry: 1,
-            refetchOnWindowFocus: false
-          }
-        }
-      })
+            refetchOnWindowFocus: false,
+          },
+        },
+      }),
   );
 
   return <QueryClientProvider client={queryClient}>{children}</QueryClientProvider>;
@@ -934,15 +932,15 @@ Root `lint-staged.config.js` đã chốt làm baseline:
 
 ```js
 module.exports = {
-  "*.{ts,tsx}": ["eslint --fix", "prettier --write"],
-  "*.{md,json,yaml,yml}": ["prettier --write"]
+  '*.{ts,tsx}': ['eslint --fix', 'prettier --write'],
+  '*.{md,json,yaml,yml}': ['prettier --write'],
 };
 ```
 
 Root `commitlint.config.js` đã chốt làm baseline:
 
 ```js
-module.exports = { extends: ["@commitlint/config-conventional"] };
+module.exports = { extends: ['@commitlint/config-conventional'] };
 ```
 
 Quy tắc: commit message theo Conventional Commits (`feat:`, `fix:`, `docs:`, `chore:`...); `pre-commit` chỉ lint/format file staged, không chạy full test suite (giữ commit nhanh, test đầy đủ chạy ở `turbo run test` riêng hoặc CI sau này).
@@ -958,8 +956,8 @@ pnpm --filter ./apps/storefront add -D @next/bundle-analyzer
 `next.config.js` đã chốt làm baseline (áp dụng tương tự cho `admin`/`cms`):
 
 ```js
-const withBundleAnalyzer = require("@next/bundle-analyzer")({
-  enabled: process.env.ANALYZE === "true"
+const withBundleAnalyzer = require('@next/bundle-analyzer')({
+  enabled: process.env.ANALYZE === 'true',
 });
 
 module.exports = withBundleAnalyzer({});
@@ -975,72 +973,72 @@ Các version dưới đây đã được **chốt làm baseline scaffold FE**.
 
 ### 3.1. Dependency matrix
 
-| Nhóm | Package | Version đã chốt | Cài ở đâu |
-|---|---|---|---|
-| Root tooling | `turbo` | `2.10.7` | root |
-| Root tooling | `typescript` | `7.0.2` | root |
-| Root tooling | `eslint` | `10.8.0` | root |
-| Root tooling | `prettier` | `3.9.6` | root |
-| Root tooling | `husky` | `9.1.7` | root |
-| Root tooling | `lint-staged` | `16.1.2` | root |
-| Root tooling | `@commitlint/cli` | `20.0.0` | root |
-| Root tooling | `@commitlint/config-conventional` | `20.0.0` | root |
-| Lint config | `typescript-eslint` | `9.4.0` | `packages/eslint-config` |
-| Lint config | `eslint-plugin-import-x` | `5.2.0` | `packages/eslint-config` |
-| Lint config | `eslint-plugin-boundaries` | `5.0.3` | `packages/eslint-config` |
-| Lint config | `eslint-config-next` | `16.2.12` | `packages/eslint-config` |
-| Lint config | `eslint-plugin-react` | `7.38.0` | `packages/eslint-config` |
-| Lint config | `eslint-plugin-react-hooks` | `6.1.0` | `packages/eslint-config` |
-| Lint config | `eslint-plugin-jsx-a11y` | `6.10.2` | `packages/eslint-config` |
-| App framework | `@next/bundle-analyzer` | `16.2.12` | `apps/*` |
-| 3D | `three` | `0.182.0` | `apps/storefront` |
-| 3D | `@react-three/fiber` | `9.3.0` | `apps/storefront` |
-| 3D | `@react-three/drei` | `10.4.0` | `apps/storefront` |
-| PWA | `@ducanh2912/next-pwa` | `10.2.7` | `apps/storefront` |
-| App framework | `next` | `16.2.12` | `apps/*` |
-| App framework | `react` | `19.2.8` | `apps/*` |
-| App framework | `react-dom` | `19.2.8` | `apps/*` |
-| App framework | `next-intl` | `4.13.4` | `apps/storefront` |
-| Data/state/contract | `@tanstack/react-query` | `5.101.4` | `apps/*`, `packages/hooks` |
-| Data/state/contract | `zustand` | `5.0.14` | `apps/*`, `packages/hooks` |
-| Data/state/contract | `zod` | `4.4.3` | `packages/schemas`, `packages/api-sdk` |
-| Data/state/contract | `msw` | `2.15.0` | `packages/api-sdk` |
-| Styling/UI | `tailwindcss` | `4.3.3` | root hoặc `packages/tailwind-config` |
-| Styling/UI | `class-variance-authority` | `0.7.1` | `packages/ui` |
-| Styling/UI | `clsx` | `2.1.1` | `packages/ui` |
-| Styling/UI | `tailwind-merge` | `3.6.0` | `packages/ui` |
-| Styling/UI | `tailwindcss-motion` | `1.1.1` | `packages/tailwind-config` |
-| Styling/UI | `lucide-react` | `1.27.0` | `packages/ui` |
-| Styling/UI | `@radix-ui/react-dialog` | `1.1.23` | `packages/ui` |
-| Styling/UI | `@radix-ui/react-tabs` | `1.1.21` | `packages/ui` |
-| Styling/UI | `@radix-ui/react-tooltip` | `1.2.16` | `packages/ui` |
-| Forms | `react-hook-form` | `7.83.0` | `apps/*` |
-| Forms | `@hookform/resolvers` | `5.5.7` | `apps/*` |
-| Testing | `vitest` | `4.1.10` | root |
-| Testing | `jsdom` | `30.0.1` | root |
-| Testing | `@playwright/test` | `1.62.0` | root |
+| Nhóm                | Package                           | Version đã chốt | Cài ở đâu                              |
+| ------------------- | --------------------------------- | --------------- | -------------------------------------- |
+| Root tooling        | `turbo`                           | `2.10.7`        | root                                   |
+| Root tooling        | `typescript`                      | `7.0.2`         | root                                   |
+| Root tooling        | `eslint`                          | `10.8.0`        | root                                   |
+| Root tooling        | `prettier`                        | `3.9.6`         | root                                   |
+| Root tooling        | `husky`                           | `9.1.7`         | root                                   |
+| Root tooling        | `lint-staged`                     | `16.1.2`        | root                                   |
+| Root tooling        | `@commitlint/cli`                 | `20.0.0`        | root                                   |
+| Root tooling        | `@commitlint/config-conventional` | `20.0.0`        | root                                   |
+| Lint config         | `typescript-eslint`               | `9.4.0`         | `packages/eslint-config`               |
+| Lint config         | `eslint-plugin-import-x`          | `5.2.0`         | `packages/eslint-config`               |
+| Lint config         | `eslint-plugin-boundaries`        | `5.0.3`         | `packages/eslint-config`               |
+| Lint config         | `eslint-config-next`              | `16.2.12`       | `packages/eslint-config`               |
+| Lint config         | `eslint-plugin-react`             | `7.38.0`        | `packages/eslint-config`               |
+| Lint config         | `eslint-plugin-react-hooks`       | `6.1.0`         | `packages/eslint-config`               |
+| Lint config         | `eslint-plugin-jsx-a11y`          | `6.10.2`        | `packages/eslint-config`               |
+| App framework       | `@next/bundle-analyzer`           | `16.2.12`       | `apps/*`                               |
+| 3D                  | `three`                           | `0.182.0`       | `apps/storefront`                      |
+| 3D                  | `@react-three/fiber`              | `9.3.0`         | `apps/storefront`                      |
+| 3D                  | `@react-three/drei`               | `10.4.0`        | `apps/storefront`                      |
+| PWA                 | `@ducanh2912/next-pwa`            | `10.2.7`        | `apps/storefront`                      |
+| App framework       | `next`                            | `16.2.12`       | `apps/*`                               |
+| App framework       | `react`                           | `19.2.8`        | `apps/*`                               |
+| App framework       | `react-dom`                       | `19.2.8`        | `apps/*`                               |
+| App framework       | `next-intl`                       | `4.13.4`        | `apps/storefront`                      |
+| Data/state/contract | `@tanstack/react-query`           | `5.101.4`       | `apps/*`, `packages/hooks`             |
+| Data/state/contract | `zustand`                         | `5.0.14`        | `apps/*`, `packages/hooks`             |
+| Data/state/contract | `zod`                             | `4.4.3`         | `packages/schemas`, `packages/api-sdk` |
+| Data/state/contract | `msw`                             | `2.15.0`        | `packages/api-sdk`                     |
+| Styling/UI          | `tailwindcss`                     | `4.3.3`         | root hoặc `packages/tailwind-config`   |
+| Styling/UI          | `class-variance-authority`        | `0.7.1`         | `packages/ui`                          |
+| Styling/UI          | `clsx`                            | `2.1.1`         | `packages/ui`                          |
+| Styling/UI          | `tailwind-merge`                  | `3.6.0`         | `packages/ui`                          |
+| Styling/UI          | `tailwindcss-motion`              | `1.1.1`         | `packages/tailwind-config`             |
+| Styling/UI          | `lucide-react`                    | `1.27.0`        | `packages/ui`                          |
+| Styling/UI          | `@radix-ui/react-dialog`          | `1.1.23`        | `packages/ui`                          |
+| Styling/UI          | `@radix-ui/react-tabs`            | `1.1.21`        | `packages/ui`                          |
+| Styling/UI          | `@radix-ui/react-tooltip`         | `1.2.16`        | `packages/ui`                          |
+| Forms               | `react-hook-form`                 | `7.83.0`        | `apps/*`                               |
+| Forms               | `@hookform/resolvers`             | `5.5.7`         | `apps/*`                               |
+| Testing             | `vitest`                          | `4.1.10`        | root                                   |
+| Testing             | `jsdom`                           | `30.0.1`        | root                                   |
+| Testing             | `@playwright/test`                | `1.62.0`        | root                                   |
 
 ### 3.2. Upgrade policy
 
-| Rule | Chính sách |
-|---|---|
-| Pin version | Dùng exact version ngay từ commit scaffold đầu tiên |
-| Cách nâng | Nâng theo batch, không nâng ngẫu nhiên từng package nhỏ lẻ |
-| Batch đề xuất | `tooling`, `app runtime`, `data/state`, `styling/ui`, `test` |
-| Khi nâng major | Chỉ nâng khi có lý do rõ ràng và có smoke check sau nâng |
-| Khi nâng patch/minor | Gom theo nhóm, không để docs và lockfile lệch nhau |
-| Source of truth | lockfile + file này + `FE.md` |
-| Nếu lockfile khác docs | lockfile thắng, nhưng phải cập nhật ngược lại docs |
+| Rule                   | Chính sách                                                   |
+| ---------------------- | ------------------------------------------------------------ |
+| Pin version            | Dùng exact version ngay từ commit scaffold đầu tiên          |
+| Cách nâng              | Nâng theo batch, không nâng ngẫu nhiên từng package nhỏ lẻ   |
+| Batch đề xuất          | `tooling`, `app runtime`, `data/state`, `styling/ui`, `test` |
+| Khi nâng major         | Chỉ nâng khi có lý do rõ ràng và có smoke check sau nâng     |
+| Khi nâng patch/minor   | Gom theo nhóm, không để docs và lockfile lệch nhau           |
+| Source of truth        | lockfile + file này + `FE.md`                                |
+| Nếu lockfile khác docs | lockfile thắng, nhưng phải cập nhật ngược lại docs           |
 
 ### 3.3. Minimum check sau upgrade
 
-| Kiểm tra | Yêu cầu |
-|---|---|
-| Install | `pnpm install` pass |
-| Typecheck | `pnpm typecheck` pass |
-| Lint | `pnpm lint` pass |
-| Unit/integration | `pnpm test` pass |
-| E2E boot | `pnpm test:e2e` boot được |
+| Kiểm tra         | Yêu cầu                              |
+| ---------------- | ------------------------------------ |
+| Install          | `pnpm install` pass                  |
+| Typecheck        | `pnpm typecheck` pass                |
+| Lint             | `pnpm lint` pass                     |
+| Unit/integration | `pnpm test` pass                     |
+| E2E boot         | `pnpm test:e2e` boot được            |
 | Storefront smoke | app chạy local và mock mode không vỡ |
 
 ## 4. Definition of Done

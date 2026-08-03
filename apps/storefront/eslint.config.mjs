@@ -1,7 +1,8 @@
+import path from 'node:path';
 import js from '@eslint/js';
 import typescript from '@typescript-eslint/eslint-plugin';
 import typescriptParser from '@typescript-eslint/parser';
-import nextVitals from 'eslint-config-next/core-web-vitals';
+import createNextConfig from '@repo/eslint-config/next';
 import prettier from 'eslint-config-prettier';
 import vitestPlugin from 'eslint-plugin-vitest';
 import simpleImportSort from 'eslint-plugin-simple-import-sort';
@@ -10,16 +11,14 @@ import unusedImports from 'eslint-plugin-unused-imports';
 import boundaries from 'eslint-plugin-boundaries';
 import noRelativeImportPaths from 'eslint-plugin-no-relative-import-paths';
 import sonarjs from 'eslint-plugin-sonarjs';
-import path from 'node:path';
 
 const tailwindEntryCss = path.join(import.meta.dirname, 'src/app/globals.css');
 const disableTypeChecked = typescript.configs['flat/disable-type-checked'];
+const sharedNextConfig = createNextConfig({ tsconfigRootDir: import.meta.dirname });
 
 const eslintConfig = [
-  ...nextVitals,
   js.configs.recommended,
-  ...typescript.configs['flat/strict-type-checked'],
-  ...typescript.configs['flat/stylistic-type-checked'],
+  ...sharedNextConfig,
 
   {
     ignores: [
