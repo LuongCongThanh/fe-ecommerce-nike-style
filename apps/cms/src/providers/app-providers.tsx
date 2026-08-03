@@ -10,19 +10,19 @@ import { AppQueryProvider } from '@/providers/query-provider';
  * `NEXT_PUBLIC_API_MOCKING` is unset) — otherwise the first query could race the worker's start.
  */
 export function AppProviders({ children }: { children: React.ReactNode }) {
-  const [mockingReady, setMockingReady] = useState(false);
+  const [isMockingReady, setIsMockingReady] = useState(false);
 
   useEffect(() => {
     enableApiMockingBrowser()
       .then(() => {
-        setMockingReady(true);
+        setIsMockingReady(true);
       })
       .catch(() => {
-        setMockingReady(true);
+        setIsMockingReady(true);
       });
   }, []);
 
-  if (!mockingReady) return null;
+  if (!isMockingReady) return null;
 
   return <AppQueryProvider>{children}</AppQueryProvider>;
 }

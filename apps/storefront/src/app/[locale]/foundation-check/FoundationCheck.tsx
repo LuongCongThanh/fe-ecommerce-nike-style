@@ -14,22 +14,22 @@ import { useQuery } from '@tanstack/react-query';
  * Boots its own MSW gate rather than the global Providers, so it can't affect any other route.
  */
 export function FoundationCheck() {
-  const [mockingReady, setMockingReady] = useState(false);
+  const [isMockingReady, setIsMockingReady] = useState(false);
 
   useEffect(() => {
     enableApiMockingBrowser()
       .then(() => {
-        setMockingReady(true);
+        setIsMockingReady(true);
       })
       .catch(() => {
-        setMockingReady(true);
+        setIsMockingReady(true);
       });
   }, []);
 
   const { data, isLoading, isError, refetch } = useQuery({
     queryKey: ['foundation-check', 'products'],
     queryFn: async () => getProducts(),
-    enabled: mockingReady,
+    enabled: isMockingReady,
   });
 
   return (

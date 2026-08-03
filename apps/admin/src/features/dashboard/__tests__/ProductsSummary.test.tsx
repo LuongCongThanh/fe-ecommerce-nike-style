@@ -3,7 +3,7 @@ import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { render, screen } from '@testing-library/react';
 import { afterAll, afterEach, beforeAll, describe, expect, it } from 'vitest';
 
-import { ProductsSummary } from '../ProductsSummary';
+import { ProductsSummary } from '@/features/dashboard/ProductsSummary';
 
 beforeAll(() => {
   server.listen({ onUnhandledRequest: 'error' });
