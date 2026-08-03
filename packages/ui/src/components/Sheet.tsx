@@ -3,7 +3,7 @@
 import * as React from 'react';
 
 import { XIcon } from 'lucide-react';
-import { Dialog as SheetPrimitive } from 'radix-ui';
+import * as SheetPrimitive from '@radix-ui/react-dialog';
 
 import { cn } from '../lib/cn';
 
@@ -92,4 +92,3 @@ function SheetDescription({ className, ...props }: React.ComponentProps<typeof S
 }
 
 export { Sheet, SheetClose, SheetContent, SheetDescription, SheetFooter, SheetHeader, SheetTitle, SheetTrigger };
-

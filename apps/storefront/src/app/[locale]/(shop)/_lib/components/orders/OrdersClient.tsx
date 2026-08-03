@@ -5,7 +5,7 @@ import Link from 'next/link';
 import { useLocale } from 'next-intl';
 
 import { OrderStatusBadge } from '@/app/[locale]/(shop)/_lib/components/common/OrderStatusBadge';
-import { formatCurrency } from '@/shared/lib/utils';
+import { formatCurrency } from '@repo/shared/utils';
 import type { Order } from '@/shared/types/order';
 
 interface OrdersClientProps {

@@ -3,8 +3,6 @@ import { format } from 'date-fns';
 import { vi } from 'date-fns/locale';
 import { twMerge } from 'tailwind-merge';
 
-import { APP_CONFIG } from '@/shared/constants/app-config';
-
 function isQueryValue(value: unknown): value is string | number | boolean {
   return typeof value === 'string' || typeof value === 'number' || typeof value === 'boolean';
 }
@@ -70,8 +68,4 @@ export function validateVietnamesePhone(phone: string): boolean {
   const normalizedPhone = phone.trim();
   const vietnamPhoneRegex = /^(0|\+84)(3[2-9]|5[6-9]|7[06-9]|8[1-9]|9[0-9])\d{7}$/;
   return vietnamPhoneRegex.test(normalizedPhone);
-}
-
-export function getDefaultPageSize(): number {
-  return APP_CONFIG.ITEMS_PER_PAGE;
 }

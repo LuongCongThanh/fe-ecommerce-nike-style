@@ -6,7 +6,7 @@ import Image from 'next/image';
 import { AnimatePresence, motion } from 'framer-motion';
 import { ChevronLeft, ChevronRight } from 'lucide-react';
 
-import { cn } from '@/shared/lib/utils';
+import { cn } from '@repo/shared/utils';
 
 interface ProductGalleryProps {
   readonly images: string[];

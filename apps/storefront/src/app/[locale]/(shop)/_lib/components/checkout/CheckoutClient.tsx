@@ -12,7 +12,7 @@ import { useCart } from '@/app/[locale]/(shop)/_lib/hooks/useCart';
 import type { CheckoutInput } from '@/app/[locale]/(shop)/_lib/schemas/checkout';
 import { SHIPPING_FEE_BY_METHOD } from '@/app/[locale]/(shop)/_lib/schemas/checkout';
 import { Input } from '@repo/ui/input';
-import { formatCurrency } from '@/shared/lib/utils';
+import { formatCurrency } from '@repo/shared/utils';
 
 type CheckoutValues = CheckoutInput;
 

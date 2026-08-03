@@ -6,7 +6,7 @@ import { AddToCartSection } from '@/app/[locale]/(shop)/_lib/components/products
 import type { ProductDisplay } from '@/app/[locale]/(shop)/_lib/types/product';
 import { calculateDiscountPercent } from '@/app/[locale]/(shop)/_lib/utils/discount';
 import { Badge } from '@repo/ui/badge';
-import { cn, formatCurrency } from '@/shared/lib/utils';
+import { cn, formatCurrency } from '@repo/shared/utils';
 
 const TRUST_BADGES = [
   { icon: Truck, title: 'Giao hàng nhanh', sub: '2-4 ngày làm việc' },
@@ -103,4 +103,3 @@ export function ProductInfoPanel({ product, locale }: ProductInfoPanelProps) {
     </div>
   );
 }
-

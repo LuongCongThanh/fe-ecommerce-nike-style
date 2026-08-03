@@ -3,7 +3,7 @@
 import { Minus, Plus } from 'lucide-react';
 
 import { Button } from '@repo/ui/button';
-import { cn } from '@/shared/lib/utils';
+import { cn } from '@repo/shared/utils';
 
 interface QuantitySelectorProps {
   readonly value: number;

@@ -2,7 +2,8 @@ import type { LucideIcon } from 'lucide-react';
 import { PackageOpen } from 'lucide-react';
 
 import { Button } from '@repo/ui/button';
-import { cn } from '@/shared/lib/utils';
+
+import { cn } from '../lib/utils';
 
 interface EmptyStateProps {
   readonly title: string;

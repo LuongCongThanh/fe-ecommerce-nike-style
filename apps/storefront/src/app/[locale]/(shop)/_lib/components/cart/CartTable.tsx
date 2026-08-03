@@ -9,7 +9,7 @@ import { QuantitySelector } from '@/app/[locale]/(shop)/_lib/components/common/Q
 import type { CartItem } from '@/app/[locale]/(shop)/_lib/hooks/useCart';
 import { useCart } from '@/app/[locale]/(shop)/_lib/hooks/useCart';
 import { Button } from '@repo/ui/button';
-import { formatCurrency } from '@/shared/lib/utils';
+import { formatCurrency } from '@repo/shared/utils';
 
 export function CartTable() {
   const { items, updateQuantity, removeCartItem } = useCart();

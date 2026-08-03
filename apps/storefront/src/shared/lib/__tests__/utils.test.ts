@@ -1,16 +1,6 @@
 import { describe, expect, it } from 'vitest';
 
-import {
-  buildQueryString,
-  cn,
-  formatCurrency,
-  formatDate,
-  formatDateTime,
-  getDefaultPageSize,
-  slugify,
-  truncateText,
-  validateVietnamesePhone,
-} from '@/shared/lib/utils';
+import { buildQueryString, cn, formatCurrency, formatDate, formatDateTime, slugify, truncateText, validateVietnamesePhone } from '@repo/shared/utils';
 
 describe('cn', () => {
   it('merges tailwind classes, last wins on conflict', () => {
@@ -118,11 +108,5 @@ describe('validateVietnamesePhone', () => {
 
   it('rejects invalid numbers', () => {
     expect(validateVietnamesePhone('12345')).toBe(false);
-  });
-});
-
-describe('getDefaultPageSize', () => {
-  it('returns the configured page size', () => {
-    expect(getDefaultPageSize()).toBe(20);
   });
 });

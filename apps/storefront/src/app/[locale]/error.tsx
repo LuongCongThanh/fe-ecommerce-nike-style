@@ -2,7 +2,9 @@
 
 import { useEffect } from 'react';
 
-import { ErrorState } from '@/shared/components/common/ErrorState';
+import { useTranslations } from 'next-intl';
+
+import { ErrorState } from '@repo/shared/error-state';
 import { captureError } from '@/shared/lib/monitoring/sentry';
 
 interface GlobalErrorProps {
@@ -11,6 +13,8 @@ interface GlobalErrorProps {
 }
 
 export default function GlobalError({ error, reset }: GlobalErrorProps): React.JSX.Element {
+  const t = useTranslations('common');
+
   useEffect(() => {
     // Log the error to Sentry
     captureError(error, { digest: error.digest });
@@ -19,6 +23,9 @@ export default function GlobalError({ error, reset }: GlobalErrorProps): React.J
   return (
     <div className="container mx-auto flex min-h-[70vh] flex-col items-center justify-center px-4">
       <ErrorState
+        title={t('errorTitle')}
+        description={t('errorDescription')}
+        retryLabel={t('retry')}
         onRetry={() => {
           reset();
         }}

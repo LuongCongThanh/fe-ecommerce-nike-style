@@ -11,11 +11,11 @@ const { mockNotify } = vi.hoisted(() => ({
   },
 }));
 
-vi.mock('@/shared/lib/notification', () => ({
+vi.mock('@repo/shared/notification', () => ({
   notify: mockNotify,
 }));
 
-import { useToast } from '@/shared/hooks/useToast';
+import { useToast } from '@repo/shared/hooks/useToast';
 
 describe('useToast', () => {
   it('returns the shared notification helpers', () => {

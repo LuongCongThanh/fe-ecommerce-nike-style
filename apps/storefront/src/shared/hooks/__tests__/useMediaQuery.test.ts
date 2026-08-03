@@ -1,7 +1,7 @@
 import { act, renderHook } from '@testing-library/react';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 
-import { useIsMobile, useIsDesktop, useIsTablet, useMediaQuery } from '@/shared/hooks/useMediaQuery';
+import { useIsMobile, useIsDesktop, useIsTablet, useMediaQuery } from '@repo/shared/hooks/useMediaQuery';
 
 type MatchMediaListener = (e: MediaQueryListEvent) => void;
 

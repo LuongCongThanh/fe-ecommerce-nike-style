@@ -6,7 +6,7 @@ import { useRouter } from 'next/navigation';
 import { useLocale } from 'next-intl';
 
 import { useAuth } from '@/core/session/useAuth';
-import { PageLoader } from '@/shared/components/common/PageLoader';
+import { PageLoader } from '@repo/shared/page-loader';
 
 /**
  * Guard client-side cho `(admin)` — chỉ là UX layer, giống middleware guard

@@ -12,7 +12,7 @@ import { useCart } from '@/app/[locale]/(shop)/_lib/hooks/useCart';
 import { Button } from '@repo/ui/button';
 import { ScrollArea } from '@repo/ui/scroll-area';
 import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger } from '@repo/ui/sheet';
-import { formatCurrency } from '@/shared/lib/utils';
+import { formatCurrency } from '@repo/shared/utils';
 
 interface CartDrawerProps {
   readonly children: React.ReactNode;
@@ -136,4 +136,3 @@ export function CartDrawer({ children }: CartDrawerProps) {
     </Sheet>
   );
 }
-

@@ -1,6 +1,6 @@
 import { cva } from 'class-variance-authority';
 
-import { cn } from '@/shared/lib/utils';
+import { cn } from '@repo/shared/utils';
 
 const containerVariants = cva('mx-auto px-4', {
   variants: {

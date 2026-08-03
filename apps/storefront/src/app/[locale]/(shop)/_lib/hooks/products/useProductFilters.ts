@@ -1,7 +1,7 @@
 import { useState } from 'react';
 
 import { APP_CONFIG } from '@/shared/constants/app-config';
-import { buildQueryString } from '@/shared/lib/utils';
+import { buildQueryString } from '@repo/shared/utils';
 import { type ProductFilter } from '@/shared/types/filter';
 
 const DEFAULT_FILTERS: ProductFilter = {

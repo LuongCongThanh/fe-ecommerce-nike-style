@@ -13,7 +13,7 @@ vi.mock('sonner', () => ({
   toast: toastMock,
 }));
 
-import { notify } from '@/shared/lib/notification';
+import { notify } from '@repo/shared/notification';
 
 describe('notify', () => {
   beforeEach(() => {

@@ -7,7 +7,7 @@ import { Package, ShoppingBag } from 'lucide-react';
 import { useLocale } from 'next-intl';
 
 import { ROUTES } from '@/shared/constants/routes';
-import { cn } from '@/shared/lib/utils';
+import { cn } from '@repo/shared/utils';
 
 const NAV_ITEMS = [
   { href: ROUTES.ADMIN.PRODUCTS, label: 'Sản phẩm', icon: Package },

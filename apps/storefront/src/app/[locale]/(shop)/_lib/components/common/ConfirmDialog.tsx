@@ -3,17 +3,8 @@
 import type { ReactNode } from 'react';
 
 import { Button } from '@repo/ui/button';
-import {
-  Dialog,
-  DialogClose,
-  DialogContent,
-  DialogDescription,
-  DialogFooter,
-  DialogHeader,
-  DialogTitle,
-  DialogTrigger,
-} from '@repo/ui/dialog';
-import { LoadingSpinner } from '@/shared/components/common/LoadingSpinner';
+import { Dialog, DialogClose, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from '@repo/ui/dialog';
+import { LoadingSpinner } from '@repo/shared/loading-spinner';
 
 interface ConfirmDialogProps {
   readonly trigger: ReactNode;
@@ -57,4 +48,3 @@ export function ConfirmDialog({
     </Dialog>
   );
 }
-

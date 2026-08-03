@@ -9,7 +9,7 @@ import { useFormContext, useWatch } from 'react-hook-form';
 import { useCart } from '@/app/[locale]/(shop)/_lib/hooks/useCart';
 import type { CheckoutInput } from '@/app/[locale]/(shop)/_lib/schemas/checkout';
 import { SHIPPING_FEE_BY_METHOD } from '@/app/[locale]/(shop)/_lib/schemas/checkout';
-import { formatCurrency } from '@/shared/lib/utils';
+import { formatCurrency } from '@repo/shared/utils';
 
 export function OrderSummary() {
   const t = useTranslations('checkout');

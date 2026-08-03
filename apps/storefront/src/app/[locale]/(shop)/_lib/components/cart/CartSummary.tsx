@@ -7,7 +7,7 @@ import { ArrowRight, Truck } from 'lucide-react';
 import { useCart } from '@/app/[locale]/(shop)/_lib/hooks/useCart';
 import { Button } from '@repo/ui/button';
 import { Separator } from '@repo/ui/separator';
-import { formatCurrency } from '@/shared/lib/utils';
+import { formatCurrency } from '@repo/shared/utils';
 
 interface CartSummaryProps {
   readonly locale: string;
@@ -64,4 +64,3 @@ export function CartSummary({ locale }: CartSummaryProps) {
     </div>
   );
 }
-

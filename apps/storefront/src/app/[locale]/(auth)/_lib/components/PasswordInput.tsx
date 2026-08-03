@@ -7,7 +7,7 @@ import type { ComponentProps } from 'react';
 
 import { Button } from '@repo/ui/button';
 import { Input } from '@repo/ui/input';
-import { cn } from '@/shared/lib/utils';
+import { cn } from '@repo/shared/utils';
 
 type PasswordInputProps = ComponentProps<typeof Input>;
 

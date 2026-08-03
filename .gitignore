@@ -53,3 +53,4 @@ yarn-error.log*
 next-env.d.ts
 .idea/
 sw.js
+apps/storefront/public/sw.js

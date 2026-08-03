@@ -1,7 +1,7 @@
 import { act, renderHook } from '@testing-library/react';
 import { describe, expect, it } from 'vitest';
 
-import { usePagination } from '@/shared/hooks/usePagination';
+import { usePagination } from '@repo/shared/hooks/usePagination';
 
 describe('usePagination', () => {
   it('starts at page 1 and calculates total pages', () => {

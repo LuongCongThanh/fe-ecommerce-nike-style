@@ -3,7 +3,7 @@
 import { Check, Star } from 'lucide-react';
 
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from '@repo/ui/accordion';
-import { cn } from '@/shared/lib/utils';
+import { cn } from '@repo/shared/utils';
 
 interface Review {
   id: number;
@@ -147,4 +147,3 @@ export function ProductDetailTabs({ description, rating, reviewCount }: ProductD
     </Accordion>
   );
 }
-

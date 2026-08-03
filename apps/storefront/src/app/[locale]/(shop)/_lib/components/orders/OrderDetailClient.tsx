@@ -6,7 +6,7 @@ import { useOrder } from '@/app/[locale]/(shop)/_lib/hooks/orders/useOrder';
 import { Button } from '@repo/ui/button';
 import { Separator } from '@repo/ui/separator';
 import { ApiError } from '@/shared/lib/errors/api-error';
-import { formatCurrency } from '@/shared/lib/utils';
+import { formatCurrency } from '@repo/shared/utils';
 
 interface OrderDetailClientProps {
   readonly id: string;
@@ -81,4 +81,3 @@ export function OrderDetailClient({ id }: OrderDetailClientProps): React.JSX.Ele
     </>
   );
 }
-

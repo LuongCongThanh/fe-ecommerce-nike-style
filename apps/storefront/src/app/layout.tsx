@@ -3,7 +3,7 @@ import { Be_Vietnam_Pro } from 'next/font/google';
 import type { Metadata, Viewport } from 'next';
 
 import { Providers } from '@/app/providers';
-import { cn } from '@/shared/lib/utils';
+import { cn } from '@repo/shared/utils';
 
 import '@/app/globals.css';
 

@@ -1,11 +1,7 @@
 import { Loader2 } from 'lucide-react';
 
-import { cn } from '@/shared/lib/utils';
+import { cn } from '../lib/utils';
 
-/**
- * Spinner nhỏ — dùng cho action cục bộ (button submit, section nhỏ).
- * Dùng `PageLoader` nếu cần loading cả trang.
- */
 interface LoadingSpinnerProps {
   readonly className?: string;
   readonly label?: string;
@@ -18,7 +14,7 @@ const spinnerSizeMap = {
   lg: 'size-6',
 } as const;
 
-export function LoadingSpinner({ className, label = 'Loading', size = 'md' }: LoadingSpinnerProps) {
+export function LoadingSpinner({ className, label = 'Loading', size = 'md' }: LoadingSpinnerProps): React.JSX.Element {
   return (
     <span className={cn('inline-flex items-center justify-center', className)} role="status" aria-label={label}>
       <Loader2 className={cn('animate-spin', spinnerSizeMap[size])} />

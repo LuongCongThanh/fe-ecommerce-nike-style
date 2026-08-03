@@ -6,7 +6,7 @@ import Link from 'next/link';
 import { Star } from 'lucide-react';
 
 import { Badge } from '@repo/ui/badge';
-import { formatCurrency } from '@/shared/lib/utils';
+import { formatCurrency } from '@repo/shared/utils';
 import type { BadgeValue } from '@/shared/types/product';
 
 interface BadgeLabels {
@@ -107,4 +107,3 @@ export function ProductCard({
     </Link>
   );
 }
-
