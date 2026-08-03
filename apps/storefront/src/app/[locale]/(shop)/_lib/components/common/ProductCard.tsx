@@ -5,7 +5,7 @@ import Link from 'next/link';
 
 import { Star } from 'lucide-react';
 
-import { Badge } from '@/shared/components/base/badge';
+import { Badge } from '@repo/ui/badge';
 import { formatCurrency } from '@/shared/lib/utils';
 import type { BadgeValue } from '@/shared/types/product';
 
@@ -107,3 +107,4 @@ export function ProductCard({
     </Link>
   );
 }
+

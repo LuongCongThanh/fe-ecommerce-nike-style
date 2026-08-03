@@ -3,7 +3,7 @@ import userEvent from '@testing-library/user-event';
 import { describe, expect, it, vi } from 'vitest';
 
 import { ConfirmDialog } from '@/app/[locale]/(shop)/_lib/components/common/ConfirmDialog';
-import { Button } from '@/shared/components/base/button';
+import { Button } from '@repo/ui/button';
 
 const defaultProps = {
   trigger: <Button>Xóa</Button>,

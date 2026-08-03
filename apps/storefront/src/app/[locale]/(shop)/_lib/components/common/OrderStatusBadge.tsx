@@ -1,4 +1,4 @@
-import { Badge } from '@/shared/components/base/badge';
+import { Badge } from '@repo/ui/badge';
 import type { OrderStatus } from '@/shared/types/order';
 
 const STATUS_MAP: Record<OrderStatus, { label: string; variant: 'default' | 'secondary' | 'destructive' | 'outline' }> = {
@@ -14,3 +14,4 @@ export function OrderStatusBadge({ status }: { readonly status: OrderStatus }) {
   const { label, variant } = STATUS_MAP[status];
   return <Badge variant={variant}>{label}</Badge>;
 }
+

@@ -5,8 +5,8 @@ import Link from 'next/link';
 import { ArrowRight, Truck } from 'lucide-react';
 
 import { useCart } from '@/app/[locale]/(shop)/_lib/hooks/useCart';
-import { Button } from '@/shared/components/base/button';
-import { Separator } from '@/shared/components/base/separator';
+import { Button } from '@repo/ui/button';
+import { Separator } from '@repo/ui/separator';
 import { formatCurrency } from '@/shared/lib/utils';
 
 interface CartSummaryProps {
@@ -64,3 +64,4 @@ export function CartSummary({ locale }: CartSummaryProps) {
     </div>
   );
 }
+

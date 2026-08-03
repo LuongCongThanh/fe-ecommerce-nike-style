@@ -2,7 +2,7 @@ import Link from 'next/link';
 
 import { useTranslations } from 'next-intl';
 
-import { Button } from '@/shared/components/base/button';
+import { Button } from '@repo/ui/button';
 
 export function HeroBanner() {
   const t = useTranslations('home');

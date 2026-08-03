@@ -9,9 +9,9 @@ import { useLocale } from 'next-intl';
 
 import { QuantitySelector } from '@/app/[locale]/(shop)/_lib/components/common/QuantitySelector';
 import { useCart } from '@/app/[locale]/(shop)/_lib/hooks/useCart';
-import { Button } from '@/shared/components/base/button';
-import { ScrollArea } from '@/shared/components/base/scroll-area';
-import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger } from '@/shared/components/base/sheet';
+import { Button } from '@repo/ui/button';
+import { ScrollArea } from '@repo/ui/scroll-area';
+import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger } from '@repo/ui/sheet';
 import { formatCurrency } from '@/shared/lib/utils';
 
 interface CartDrawerProps {
@@ -136,3 +136,4 @@ export function CartDrawer({ children }: CartDrawerProps) {
     </Sheet>
   );
 }
+

@@ -11,7 +11,7 @@ import { useCreateOrder } from '@/app/[locale]/(shop)/_lib/hooks/checkout/useCre
 import { useCart } from '@/app/[locale]/(shop)/_lib/hooks/useCart';
 import type { CheckoutInput } from '@/app/[locale]/(shop)/_lib/schemas/checkout';
 import { SHIPPING_FEE_BY_METHOD } from '@/app/[locale]/(shop)/_lib/schemas/checkout';
-import { Input } from '@/shared/components/base/input';
+import { Input } from '@repo/ui/input';
 import { formatCurrency } from '@/shared/lib/utils';
 
 type CheckoutValues = CheckoutInput;

@@ -1,6 +1,6 @@
 'use client';
 
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/shared/components/base/select';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@repo/ui/select';
 import { SORT_OPTIONS, type SortOption } from '@/shared/constants/app-config';
 
 interface SortSelectProps {
@@ -25,3 +25,4 @@ export function SortSelect({ value, onValueChange, placeholder = 'Sắp xếp' }
     </Select>
   );
 }
+

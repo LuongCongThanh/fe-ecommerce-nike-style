@@ -43,7 +43,7 @@ Tech stack, routing, module structure, state management, quality gates: xem [`do
 import { Foo } from '../_lib/types';
 
 // CORRECT
-import { Foo } from '@/shared/lib/http/client';
+import { Foo } from '@repo/api-sdk/endpoints/auth';
 ```
 
 ## MVP Scope

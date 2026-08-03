@@ -13,9 +13,9 @@ import { ApiErrorAlert } from '@/app/[locale]/(auth)/_lib/components/ApiErrorAle
 import { useApiErrorMessage } from '@/app/[locale]/(auth)/_lib/hooks/useApiErrorMessage';
 import type { ResetPasswordFormInput } from '@/app/[locale]/(auth)/_lib/schemas/auth';
 import { ResetPasswordFormSchema } from '@/app/[locale]/(auth)/_lib/schemas/auth';
-import { Button } from '@/shared/components/base/button';
-import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/shared/components/base/form';
-import { Input } from '@/shared/components/base/input';
+import { Button } from '@repo/ui/button';
+import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '@repo/ui/form';
+import { Input } from '@repo/ui/input';
 
 interface ResetPasswordFormProps {
   readonly token: string;
@@ -91,3 +91,4 @@ export function ResetPasswordForm({ token, uid }: ResetPasswordFormProps) {
     </Form>
   );
 }
+

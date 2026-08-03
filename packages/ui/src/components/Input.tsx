@@ -27,3 +27,4 @@ export interface InputProps extends Omit<InputHTMLAttributes<HTMLInputElement>, 
 export function Input({ className, state, inputSize, ...props }: InputProps) {
   return <input className={cn(inputVariants({ state, inputSize }), className)} aria-invalid={state === 'error' || undefined} {...props} />;
 }
+

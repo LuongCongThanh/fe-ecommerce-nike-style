@@ -2,7 +2,7 @@ import type { LucideIcon } from 'lucide-react';
 import { AlertCircle } from 'lucide-react';
 import { useTranslations } from 'next-intl';
 
-import { Button } from '@/shared/components/base/button';
+import { Button } from '@repo/ui/button';
 import { cn } from '@/shared/lib/utils';
 
 interface ErrorStateProps {

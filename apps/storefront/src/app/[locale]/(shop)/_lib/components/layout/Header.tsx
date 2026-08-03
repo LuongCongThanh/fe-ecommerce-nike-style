@@ -11,7 +11,7 @@ import { CartDrawer } from '@/app/[locale]/(shop)/_lib/components/cart/CartDrawe
 import { DesktopMegaMenu } from '@/app/[locale]/(shop)/_lib/components/navigation/DesktopMegaMenu';
 import { MobileNav } from '@/app/[locale]/(shop)/_lib/components/navigation/MobileNav';
 import { useCart } from '@/app/[locale]/(shop)/_lib/hooks/useCart';
-import { Button } from '@/shared/components/base/button';
+import { Button } from '@repo/ui/button';
 
 export function Header() {
   const t = useTranslations('common');

@@ -5,7 +5,7 @@ import { ArrowLeft, RotateCcw, ShieldCheck, Star, Truck } from 'lucide-react';
 import { AddToCartSection } from '@/app/[locale]/(shop)/_lib/components/products/AddToCartSection';
 import type { ProductDisplay } from '@/app/[locale]/(shop)/_lib/types/product';
 import { calculateDiscountPercent } from '@/app/[locale]/(shop)/_lib/utils/discount';
-import { Badge } from '@/shared/components/base/badge';
+import { Badge } from '@repo/ui/badge';
 import { cn, formatCurrency } from '@/shared/lib/utils';
 
 const TRUST_BADGES = [
@@ -103,3 +103,4 @@ export function ProductInfoPanel({ product, locale }: ProductInfoPanelProps) {
     </div>
   );
 }
+

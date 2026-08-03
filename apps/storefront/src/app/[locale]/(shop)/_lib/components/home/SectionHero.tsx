@@ -8,7 +8,7 @@ import { useLocale } from 'next-intl';
 
 import { TrustBadgeList } from '@/app/[locale]/(shop)/_lib/components/home/TrustBadgeList';
 import { homeHeroData } from '@/app/[locale]/(shop)/_lib/data/home';
-import { Button } from '@/shared/components/base/button';
+import { Button } from '@repo/ui/button';
 
 const revealUp = {
   hidden: { opacity: 0, y: 24 },

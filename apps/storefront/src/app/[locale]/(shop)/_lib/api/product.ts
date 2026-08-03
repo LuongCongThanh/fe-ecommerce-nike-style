@@ -1,9 +1,31 @@
-import { API } from '@/shared/constants/api-endpoints';
-import { http } from '@/shared/lib/http/client';
+import {
+  getStorefrontCategories,
+  getStorefrontProduct,
+  getStorefrontProducts,
+} from '@repo/api-sdk/endpoints/storefront-products';
 import type { Product, ProductList } from '@/shared/types/product';
+import { toStorefrontApiError } from '@/shared/lib/errors/toStorefrontApiError';
 
 export const productActions = {
-  list: async (filters: object) => http.get<ProductList>(API.PRODUCTS.LIST, filters),
-  detail: async (slug: string) => http.get<Product>(API.PRODUCTS.DETAIL(slug)),
-  categories: async () => http.get<Array<{ id: number; name: string; slug: string }>>(API.PRODUCTS.CATEGORIES),
+  list: async (filters: object) => {
+    try {
+      return (await getStorefrontProducts(filters as Record<string, unknown>)) as ProductList;
+    } catch (error) {
+      throw toStorefrontApiError(error);
+    }
+  },
+  detail: async (slug: string) => {
+    try {
+      return (await getStorefrontProduct(slug)) as Product;
+    } catch (error) {
+      throw toStorefrontApiError(error);
+    }
+  },
+  categories: async () => {
+    try {
+      return await getStorefrontCategories();
+    } catch (error) {
+      throw toStorefrontApiError(error);
+    }
+  },
 };

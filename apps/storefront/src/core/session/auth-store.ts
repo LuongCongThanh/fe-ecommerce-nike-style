@@ -1,8 +1,7 @@
 import { create } from 'zustand';
+import { refreshSession } from '@repo/api-sdk/endpoints/auth';
+import { getProfile } from '@repo/api-sdk/endpoints/profile';
 
-import { callAuthRoute } from '@/core/session/auth-route-client';
-import { API } from '@/shared/constants/api-endpoints';
-import { http } from '@/shared/lib/http/client';
 import type { User } from '@/shared/types/user';
 
 export type AuthStatus = 'initializing' | 'authenticated' | 'anonymous';
@@ -60,7 +59,7 @@ export function clearAuth(): void {
 }
 
 export async function refreshAccessToken(): Promise<string> {
-  const data = await callAuthRoute<{ access: string }>(API.AUTH.REFRESH);
+  const data = await refreshSession();
 
   setAccessToken(data.access);
   return data.access;
@@ -71,7 +70,7 @@ export async function refreshAccessToken(): Promise<string> {
 export async function bootstrapAuth(): Promise<void> {
   try {
     await refreshAccessToken();
-    const user = await http.get<User>(API.PROFILE.ME);
+    const user = (await getProfile()) as User;
     setUser(user);
   } catch {
     clearAuth();

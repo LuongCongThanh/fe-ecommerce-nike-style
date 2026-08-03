@@ -2,7 +2,7 @@
 
 import { motion } from 'framer-motion';
 
-import { Skeleton } from '@/shared/components/base/skeleton';
+import { Skeleton } from '@repo/ui/skeleton';
 
 export function ShopLoadingShell() {
   return (
@@ -58,3 +58,4 @@ export function ShopLoadingShell() {
     </motion.div>
   );
 }
+

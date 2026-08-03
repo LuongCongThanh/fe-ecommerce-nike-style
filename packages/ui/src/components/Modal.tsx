@@ -33,3 +33,4 @@ export function ModalContent({ className, children, ...props }: ComponentPropsWi
 
 export const ModalTitle = DialogPrimitive.Title;
 export const ModalDescription = DialogPrimitive.Description;
+

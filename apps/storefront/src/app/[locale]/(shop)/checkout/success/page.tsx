@@ -2,7 +2,7 @@ import Link from 'next/link';
 
 import { CheckCircle } from 'lucide-react';
 
-import { Button } from '@/shared/components/base/button';
+import { Button } from '@repo/ui/button';
 
 export default async function CheckoutSuccessPage({
   params,

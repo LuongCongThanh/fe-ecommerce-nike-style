@@ -1,8 +1,13 @@
-import { callAuthRoute } from '@/core/session/auth-route-client';
+import {
+  type AuthSessionResponse,
+  forgotPassword,
+  login,
+  logout,
+  register,
+  resetPassword,
+} from '@repo/api-sdk/endpoints/auth';
 import { clearAuth, setAccessToken, setUser } from '@/core/session/auth-store';
-import { API } from '@/shared/constants/api-endpoints';
-import { http } from '@/shared/lib/http/client';
-import type { AuthToken, User } from '@/shared/types/user';
+import type { User } from '@/shared/types/user';
 
 interface LoginPayload {
   email: string;
@@ -16,34 +21,49 @@ interface RegisterPayload {
   lastName: string;
 }
 
+function toStorefrontUser(user: AuthSessionResponse['user']): User {
+  return {
+    id: user.id,
+    email: user.email,
+    firstName: user.firstName,
+    lastName: user.lastName,
+    phone: user.phone,
+    avatar: user.avatar,
+    role: user.role,
+    isActive: user.isActive,
+    createdAt: user.createdAt,
+  };
+}
+
 export async function loginAction(payload: LoginPayload): Promise<User> {
-  const data = await callAuthRoute<{ user: User; access: string }>(API.AUTH.LOGIN, payload);
+  const data = await login(payload);
+  const user = toStorefrontUser(data.user);
   setAccessToken(data.access);
-  setUser(data.user);
-  return data.user;
+  setUser(user);
+  return user;
 }
 
 export async function registerAction(payload: RegisterPayload): Promise<User> {
-  const data = await callAuthRoute<{ user: User; access: string }>(API.AUTH.REGISTER, payload);
+  const data = await register(payload);
+  const user = toStorefrontUser(data.user);
   setAccessToken(data.access);
-  setUser(data.user);
-  return data.user;
+  setUser(user);
+  return user;
 }
 
 export async function forgotPasswordAction(email: string): Promise<void> {
-  await http.post<unknown>(API.AUTH.FORGOT_PASSWORD, { email });
+  await forgotPassword({ email });
 }
 
 export async function resetPasswordAction(payload: { token: string; uid: string; password: string }): Promise<void> {
-  await http.post<AuthToken>(API.AUTH.RESET_PASSWORD, {
+  await resetPassword({
     token: payload.token,
     uid: payload.uid,
-    new_password1: payload.password,
-    new_password2: payload.password,
+    password: payload.password,
   });
 }
 
 export async function logoutAction(): Promise<void> {
   clearAuth();
-  await fetch(API.AUTH.LOGOUT, { method: 'POST' }).catch(() => undefined);
+  await logout().catch(() => undefined);
 }
