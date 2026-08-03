@@ -1,0 +1,32 @@
+{
+  "name": "@repo/api-sdk",
+  "version": "0.0.0",
+  "private": true,
+  "type": "module",
+  "sideEffects": false,
+  "scripts": {
+    "typecheck": "tsc --noEmit",
+    "test": "vitest run"
+  },
+  "exports": {
+    "./env": "./src/env/config.ts",
+    "./client": "./src/client/fetcher.ts",
+    "./client/error": "./src/client/api-error.ts",
+    "./endpoints/catalog": "./src/endpoints/catalog.ts",
+    "./mocks": "./src/mocks/handlers.ts",
+    "./adapters/browser": "./src/adapters/browser.ts",
+    "./adapters/server": "./src/adapters/server.ts",
+    "./testing/msw-browser": "./src/testing/msw-browser.ts",
+    "./testing/msw-server": "./src/testing/msw-server.ts"
+  },
+  "dependencies": {
+    "@repo/schemas": "workspace:*",
+    "msw": "^2.15.0"
+  },
+  "devDependencies": {
+    "@repo/ts-config": "workspace:*",
+    "@types/node": "^24.13.3",
+    "typescript": "^5",
+    "vitest": "^4.1.10"
+  }
+}
