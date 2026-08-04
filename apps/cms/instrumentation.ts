@@ -1,5 +1,6 @@
-import { enableApiMockingServer } from '@repo/api-sdk/adapters/server';
-
 export async function register(): Promise<void> {
-  await enableApiMockingServer();
+  if (process.env.NEXT_RUNTIME !== 'nodejs') return;
+
+  const { registerNodeInstrumentation } = await import('./instrumentation.node');
+  await registerNodeInstrumentation();
 }
