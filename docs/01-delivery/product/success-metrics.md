@@ -25,16 +25,16 @@ Lý do:
 
 ## Metric theo capability
 
-| Capability | Outcome metric | Guardrail metric | Ghi chú |
-|---|---|---|---|
-| Storefront browse + discovery | Tỷ lệ từ PLP/Search sang PDP | Bounce rate của PLP/Search | Dùng để xem IA, search và card UI có dẫn được người dùng đi tiếp hay không |
-| PDP | Add-to-cart rate từ PDP | Tỷ lệ lỗi chọn variant / add-to-cart fail | Nếu PDP đẹp nhưng add-to-cart thấp, thường nằm ở variant selection hoặc trust |
-| Cart | Cart-to-checkout start rate | Tỷ lệ rollback do tồn kho / giá thay đổi | Guardrail này bám với chiến lược mock/API contract hiện tại |
-| Checkout COD | Checkout completion rate | Tỷ lệ drop ở từng bước Contact / Address / Shipping / Review | Capability quan trọng nhất của MVP storefront |
-| Authentication | Tỷ lệ sign-up hoàn tất, tỷ lệ sign-in thành công | Tỷ lệ lỗi auth / reset password fail | Auth có trong MVP nên phải đo riêng, không coi là phần phụ |
-| Wishlist | Tỷ lệ user dùng wishlist, tỷ lệ merge guest → authenticated thành công | Tỷ lệ lỗi optimistic toggle / merge fail | Nên đo riêng vì wishlist có logic cross-session |
-| CMS | Thời gian từ draft đầu tiên đến publish | Tỷ lệ publish fail / preview mismatch | Giúp đánh giá công cụ nội bộ có thực sự usable không |
-| Admin | Thời gian hoàn tất tác vụ cập nhật sản phẩm / trạng thái đơn hàng | Tỷ lệ lỗi thao tác hoặc phải làm lại | Dùng để đo hiệu quả vận hành, không chỉ correctness |
+| Capability                    | Outcome metric                                                         | Guardrail metric                                             | Ghi chú                                                                       |
+| ----------------------------- | ---------------------------------------------------------------------- | ------------------------------------------------------------ | ----------------------------------------------------------------------------- |
+| Storefront browse + discovery | Tỷ lệ từ PLP/Search sang PDP                                           | Bounce rate của PLP/Search                                   | Dùng để xem IA, search và card UI có dẫn được người dùng đi tiếp hay không    |
+| PDP                           | Add-to-cart rate từ PDP                                                | Tỷ lệ lỗi chọn variant / add-to-cart fail                    | Nếu PDP đẹp nhưng add-to-cart thấp, thường nằm ở variant selection hoặc trust |
+| Cart                          | Cart-to-checkout start rate                                            | Tỷ lệ rollback do tồn kho / giá thay đổi                     | Guardrail này bám với chiến lược mock/API contract hiện tại                   |
+| Checkout COD                  | Checkout completion rate                                               | Tỷ lệ drop ở từng bước Contact / Address / Shipping / Review | Capability quan trọng nhất của MVP storefront                                 |
+| Authentication                | Tỷ lệ sign-up hoàn tất, tỷ lệ sign-in thành công                       | Tỷ lệ lỗi auth / reset password fail                         | Auth có trong MVP nên phải đo riêng, không coi là phần phụ                    |
+| Wishlist                      | Tỷ lệ user dùng wishlist, tỷ lệ merge guest → authenticated thành công | Tỷ lệ lỗi optimistic toggle / merge fail                     | Nên đo riêng vì wishlist có logic cross-session                               |
+| CMS                           | Thời gian từ draft đầu tiên đến publish                                | Tỷ lệ publish fail / preview mismatch                        | Giúp đánh giá công cụ nội bộ có thực sự usable không                          |
+| Admin                         | Thời gian hoàn tất tác vụ cập nhật sản phẩm / trạng thái đơn hàng      | Tỷ lệ lỗi thao tác hoặc phải làm lại                         | Dùng để đo hiệu quả vận hành, không chỉ correctness                           |
 
 ## Metric theo release
 

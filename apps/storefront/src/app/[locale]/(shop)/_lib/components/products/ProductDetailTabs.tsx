@@ -1,9 +1,8 @@
 'use client';
 
+import { cn } from '@repo/shared/utils';
+import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from '@repo/ui/accordion';
 import { Check, Star } from 'lucide-react';
-
-import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from '@/shared/components/base/accordion';
-import { cn } from '@/shared/lib/utils';
 
 interface Review {
   id: number;

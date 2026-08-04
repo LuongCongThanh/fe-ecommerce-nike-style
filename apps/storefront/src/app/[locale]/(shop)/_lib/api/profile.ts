@@ -1,8 +1,21 @@
-import { API } from '@/shared/constants/api-endpoints';
-import { http } from '@/shared/lib/http/client';
+import { getProfile, updateProfile } from '@repo/api-sdk/endpoints/profile';
+
+import { toStorefrontApiError } from '@/shared/lib/errors/toStorefrontApiError';
 import type { User } from '@/shared/types/user';
 
 export const profileActions = {
-  get: async () => http.get<User>(API.PROFILE.ME),
-  update: async (data: Partial<User>) => http.patch<User>(API.PROFILE.UPDATE, data),
+  get: async () => {
+    try {
+      return await getProfile();
+    } catch (error) {
+      throw toStorefrontApiError(error);
+    }
+  },
+  update: async (data: Partial<User>) => {
+    try {
+      return await updateProfile(data);
+    } catch (error) {
+      throw toStorefrontApiError(error);
+    }
+  },
 };

@@ -1,0 +1,43 @@
+{
+  "name": "@repo/shared",
+  "version": "0.0.0",
+  "private": true,
+  "type": "module",
+  "sideEffects": false,
+  "scripts": {
+    "typecheck": "tsc --noEmit"
+  },
+  "exports": {
+    "./utils": "./src/lib/utils.ts",
+    "./notification": "./src/lib/notification.ts",
+    "./empty-state": "./src/components/EmptyState.tsx",
+    "./error-state": "./src/components/ErrorState.tsx",
+    "./loading-spinner": "./src/components/LoadingSpinner.tsx",
+    "./page-loader": "./src/components/PageLoader.tsx",
+    "./hooks/useDebounce": "./src/hooks/useDebounce.ts",
+    "./hooks/useLocalStorage": "./src/hooks/useLocalStorage.ts",
+    "./hooks/useMediaQuery": "./src/hooks/useMediaQuery.ts",
+    "./hooks/usePagination": "./src/hooks/usePagination.ts",
+    "./hooks/useToast": "./src/hooks/useToast.ts"
+  },
+  "dependencies": {
+    "@repo/ui": "workspace:*",
+    "clsx": "^2.1.1",
+    "date-fns": "^4.4.0",
+    "lucide-react": "^1.25.0",
+    "sonner": "^2.0.7",
+    "tailwind-merge": "^3.6.0"
+  },
+  "devDependencies": {
+    "@repo/ts-config": "workspace:*",
+    "@types/react": "^19",
+    "@types/react-dom": "^19",
+    "react": "^19.0.0",
+    "react-dom": "^19.0.0",
+    "typescript": "^5"
+  },
+  "peerDependencies": {
+    "react": "^19.0.0",
+    "react-dom": "^19.0.0"
+  }
+}

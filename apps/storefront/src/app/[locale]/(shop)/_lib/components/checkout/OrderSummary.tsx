@@ -2,6 +2,7 @@
 
 import Image from 'next/image';
 
+import { formatCurrency } from '@repo/shared/utils';
 import { motion } from 'framer-motion';
 import { useTranslations } from 'next-intl';
 import { useFormContext, useWatch } from 'react-hook-form';
@@ -9,7 +10,6 @@ import { useFormContext, useWatch } from 'react-hook-form';
 import { useCart } from '@/app/[locale]/(shop)/_lib/hooks/useCart';
 import type { CheckoutInput } from '@/app/[locale]/(shop)/_lib/schemas/checkout';
 import { SHIPPING_FEE_BY_METHOD } from '@/app/[locale]/(shop)/_lib/schemas/checkout';
-import { formatCurrency } from '@/shared/lib/utils';
 
 export function OrderSummary() {
   const t = useTranslations('checkout');

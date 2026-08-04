@@ -91,16 +91,18 @@ Chỉ được tạo tại thời điểm khách **bắt đầu Checkout**, khô
 _Avoid_: reserve ngay khi add-to-cart (gây khoá tồn kho oan khi khách add rồi bỏ giỏ)
 
 **Order** — vòng đời trạng thái (`OrderStatus`, MVP COD-only, không có bước payment gateway):
+
 ```
 PENDING → PROCESSING → PACKED → SHIPPED → DELIVERED
                                               ↓
                                     RETURN_REQUESTED → RETURNED
 PENDING/PROCESSING → CANCELLED (nhánh riêng, chỉ từ 2 trạng thái này)
 ```
+
 - **CANCELLED** chỉ hợp lệ từ `PENDING` hoặc `PROCESSING`. Từ `PACKED` trở đi, đơn **không thể** chuyển thẳng sang `CANCELLED` nữa — phải chờ `DELIVERED` rồi đi qua luồng `RETURN_REQUESTED` → `RETURNED`.
 - **Reservation → committed stock**: chuyển ngay tại thời điểm Order được tạo thành công (Place Order thành công), không chờ thêm bước xác nhận nào khác (khác với luồng có payment gateway — nơi thường chờ webhook thanh toán trước khi commit).
 - **Tồn kho được trả lại** (`committed` → `available`) chỉ ở hai thời điểm: khi Order chuyển sang `CANCELLED`, hoặc khi luồng `RETURNED` hoàn tất — không trả lại tồn kho ở bất kỳ trạng thái trung gian nào khác.
-_Avoid_: coi PACKED/SHIPPED có thể huỷ trực tiếp như PENDING/PROCESSING
+  _Avoid_: coi PACKED/SHIPPED có thể huỷ trực tiếp như PENDING/PROCESSING
 
 **OrderItem**:
 Phải **snapshot** dữ liệu tại thời điểm mua (tên, SKU, Color/Size đã chọn, đơn giá, discount nếu có, ảnh) — không chỉ tham chiếu Product/SKU hiện tại, vì Product có thể đổi (giá, tên, ảnh...) sau khi đơn đã được tạo.
@@ -116,9 +118,10 @@ _Avoid_: gắn SKU/Variant cụ thể vào WishlistItem
 **Hợp nhất (union)** theo Product, khử trùng — không có khái niệm xung đột số lượng như Cart vì WishlistItem không có quantity.
 
 **Move to cart** (từ Wishlist):
+
 - Product có ≥1 Variant: điều hướng sang PDP để khách tự chọn Variant — hệ thống không tự suy đoán Color/Size khách muốn.
 - Product không có Variant (ánh xạ 1-1 SKU ẩn): add thẳng vào Cart, không cần mở PDP.
-_Avoid_: tự động chọn Variant đầu tiên còn hàng rồi add thẳng vào Cart cho Product có Variant
+  _Avoid_: tự động chọn Variant đầu tiên còn hàng rồi add thẳng vào Cart cho Product có Variant
 
 ## Return & Refund
 
@@ -130,9 +133,10 @@ _Avoid_: cho phép return không giới hạn thời gian
 
 **Return approval** (duyệt yêu cầu trả hàng):
 `RETURN_REQUESTED` không tự động thành `RETURNED` — cần nhân viên (`ADMIN_STAFF`) kiểm tra hàng trả về thực tế trước khi duyệt. Có hai kết quả:
+
 - **Duyệt**: chuyển `RETURNED`, tồn kho SKU liên quan được giải phóng lại `available` (đã chốt ở Decision #38/39).
 - **Từ chối** (hàng không đủ điều kiện — đã qua sử dụng, thiếu phụ kiện...): Order quay lại `DELIVERED`, không có trạng thái `RETURNED` nào được tạo, tồn kho không thay đổi.
-_Avoid_: coi RETURN_REQUESTED tự động dẫn tới RETURNED mà không qua bước kiểm tra hàng thực tế
+  _Avoid_: coi RETURN_REQUESTED tự động dẫn tới RETURNED mà không qua bước kiểm tra hàng thực tế
 
 **Hoàn tiền COD (Refund)**:
 Vì MVP không có cổng thanh toán online, hệ thống **không tự động chuyển tiền**. Khi `RETURNED` được duyệt, hệ thống chỉ lưu số tiền cần hoàn và thông tin nhận hoàn (do khách cung cấp) — nhân viên tự chuyển khoản tay ngoài hệ thống, rồi đánh dấu đã hoàn xong.

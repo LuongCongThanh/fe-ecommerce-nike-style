@@ -2,12 +2,12 @@
 
 import { useRouter, useSearchParams } from 'next/navigation';
 
+import { Button } from '@repo/ui/button';
+import { Input } from '@repo/ui/input';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@repo/ui/select';
 import type { SyntheticEvent } from 'react';
 
 import type { SortBy } from '@/app/[locale]/(shop)/_lib/hooks/products/useProducts';
-import { Button } from '@/shared/components/base/button';
-import { Input } from '@/shared/components/base/input';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/shared/components/base/select';
 
 export function FilterSidebar(): React.JSX.Element {
   const router = useRouter();

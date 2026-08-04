@@ -1,8 +1,7 @@
 'use client';
 
+import { Skeleton } from '@repo/ui/skeleton';
 import { motion } from 'framer-motion';
-
-import { Skeleton } from '@/shared/components/base/skeleton';
 
 export function ShopLoadingShell() {
   return (

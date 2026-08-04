@@ -3,11 +3,11 @@
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 
+import { cn } from '@repo/shared/utils';
 import { Package, ShoppingBag } from 'lucide-react';
 import { useLocale } from 'next-intl';
 
 import { ROUTES } from '@/shared/constants/routes';
-import { cn } from '@/shared/lib/utils';
 
 const NAV_ITEMS = [
   { href: ROUTES.ADMIN.PRODUCTS, label: 'Sản phẩm', icon: Package },

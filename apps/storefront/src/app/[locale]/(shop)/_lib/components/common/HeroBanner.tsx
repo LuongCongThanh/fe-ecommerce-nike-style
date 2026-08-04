@@ -1,8 +1,7 @@
 import Link from 'next/link';
 
+import { Button } from '@repo/ui/button';
 import { useTranslations } from 'next-intl';
-
-import { Button } from '@/shared/components/base/button';
 
 export function HeroBanner() {
   const t = useTranslations('home');

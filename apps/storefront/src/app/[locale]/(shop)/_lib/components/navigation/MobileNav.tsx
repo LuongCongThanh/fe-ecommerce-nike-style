@@ -3,12 +3,12 @@
 import { useState } from 'react';
 import Link from 'next/link';
 
+import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from '@repo/ui/accordion';
+import { Button } from '@repo/ui/button';
+import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger } from '@repo/ui/sheet';
 import { Flame, Menu } from 'lucide-react';
 
 import { NAV_CATEGORIES } from '@/app/[locale]/(shop)/_lib/data/nav-categories';
-import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from '@/shared/components/base/accordion';
-import { Button } from '@/shared/components/base/button';
-import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger } from '@/shared/components/base/sheet';
 
 interface MobileNavProps {
   readonly locale: string;

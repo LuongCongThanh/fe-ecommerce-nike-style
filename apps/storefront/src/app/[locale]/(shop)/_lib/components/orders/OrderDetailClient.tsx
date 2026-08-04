@@ -1,12 +1,13 @@
 'use client';
 
+import { formatCurrency } from '@repo/shared/utils';
+import { Button } from '@repo/ui/button';
+import { Separator } from '@repo/ui/separator';
+
 import { OrderStatusBadge } from '@/app/[locale]/(shop)/_lib/components/common/OrderStatusBadge';
 import { useCancelOrder } from '@/app/[locale]/(shop)/_lib/hooks/orders/useCancelOrder';
 import { useOrder } from '@/app/[locale]/(shop)/_lib/hooks/orders/useOrder';
-import { Button } from '@/shared/components/base/button';
-import { Separator } from '@/shared/components/base/separator';
 import { ApiError } from '@/shared/lib/errors/api-error';
-import { formatCurrency } from '@/shared/lib/utils';
 
 interface OrderDetailClientProps {
   readonly id: string;

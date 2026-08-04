@@ -2,15 +2,16 @@
 
 import { useEffect } from 'react';
 
+import { registerAuthRuntimeAdapter } from '@repo/api-sdk/client/runtime';
+
 import { bootstrapAuth, clearAuth, getAccessToken, refreshAccessToken } from '@/core/session/auth-store';
-import { registerHttpRuntimeAdapter } from '@/shared/lib/http/runtime';
 
 export function AuthRuntimeProvider({ children }: { readonly children: React.ReactNode }): React.JSX.Element {
   useEffect(() => {
-    const unregister = registerHttpRuntimeAdapter({
+    const unregister = registerAuthRuntimeAdapter({
       getAccessToken,
-      refreshAccessToken,
-      onRefreshFailure: () => {
+      refreshSession: refreshAccessToken,
+      onAuthFailure: () => {
         clearAuth();
       },
     });

@@ -26,8 +26,8 @@ Khi nội dung ở các file tách ra dưới đây không khớp với tài li�
 
 ## Ba file sau khi tách
 
-| File | Vai trò |
-|---|---|
-| [`implementation-plan-overview.md`](implementation-plan-overview.md) | Tổng quan, drift notes, nguyên tắc triển khai, phạm vi tham khảo, kiến trúc lớn |
-| [`implementation-plan-frontend-reference.md`](implementation-plan-frontend-reference.md) | Phase tham khảo cho Front-end |
-| [`implementation-plan-backend-release-reference.md`](implementation-plan-backend-release-reference.md) | Phase tham khảo cho Back-end, integration, release, backlog |
+| File                                                                                                   | Vai trò                                                                         |
+| ------------------------------------------------------------------------------------------------------ | ------------------------------------------------------------------------------- |
+| [`implementation-plan-overview.md`](implementation-plan-overview.md)                                   | Tổng quan, drift notes, nguyên tắc triển khai, phạm vi tham khảo, kiến trúc lớn |
+| [`implementation-plan-frontend-reference.md`](implementation-plan-frontend-reference.md)               | Phase tham khảo cho Front-end                                                   |
+| [`implementation-plan-backend-release-reference.md`](implementation-plan-backend-release-reference.md) | Phase tham khảo cho Back-end, integration, release, backlog                     |

@@ -34,11 +34,6 @@ export default defineConfig({
         'src/**/__tests__/**',
         'src/**/*.test.*',
         'src/**/*.spec.*',
-        // Intentionally excluded: needs integration/e2e test, not unit test
-        'src/shared/lib/http/client.ts',
-        'src/shared/lib/http/api-auth.ts',
-        'src/shared/lib/http/api-client.ts',
-        'src/shared/lib/http/methods.ts',
         'src/shared/lib/guards/**',
         'src/shared/lib/query-client.ts',
         'src/shared/lib/env.ts',

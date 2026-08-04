@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from 'react';
 
-import { cn } from '@/shared/lib/utils';
+import { cn } from '@repo/shared/utils';
 
 interface CountdownTimerLabels {
   readonly days: string;

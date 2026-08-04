@@ -1,4 +1,5 @@
-import { Badge } from '@/shared/components/base/badge';
+import { Badge } from '@repo/ui/badge';
+
 import type { OrderStatus } from '@/shared/types/order';
 
 const STATUS_MAP: Record<OrderStatus, { label: string; variant: 'default' | 'secondary' | 'destructive' | 'outline' }> = {

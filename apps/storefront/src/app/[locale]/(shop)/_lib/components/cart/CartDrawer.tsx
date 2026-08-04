@@ -3,16 +3,16 @@
 import Image from 'next/image';
 import Link from 'next/link';
 
+import { formatCurrency } from '@repo/shared/utils';
+import { Button } from '@repo/ui/button';
+import { ScrollArea } from '@repo/ui/scroll-area';
+import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger } from '@repo/ui/sheet';
 import { AnimatePresence, motion } from 'framer-motion';
 import { ShoppingBag, Trash2 } from 'lucide-react';
 import { useLocale } from 'next-intl';
 
 import { QuantitySelector } from '@/app/[locale]/(shop)/_lib/components/common/QuantitySelector';
 import { useCart } from '@/app/[locale]/(shop)/_lib/hooks/useCart';
-import { Button } from '@/shared/components/base/button';
-import { ScrollArea } from '@/shared/components/base/scroll-area';
-import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger } from '@/shared/components/base/sheet';
-import { formatCurrency } from '@/shared/lib/utils';
 
 interface CartDrawerProps {
   readonly children: React.ReactNode;

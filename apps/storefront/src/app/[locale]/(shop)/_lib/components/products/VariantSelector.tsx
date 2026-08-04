@@ -1,7 +1,8 @@
 'use client';
 
+import { cn } from '@repo/shared/utils';
+
 import type { SizeOption } from '@/app/[locale]/(shop)/_lib/types/product';
-import { cn } from '@/shared/lib/utils';
 
 interface VariantSelectorProps {
   readonly variants: SizeOption[];

@@ -2,14 +2,14 @@
 
 import Image from 'next/image';
 
+import { formatCurrency } from '@repo/shared/utils';
+import { Button } from '@repo/ui/button';
 import { AnimatePresence, motion } from 'framer-motion';
 import { Trash2 } from 'lucide-react';
 
 import { QuantitySelector } from '@/app/[locale]/(shop)/_lib/components/common/QuantitySelector';
 import type { CartItem } from '@/app/[locale]/(shop)/_lib/hooks/useCart';
 import { useCart } from '@/app/[locale]/(shop)/_lib/hooks/useCart';
-import { Button } from '@/shared/components/base/button';
-import { formatCurrency } from '@/shared/lib/utils';
 
 export function CartTable() {
   const { items, updateQuantity, removeCartItem } = useCart();

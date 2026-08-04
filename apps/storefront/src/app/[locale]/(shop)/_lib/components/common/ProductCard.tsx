@@ -3,10 +3,10 @@
 import Image from 'next/image';
 import Link from 'next/link';
 
+import { formatCurrency } from '@repo/shared/utils';
+import { Badge } from '@repo/ui/badge';
 import { Star } from 'lucide-react';
 
-import { Badge } from '@/shared/components/base/badge';
-import { formatCurrency } from '@/shared/lib/utils';
 import type { BadgeValue } from '@/shared/types/product';
 
 interface BadgeLabels {

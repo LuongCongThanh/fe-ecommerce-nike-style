@@ -156,6 +156,7 @@ Phiên grilling riêng (skill `grilling` + `domain-modeling`) đào sâu domain 
 **Khái niệm domain mới** (ghi vào [`glossary.md`](../../00-core/glossary.md)): `Locale`, `Locale mặc định`, `Localized Text`, `Market` (chưa dùng, đặt tên trước).
 
 **ADR mới** (trong [`docs/adr/`](../../planning/docs/adr/)):
+
 - `0001-closed-locale-list.md` — danh sách Locale đóng, quản lý trong code
 - `0002-locale-scope-storefront-only.md` — đa Locale UI chỉ áp dụng `storefront`
 - `0003-single-typography-token-set-across-locales.md` — một bộ typography token cho mọi Locale
