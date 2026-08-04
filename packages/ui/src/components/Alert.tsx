@@ -38,5 +38,3 @@ function AlertDescription({ className, ...props }: React.ComponentProps<'div'>) 
 }
 
 export { Alert, AlertDescription, AlertTitle };
-
-

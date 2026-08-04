@@ -1,8 +1,7 @@
 import Link from 'next/link';
 
-import { CheckCircle } from 'lucide-react';
-
 import { Button } from '@repo/ui/button';
+import { CheckCircle } from 'lucide-react';
 
 export default async function CheckoutSuccessPage({
   params,

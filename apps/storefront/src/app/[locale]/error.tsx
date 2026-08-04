@@ -2,9 +2,9 @@
 
 import { useEffect } from 'react';
 
+import { ErrorState } from '@repo/shared/error-state';
 import { useTranslations } from 'next-intl';
 
-import { ErrorState } from '@repo/shared/error-state';
 import { captureError } from '@/shared/lib/monitoring/sentry';
 
 interface GlobalErrorProps {

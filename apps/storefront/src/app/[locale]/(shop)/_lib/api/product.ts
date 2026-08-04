@@ -1,22 +1,18 @@
-import {
-  getStorefrontCategories,
-  getStorefrontProduct,
-  getStorefrontProducts,
-} from '@repo/api-sdk/endpoints/storefront-products';
-import type { Product, ProductList } from '@/shared/types/product';
+import { getStorefrontCategories, getStorefrontProduct, getStorefrontProducts } from '@repo/api-sdk/endpoints/storefront-products';
+
 import { toStorefrontApiError } from '@/shared/lib/errors/toStorefrontApiError';
 
 export const productActions = {
   list: async (filters: object) => {
     try {
-      return (await getStorefrontProducts(filters as Record<string, unknown>)) as ProductList;
+      return await getStorefrontProducts(filters as Record<string, unknown>);
     } catch (error) {
       throw toStorefrontApiError(error);
     }
   },
   detail: async (slug: string) => {
     try {
-      return (await getStorefrontProduct(slug)) as Product;
+      return await getStorefrontProduct(slug);
     } catch (error) {
       throw toStorefrontApiError(error);
     }

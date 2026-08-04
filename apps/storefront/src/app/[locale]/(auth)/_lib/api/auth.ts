@@ -1,11 +1,5 @@
-import {
-  type AuthSessionResponse,
-  forgotPassword,
-  login,
-  logout,
-  register,
-  resetPassword,
-} from '@repo/api-sdk/endpoints/auth';
+import { type AuthSessionResponse, forgotPassword, login, logout, register, resetPassword } from '@repo/api-sdk/endpoints/auth';
+
 import { clearAuth, setAccessToken, setUser } from '@/core/session/auth-store';
 import type { User } from '@/shared/types/user';
 

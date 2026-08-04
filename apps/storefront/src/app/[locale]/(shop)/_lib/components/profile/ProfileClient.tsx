@@ -3,15 +3,15 @@
 import { useEffect } from 'react';
 
 import { zodResolver } from '@hookform/resolvers/zod';
+import { Button } from '@repo/ui/button';
+import { Input } from '@repo/ui/input';
+import { Label } from '@repo/ui/label';
 import { useForm } from 'react-hook-form';
 
 import { useProfile } from '@/app/[locale]/(shop)/_lib/hooks/profile/useProfile';
 import { useUpdateProfile } from '@/app/[locale]/(shop)/_lib/hooks/profile/useUpdateProfile';
 import type { ProfileInput } from '@/app/[locale]/(shop)/_lib/schemas/profile';
 import { profileSchema } from '@/app/[locale]/(shop)/_lib/schemas/profile';
-import { Button } from '@repo/ui/button';
-import { Input } from '@repo/ui/input';
-import { Label } from '@repo/ui/label';
 
 export function ProfileClient(): React.JSX.Element {
   const { data: profile } = useProfile();

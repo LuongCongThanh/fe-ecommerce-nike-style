@@ -58,7 +58,7 @@ docs/
 | Layer        | Technology            |
 | ------------ | --------------------- |
 | Framework    | Next.js 16            |
-| Language     | TypeScript             |
+| Language     | TypeScript            |
 | Styling      | Tailwind v4           |
 | Components   | shadcn/ui             |
 | State        | Zustand               |
@@ -156,9 +156,9 @@ Ví dụ:
 
 ```ts
 export const colors = {
-    primary: "#111111",
-    secondary: "#757575",
-    success: "#00A651",
+  primary: '#111111',
+  secondary: '#757575',
+  success: '#00A651',
 };
 ```
 
@@ -282,9 +282,9 @@ Sort
 
 Công cụ:
 
-* Elasticsearch.
-* Algolia.
-* Meilisearch.
+- Elasticsearch.
+- Algolia.
+- Meilisearch.
 
 ---
 
@@ -404,42 +404,42 @@ services/
 
 ### Phase 1 (Tuần 1-2)
 
-* Setup Turborepo.
-* Setup Next.js 16.
-* Setup Design System.
-* Setup Storybook.
+- Setup Turborepo.
+- Setup Next.js 16.
+- Setup Design System.
+- Setup Storybook.
 
 ### Phase 2 (Tuần 3-4)
 
-* Authentication.
-* Home.
-* Category.
-* Product Detail.
+- Authentication.
+- Home.
+- Category.
+- Product Detail.
 
 ### Phase 3 (Tuần 5-6)
 
-* Cart.
-* Wishlist.
-* Checkout.
+- Cart.
+- Wishlist.
+- Checkout.
 
 ### Phase 4 (Tuần 7-8)
 
-* Orders.
-* Profile.
-* Search.
+- Orders.
+- Profile.
+- Search.
 
 ### Phase 5 (Tuần 9-10)
 
-* Admin Dashboard.
-* CMS.
+- Admin Dashboard.
+- CMS.
 
 ### Phase 6 (Tuần 11-12)
 
-* Playwright.
-* Hallmark.
-* Sentry.
-* Lighthouse.
-* Performance Optimization.
+- Playwright.
+- Hallmark.
+- Sentry.
+- Lighthouse.
+- Performance Optimization.
 
 ---
 

@@ -1,8 +1,7 @@
 'use client';
 
-import { ChevronLeft, ChevronRight } from 'lucide-react';
-
 import { Button } from '@repo/ui/button';
+import { ChevronLeft, ChevronRight } from 'lucide-react';
 
 interface PaginationProps {
   readonly currentPage: number;

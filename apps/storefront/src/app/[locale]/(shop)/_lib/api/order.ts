@@ -1,7 +1,8 @@
-import type { CheckoutInput } from '@/app/[locale]/(shop)/_lib/schemas/checkout';
 import { cancelOrder, createOrder, getOrder, getOrders } from '@repo/api-sdk/endpoints/orders';
-import type { Order } from '@/shared/types/order';
+
+import type { CheckoutInput } from '@/app/[locale]/(shop)/_lib/schemas/checkout';
 import { toStorefrontApiError } from '@/shared/lib/errors/toStorefrontApiError';
+import type { Order } from '@/shared/types/order';
 
 export const orderActions = {
   list: async () => {

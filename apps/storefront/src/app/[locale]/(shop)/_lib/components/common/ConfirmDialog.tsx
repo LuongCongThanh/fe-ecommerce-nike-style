@@ -1,10 +1,9 @@
 'use client';
 
-import type { ReactNode } from 'react';
-
+import { LoadingSpinner } from '@repo/shared/loading-spinner';
 import { Button } from '@repo/ui/button';
 import { Dialog, DialogClose, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from '@repo/ui/dialog';
-import { LoadingSpinner } from '@repo/shared/loading-spinner';
+import type { ReactNode } from 'react';
 
 interface ConfirmDialogProps {
   readonly trigger: ReactNode;

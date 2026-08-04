@@ -3,6 +3,8 @@
 import { useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 
+import { formatCurrency } from '@repo/shared/utils';
+import { Input } from '@repo/ui/input';
 import { motion } from 'framer-motion';
 import { useLocale, useTranslations } from 'next-intl';
 import { useFormContext } from 'react-hook-form';
@@ -11,8 +13,6 @@ import { useCreateOrder } from '@/app/[locale]/(shop)/_lib/hooks/checkout/useCre
 import { useCart } from '@/app/[locale]/(shop)/_lib/hooks/useCart';
 import type { CheckoutInput } from '@/app/[locale]/(shop)/_lib/schemas/checkout';
 import { SHIPPING_FEE_BY_METHOD } from '@/app/[locale]/(shop)/_lib/schemas/checkout';
-import { Input } from '@repo/ui/input';
-import { formatCurrency } from '@repo/shared/utils';
 
 type CheckoutValues = CheckoutInput;
 

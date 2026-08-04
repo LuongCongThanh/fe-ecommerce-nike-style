@@ -29,5 +29,3 @@ function RadioGroupItem({ className, ...props }: React.ComponentProps<typeof Rad
 }
 
 export { RadioGroup, RadioGroupItem };
-
-

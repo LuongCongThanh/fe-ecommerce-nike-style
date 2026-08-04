@@ -508,25 +508,25 @@ Hierarchy của Nike:
 ```typescript
 export const typography = {
   display: {
-    72: "",
-    64: "",
-    48: "",
+    72: '',
+    64: '',
+    48: '',
   },
 
   heading: {
-    32: "",
-    24: "",
+    32: '',
+    24: '',
   },
 
   body: {
-    20: "",
-    18: "",
-    16: "",
+    20: '',
+    18: '',
+    16: '',
   },
 
   caption: {
-    14: "",
-    12: "",
+    14: '',
+    12: '',
   },
 };
 ```
@@ -1573,7 +1573,7 @@ Admin Dashboard
 ## 40. Tech Stack đề xuất để Clone Nike (bảng chi tiết)
 
 | Module           | Tech Stack                    |
-| ---------------- | ------------------------------ |
+| ---------------- | ----------------------------- |
 | Front-end        | NextJS 16                     |
 | UI               | Tailwind v4                   |
 | Design System    | Storybook                     |

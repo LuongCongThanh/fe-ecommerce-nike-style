@@ -40,4 +40,3 @@ function ScrollBar({ className, orientation = 'vertical', ...props }: React.Comp
 }
 
 export { ScrollArea, ScrollBar };
-

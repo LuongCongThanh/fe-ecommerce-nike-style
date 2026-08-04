@@ -1,8 +1,7 @@
 import Link from 'next/link';
 
-import { useTranslations } from 'next-intl';
-
 import { Button } from '@repo/ui/button';
+import { useTranslations } from 'next-intl';
 
 export function FlashSaleBanner() {
   const t = useTranslations('home');

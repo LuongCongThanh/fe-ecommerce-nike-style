@@ -9,13 +9,16 @@ const buttonVariants = cva(
     variants: {
       variant: {
         default: 'bg-primary text-primary-foreground hover:bg-primary/90',
-        destructive: 'bg-destructive text-white hover:bg-destructive/90 focus-visible:ring-destructive/20 dark:bg-destructive/60 dark:focus-visible:ring-destructive/40',
-        outline: 'border bg-background shadow-xs hover:bg-accent hover:text-accent-foreground dark:border-input dark:bg-input/30 dark:hover:bg-input/50',
+        destructive:
+          'bg-destructive text-white hover:bg-destructive/90 focus-visible:ring-destructive/20 dark:bg-destructive/60 dark:focus-visible:ring-destructive/40',
+        outline:
+          'border bg-background shadow-xs hover:bg-accent hover:text-accent-foreground dark:border-input dark:bg-input/30 dark:hover:bg-input/50',
         secondary: 'bg-secondary text-secondary-foreground hover:bg-secondary/80',
         ghost: 'hover:bg-accent hover:text-accent-foreground dark:hover:bg-accent/50',
         link: 'text-primary underline-offset-4 hover:underline',
         primary: 'bg-primary text-primary-foreground hover:bg-primary/90',
-        danger: 'bg-destructive text-white hover:bg-destructive/90 focus-visible:ring-destructive/20 dark:bg-destructive/60 dark:focus-visible:ring-destructive/40',
+        danger:
+          'bg-destructive text-white hover:bg-destructive/90 focus-visible:ring-destructive/20 dark:bg-destructive/60 dark:focus-visible:ring-destructive/40',
       },
       size: {
         default: 'h-9 px-4 py-2 has-[>svg]:px-3',
@@ -38,7 +41,16 @@ export interface ButtonProps extends ButtonHTMLAttributes<HTMLButtonElement>, Va
   loading?: boolean;
 }
 
-export function Button({ className, variant = 'default', size = 'default', asChild = false, loading = false, disabled, children, ...props }: ButtonProps) {
+export function Button({
+  className,
+  variant = 'default',
+  size = 'default',
+  asChild = false,
+  loading = false,
+  disabled,
+  children,
+  ...props
+}: ButtonProps) {
   const resolvedClassName = cn(buttonVariants({ variant, size }), className);
   const resolvedDisabled = disabled ?? loading;
 
@@ -69,4 +81,3 @@ export function Button({ className, variant = 'default', size = 'default', asChi
 }
 
 export { buttonVariants };
-

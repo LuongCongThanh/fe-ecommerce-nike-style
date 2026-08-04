@@ -4,6 +4,9 @@ import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 
 import { zodResolver } from '@hookform/resolvers/zod';
+import { Button } from '@repo/ui/button';
+import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '@repo/ui/form';
+import { Input } from '@repo/ui/input';
 import { Loader2 } from 'lucide-react';
 import { useLocale } from 'next-intl';
 import { useForm } from 'react-hook-form';
@@ -13,9 +16,6 @@ import { ApiErrorAlert } from '@/app/[locale]/(auth)/_lib/components/ApiErrorAle
 import { useApiErrorMessage } from '@/app/[locale]/(auth)/_lib/hooks/useApiErrorMessage';
 import type { RegisterFormInput } from '@/app/[locale]/(auth)/_lib/schemas/auth';
 import { RegisterFormSchema } from '@/app/[locale]/(auth)/_lib/schemas/auth';
-import { Button } from '@repo/ui/button';
-import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '@repo/ui/form';
-import { Input } from '@repo/ui/input';
 
 export function RegisterForm() {
   const router = useRouter();
@@ -135,4 +135,3 @@ export function RegisterForm() {
     </Form>
   );
 }
-

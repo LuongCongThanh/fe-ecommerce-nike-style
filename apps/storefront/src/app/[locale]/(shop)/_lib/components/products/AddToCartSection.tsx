@@ -1,12 +1,12 @@
 'use client';
 
+import { Button } from '@repo/ui/button';
 import { AnimatePresence, motion } from 'framer-motion';
 import { Check, Minus, Plus, ShoppingCart, Zap } from 'lucide-react';
 
 import { VariantSelector } from '@/app/[locale]/(shop)/_lib/components/products/VariantSelector';
 import { useAddToCart } from '@/app/[locale]/(shop)/_lib/hooks/products/useAddToCart';
 import type { ProductDisplay } from '@/app/[locale]/(shop)/_lib/types/product';
-import { Button } from '@repo/ui/button';
 
 interface AddToCartSectionProps {
   readonly product: ProductDisplay;

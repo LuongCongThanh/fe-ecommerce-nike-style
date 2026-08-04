@@ -3,12 +3,12 @@
 import { useState } from 'react';
 import Link from 'next/link';
 
-import { Flame, Menu } from 'lucide-react';
-
-import { NAV_CATEGORIES } from '@/app/[locale]/(shop)/_lib/data/nav-categories';
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from '@repo/ui/accordion';
 import { Button } from '@repo/ui/button';
 import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger } from '@repo/ui/sheet';
+import { Flame, Menu } from 'lucide-react';
+
+import { NAV_CATEGORIES } from '@/app/[locale]/(shop)/_lib/data/nav-categories';
 
 interface MobileNavProps {
   readonly locale: string;
@@ -99,4 +99,3 @@ export function MobileNav({ locale }: MobileNavProps) {
     </Sheet>
   );
 }
-

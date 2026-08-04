@@ -1,8 +1,7 @@
 'use client';
 
-import { motion } from 'framer-motion';
-
 import { Skeleton } from '@repo/ui/skeleton';
+import { motion } from 'framer-motion';
 
 export function ShopLoadingShell() {
   return (
@@ -58,4 +57,3 @@ export function ShopLoadingShell() {
     </motion.div>
   );
 }
-

@@ -2,12 +2,12 @@
 
 import Link from 'next/link';
 
+import { formatCurrency } from '@repo/shared/utils';
+import { Button } from '@repo/ui/button';
+import { Separator } from '@repo/ui/separator';
 import { ArrowRight, Truck } from 'lucide-react';
 
 import { useCart } from '@/app/[locale]/(shop)/_lib/hooks/useCart';
-import { Button } from '@repo/ui/button';
-import { Separator } from '@repo/ui/separator';
-import { formatCurrency } from '@repo/shared/utils';
 
 interface CartSummaryProps {
   readonly locale: string;

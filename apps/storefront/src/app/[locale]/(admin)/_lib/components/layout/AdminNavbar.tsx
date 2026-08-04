@@ -1,9 +1,9 @@
 'use client';
 
+import { Button } from '@repo/ui/button';
 import { LogOut } from 'lucide-react';
 
 import { useAuth } from '@/core/session/useAuth';
-import { Button } from '@repo/ui/button';
 
 export function AdminNavbar(): React.JSX.Element {
   const { user, logout } = useAuth();

@@ -3,10 +3,9 @@
 import { useState } from 'react';
 import Image from 'next/image';
 
+import { cn } from '@repo/shared/utils';
 import { AnimatePresence, motion } from 'framer-motion';
 import { ChevronLeft, ChevronRight } from 'lucide-react';
-
-import { cn } from '@repo/shared/utils';
 
 interface ProductGalleryProps {
   readonly images: string[];

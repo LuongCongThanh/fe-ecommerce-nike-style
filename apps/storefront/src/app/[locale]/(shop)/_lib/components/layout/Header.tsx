@@ -4,6 +4,7 @@ import { useState } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 
+import { Button } from '@repo/ui/button';
 import { Flame, Search, ShoppingCart, X } from 'lucide-react';
 import { useLocale, useTranslations } from 'next-intl';
 
@@ -11,7 +12,6 @@ import { CartDrawer } from '@/app/[locale]/(shop)/_lib/components/cart/CartDrawe
 import { DesktopMegaMenu } from '@/app/[locale]/(shop)/_lib/components/navigation/DesktopMegaMenu';
 import { MobileNav } from '@/app/[locale]/(shop)/_lib/components/navigation/MobileNav';
 import { useCart } from '@/app/[locale]/(shop)/_lib/hooks/useCart';
-import { Button } from '@repo/ui/button';
 
 export function Header() {
   const t = useTranslations('common');

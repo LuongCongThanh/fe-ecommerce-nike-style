@@ -1,8 +1,7 @@
 import Image from 'next/image';
 
-import { Star } from 'lucide-react';
-
 import { cn } from '@repo/shared/utils';
+import { Star } from 'lucide-react';
 
 interface TestimonialCardProps {
   readonly name: string;

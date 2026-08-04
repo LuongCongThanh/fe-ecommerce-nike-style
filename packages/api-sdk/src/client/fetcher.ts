@@ -52,11 +52,7 @@ async function parseResponseBody(response: Response): Promise<unknown> {
   return response.json().catch(() => undefined);
 }
 
-async function executeFetch<TResponse>(
-  config: RequestConfig<TResponse>,
-  tokenOverride?: string,
-  forceSkipRefresh = false,
-): Promise<Response> {
+async function executeFetch<TResponse>(config: RequestConfig<TResponse>, tokenOverride?: string, forceSkipRefresh = false): Promise<Response> {
   const runtimeAdapter = getAuthRuntimeAdapter();
   const token = tokenOverride ?? runtimeAdapter?.getAccessToken() ?? null;
   const headers = new Headers(config.headers);
@@ -123,11 +119,7 @@ export const apiClient = {
       params,
     }),
 
-  post: async <TResponse>(
-    url: string,
-    data?: unknown,
-    options?: Omit<RequestConfig<TResponse>, 'url' | 'method' | 'data'>,
-  ): Promise<TResponse> =>
+  post: async <TResponse>(url: string, data?: unknown, options?: Omit<RequestConfig<TResponse>, 'url' | 'method' | 'data'>): Promise<TResponse> =>
     request<TResponse>({
       ...options,
       url,
@@ -135,11 +127,7 @@ export const apiClient = {
       data,
     }),
 
-  put: async <TResponse>(
-    url: string,
-    data?: unknown,
-    options?: Omit<RequestConfig<TResponse>, 'url' | 'method' | 'data'>,
-  ): Promise<TResponse> =>
+  put: async <TResponse>(url: string, data?: unknown, options?: Omit<RequestConfig<TResponse>, 'url' | 'method' | 'data'>): Promise<TResponse> =>
     request<TResponse>({
       ...options,
       url,
@@ -147,11 +135,7 @@ export const apiClient = {
       data,
     }),
 
-  patch: async <TResponse>(
-    url: string,
-    data?: unknown,
-    options?: Omit<RequestConfig<TResponse>, 'url' | 'method' | 'data'>,
-  ): Promise<TResponse> =>
+  patch: async <TResponse>(url: string, data?: unknown, options?: Omit<RequestConfig<TResponse>, 'url' | 'method' | 'data'>): Promise<TResponse> =>
     request<TResponse>({
       ...options,
       url,
@@ -159,10 +143,7 @@ export const apiClient = {
       data,
     }),
 
-  delete: async <TResponse>(
-    url: string,
-    options?: Omit<RequestConfig<TResponse>, 'url' | 'method'>,
-  ): Promise<TResponse> =>
+  delete: async <TResponse>(url: string, options?: Omit<RequestConfig<TResponse>, 'url' | 'method'>): Promise<TResponse> =>
     request<TResponse>({
       ...options,
       url,

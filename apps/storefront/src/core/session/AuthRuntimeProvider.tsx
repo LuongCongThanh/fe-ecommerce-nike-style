@@ -1,7 +1,8 @@
 'use client';
 
-import { registerAuthRuntimeAdapter } from '@repo/api-sdk/client/runtime';
 import { useEffect } from 'react';
+
+import { registerAuthRuntimeAdapter } from '@repo/api-sdk/client/runtime';
 
 import { bootstrapAuth, clearAuth, getAccessToken, refreshAccessToken } from '@/core/session/auth-store';
 

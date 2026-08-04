@@ -1,6 +1,6 @@
-import { create } from 'zustand';
 import { refreshSession } from '@repo/api-sdk/endpoints/auth';
 import { getProfile } from '@repo/api-sdk/endpoints/profile';
+import { create } from 'zustand';
 
 import type { User } from '@/shared/types/user';
 
@@ -70,7 +70,7 @@ export async function refreshAccessToken(): Promise<string> {
 export async function bootstrapAuth(): Promise<void> {
   try {
     await refreshAccessToken();
-    const user = (await getProfile()) as User;
+    const user = await getProfile();
     setUser(user);
   } catch {
     clearAuth();

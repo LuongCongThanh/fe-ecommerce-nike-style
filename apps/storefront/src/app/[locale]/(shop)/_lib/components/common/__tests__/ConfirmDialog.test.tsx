@@ -2,8 +2,8 @@ import { render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { describe, expect, it, vi } from 'vitest';
 
-import { ConfirmDialog } from '@/app/[locale]/(shop)/_lib/components/common/ConfirmDialog';
 import { Button } from '@repo/ui/button';
+import { ConfirmDialog } from '@/app/[locale]/(shop)/_lib/components/common/ConfirmDialog';
 
 const defaultProps = {
   trigger: <Button>Xóa</Button>,

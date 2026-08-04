@@ -13,4 +13,3 @@ export function Label({ className, ...props }: ComponentPropsWithoutRef<typeof L
     />
   );
 }
-

@@ -1,9 +1,8 @@
 'use client';
 
-import { Minus, Plus } from 'lucide-react';
-
-import { Button } from '@repo/ui/button';
 import { cn } from '@repo/shared/utils';
+import { Button } from '@repo/ui/button';
+import { Minus, Plus } from 'lucide-react';
 
 interface QuantitySelectorProps {
   readonly value: number;
