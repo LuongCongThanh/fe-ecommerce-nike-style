@@ -8,10 +8,14 @@ import { SectionNewArrivals } from '@/app/[locale]/(shop)/_lib/components/home/S
 import { SectionNewsletter } from '@/app/[locale]/(shop)/_lib/components/home/SectionNewsletter';
 import { SectionTestimonials } from '@/app/[locale]/(shop)/_lib/components/home/SectionTestimonials';
 import { SectionWhyChooseUs } from '@/app/[locale]/(shop)/_lib/components/home/SectionWhyChooseUs';
+import { env } from '@/shared/lib/env';
 
 export default async function HomePage({ params }: { readonly params: Promise<{ locale: string }> }) {
   const { locale } = await params;
   setRequestLocale(locale);
+
+  // homeTestimonialsData is placeholder copy (no verified customer source yet) — never render it in production.
+  const showTestimonials = env.NODE_ENV !== 'production';
 
   return (
     <>
@@ -21,7 +25,7 @@ export default async function HomePage({ params }: { readonly params: Promise<{ 
       <SectionBestSellers />
       <SectionNewArrivals />
       <SectionWhyChooseUs />
-      <SectionTestimonials />
+      {showTestimonials ? <SectionTestimonials /> : null}
       <SectionNewsletter />
     </>
   );
