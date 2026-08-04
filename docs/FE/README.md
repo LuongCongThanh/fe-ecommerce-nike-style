@@ -9,6 +9,7 @@ Nếu bạn chỉ làm FE, hãy bắt đầu ở đây thay vì đọc toàn b�
 1. [`FE.md`](./FE.md)
 2. [`FE-ARCHITECTURE.md`](./FE-ARCHITECTURE.md)
 3. [`FE-EXECUTION.md`](./FE-EXECUTION.md)
+4. [`FE-UI-IMPROVEMENT-PLAN.md`](./FE-UI-IMPROVEMENT-PLAN.md) khi triển khai cải thiện UI sau Hallmark audit
 
 ## Vai trò từng file
 
@@ -21,11 +22,15 @@ Nếu bạn chỉ làm FE, hãy bắt đầu ở đây thay vì đọc toàn b�
 - [`FE-EXECUTION.md`](./FE-EXECUTION.md)
   Foundation checklist, bootstrap steps, dependency matrix, và Definition of Done cho FE.
 
+- [`FE-UI-IMPROVEMENT-PLAN.md`](./FE-UI-IMPROVEMENT-PLAN.md)
+  Kế hoạch theo phase để xử lý Hallmark findings, tái cấu trúc homepage, hoàn thiện component voice và xây application shell cho Admin/CMS.
+
 ## Đường đọc theo mục đích
 
 - Muốn hiểu FE tổng thể: `FE.md`
 - Muốn chốt kiến trúc chuẩn cho 3 app và module chung, hoặc chuẩn design system để build component nhất quán: `FE-ARCHITECTURE.md`
 - Muốn biết foundation gồm gì, khi nào pass, bắt đầu scaffold ngay, hoặc xem version/package matrix: `FE-EXECUTION.md`
+- Muốn cải thiện UI Storefront/Admin/CMS theo kết quả Hallmark audit: `FE-UI-IMPROVEMENT-PLAN.md`
 
 ## Quan hệ với tài liệu ngoài thư mục này
 

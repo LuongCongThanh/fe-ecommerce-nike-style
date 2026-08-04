@@ -499,4 +499,3 @@ README là tài liệu onboarding, không phải nguồn sự thật để thay 
 - [Contributing guide](./CONTRIBUTING.md)
 - [Security baseline](./docs/01-delivery/security/security-baseline.md)
 - [Requirements traceability](./docs/01-delivery/traceability/requirements-traceability-matrix.md)
- 
