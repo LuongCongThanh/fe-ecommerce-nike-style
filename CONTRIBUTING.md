@@ -25,7 +25,9 @@ Example: `feat/9-storefront-catalog-browse`. Branch off `dev`, not `main`.
 
 [Conventional Commits](https://www.conventionalcommits.org/) (`feat:`, `fix:`, `docs:`, `chore:`, `refactor:`, `test:`, `ci:`, `perf:`, `style:`, `build:`, `revert:`), enforced by `commitlint` (`.husky/commit-msg`). See `docs/FE/FE-EXECUTION.md` §2.16 and `docs/00-core/decision-log.md` Decision #52.
 
-**No AI/assistant co-author attribution** (e.g. `Co-Authored-By: Claude ...`) in any commit message.
+**No AI/assistant co-author attribution** (e.g. `Co-Authored-By: Claude ...`) in any commit message — applies to both AI agents and humans, whether the commit is new, amended, or rebased. Enforced by `.husky/commit-msg` (rejects any message matching `claude`/`anthropic`, case-insensitive) and, for squash-merged PRs, by the `Check PR title` CI job (`.github/workflows/pr-title-lint.yml`), which scans the PR title and body for the same pattern. See `docs/00-core/decision-log.md` Decision #86.
+
+Before every commit, `.husky/pre-commit` runs `lint-staged` (Prettier on staged files) and `pnpm lint` (ESLint via turbo, scoped per package). Before every push, `.husky/pre-push` runs `pnpm typecheck` and `pnpm build` — a commit or push that fails any of these is rejected.
 
 ## Pull requests
 

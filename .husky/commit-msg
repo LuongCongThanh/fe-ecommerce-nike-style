@@ -1,1 +1,6 @@
+if grep -iE "claude|anthropic" "$1" > /dev/null; then
+  echo "Commit message must not reference Claude/Anthropic (no AI co-author attribution). See CONTRIBUTING.md." >&2
+  exit 1
+fi
+
 pnpm commitlint --edit "$1"

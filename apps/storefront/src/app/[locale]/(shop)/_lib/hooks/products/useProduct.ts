@@ -1,17 +1,18 @@
 'use client';
 
+import { getProduct } from '@repo/api-sdk/endpoints/catalog';
 import { useQuery } from '@tanstack/react-query';
 
-import { productActions } from '@/app/[locale]/(shop)/_lib/api/product';
+import { ensureApiMockingReady } from '@/shared/lib/api-mocking';
 
-const productKeys = {
-  all: ['products'] as const,
-  detail: (slug: string) => [...productKeys.all, 'detail', slug] as const,
-};
-
-export const useProduct = (slug: string) =>
-  useQuery({
-    queryKey: productKeys.detail(slug),
-    queryFn: async () => productActions.detail(slug),
-    staleTime: 5 * 60_000,
+/** PDP product lookup — backed by `packages/api-sdk` (MSW mock today). Client-driven per Decision #87. */
+export function useProduct(slug: string) {
+  return useQuery({
+    queryKey: ['catalog', 'product', slug],
+    queryFn: async () => {
+      await ensureApiMockingReady();
+      const { data } = await getProduct(slug);
+      return data;
+    },
   });
+}

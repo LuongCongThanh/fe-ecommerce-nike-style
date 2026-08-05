@@ -28,6 +28,8 @@ interface ProductCardProps {
   readonly badges?: BadgeValue[];
   readonly locale: string;
   readonly badgeLabels?: Partial<BadgeLabels>;
+  /** Product's SKUs diverge in price — render "Từ {price}" instead of a single price (glossary.md — SKU). */
+  readonly isPriceRange?: boolean;
 }
 
 const BADGE_VARIANTS: Record<BadgeValue, 'warning' | 'info' | 'brand'> = {
@@ -56,6 +58,7 @@ export function ProductCard({
   badges,
   locale,
   badgeLabels,
+  isPriceRange = false,
 }: ProductCardProps): React.JSX.Element {
   const hasDiscount = typeof salePrice === 'number' && salePrice > 0 && salePrice < price;
   const displayPrice = hasDiscount ? salePrice : price;
@@ -95,7 +98,10 @@ export function ProductCard({
 
           {/* Price */}
           <div className="flex flex-wrap items-baseline gap-2">
-            <span className="text-brand-600 text-lg font-bold tabular-nums">{formatCurrency(displayPrice)}</span>
+            <span className="text-brand-600 text-lg font-bold tabular-nums">
+              {isPriceRange ? <span className="text-muted-foreground mr-1 text-xs font-normal normal-case">Từ</span> : null}
+              {formatCurrency(displayPrice)}
+            </span>
             {hasDiscount ? <span className="text-muted-foreground text-xs tabular-nums line-through">{formatCurrency(price)}</span> : null}
           </div>
 

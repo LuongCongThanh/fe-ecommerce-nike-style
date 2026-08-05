@@ -2,53 +2,91 @@
 
 import { useRouter, useSearchParams } from 'next/navigation';
 
+import type { Gender } from '@repo/schemas/catalog';
 import { Button } from '@repo/ui/button';
 import { Input } from '@repo/ui/input';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@repo/ui/select';
+import { useLocale } from 'next-intl';
 import type { SyntheticEvent } from 'react';
 
-import type { SortBy } from '@/app/[locale]/(shop)/_lib/hooks/products/useProducts';
+import { CategoryNav } from '@/app/[locale]/(shop)/_lib/components/categories/CategoryNav';
+import { useCategoryTree } from '@/app/[locale]/(shop)/_lib/hooks/categories/useCategoryTree';
+import { clearCatalogFilters, parseCatalogFilters, withCatalogFilter } from '@/app/[locale]/(shop)/_lib/utils/catalogUrlState';
 
-export function FilterSidebar(): React.JSX.Element {
+const GENDER_LABELS: Record<Gender, string> = {
+  men: 'Nam',
+  women: 'Nữ',
+  kids: 'Trẻ em',
+  unisex: 'Unisex',
+};
+
+interface FilterSidebarProps {
+  /** Highlights the current node in the Category tree — only set on `/categories/[slug]`. */
+  readonly activeCategorySlug?: string;
+}
+
+export function FilterSidebar({ activeCategorySlug }: FilterSidebarProps = {}): React.JSX.Element {
   const router = useRouter();
   const searchParams = useSearchParams();
+  const locale = useLocale();
+  const { data: categories } = useCategoryTree();
 
-  const sortByParam = searchParams.get('sortBy');
-  const currentSort = (sortByParam as SortBy | null) !== null ? (sortByParam as SortBy) : 'newest';
-  const currentMinPrice = searchParams.get('minPrice') ?? '';
-  const currentMaxPrice = searchParams.get('maxPrice') ?? '';
+  const filters = parseCatalogFilters(searchParams);
 
-  const updateFilters = (key: string, value: string) => {
-    const params = new URLSearchParams(searchParams.toString());
-    if (value !== '') {
-      params.set(key, value);
-    } else {
-      params.delete(key);
-    }
-    // Reset to page 1 when filter changes
-    params.set('page', '1');
-    router.push(`?${params.toString()}`);
+  const applyFilter = (key: 'gender' | 'sortBy' | 'minPrice' | 'maxPrice', value: string | undefined) => {
+    router.push(`?${withCatalogFilter(searchParams, key, value).toString()}`);
   };
 
   const handlePriceSubmit = (e: SyntheticEvent<HTMLFormElement>) => {
     e.preventDefault();
     const formData = new FormData(e.currentTarget);
-    updateFilters('minPrice', formData.get('minPrice') as string);
-    updateFilters('maxPrice', formData.get('maxPrice') as string);
+    const next = withCatalogFilter(
+      withCatalogFilter(searchParams, 'minPrice', formData.get('minPrice') as string),
+      'maxPrice',
+      formData.get('maxPrice') as string,
+    );
+    router.push(`?${next.toString()}`);
   };
 
   return (
     <aside className="space-y-8">
+      {categories !== undefined && categories.length > 0 ? (
+        <CategoryNav categories={categories} locale={locale} activeSlug={activeCategorySlug} />
+      ) : null}
+
+      {/* Gender */}
+      <div className="space-y-3">
+        <h3 className="text-muted-foreground text-sm font-bold tracking-wider uppercase">Giới tính</h3>
+        <Select
+          value={filters.gender ?? 'all'}
+          onValueChange={(val) => {
+            applyFilter('gender', val === 'all' ? undefined : val);
+          }}
+        >
+          <SelectTrigger className="w-full" aria-label="Giới tính">
+            <SelectValue placeholder="Tất cả" />
+          </SelectTrigger>
+          <SelectContent>
+            <SelectItem value="all">Tất cả</SelectItem>
+            {Object.entries(GENDER_LABELS).map(([value, label]) => (
+              <SelectItem key={value} value={value}>
+                {label}
+              </SelectItem>
+            ))}
+          </SelectContent>
+        </Select>
+      </div>
+
       {/* Sorting */}
       <div className="space-y-3">
         <h3 className="text-muted-foreground text-sm font-bold tracking-wider uppercase">Sắp xếp theo</h3>
         <Select
-          value={currentSort}
+          value={filters.sortBy}
           onValueChange={(val) => {
-            updateFilters('sortBy', val);
+            applyFilter('sortBy', val);
           }}
         >
-          <SelectTrigger className="w-full">
+          <SelectTrigger className="w-full" aria-label="Sắp xếp theo">
             <SelectValue placeholder="Chọn kiểu sắp xếp" />
           </SelectTrigger>
           <SelectContent>
@@ -64,9 +102,9 @@ export function FilterSidebar(): React.JSX.Element {
         <h3 className="text-muted-foreground text-sm font-bold tracking-wider uppercase">Khoảng giá (VNĐ)</h3>
         <form onSubmit={handlePriceSubmit} className="space-y-3">
           <div className="flex items-center gap-2">
-            <Input name="minPrice" type="number" placeholder="Từ" defaultValue={currentMinPrice} className="h-9" />
+            <Input name="minPrice" type="number" placeholder="Từ" defaultValue={filters.minPrice ?? ''} className="h-9" />
             <span className="text-muted-foreground">-</span>
-            <Input name="maxPrice" type="number" placeholder="Đến" defaultValue={currentMaxPrice} className="h-9" />
+            <Input name="maxPrice" type="number" placeholder="Đến" defaultValue={filters.maxPrice ?? ''} className="h-9" />
           </div>
           <Button type="submit" size="sm" className="w-full">
             Áp dụng
@@ -80,7 +118,7 @@ export function FilterSidebar(): React.JSX.Element {
         size="sm"
         className="text-muted-foreground hover:text-foreground w-full"
         onClick={() => {
-          router.push(window.location.pathname);
+          router.push(`?${clearCatalogFilters(searchParams).toString()}`);
         }}
       >
         Xóa tất cả bộ lọc

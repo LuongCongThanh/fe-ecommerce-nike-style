@@ -4,7 +4,7 @@ import { useRouter, useSearchParams } from 'next/navigation';
 
 import { Pagination } from '@/app/[locale]/(shop)/_lib/components/common/Pagination';
 import { ProductGrid } from '@/app/[locale]/(shop)/_lib/components/common/ProductGrid';
-import { useProducts } from '@/app/[locale]/(shop)/_lib/hooks/products/useProducts';
+import { useLegacyProductSearch } from '@/app/[locale]/(shop)/_lib/hooks/products/useLegacyProductSearch';
 
 export function SearchClient(): React.JSX.Element {
   const router = useRouter();
@@ -13,7 +13,7 @@ export function SearchClient(): React.JSX.Element {
   const pageParam = searchParams.get('page');
   const page = pageParam !== null ? Math.max(1, Number(pageParam)) : 1;
 
-  const { products, totalPages } = useProducts({ search: query, page, pageSize: 12 });
+  const { products, totalPages } = useLegacyProductSearch({ search: query, page, pageSize: 12 });
 
   const handlePageChange = (p: number) => {
     const params = new URLSearchParams(searchParams.toString());

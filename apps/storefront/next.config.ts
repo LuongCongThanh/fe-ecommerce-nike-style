@@ -21,6 +21,9 @@ const withNextIntl = createNextIntlPlugin('./src/i18n/request.ts');
 const nextConfig: NextConfig = {
   turbopack: {},
   serverExternalPackages: ['msw', '@mswjs/interceptors'],
+  // Playwright's default baseURL is 127.0.0.1 (see playwright.config.ts) — without this, Next.js
+  // blocks dev-only asset/HMR requests from that origin and no client component ever hydrates.
+  allowedDevOrigins: ['127.0.0.1'],
   images: {
     remotePatterns: [
       { protocol: 'https', hostname: '**.amazonaws.com' },
