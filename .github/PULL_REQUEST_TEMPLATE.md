@@ -18,4 +18,4 @@ Refs #
 
 ---
 
-- [ ] No AI/assistant attribution (e.g. `Co-Authored-By: Claude ...`) in this PR's commit messages or description.
+- [ ] No AI/assistant co-author attribution in this PR's commit messages or description (see CONTRIBUTING.md).
