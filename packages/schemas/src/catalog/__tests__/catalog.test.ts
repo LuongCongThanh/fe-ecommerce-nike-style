@@ -1,16 +1,26 @@
 import { describe, expect, it } from 'vitest';
 
-import { CatalogErrorSchema, CategoryListResponseSchema, ProductListRequestSchema, ProductListResponseSchema, ProductSchema } from '../catalog';
+import {
+  CatalogErrorSchema,
+  CategoryListResponseSchema,
+  ProductDetailResponseSchema,
+  ProductListRequestSchema,
+  ProductListResponseSchema,
+  ProductSchema,
+} from '../catalog';
 
-const validSku = { id: 'sku-1', price: 129.99, color: null, size: null };
+const validSku = { id: 'sku-1', price: 129.99, stock: 10, color: null, size: null };
 const validProduct = {
   id: '1',
   slug: 'air-max',
   name: 'Air Max',
+  description: 'A classic sneaker.',
   images: ['/air-max.jpg'],
   categoryId: 'cat-running',
   gender: 'unisex' as const,
   skus: [validSku],
+  rating: 4.5,
+  reviewCount: 10,
 };
 
 describe('ProductSchema', () => {
@@ -32,12 +42,18 @@ describe('ProductSchema', () => {
     expect(result.success).toBe(false);
   });
 
-  it('accepts multiple SKUs with diverging prices (Color x Size Variant)', () => {
+  it('rejects a SKU with a negative stock', () => {
+    const result = ProductSchema.safeParse({ ...validProduct, skus: [{ ...validSku, stock: -1 }] });
+
+    expect(result.success).toBe(false);
+  });
+
+  it('accepts multiple SKUs with diverging prices and stock (Color x Size Variant)', () => {
     const result = ProductSchema.safeParse({
       ...validProduct,
       skus: [
-        { id: 'sku-1', price: 100, color: 'black', size: 'm' },
-        { id: 'sku-2', price: 120, color: 'black', size: 'l' },
+        { id: 'sku-1', price: 100, stock: 5, color: 'black', size: 'm' },
+        { id: 'sku-2', price: 120, stock: 0, color: 'black', size: 'l' },
       ],
     });
 
@@ -99,6 +115,14 @@ describe('ProductListResponseSchema', () => {
     });
 
     expect(result.success).toBe(false);
+  });
+});
+
+describe('ProductDetailResponseSchema', () => {
+  it('round-trips a single product response', () => {
+    const result = ProductDetailResponseSchema.safeParse({ data: validProduct });
+
+    expect(result.success).toBe(true);
   });
 });
 

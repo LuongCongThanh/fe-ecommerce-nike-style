@@ -24,6 +24,7 @@ export const CategorySchema = z.object({
 export const SkuSchema = z.object({
   id: z.string(),
   price: z.number(),
+  stock: z.number().int().nonnegative(),
   color: z.string().nullable(),
   size: z.string().nullable(),
 });
@@ -32,10 +33,13 @@ export const ProductSchema = z.object({
   id: z.string(),
   slug: z.string(),
   name: z.string(),
+  description: z.string(),
   images: z.array(z.string()),
   categoryId: z.string(),
   gender: GenderSchema,
   skus: z.array(SkuSchema).min(1),
+  rating: z.number().min(0).max(5),
+  reviewCount: z.number().int().nonnegative(),
 });
 
 export const ProductListRequestSchema = PaginationQuerySchema.extend({
@@ -57,6 +61,10 @@ export const CategoryListResponseSchema = z.object({
   data: z.array(CategorySchema),
 });
 
+export const ProductDetailResponseSchema = z.object({
+  data: ProductSchema,
+});
+
 export type Gender = z.infer<typeof GenderSchema>;
 export type Category = z.infer<typeof CategorySchema>;
 export type Sku = z.infer<typeof SkuSchema>;
@@ -64,3 +72,4 @@ export type Product = z.infer<typeof ProductSchema>;
 export type ProductListRequest = z.infer<typeof ProductListRequestSchema>;
 export type ProductListResponse = z.infer<typeof ProductListResponseSchema>;
 export type CategoryListResponse = z.infer<typeof CategoryListResponseSchema>;
+export type ProductDetailResponse = z.infer<typeof ProductDetailResponseSchema>;

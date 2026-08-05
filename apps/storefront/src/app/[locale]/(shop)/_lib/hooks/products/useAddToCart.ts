@@ -3,47 +3,67 @@
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 
+import type { Product } from '@repo/schemas/catalog';
 import { useLocale } from 'next-intl';
 import { toast } from 'sonner';
 
 import { useCart } from '@/app/[locale]/(shop)/_lib/hooks/useCart';
-import type { ProductDisplay, SizeOption } from '@/app/[locale]/(shop)/_lib/types/product';
+import type { VariantSelection } from '@/app/[locale]/(shop)/_lib/utils/variantResolution';
+import { getVariantAxes, resolveSku } from '@/app/[locale]/(shop)/_lib/utils/variantResolution';
 
-export function useAddToCart(product: ProductDisplay) {
+/**
+ * Variant selection + resolved-SKU state for a PDP (glossary.md — Variant/SKU). Bridges into the
+ * existing `useCart`/`CartItem` shape unchanged (Decision #84/#85 — Cart stays out of scope here):
+ * `variantId` becomes the resolved SKU id, `price` is always read from that SKU, never re-derived.
+ */
+export function useAddToCart(product: Product) {
   const locale = useLocale();
   const router = useRouter();
   const { addToCart } = useCart();
 
-  const [selectedVariant, setSelectedVariant] = useState<SizeOption | null>(product.variants[0] ?? null);
+  const axes = getVariantAxes(product.skus);
+  const [selection, setSelection] = useState<VariantSelection>({});
   const [quantity, setQuantity] = useState(1);
   const [isAdded, setIsAdded] = useState(false);
 
-  const maxStock = selectedVariant?.stock ?? 99;
+  const selectedSku = resolveSku(product.skus, selection);
+  const maxStock = selectedSku?.stock ?? 0;
 
-  const selectVariant = (variant: SizeOption) => {
-    setSelectedVariant(variant);
+  const selectColor = (color: string) => {
+    setSelection((prev) => ({ ...prev, color }));
     setQuantity(1);
   };
 
-  const add = () => {
-    if (product.variants.length > 0 && selectedVariant === null) {
-      toast.error('Vui lòng chọn phân loại sản phẩm');
+  const selectSize = (size: string) => {
+    setSelection((prev) => ({ ...prev, size }));
+    setQuantity(1);
+  };
+
+  const add = (): boolean => {
+    if (selectedSku === null) {
+      toast.error('Vui lòng chọn đầy đủ phân loại sản phẩm');
+      return false;
+    }
+    if (selectedSku.stock === 0) {
+      toast.error('Sản phẩm đã hết hàng');
       return false;
     }
 
+    const variantName = [selection.color, selection.size].filter((v): v is string => v !== undefined).join(' / ');
+
     addToCart({
-      productId: product.id.toString(),
-      variantId: selectedVariant?.id ?? `v-${product.id.toString()}`,
+      productId: product.id,
+      variantId: selectedSku.id,
       name: product.name,
       image: product.images.at(0) ?? '',
-      price: product.salePrice ?? product.price,
+      price: selectedSku.price,
       quantity,
-      variantName: selectedVariant?.label,
+      variantName: variantName === '' ? undefined : variantName,
     });
 
     setIsAdded(true);
     toast.success(`Đã thêm ${quantity.toString()} sản phẩm vào giỏ hàng`, {
-      description: product.name + (selectedVariant === null ? '' : ` (${selectedVariant.label})`),
+      description: product.name + (variantName === '' ? '' : ` (${variantName})`),
       action: {
         label: 'Giỏ hàng',
         onClick: () => {
@@ -67,11 +87,14 @@ export function useAddToCart(product: ProductDisplay) {
   };
 
   return {
-    selectedVariant,
+    axes,
+    selection,
+    selectedSku,
     quantity,
     isAdded,
     maxStock,
-    selectVariant,
+    selectColor,
+    selectSize,
     setQuantity,
     add,
     buyNow,

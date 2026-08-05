@@ -58,4 +58,14 @@ export const handlers = [
 
     return HttpResponse.json({ data, meta: { page, pageSize, total, totalPages } });
   }),
+
+  http.get('*/api/catalog/products/:slug', ({ params }) => {
+    const product = mockProducts.find((p) => p.slug === params.slug);
+
+    if (product === undefined) {
+      return HttpResponse.json({ error: { code: 'NOT_FOUND', message: 'Product not found' } }, { status: 404 });
+    }
+
+    return HttpResponse.json({ data: product });
+  }),
 ];

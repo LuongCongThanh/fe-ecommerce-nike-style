@@ -1,23 +1,56 @@
 'use client';
 
+import type { Sku } from '@repo/schemas/catalog';
 import { Button } from '@repo/ui/button';
 import { AnimatePresence, motion } from 'framer-motion';
 import { Check, Minus, Plus, ShoppingCart, Zap } from 'lucide-react';
 
 import { VariantSelector } from '@/app/[locale]/(shop)/_lib/components/products/VariantSelector';
-import { useAddToCart } from '@/app/[locale]/(shop)/_lib/hooks/products/useAddToCart';
-import type { ProductDisplay } from '@/app/[locale]/(shop)/_lib/types/product';
+import type { useAddToCart } from '@/app/[locale]/(shop)/_lib/hooks/products/useAddToCart';
 
-interface AddToCartSectionProps {
-  readonly product: ProductDisplay;
+type AddToCartSectionProps = ReturnType<typeof useAddToCart>;
+
+function stockMessage(selectedSku: Sku | null): React.JSX.Element | null {
+  if (selectedSku === null) return null;
+  if (selectedSku.stock === 0) return <p className="text-destructive text-xs font-semibold">Hết hàng</p>;
+  if (selectedSku.stock < 10) {
+    return (
+      <p className="text-warning-700 flex items-center gap-1.5 text-xs font-semibold">
+        <span className="bg-warning-500 inline-block size-1.5 rounded-full" />
+        Chỉ còn {selectedSku.stock.toString()} sản phẩm!
+      </p>
+    );
+  }
+  return null;
 }
 
-export function AddToCartSection({ product }: AddToCartSectionProps) {
-  const { selectedVariant, quantity, isAdded, maxStock, selectVariant, setQuantity, add, buyNow } = useAddToCart(product);
+export function AddToCartSection({
+  axes,
+  selection,
+  selectedSku,
+  quantity,
+  isAdded,
+  maxStock,
+  selectColor,
+  selectSize,
+  setQuantity,
+  add,
+  buyNow,
+}: AddToCartSectionProps) {
+  const canAdd = selectedSku !== null && selectedSku.stock > 0;
 
   return (
     <div className="space-y-8">
-      {product.variants.length > 0 && <VariantSelector variants={product.variants} selectedVariant={selectedVariant} onSelect={selectVariant} />}
+      <VariantSelector
+        colors={axes.colors}
+        sizes={axes.sizes}
+        selectedColor={selection.color}
+        selectedSize={selection.size}
+        onSelectColor={selectColor}
+        onSelectSize={selectSize}
+      />
+
+      {stockMessage(selectedSku)}
 
       <div>
         <h3 className="text-muted-foreground mb-4 text-sm font-bold tracking-wider uppercase">Số lượng</h3>
@@ -52,20 +85,14 @@ export function AddToCartSection({ product }: AddToCartSectionProps) {
       </div>
 
       <div className="flex flex-col gap-3">
-        <Button variant="default" size="lg" className="h-12 w-full text-base" onClick={buyNow} disabled={maxStock === 0}>
+        <Button variant="default" size="lg" className="h-12 w-full text-base" onClick={buyNow} disabled={!canAdd}>
           <div className="flex items-center gap-2 font-semibold">
             <Zap className="size-5 fill-current" />
             Mua ngay
           </div>
         </Button>
 
-        <Button
-          variant="outline"
-          size="lg"
-          className="relative h-12 w-full overflow-hidden text-base"
-          onClick={add}
-          disabled={isAdded || maxStock === 0}
-        >
+        <Button variant="outline" size="lg" className="relative h-12 w-full overflow-hidden text-base" onClick={add} disabled={isAdded || !canAdd}>
           <AnimatePresence mode="wait">
             {isAdded ? (
               <motion.div

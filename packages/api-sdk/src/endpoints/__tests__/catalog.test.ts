@@ -1,7 +1,8 @@
 import { afterAll, afterEach, beforeAll, describe, expect, it } from 'vitest';
 
+import { ApiError } from '../../client/api-error';
 import { server } from '../../testing/msw-server';
-import { getCategories, getProducts } from '../catalog';
+import { getCategories, getProduct, getProducts } from '../catalog';
 
 beforeAll(() => server.listen({ onUnhandledRequest: 'error' }));
 afterEach(() => server.resetHandlers());
@@ -61,6 +62,20 @@ describe('getProducts', () => {
     expect(pageTwo.data).toHaveLength(5);
     expect(pageOne.data.map((p) => p.id)).not.toEqual(pageTwo.data.map((p) => p.id));
     expect(pageOne.meta.totalPages).toBeGreaterThan(1);
+  });
+});
+
+describe('getProduct', () => {
+  it('resolves a single product by slug, including its SKUs', async () => {
+    const result = await getProduct('running-shoe-alpha');
+
+    expect(result.data.slug).toBe('running-shoe-alpha');
+    expect(result.data.skus.length).toBeGreaterThan(0);
+  });
+
+  it('rejects with a 404 ApiError for an unknown slug', async () => {
+    await expect(getProduct('does-not-exist')).rejects.toThrow(ApiError);
+    await expect(getProduct('does-not-exist')).rejects.toMatchObject({ status: 404 });
   });
 });
 

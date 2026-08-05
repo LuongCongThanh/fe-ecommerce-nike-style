@@ -1,5 +1,5 @@
-import { CategoryListResponseSchema, ProductListRequestSchema, ProductListResponseSchema } from '@repo/schemas/catalog';
-import type { CategoryListResponse, ProductListRequest, ProductListResponse } from '@repo/schemas/catalog';
+import { CategoryListResponseSchema, ProductDetailResponseSchema, ProductListRequestSchema, ProductListResponseSchema } from '@repo/schemas/catalog';
+import type { CategoryListResponse, ProductDetailResponse, ProductListRequest, ProductListResponse } from '@repo/schemas/catalog';
 
 import { fetcher } from '../client/fetcher';
 import { API_BASE_URL } from '../env/config';
@@ -26,4 +26,10 @@ export async function getCategories(): Promise<CategoryListResponse> {
   const data = await fetcher<unknown>(`${API_BASE_URL}/api/catalog/categories`);
 
   return CategoryListResponseSchema.parse(data);
+}
+
+export async function getProduct(slug: string): Promise<ProductDetailResponse> {
+  const data = await fetcher<unknown>(`${API_BASE_URL}/api/catalog/products/${encodeURIComponent(slug)}`);
+
+  return ProductDetailResponseSchema.parse(data);
 }

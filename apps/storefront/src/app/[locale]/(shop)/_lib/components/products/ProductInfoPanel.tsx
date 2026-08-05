@@ -1,12 +1,20 @@
+import dynamic from 'next/dynamic';
 import Link from 'next/link';
 
+import type { Product } from '@repo/schemas/catalog';
 import { cn, formatCurrency } from '@repo/shared/utils';
-import { Badge } from '@repo/ui/badge';
 import { ArrowLeft, RotateCcw, ShieldCheck, Star, Truck } from 'lucide-react';
 
 import { AddToCartSection } from '@/app/[locale]/(shop)/_lib/components/products/AddToCartSection';
-import type { ProductDisplay } from '@/app/[locale]/(shop)/_lib/types/product';
-import { calculateDiscountPercent } from '@/app/[locale]/(shop)/_lib/utils/discount';
+import { useAddToCart } from '@/app/[locale]/(shop)/_lib/hooks/products/useAddToCart';
+import { getProductPriceRange } from '@/app/[locale]/(shop)/_lib/utils/priceRange';
+
+// Decision #59 / FE-ARCHITECTURE.md §4.1.1 — three.js only ever loads for a mounted PDP, never at a
+// higher-level route/layout, and never during SSR (WebGL has no server-side renderer).
+const ProductViewer3D = dynamic(async () => import('@/app/[locale]/(shop)/_lib/components/products/ProductViewer3D'), {
+  ssr: false,
+  loading: () => <div className="bg-muted aspect-square w-full animate-pulse rounded-xl" />,
+});
 
 const TRUST_BADGES = [
   { icon: Truck, title: 'Giao hàng nhanh', sub: '2-4 ngày làm việc' },
@@ -15,29 +23,22 @@ const TRUST_BADGES = [
 ] as const;
 
 interface ProductInfoPanelProps {
-  readonly product: ProductDisplay;
+  readonly product: Product;
   readonly locale: string;
 }
 
 export function ProductInfoPanel({ product, locale }: ProductInfoPanelProps) {
-  const discount = product.salePrice !== null ? calculateDiscountPercent(product.price, product.salePrice) : null;
+  const cartState = useAddToCart(product);
+  const { selectedSku, selection } = cartState;
+  const { min: priceFrom, isRange } = getProductPriceRange(product);
+  const displayPrice = selectedSku?.price ?? priceFrom;
 
   return (
     <div className="flex flex-col gap-6">
-      {/* Badges + name */}
+      {/* Name + rating */}
       <div>
-        {product.badges.length > 0 && (
-          <div className="mb-3 flex flex-wrap gap-2">
-            {product.badges.map((badge) => (
-              <Badge key={badge} variant="secondary" className="capitalize">
-                {badge}
-              </Badge>
-            ))}
-          </div>
-        )}
         <h1 className="text-3xl leading-tight font-bold tracking-tight sm:text-4xl">{product.name}</h1>
 
-        {/* Rating */}
         <div className="mt-3 flex items-center gap-3">
           <div className="flex items-center gap-1">
             {Array.from({ length: 5 }).map((_, i) => (
@@ -49,33 +50,25 @@ export function ProductInfoPanel({ product, locale }: ProductInfoPanelProps) {
           </div>
           <span className="text-sm font-semibold">{product.rating.toFixed(1)}</span>
           <span className="text-muted-foreground text-sm">({product.reviewCount.toString()} đánh giá)</span>
-          <span className="text-muted-foreground">·</span>
-          <span className="text-success-700 text-sm">Còn hàng</span>
         </div>
       </div>
+
+      {/* 3D viewer — lazy, synced to the selected Color */}
+      <ProductViewer3D color={selection.color ?? null} />
 
       {/* Price */}
       <div>
-        <div className="flex items-baseline gap-4">
-          {product.salePrice !== null ? (
-            <>
-              <span className="text-brand-600 text-3xl font-bold">{formatCurrency(product.salePrice)}</span>
-              <span className="text-muted-foreground text-lg line-through">{formatCurrency(product.price)}</span>
-              {discount !== null && (
-                <span className="bg-brand-50 text-brand-700 rounded-full px-2.5 py-0.5 text-sm font-bold">-{discount.toString()}%</span>
-              )}
-            </>
-          ) : (
-            <span className="text-brand-600 text-3xl font-bold">{formatCurrency(product.price)}</span>
-          )}
-        </div>
-        {product.salePrice !== null && (
-          <p className="text-muted-foreground mt-1.5 text-xs">Tiết kiệm {formatCurrency(product.price - product.salePrice)}</p>
-        )}
+        <span className="text-brand-600 text-3xl font-bold">
+          {selectedSku === null && isRange ? <span className="text-muted-foreground mr-1.5 text-base font-normal">Từ</span> : null}
+          {formatCurrency(displayPrice)}
+        </span>
+        {selectedSku === null && (product.skus.length > 1 || isRange) ? (
+          <p className="text-muted-foreground mt-1.5 text-xs">Chọn phân loại để xem giá và tồn kho chính xác</p>
+        ) : null}
       </div>
 
       {/* Variant + Qty + Cart */}
-      <AddToCartSection product={product} />
+      <AddToCartSection {...cartState} />
 
       {/* Trust badges */}
       <div className="grid grid-cols-3 gap-3 border-t pt-6">
