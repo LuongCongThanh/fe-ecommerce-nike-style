@@ -1,67 +1,29 @@
 'use client';
 
-import { useMemo } from 'react';
+import { getProducts } from '@repo/api-sdk/endpoints/catalog';
+import { useQuery } from '@tanstack/react-query';
 
-import { productsData } from '@/app/[locale]/(shop)/_lib/data/products';
-import type { ProductDisplay } from '@/app/[locale]/(shop)/_lib/types/product';
+import { catalogKeys } from '@/app/[locale]/(shop)/_lib/hooks/products/catalogKeys';
+import type { CatalogFilters } from '@/app/[locale]/(shop)/_lib/utils/catalogUrlState';
+import { ensureApiMockingReady } from '@/shared/lib/api-mocking';
 
-export type SortBy = 'newest' | 'price_asc' | 'price_desc';
+const PAGE_SIZE = 12;
 
-export interface ProductQuery {
-  search?: string;
-  categorySlug?: string;
-  sortBy?: SortBy;
-  minPrice?: number;
-  maxPrice?: number;
-  page?: number;
-  pageSize?: number;
-}
-
-export function useProducts({
-  search,
-  categorySlug,
-  sortBy = 'newest',
-  minPrice = 0,
-  maxPrice = 10_000_000,
-  page = 1,
-  pageSize = 12,
-}: ProductQuery = {}) {
-  return useMemo(() => {
-    // Empty string search → no results (search page with no query)
-    if (search === '') {
-      return { products: [], total: 0, totalPages: 1, currentPage: 1 };
-    }
-
-    let filtered: ProductDisplay[] = productsData;
-
-    if (search !== undefined) {
-      const q = search.trim().toLowerCase();
-      filtered = filtered.filter((p) => p.name.toLowerCase().includes(q) || p.description.toLowerCase().includes(q));
-    }
-
-    if (categorySlug !== undefined && categorySlug !== '' && categorySlug !== 'all') {
-      filtered = filtered.filter((p) => p.categorySlug === categorySlug);
-    }
-
-    filtered = filtered.filter((p) => {
-      const effectivePrice = p.salePrice ?? p.price;
-      return effectivePrice >= minPrice && effectivePrice <= maxPrice;
-    });
-
-    const sorted = [...filtered].sort((a, b) => {
-      const aPrice = a.salePrice ?? a.price;
-      const bPrice = b.salePrice ?? b.price;
-      if (sortBy === 'price_asc') return aPrice - bPrice;
-      if (sortBy === 'price_desc') return bPrice - aPrice;
-      return b.id - a.id;
-    });
-
-    const total = sorted.length;
-    const totalPages = Math.max(1, Math.ceil(total / pageSize));
-    const currentPage = Math.min(Math.max(1, page), totalPages);
-    const start = (currentPage - 1) * pageSize;
-    const products = sorted.slice(start, start + pageSize);
-
-    return { products, total, totalPages, currentPage };
-  }, [search, categorySlug, sortBy, minPrice, maxPrice, page, pageSize]);
+/** PLP/Category product list — backed by `packages/api-sdk` (MSW mock today, real Backend later behind the same call shape per Decision #28). */
+export function useProducts(categorySlug: string | undefined, filters: CatalogFilters) {
+  return useQuery({
+    queryKey: catalogKeys.products(categorySlug, filters),
+    queryFn: async () => {
+      await ensureApiMockingReady();
+      return getProducts({
+        page: filters.page,
+        pageSize: PAGE_SIZE,
+        sort: filters.sortBy,
+        category: categorySlug,
+        gender: filters.gender,
+        minPrice: filters.minPrice,
+        maxPrice: filters.maxPrice,
+      });
+    },
+  });
 }

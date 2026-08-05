@@ -3,35 +3,21 @@
 import { useRouter, useSearchParams } from 'next/navigation';
 
 import { Pagination } from '@/app/[locale]/(shop)/_lib/components/common/Pagination';
-import { ProductGrid } from '@/app/[locale]/(shop)/_lib/components/common/ProductGrid';
 import { SectionHeading } from '@/app/[locale]/(shop)/_lib/components/common/SectionHeading';
-import type { SortBy } from '@/app/[locale]/(shop)/_lib/hooks/products/useProducts';
+import { CatalogProductGrid } from '@/app/[locale]/(shop)/_lib/components/products/CatalogProductGrid';
 import { useProducts } from '@/app/[locale]/(shop)/_lib/hooks/products/useProducts';
+import { parseCatalogFilters, withCatalogPage } from '@/app/[locale]/(shop)/_lib/utils/catalogUrlState';
 
-interface ProductsClientProps {
-  readonly category?: string;
-  readonly sortBy?: string;
-  readonly page?: string;
-}
-
-export default function ProductsClient({ category, sortBy: sortByProp, page: pageProp }: ProductsClientProps) {
+export default function ProductsClient(): React.JSX.Element {
   const router = useRouter();
   const searchParams = useSearchParams();
+  const category = searchParams.get('category') ?? undefined;
+  const filters = parseCatalogFilters(searchParams);
 
-  const sortBy = (sortByProp as SortBy | undefined) ?? 'newest';
-  const page = pageProp !== undefined ? Math.max(1, parseInt(pageProp)) : 1;
+  const { data, isLoading, isError } = useProducts(category, filters);
 
-  const { products, totalPages } = useProducts({
-    categorySlug: category,
-    sortBy,
-    pageSize: 12,
-    page,
-  });
-
-  const handlePageChange = (p: number) => {
-    const params = new URLSearchParams(searchParams.toString());
-    params.set('page', p.toString());
-    router.push(`?${params.toString()}`);
+  const handlePageChange = (page: number) => {
+    router.push(`?${withCatalogPage(searchParams, page).toString()}`);
   };
 
   return (
@@ -40,8 +26,20 @@ export default function ProductsClient({ category, sortBy: sortByProp, page: pag
         title={category !== undefined ? `Sản phẩm: ${category}` : 'Tất cả sản phẩm'}
         subtitle={category !== undefined ? `Khám phá các sản phẩm trong danh mục ${category}` : 'Duyệt qua toàn bộ bộ sưu tập của chúng tôi'}
       />
-      <ProductGrid products={products} />
-      {totalPages > 1 && <Pagination currentPage={page} totalPages={totalPages} onPageChange={handlePageChange} />}
+
+      {isLoading ? (
+        <p className="text-muted-foreground py-12 text-center">Đang tải sản phẩm…</p>
+      ) : isError || data === undefined ? (
+        <div className="flex min-h-100 flex-col items-center justify-center rounded-2xl border border-dashed text-center">
+          <h3 className="text-lg font-medium">Không thể tải sản phẩm</h3>
+          <p className="text-muted-foreground mt-1">Vui lòng thử lại sau.</p>
+        </div>
+      ) : (
+        <>
+          <CatalogProductGrid products={data.data} />
+          {data.meta.totalPages > 1 && <Pagination currentPage={data.meta.page} totalPages={data.meta.totalPages} onPageChange={handlePageChange} />}
+        </>
+      )}
     </div>
   );
 }

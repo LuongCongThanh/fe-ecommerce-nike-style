@@ -29,7 +29,7 @@ describe('FoundationCheck', () => {
     renderWithQueryClient();
 
     expect(screen.getByRole('button', { name: 'Refresh' })).toBeInTheDocument();
-    expect(await screen.findByText('Air Max 90')).toBeInTheDocument();
-    expect(screen.getByText('Air Force 1')).toBeInTheDocument();
+    expect(await screen.findByText('Cap Trucker Unisex')).toBeInTheDocument();
+    expect(screen.getByText('Basketball High-Top Court')).toBeInTheDocument();
   });
 });
