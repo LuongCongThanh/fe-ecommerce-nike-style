@@ -28,7 +28,7 @@ describe('ProductsSummary', () => {
   it('renders the @repo/ui Button primitive and the mocked product list', async () => {
     renderWithQueryClient();
 
-    expect(screen.getByRole('button', { name: 'Refresh' })).toBeInTheDocument();
+    expect(screen.getByRole('button', { name: 'Tải lại' })).toBeInTheDocument();
     expect(await screen.findByText('Air Max 90')).toBeInTheDocument();
     expect(screen.getByText('Air Force 1')).toBeInTheDocument();
   });

@@ -70,6 +70,11 @@ export const newArrivalsData: HomeProductHighlight[] = Array.from({ length: 8 },
   badges: ['new'],
 }));
 
+/**
+ * Placeholder copy, not real customer submissions — no verified testimonial source exists yet.
+ * `home/page.tsx` only renders `SectionTestimonials` outside production; do not wire this into a
+ * production surface until it is backed by real reviews or explicitly labelled as demo content.
+ */
 export const homeTestimonialsData: HomeTestimonial[] = [
   {
     id: 1,

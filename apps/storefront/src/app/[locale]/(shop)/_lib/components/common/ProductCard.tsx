@@ -63,15 +63,19 @@ export function ProductCard({
   const resolvedBadgeLabels = { ...DEFAULT_BADGE_LABELS, ...badgeLabels };
 
   return (
-    <Link href={`/${locale}/products/${slug}`} className="group block" data-product-id={String(id)}>
-      <div className="bg-card overflow-hidden rounded-xl border shadow-sm transition-shadow hover:shadow-md">
+    <Link
+      href={`/${locale}/products/${slug}`}
+      className="group focus-visible:ring-ring block rounded-xl outline-none focus-visible:ring-2 focus-visible:ring-offset-2"
+      data-product-id={String(id)}
+    >
+      <div className="bg-card group-hover:border-foreground/30 overflow-hidden rounded-xl border shadow-sm transition-[box-shadow,border-color] duration-(--duration-normal) ease-out group-hover:shadow-md">
         {/* Image */}
         <div className="bg-muted relative aspect-square overflow-hidden">
           <Image
             src={coverImage}
             alt={name}
             fill
-            className="object-cover transition-transform duration-300 group-hover:scale-105"
+            className="object-cover transition-transform duration-(--duration-normal) ease-out group-hover:-translate-y-0.5"
             sizes="(max-width: 768px) 50vw, 25vw"
           />
           {badges != null && badges.length > 0 ? (
@@ -91,15 +95,17 @@ export function ProductCard({
 
           {/* Price */}
           <div className="flex flex-wrap items-baseline gap-2">
-            <span className="text-brand-600 text-lg font-bold">{formatCurrency(displayPrice)}</span>
-            {hasDiscount ? <span className="text-muted-foreground text-xs line-through">{formatCurrency(price)}</span> : null}
+            <span className="text-brand-600 text-lg font-bold tabular-nums">{formatCurrency(displayPrice)}</span>
+            {hasDiscount ? <span className="text-muted-foreground text-xs tabular-nums line-through">{formatCurrency(price)}</span> : null}
           </div>
 
           {rating != null ? (
             <div className="mt-1 flex items-center gap-1 border-t pt-3">
               <Star className="size-3 fill-amber-400 text-amber-400" />
-              <span className="text-foreground text-xs font-bold">{rating.toFixed(1)}</span>
-              {reviewCount != null && reviewCount > 0 ? <span className="text-muted-foreground text-[10px]">({reviewCount})</span> : null}
+              <span className="text-foreground text-xs font-bold tabular-nums">{rating.toFixed(1)}</span>
+              {reviewCount != null && reviewCount > 0 ? (
+                <span className="text-muted-foreground text-[10px] tabular-nums">({reviewCount})</span>
+              ) : null}
             </div>
           ) : null}
         </div>
