@@ -25,6 +25,27 @@ describe('getProducts', () => {
     expect(result.data.every((p) => p.name.includes('Running Shoe'))).toBe(true);
   });
 
+  it('matches a search term missing Vietnamese diacritics against the (accented) product description (issue #11)', async () => {
+    const result = await getProducts({ page: 1, pageSize: 50, sort: 'newest', search: 'giay chay bo' });
+
+    expect(result.data.length).toBeGreaterThan(0);
+    expect(result.data.every((p) => p.categoryId === 'cat-running')).toBe(true);
+  });
+
+  it('tolerates a slight misspelling in the search term (issue #11)', async () => {
+    const result = await getProducts({ page: 1, pageSize: 50, sort: 'newest', search: 'Runing Shoe' });
+
+    expect(result.data.length).toBeGreaterThan(0);
+    expect(result.data.every((p) => p.name.includes('Running Shoe'))).toBe(true);
+  });
+
+  it('returns an empty result set for a search term with no match', async () => {
+    const result = await getProducts({ page: 1, pageSize: 50, sort: 'newest', search: 'zzzznotarealproductzzzz' });
+
+    expect(result.data).toEqual([]);
+    expect(result.meta.total).toBe(0);
+  });
+
   it('filters by category slug, including descendants of a top-level category', async () => {
     const result = await getProducts({ page: 1, pageSize: 50, sort: 'newest', category: 'shoes' });
 
