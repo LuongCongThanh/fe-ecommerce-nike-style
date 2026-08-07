@@ -7,16 +7,18 @@ interface SearchPageProps {
 
 export default async function SearchPage({ searchParams }: SearchPageProps) {
   const { q: query } = await searchParams;
+  // Trim so a whitespace-only `q` (e.g. `?q=%20%20`) is treated the same as no query at all — otherwise
+  // it slips past this guard, `useProductSearch` disables its fetch, and `SearchClient` would render its
+  // error state instead of the "type something" prompt below.
+  const hasQuery = query !== undefined && query.trim() !== '';
 
   return (
     <PageShell.Browse>
       <header className="mb-12">
-        <h1 className="text-3xl font-bold tracking-tight">
-          {query !== undefined && query !== '' ? `Kết quả tìm kiếm cho "${query}"` : 'Tìm kiếm sản phẩm'}
-        </h1>
+        <h1 className="text-3xl font-bold tracking-tight">{hasQuery ? `Kết quả tìm kiếm cho "${query}"` : 'Tìm kiếm sản phẩm'}</h1>
       </header>
 
-      {query !== undefined && query !== '' ? (
+      {hasQuery ? (
         <SearchClient />
       ) : (
         <div className="flex min-h-75 flex-col items-center justify-center rounded-2xl border border-dashed text-center">

@@ -3,6 +3,7 @@ import { http, HttpResponse } from 'msw';
 import type { Product } from '@repo/schemas/catalog';
 
 import { minSkuPrice, mockCategories, mockProducts, resolveCategoryIds } from './catalog-fixtures';
+import { matchesSearchQuery } from './search-match';
 
 function sortProducts(products: Product[], sort: string): Product[] {
   const sorted = [...products];
@@ -39,8 +40,8 @@ export const handlers = [
       filtered = filtered.filter((p) => p.gender === gender);
     }
     if (search !== null && search !== '') {
-      const q = search.toLowerCase();
-      filtered = filtered.filter((p) => p.name.toLowerCase().includes(q));
+      // Accent-insensitive + slight-misspelling-tolerant (issue #11) — see search-match.ts.
+      filtered = filtered.filter((p) => matchesSearchQuery(p.name, search) || matchesSearchQuery(p.description, search));
     }
     if (minPrice !== null && minPrice !== '') {
       filtered = filtered.filter((p) => minSkuPrice(p) >= Number(minPrice));
