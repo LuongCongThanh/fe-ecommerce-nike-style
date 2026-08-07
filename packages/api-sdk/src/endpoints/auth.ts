@@ -47,10 +47,12 @@ export interface ForgotPasswordPayload {
 export interface AuthSessionResponse {
   user: AuthUser;
   access: string;
+  refresh: string;
 }
 
 export interface RefreshSessionResponse {
   access: string;
+  refresh: string;
 }
 
 export async function login(payload: LoginPayload): Promise<AuthSessionResponse> {
@@ -65,10 +67,18 @@ export async function register(payload: RegisterPayload): Promise<AuthSessionRes
   });
 }
 
-export async function refreshSession(): Promise<RefreshSessionResponse> {
-  return apiClient.post<RefreshSessionResponse>(AUTH_API.REFRESH, undefined, {
-    skipRefresh: true,
-  });
+/**
+ * `refreshToken` is sent explicitly in the body rather than riding a cookie — mock-phase deviation
+ * from ADR-0010, see decision-log.md Decision #90 and `packages/api-sdk/src/mocks/auth-fixtures.ts`.
+ */
+export async function refreshSession(refreshToken: string): Promise<RefreshSessionResponse> {
+  return apiClient.post<RefreshSessionResponse>(
+    AUTH_API.REFRESH,
+    { refreshToken },
+    {
+      skipRefresh: true,
+    },
+  );
 }
 
 export async function forgotPassword(payload: ForgotPasswordPayload): Promise<void> {
@@ -92,8 +102,12 @@ export async function resetPassword(payload: ResetPasswordPayload): Promise<void
   );
 }
 
-export async function logout(): Promise<void> {
-  await apiClient.post<unknown>(AUTH_API.LOGOUT, undefined, {
-    skipRefresh: true,
-  });
+export async function logout(refreshToken: string): Promise<void> {
+  await apiClient.post<unknown>(
+    AUTH_API.LOGOUT,
+    { refreshToken },
+    {
+      skipRefresh: true,
+    },
+  );
 }

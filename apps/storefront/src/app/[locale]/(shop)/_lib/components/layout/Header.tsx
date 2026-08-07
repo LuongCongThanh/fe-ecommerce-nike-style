@@ -5,13 +5,14 @@ import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 
 import { Button } from '@repo/ui/button';
-import { Flame, Search, ShoppingCart, X } from 'lucide-react';
+import { Flame, LogOut, Search, ShoppingCart, User, X } from 'lucide-react';
 import { useLocale, useTranslations } from 'next-intl';
 
 import { CartDrawer } from '@/app/[locale]/(shop)/_lib/components/cart/CartDrawer';
 import { DesktopMegaMenu } from '@/app/[locale]/(shop)/_lib/components/navigation/DesktopMegaMenu';
 import { MobileNav } from '@/app/[locale]/(shop)/_lib/components/navigation/MobileNav';
 import { useCart } from '@/app/[locale]/(shop)/_lib/hooks/useCart';
+import { useAuth } from '@/core/session/useAuth';
 
 export function Header() {
   const t = useTranslations('common');
@@ -21,6 +22,7 @@ export function Header() {
   const [searchOpen, setSearchOpen] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
   const { itemCount } = useCart();
+  const { isLoggedIn, logout } = useAuth();
 
   const handleSearch = (e: React.SyntheticEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -101,6 +103,18 @@ export function Header() {
               className="hidden sm:inline-flex"
             >
               <Search className="size-5" />
+            </Button>
+          )}
+
+          {isLoggedIn ? (
+            <Button variant="ghost" size="icon" aria-label="Đăng xuất" onClick={logout}>
+              <LogOut className="size-5" />
+            </Button>
+          ) : (
+            <Button variant="ghost" size="icon" aria-label="Đăng nhập" asChild>
+              <Link href={`/${locale}/login`}>
+                <User className="size-5" />
+              </Link>
             </Button>
           )}
 

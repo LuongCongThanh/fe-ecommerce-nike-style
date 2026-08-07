@@ -1,6 +1,7 @@
-import { type AuthSessionResponse, forgotPassword, login, logout, register, resetPassword } from '@repo/api-sdk/endpoints/auth';
+import { type AuthSessionResponse, forgotPassword, login, register, resetPassword } from '@repo/api-sdk/endpoints/auth';
 
-import { clearAuth, setAccessToken, setUser } from '@/core/session/auth-store';
+import { setAccessToken, setRefreshToken, setUser } from '@/core/session/auth-store';
+import { ensureApiMockingReady } from '@/shared/lib/api-mocking';
 import type { User } from '@/shared/types/user';
 
 interface LoginPayload {
@@ -30,34 +31,35 @@ function toStorefrontUser(user: AuthSessionResponse['user']): User {
 }
 
 export async function loginAction(payload: LoginPayload): Promise<User> {
+  await ensureApiMockingReady();
   const data = await login(payload);
   const user = toStorefrontUser(data.user);
   setAccessToken(data.access);
+  setRefreshToken(data.refresh);
   setUser(user);
   return user;
 }
 
 export async function registerAction(payload: RegisterPayload): Promise<User> {
+  await ensureApiMockingReady();
   const data = await register(payload);
   const user = toStorefrontUser(data.user);
   setAccessToken(data.access);
+  setRefreshToken(data.refresh);
   setUser(user);
   return user;
 }
 
 export async function forgotPasswordAction(email: string): Promise<void> {
+  await ensureApiMockingReady();
   await forgotPassword({ email });
 }
 
 export async function resetPasswordAction(payload: { token: string; uid: string; password: string }): Promise<void> {
+  await ensureApiMockingReady();
   await resetPassword({
     token: payload.token,
     uid: payload.uid,
     password: payload.password,
   });
-}
-
-export async function logoutAction(): Promise<void> {
-  clearAuth();
-  await logout().catch(() => undefined);
 }
