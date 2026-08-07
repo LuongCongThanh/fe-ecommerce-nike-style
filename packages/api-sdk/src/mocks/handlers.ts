@@ -15,6 +15,7 @@ import {
   setUserPassword,
   toPublicUser,
 } from './auth-fixtures';
+import { mergeAccountCart, resolveSkus } from './cart-fixtures';
 import { minSkuPrice, mockCategories, mockProducts, resolveCategoryIds } from './catalog-fixtures';
 import { matchesSearchQuery } from './search-match';
 
@@ -168,5 +169,29 @@ export const handlers = [
     }
 
     return HttpResponse.json(toPublicUser(user));
+  }),
+
+  // CartItem is {skuId, quantity} only (glossary.md) — price/stock are never cached client-side, so the
+  // Cart hook re-resolves against the live SKU through this endpoint every time it needs to display or
+  // total the cart. Unknown ids are silently dropped (SKU no longer exists).
+  http.get('*/api/catalog/skus', ({ request }) => {
+    const idsParam = new URL(request.url).searchParams.get('ids') ?? '';
+    const skuIds = idsParam.split(',').filter((id) => id !== '');
+    return HttpResponse.json({ data: resolveSkus(skuIds) });
+  }),
+
+  // Merge-after-login (Decision #36): sums quantity per matching SKU with whatever the account already
+  // had, clamps each line to current stock, and returns the merged cart resolved against live SKU data.
+  http.post('*/api/cart/merge', async ({ request }) => {
+    const user = findUserByAccessToken(request.headers.get('authorization'));
+    if (user === undefined) {
+      return errorResponse(401, 'UNAUTHORIZED', 'Chưa đăng nhập hoặc phiên đã hết hạn.');
+    }
+
+    const body = (await request.json()) as { items: { skuId: string; quantity: number }[] };
+    const merged = mergeAccountCart(user.id, body.items);
+    return HttpResponse.json({
+      data: resolveSkus(merged.map((i) => i.skuId)).map((sku) => ({ ...sku, quantity: merged.find((m) => m.skuId === sku.skuId)?.quantity ?? 0 })),
+    });
   }),
 ];

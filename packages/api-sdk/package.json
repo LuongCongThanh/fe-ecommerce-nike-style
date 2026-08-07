@@ -14,6 +14,7 @@
     "./client/error": "./src/client/api-error.ts",
     "./client/runtime": "./src/client/runtime.ts",
     "./endpoints/auth": "./src/endpoints/auth.ts",
+    "./endpoints/cart": "./src/endpoints/cart.ts",
     "./endpoints/catalog": "./src/endpoints/catalog.ts",
     "./endpoints/orders": "./src/endpoints/orders.ts",
     "./endpoints/profile": "./src/endpoints/profile.ts",

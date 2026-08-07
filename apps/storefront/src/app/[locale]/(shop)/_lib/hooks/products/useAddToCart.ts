@@ -11,11 +11,7 @@ import { useCart } from '@/app/[locale]/(shop)/_lib/hooks/useCart';
 import type { VariantSelection } from '@/app/[locale]/(shop)/_lib/utils/variantResolution';
 import { getVariantAxes, resolveSku } from '@/app/[locale]/(shop)/_lib/utils/variantResolution';
 
-/**
- * Variant selection + resolved-SKU state for a PDP (glossary.md — Variant/SKU). Bridges into the
- * existing `useCart`/`CartItem` shape unchanged (Decision #84/#85 — Cart stays out of scope here):
- * `variantId` becomes the resolved SKU id, `price` is always read from that SKU, never re-derived.
- */
+/** Variant selection + resolved-SKU state for a PDP (glossary.md — Variant/SKU); adds the resolved SKU straight into the Cart (issue #13). */
 export function useAddToCart(product: Product) {
   const locale = useLocale();
   const router = useRouter();
@@ -51,19 +47,20 @@ export function useAddToCart(product: Product) {
 
     const variantName = [selection.color, selection.size].filter((v): v is string => v !== undefined).join(' / ');
 
-    addToCart({
-      productId: product.id,
-      variantId: selectedSku.id,
-      name: product.name,
-      image: product.images.at(0) ?? '',
-      price: selectedSku.price,
-      quantity,
-      variantName: variantName === '' ? undefined : variantName,
-    });
+    // No Reservation at add-to-cart time (glossary.md) — just a live `available > 0` check, clamped to
+    // whatever room is left after what's already in the cart; refuses rather than silently over-adding.
+    const result = addToCart(selectedSku.id, quantity, selectedSku.stock);
+    if (!result.ok) {
+      toast.error('Sản phẩm này đã có đủ số lượng tồn kho trong giỏ hàng.');
+      return false;
+    }
 
     setIsAdded(true);
-    toast.success(`Đã thêm ${quantity.toString()} sản phẩm vào giỏ hàng`, {
-      description: product.name + (variantName === '' ? '' : ` (${variantName})`),
+    toast.success(`Đã thêm ${result.addedQuantity.toString()} sản phẩm vào giỏ hàng`, {
+      description:
+        product.name +
+        (variantName === '' ? '' : ` (${variantName})`) +
+        (result.addedQuantity < quantity ? ' — chỉ còn đủ hàng cho số lượng này' : ''),
       action: {
         label: 'Giỏ hàng',
         onClick: () => {

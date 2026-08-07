@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 
@@ -11,7 +11,7 @@ import { useLocale, useTranslations } from 'next-intl';
 import { CartDrawer } from '@/app/[locale]/(shop)/_lib/components/cart/CartDrawer';
 import { DesktopMegaMenu } from '@/app/[locale]/(shop)/_lib/components/navigation/DesktopMegaMenu';
 import { MobileNav } from '@/app/[locale]/(shop)/_lib/components/navigation/MobileNav';
-import { useCart } from '@/app/[locale]/(shop)/_lib/hooks/useCart';
+import { mergeCartOnLogin, useCart } from '@/app/[locale]/(shop)/_lib/hooks/useCart';
 import { useAuth } from '@/core/session/useAuth';
 
 export function Header() {
@@ -22,7 +22,17 @@ export function Header() {
   const [searchOpen, setSearchOpen] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
   const { itemCount } = useCart();
-  const { isLoggedIn, logout } = useAuth();
+  const { isLoggedIn, logout, authStatus } = useAuth();
+
+  // Merge cart sau đăng nhập (Decision #36) — chạy đúng 1 lần khi status chuyển sang authenticated
+  // (đăng nhập/đăng ký thành công), không chạy lại mỗi lần Header re-render trong lúc đã đăng nhập.
+  const wasAuthenticated = useRef(false);
+  useEffect(() => {
+    if (!wasAuthenticated.current && authStatus === 'authenticated') {
+      mergeCartOnLogin().catch(() => undefined);
+    }
+    wasAuthenticated.current = authStatus === 'authenticated';
+  }, [authStatus]);
 
   const handleSearch = (e: React.SyntheticEvent<HTMLFormElement>) => {
     e.preventDefault();
