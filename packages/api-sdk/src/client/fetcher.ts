@@ -1,5 +1,5 @@
 import { ApiError } from './api-error';
-import { getAuthRuntimeAdapter } from './runtime';
+import { type AuthRuntimeAdapter, getAuthRuntimeAdapter } from './runtime';
 
 export type RequestMethod = 'GET' | 'POST' | 'PUT' | 'PATCH' | 'DELETE';
 
@@ -52,6 +52,18 @@ async function parseResponseBody(response: Response): Promise<unknown> {
   return response.json().catch(() => undefined);
 }
 
+// Single-flight guard: two requests hitting 401 around the same time must share one refresh call, not
+// each rotate the refresh token independently — a second, concurrent rotation attempt would find the
+// first one's token already consumed and trip reuse-detection, force-logging-out a legitimate user.
+let inFlightRefresh: Promise<string> | null = null;
+
+async function refreshSessionOnce(runtimeAdapter: AuthRuntimeAdapter): Promise<string> {
+  inFlightRefresh ??= runtimeAdapter.refreshSession().finally(() => {
+    inFlightRefresh = null;
+  });
+  return inFlightRefresh;
+}
+
 async function executeFetch<TResponse>(config: RequestConfig<TResponse>, tokenOverride?: string, forceSkipRefresh = false): Promise<Response> {
   const runtimeAdapter = getAuthRuntimeAdapter();
   const token = tokenOverride ?? runtimeAdapter?.getAccessToken() ?? null;
@@ -81,7 +93,7 @@ async function executeFetch<TResponse>(config: RequestConfig<TResponse>, tokenOv
   }
 
   try {
-    const refreshedToken = await runtimeAdapter.refreshSession();
+    const refreshedToken = await refreshSessionOnce(runtimeAdapter);
 
     return await executeFetch(config, refreshedToken, true);
   } catch (error) {

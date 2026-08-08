@@ -2,8 +2,25 @@ import { http, HttpResponse } from 'msw';
 
 import type { Product } from '@repo/schemas/catalog';
 
+import {
+  consumeResetToken,
+  createResetToken,
+  createSession,
+  createUser,
+  findUserByAccessToken,
+  findUserByEmail,
+  revokeAllSessionsForUser,
+  revokeByRefreshToken,
+  rotateRefreshToken,
+  setUserPassword,
+  toPublicUser,
+} from './auth-fixtures';
 import { minSkuPrice, mockCategories, mockProducts, resolveCategoryIds } from './catalog-fixtures';
 import { matchesSearchQuery } from './search-match';
+
+function errorResponse(status: number, code: string, message: string) {
+  return HttpResponse.json({ error: { code, message } }, { status });
+}
 
 function sortProducts(products: Product[], sort: string): Product[] {
   const sorted = [...products];
@@ -68,5 +85,88 @@ export const handlers = [
     }
 
     return HttpResponse.json({ data: product });
+  }),
+
+  http.post('*/api/auth/register/', async ({ request }) => {
+    const body = (await request.json()) as { email: string; password: string; firstName: string; lastName: string };
+
+    if (findUserByEmail(body.email) !== undefined) {
+      return errorResponse(409, 'EMAIL_TAKEN', 'Email đã được sử dụng.');
+    }
+
+    const user = createUser(body);
+    const { access, refresh } = createSession(user.id);
+    return HttpResponse.json({ user: toPublicUser(user), access, refresh }, { status: 201 });
+  }),
+
+  http.post('*/api/auth/login/', async ({ request }) => {
+    const body = (await request.json()) as { email: string; password: string };
+    const user = findUserByEmail(body.email);
+
+    if (user === undefined || user.password !== body.password) {
+      return errorResponse(401, 'INVALID_CREDENTIALS', 'Email hoặc mật khẩu không đúng.');
+    }
+
+    const { access, refresh } = createSession(user.id);
+    return HttpResponse.json({ user: toPublicUser(user), access, refresh });
+  }),
+
+  http.post('*/api/auth/refresh/', async ({ request }) => {
+    const body = (await request.json()) as { refreshToken: string };
+    const result = rotateRefreshToken(body.refreshToken);
+
+    if (result.status !== 'ok') {
+      return errorResponse(401, 'REFRESH_INVALID', 'Phiên đăng nhập đã hết hạn, vui lòng đăng nhập lại.');
+    }
+
+    return HttpResponse.json({ access: result.access, refresh: result.refresh });
+  }),
+
+  http.post('*/api/auth/logout/', async ({ request }) => {
+    const body = (await request.json().catch(() => null)) as { refreshToken?: string } | null;
+    if (body?.refreshToken !== undefined) revokeByRefreshToken(body.refreshToken);
+    return HttpResponse.json({});
+  }),
+
+  // Always 200 regardless of whether the email exists — no account-enumeration signal. `devResetToken`/
+  // `devUid` are a mock-only convenience so tests can complete the flow without a real email transport;
+  // a real backend would email the link, never return the token in the response body.
+  http.post('*/api/auth/password/reset/', async ({ request }) => {
+    const body = (await request.json()) as { email: string };
+    const user = findUserByEmail(body.email);
+
+    if (user === undefined) {
+      return HttpResponse.json({ message: 'Nếu email tồn tại, link đặt lại mật khẩu đã được gửi.' });
+    }
+
+    const { token, uid } = createResetToken(user.id);
+    return HttpResponse.json({ message: 'Nếu email tồn tại, link đặt lại mật khẩu đã được gửi.', devResetToken: token, devUid: uid });
+  }),
+
+  http.post('*/api/auth/password/reset/confirm/', async ({ request }) => {
+    const body = (await request.json()) as { token: string; uid: string; new_password1: string; new_password2: string };
+
+    if (body.new_password1 !== body.new_password2) {
+      return errorResponse(400, 'PASSWORD_MISMATCH', 'Mật khẩu xác nhận không khớp.');
+    }
+
+    const user = consumeResetToken(body.token, body.uid);
+    if (user === undefined) {
+      return errorResponse(400, 'RESET_TOKEN_INVALID', 'Link đặt lại mật khẩu không hợp lệ hoặc đã hết hạn.');
+    }
+
+    setUserPassword(user, body.new_password1);
+    revokeAllSessionsForUser(user.id);
+    return HttpResponse.json({});
+  }),
+
+  http.get('*/api/auth/me/', ({ request }) => {
+    const user = findUserByAccessToken(request.headers.get('authorization'));
+
+    if (user === undefined) {
+      return errorResponse(401, 'UNAUTHORIZED', 'Chưa đăng nhập hoặc phiên đã hết hạn.');
+    }
+
+    return HttpResponse.json(toPublicUser(user));
   }),
 ];

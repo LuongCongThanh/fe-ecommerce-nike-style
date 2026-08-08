@@ -1,11 +1,17 @@
-import { act, renderHook } from '@testing-library/react';
+import { act, renderHook, waitFor } from '@testing-library/react';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
+import { logout as revokeSession } from '@repo/api-sdk/endpoints/auth';
 
-import { clearAuth, setAccessToken } from '@/core/session/auth-store';
+import { clearAuth, setAccessToken, setRefreshToken } from '@/core/session/auth-store';
 import { login, useAuth, useIsLoggedIn } from '@/core/session/useAuth';
 
 const mockPush = vi.fn();
 vi.mock('next/navigation', () => ({ useRouter: () => ({ push: mockPush }) }));
+vi.mock('next-intl', () => ({ useLocale: () => 'vi' }));
+
+vi.mock('@repo/api-sdk/endpoints/auth', () => ({
+  logout: vi.fn().mockResolvedValue(undefined),
+}));
 
 const mockUser = {
   id: 1,
@@ -60,7 +66,28 @@ describe('useAuth', () => {
     expect(result.current.isLoggedIn).toBe(false);
     expect(result.current.user).toBeNull();
     expect(result.current.authStatus).toBe('anonymous');
-    expect(mockPush).toHaveBeenCalledWith('/login');
+    expect(mockPush).toHaveBeenCalledWith('/vi/login');
+  });
+
+  it('calls the revoke endpoint with the refresh token on logout (acceptance criterion — issue #12)', async () => {
+    setRefreshToken('refresh_abc');
+    const { result } = renderHook(() => useAuth());
+
+    act(() => login('token123', mockUser));
+    act(() => result.current.logout());
+
+    await waitFor(() => {
+      expect(revokeSession).toHaveBeenCalledWith('refresh_abc');
+    });
+  });
+
+  it('does not call the revoke endpoint when there was no refresh token to revoke', async () => {
+    const { result } = renderHook(() => useAuth());
+
+    act(() => login('token123', mockUser));
+    act(() => result.current.logout());
+
+    expect(revokeSession).not.toHaveBeenCalled();
   });
 });
 
