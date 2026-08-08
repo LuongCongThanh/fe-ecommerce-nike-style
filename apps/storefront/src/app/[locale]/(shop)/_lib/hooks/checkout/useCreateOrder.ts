@@ -20,7 +20,7 @@ export const useCreateOrder = (locale: string) => {
     mutationFn: async (data: CheckoutInput) =>
       orderActions.create({
         ...data,
-        items: items.map((i) => ({ variantId: i.variantId, quantity: i.quantity })),
+        items: items.map((i) => ({ variantId: i.skuId, quantity: i.quantity })),
       }),
     onSuccess: async (order) => {
       clearCart();

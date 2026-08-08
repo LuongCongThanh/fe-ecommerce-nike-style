@@ -54,7 +54,7 @@ export function CartDrawer({ children }: CartDrawerProps) {
                 <AnimatePresence initial={false}>
                   {items.map((item, index) => (
                     <motion.div
-                      key={item.variantId}
+                      key={item.skuId}
                       layout
                       initial={{ opacity: 0, x: 20 }}
                       animate={{ opacity: 1, x: 0 }}
@@ -64,7 +64,7 @@ export function CartDrawer({ children }: CartDrawerProps) {
                     >
                       <div className="bg-muted relative size-20 overflow-hidden rounded-lg">
                         <Image
-                          src={item.image}
+                          src={item.image ?? '/placeholder-product.png'}
                           alt={item.name}
                           fill
                           sizes="80px"
@@ -81,7 +81,7 @@ export function CartDrawer({ children }: CartDrawerProps) {
                             value={item.quantity}
                             min={1}
                             onChange={(quantity) => {
-                              updateQuantity(item.variantId, quantity);
+                              updateQuantity(item.skuId, quantity);
                             }}
                           />
                           <Button
@@ -90,7 +90,7 @@ export function CartDrawer({ children }: CartDrawerProps) {
                             size="icon"
                             aria-label="Xóa sản phẩm"
                             onClick={() => {
-                              removeCartItem(item.variantId);
+                              removeCartItem(item.skuId);
                             }}
                             className="hover:text-destructive text-muted-foreground"
                           >

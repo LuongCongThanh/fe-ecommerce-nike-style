@@ -26,9 +26,9 @@ export function OrderSummary() {
 
       <div className="mb-6 space-y-4">
         {items.map((item) => (
-          <div key={item.variantId} className="flex gap-4">
+          <div key={item.skuId} className="flex gap-4">
             <div className="bg-muted relative size-16 shrink-0 overflow-hidden rounded-lg">
-              <Image src={item.image !== '' ? item.image : '/images/placeholder.jpg'} alt={item.name} fill sizes="64px" className="object-cover" />
+              <Image src={item.image ?? '/images/placeholder.jpg'} alt={item.name} fill sizes="64px" className="object-cover" />
               <span className="bg-primary text-primary-foreground absolute -top-2 -right-2 flex size-5 items-center justify-center rounded-full text-[10px] font-bold">
                 {item.quantity}
               </span>
