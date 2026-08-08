@@ -1,15 +1,18 @@
 /**
- * Mock Order backing store for `packages/api-sdk/src/mocks/handlers.ts` — issue #15 (SF-09, read side).
+ * Mock Order backing store for `packages/api-sdk/src/mocks/handlers.ts` — issue #15 (SF-09, read side),
+ * #16 (place order), #17 (cancel + return request state transitions).
  *
- * Only list/detail (ownership-checked) are backed here — issue #15's own acceptance criteria explicitly
- * allows Order detail to run against placeholder data if the Checkout slice isn't done yet. Place-order
- * (Reservation, idempotency) is issue #16; cancel/return-request state transitions are issue #17. Orders
- * are keyed by owning Customer id so "Customer chỉ xem được Order của chính mình" (glossary.md —
+ * Orders are keyed by owning Customer id so "Customer chỉ xem được Order của chính mình" (glossary.md —
  * Customer) holds by construction — there's no cross-user lookup path at all, not a permission check
  * layered on top of one. Persisted via `sessionStorage`, same pattern as `cart-fixtures.ts`.
+ *
+ * Cancel/return-request only ever touch `status`/`updated_at` — releasing committed stock back to
+ * `available` on CANCELLED (glossary.md — Cart & Order) would need OrderItem to retain a skuId, which
+ * the customer-facing snapshot deliberately doesn't (glossary.md — OrderItem is a name/price/image
+ * snapshot, not a live reference); left as a known gap rather than widening that shape for this issue.
  */
 
-import type { StorefrontOrder } from '../endpoints/orders';
+import type { StorefrontOrder, StorefrontOrderStatus } from '../endpoints/orders';
 
 type MockOrder = StorefrontOrder & { userId: number };
 
@@ -123,6 +126,56 @@ export function getOrderByRequestKey(userId: number, requestKey: string): Storef
 
 export function recordRequestKey(requestKey: string, orderId: number): void {
   orderIdByRequestKey.set(requestKey, orderId);
+}
+
+/** Return window per glossary.md — Return & Refund: 7 days from the moment an Order became DELIVERED. */
+export const RETURN_WINDOW_MS = 7 * 24 * 60 * 60 * 1000;
+
+export type OrderTransitionResult = { ok: true; order: StorefrontOrder } | { ok: false; code: string; message: string };
+
+function updateOrderStatus(userId: number, orderId: number, status: StorefrontOrderStatus): StorefrontOrder {
+  const order = orders.get(orderId);
+  if (order === undefined) throw new Error('unreachable — caller already checked ownership');
+  const updated: MockOrder = { ...order, status, updated_at: new Date().toISOString() };
+  orders.set(orderId, updated);
+  persist();
+  const { userId: _userId, ...rest } = updated;
+  return rest;
+}
+
+/** CANCELLED is only valid from PENDING/PROCESSING — from PACKED onward it must go DELIVERED → RETURN_REQUESTED → RETURNED instead (glossary.md). */
+export function cancelOrderForCustomer(userId: number, orderId: number): OrderTransitionResult {
+  const order = getAccountOrder(userId, orderId);
+  if (order === undefined) {
+    return { ok: false, code: 'NOT_FOUND', message: 'Không tìm thấy đơn hàng.' };
+  }
+  if (order.status !== 'PENDING' && order.status !== 'PROCESSING') {
+    return { ok: false, code: 'INVALID_TRANSITION', message: 'Đơn hàng này không còn ở trạng thái có thể huỷ.' };
+  }
+  return { ok: true, order: updateOrderStatus(userId, orderId, 'CANCELLED') };
+}
+
+/** RETURN_REQUESTED only from DELIVERED, and only within the 7-day return window (glossary.md — Return window). */
+export function requestReturnForCustomer(userId: number, orderId: number): OrderTransitionResult {
+  const order = getAccountOrder(userId, orderId);
+  if (order === undefined) {
+    return { ok: false, code: 'NOT_FOUND', message: 'Không tìm thấy đơn hàng.' };
+  }
+  if (order.status !== 'DELIVERED' || order.delivered_at === null) {
+    return { ok: false, code: 'INVALID_TRANSITION', message: 'Chỉ có thể yêu cầu trả hàng cho đơn đã giao.' };
+  }
+  const deliveredAt = new Date(order.delivered_at).getTime();
+  if (Date.now() - deliveredAt > RETURN_WINDOW_MS) {
+    return { ok: false, code: 'RETURN_WINDOW_EXPIRED', message: 'Đã quá hạn 7 ngày để yêu cầu trả hàng.' };
+  }
+  return { ok: true, order: updateOrderStatus(userId, orderId, 'RETURN_REQUESTED') };
+}
+
+/** Test-only — forces `orderId` (must already exist) into an arbitrary status/`delivered_at`, to exercise state-transition branches the seed data doesn't cover on its own. */
+export function setOrderStatusForTesting(orderId: number, status: StorefrontOrderStatus, deliveredAt: string | null = null): void {
+  const order = orders.get(orderId);
+  if (order === undefined) return;
+  orders.set(orderId, { ...order, status, delivered_at: deliveredAt });
 }
 
 /** Test-only — resets the mock "DB" (orders + idempotency keys + id counter) back to its seed state between FE-INT tests. */

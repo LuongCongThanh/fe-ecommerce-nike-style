@@ -7,7 +7,9 @@ import { Separator } from '@repo/ui/separator';
 import { OrderStatusBadge } from '@/app/[locale]/(shop)/_lib/components/common/OrderStatusBadge';
 import { useCancelOrder } from '@/app/[locale]/(shop)/_lib/hooks/orders/useCancelOrder';
 import { useOrder } from '@/app/[locale]/(shop)/_lib/hooks/orders/useOrder';
+import { useRequestReturn } from '@/app/[locale]/(shop)/_lib/hooks/orders/useRequestReturn';
 import { ApiError } from '@/shared/lib/errors/api-error';
+import { canCancelOrder, canRequestReturn } from '@/shared/types/order';
 
 interface OrderDetailClientProps {
   readonly id: string;
@@ -16,6 +18,7 @@ interface OrderDetailClientProps {
 export function OrderDetailClient({ id }: OrderDetailClientProps): React.JSX.Element {
   const { data: order, isPending, error } = useOrder(id);
   const cancelOrder = useCancelOrder(id);
+  const requestReturn = useRequestReturn(id);
 
   if (isPending) {
     return <p className="text-center">Đang tải...</p>;
@@ -67,9 +70,9 @@ export function OrderDetailClient({ id }: OrderDetailClientProps): React.JSX.Ele
         ) : null}
       </div>
 
-      {/* Full cancel/return-request state-machine gating (glossary.md) is issue #17 — this keeps the
-          existing PENDING-only cancel action working after the status enum realignment (issue #15). */}
-      {order.status === 'PENDING' && (
+      {/* Cancel: PENDING/PROCESSING only — from PACKED onward it must go through DELIVERED →
+          RETURN_REQUESTED → RETURNED instead (glossary.md — Cart & Order; issue #17). */}
+      {canCancelOrder(order) && (
         <Button
           variant="destructive"
           className="mt-4"
@@ -80,6 +83,23 @@ export function OrderDetailClient({ id }: OrderDetailClientProps): React.JSX.Ele
         >
           {cancelOrder.isPending ? 'Đang huỷ...' : 'Huỷ đơn hàng'}
         </Button>
+      )}
+
+      {/* Return request: DELIVERED only, within the 7-day return window (glossary.md — Return window; issue #17). */}
+      {canRequestReturn(order) && (
+        <Button
+          variant="outline"
+          className="mt-4"
+          onClick={() => {
+            requestReturn.mutate();
+          }}
+          disabled={requestReturn.isPending}
+        >
+          {requestReturn.isPending ? 'Đang gửi yêu cầu...' : 'Yêu cầu trả hàng'}
+        </Button>
+      )}
+      {order.status === 'DELIVERED' && !canRequestReturn(order) && (
+        <p className="text-muted-foreground mt-4 text-sm">Đã quá hạn 7 ngày để yêu cầu trả hàng cho đơn này.</p>
       )}
     </>
   );

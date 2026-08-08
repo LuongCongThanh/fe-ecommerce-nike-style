@@ -19,7 +19,16 @@ import {
 } from './auth-fixtures';
 import { mergeAccountCart, resolveSkus } from './cart-fixtures';
 import { findProductBySkuId, minSkuPrice, mockCategories, mockProducts, resolveCategoryIds } from './catalog-fixtures';
-import { addAccountOrder, allocateOrderId, getAccountOrder, getAccountOrders, getOrderByRequestKey, recordRequestKey } from './order-fixtures';
+import {
+  addAccountOrder,
+  allocateOrderId,
+  cancelOrderForCustomer,
+  getAccountOrder,
+  getAccountOrders,
+  getOrderByRequestKey,
+  recordRequestKey,
+  requestReturnForCustomer,
+} from './order-fixtures';
 import { consumeReservation, createReservation } from './reservation-fixtures';
 import { matchesSearchQuery } from './search-match';
 import { mergeAccountWishlist, resolveProducts } from './wishlist-fixtures';
@@ -412,5 +421,35 @@ export const handlers = [
     recordRequestKey(body.requestKey, id);
 
     return HttpResponse.json(order, { status: 201 });
+  }),
+
+  // Cancel (issue #17) — only valid from PENDING/PROCESSING (glossary.md); from PACKED onward this
+  // 409s instead of silently no-op'ing, so the FE surfaces a real error rather than a stale UI.
+  http.post('*/api/orders/:id/cancel/', ({ request, params }) => {
+    const user = findUserByAccessToken(request.headers.get('authorization'));
+    if (user === undefined) {
+      return errorResponse(401, 'UNAUTHORIZED', 'Chưa đăng nhập hoặc phiên đã hết hạn.');
+    }
+
+    const result = cancelOrderForCustomer(user.id, Number(params.id));
+    if (!result.ok) {
+      return errorResponse(result.code === 'NOT_FOUND' ? 404 : 409, result.code, result.message);
+    }
+    return HttpResponse.json(result.order);
+  }),
+
+  // Return request (issue #17) — only from DELIVERED, only within the 7-day return window (glossary.md
+  // — Return window); rejected at validate, same as Cancel above.
+  http.post('*/api/orders/:id/return-request/', ({ request, params }) => {
+    const user = findUserByAccessToken(request.headers.get('authorization'));
+    if (user === undefined) {
+      return errorResponse(401, 'UNAUTHORIZED', 'Chưa đăng nhập hoặc phiên đã hết hạn.');
+    }
+
+    const result = requestReturnForCustomer(user.id, Number(params.id));
+    if (!result.ok) {
+      return errorResponse(result.code === 'NOT_FOUND' ? 404 : 409, result.code, result.message);
+    }
+    return HttpResponse.json(result.order);
   }),
 ];
