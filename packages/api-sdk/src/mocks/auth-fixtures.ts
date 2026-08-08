@@ -145,6 +145,15 @@ export function setUserPassword(user: MockAuthUser, password: string): void {
   persist();
 }
 
+/** Issue #15 — profile update (`PATCH /api/auth/me/update/`). `email`/`id`/`role` aren't editable this way. */
+export function updateUserProfile(user: MockAuthUser, patch: { firstName?: string; lastName?: string; phone?: string }): MockAuthUser {
+  if (patch.firstName !== undefined) user.firstName = patch.firstName;
+  if (patch.lastName !== undefined) user.lastName = patch.lastName;
+  if (patch.phone !== undefined) user.phone = patch.phone;
+  persist();
+  return user;
+}
+
 // --- Access token — opaque, unsigned {sub, exp} blob (NOT a real JWT; mock TTL simulation only). ---
 
 interface AccessTokenPayload {

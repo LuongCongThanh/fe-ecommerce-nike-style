@@ -15,6 +15,7 @@ export const ROUTES = {
     ORDERS: '/account/orders',
     ORDER: (id: string | number) => `/account/orders/${String(id)}`,
     PROFILE: '/account/profile',
+    ADDRESSES: '/account/addresses',
   },
   ADMIN: {
     PRODUCTS: '/admin/products',

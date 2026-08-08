@@ -22,7 +22,11 @@ export function OrdersClient({ orders }: OrdersClientProps): React.JSX.Element {
   return (
     <div className="space-y-4">
       {orders.map((order) => (
-        <Link key={order.id} href={`/${locale}/orders/${String(order.id)}`} className="block rounded-xl border p-4 transition hover:shadow-sm">
+        <Link
+          key={order.id}
+          href={`/${locale}/account/orders/${String(order.id)}`}
+          className="block rounded-xl border p-4 transition hover:shadow-sm"
+        >
           <div className="flex items-center justify-between gap-3">
             <div>
               <p className="font-medium">Đơn #{order.code}</p>

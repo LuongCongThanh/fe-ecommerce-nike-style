@@ -23,7 +23,7 @@ export default async function CheckoutSuccessPage({
       <p className="text-muted-foreground max-w-md">Cảm ơn bạn đã đặt hàng. Chúng tôi sẽ liên hệ xác nhận trong thời gian sớm nhất.</p>
       <div className="flex gap-3">
         <Button asChild variant="outline">
-          <Link href={`/${locale}/orders`}>Xem đơn hàng</Link>
+          <Link href={`/${locale}/account/orders`}>Xem đơn hàng</Link>
         </Button>
         <Button asChild>
           <Link href={`/${locale}/products`}>Tiếp tục mua sắm</Link>

@@ -7,7 +7,8 @@ const ORDERS_API = {
   CANCEL: (id: string) => `${API_BASE_URL}/api/orders/${id}/cancel/`,
 } as const;
 
-export type StorefrontOrderStatus = 'pending' | 'confirmed' | 'processing' | 'shipped' | 'delivered' | 'cancelled';
+/** Mirrors `shared/types/order.ts`'s `OrderStatusSchema` (glossary.md — Cart & Order state machine). */
+export type StorefrontOrderStatus = 'PENDING' | 'PROCESSING' | 'PACKED' | 'SHIPPED' | 'DELIVERED' | 'CANCELLED' | 'RETURN_REQUESTED' | 'RETURNED';
 export type StorefrontPaymentMethod = 'cod' | 'bankTransfer' | 'vnpay' | 'momo' | 'zalopay';
 export type StorefrontPaymentStatus = 'pending' | 'paid' | 'failed' | 'refunded';
 
@@ -35,6 +36,7 @@ export interface StorefrontOrder {
   note: string;
   created_at: string;
   updated_at: string;
+  delivered_at: string | null;
 }
 
 export interface CreateOrderPayload {
