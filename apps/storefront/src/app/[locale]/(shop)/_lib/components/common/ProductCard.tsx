@@ -5,8 +5,9 @@ import Link from 'next/link';
 
 import { formatCurrency } from '@repo/shared/utils';
 import { Badge } from '@repo/ui/badge';
-import { Star } from 'lucide-react';
+import { Heart, Star } from 'lucide-react';
 
+import { useIsWishlisted } from '@/app/[locale]/(shop)/_lib/hooks/useWishlist';
 import type { BadgeValue } from '@/shared/types/product';
 
 interface BadgeLabels {
@@ -64,6 +65,7 @@ export function ProductCard({
   const displayPrice = hasDiscount ? salePrice : price;
   const coverImage = images[0] ?? '/placeholder-product.png';
   const resolvedBadgeLabels = { ...DEFAULT_BADGE_LABELS, ...badgeLabels };
+  const { isWishlisted, toggle: toggleWishlist } = useIsWishlisted(String(id));
 
   return (
     <Link
@@ -81,6 +83,19 @@ export function ProductCard({
             className="object-cover transition-transform duration-(--duration-normal) ease-out group-hover:-translate-y-0.5"
             sizes="(max-width: 768px) 50vw, 25vw"
           />
+          <button
+            type="button"
+            aria-label={isWishlisted ? 'Bỏ khỏi yêu thích' : 'Thêm vào yêu thích'}
+            aria-pressed={isWishlisted}
+            onClick={(e) => {
+              e.preventDefault();
+              e.stopPropagation();
+              toggleWishlist();
+            }}
+            className="bg-background/80 hover:bg-background absolute top-3 right-3 flex size-8 items-center justify-center rounded-full backdrop-blur-sm transition-colors"
+          >
+            <Heart className={isWishlisted ? 'text-brand-600 fill-brand-600 size-4' : 'text-foreground size-4'} />
+          </button>
           {badges != null && badges.length > 0 ? (
             <div className="absolute top-3 left-3 flex flex-wrap gap-1.5">
               {badges.map((badge) => (
