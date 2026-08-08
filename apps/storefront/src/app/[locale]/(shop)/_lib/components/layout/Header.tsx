@@ -5,13 +5,14 @@ import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 
 import { Button } from '@repo/ui/button';
-import { Flame, LogOut, Search, ShoppingCart, User, X } from 'lucide-react';
+import { Flame, Heart, LogOut, Search, ShoppingCart, User, X } from 'lucide-react';
 import { useLocale, useTranslations } from 'next-intl';
 
 import { CartDrawer } from '@/app/[locale]/(shop)/_lib/components/cart/CartDrawer';
 import { DesktopMegaMenu } from '@/app/[locale]/(shop)/_lib/components/navigation/DesktopMegaMenu';
 import { MobileNav } from '@/app/[locale]/(shop)/_lib/components/navigation/MobileNav';
 import { mergeCartOnLogin, useCart } from '@/app/[locale]/(shop)/_lib/hooks/useCart';
+import { mergeWishlistOnLogin, useWishlist } from '@/app/[locale]/(shop)/_lib/hooks/useWishlist';
 import { useAuth } from '@/core/session/useAuth';
 
 export function Header() {
@@ -22,14 +23,17 @@ export function Header() {
   const [searchOpen, setSearchOpen] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
   const { itemCount } = useCart();
+  const { itemCount: wishlistCount } = useWishlist();
   const { isLoggedIn, logout, authStatus } = useAuth();
 
-  // Merge cart sau đăng nhập (Decision #36) — chạy đúng 1 lần khi status chuyển sang authenticated
-  // (đăng nhập/đăng ký thành công), không chạy lại mỗi lần Header re-render trong lúc đã đăng nhập.
+  // Merge cart + wishlist sau đăng nhập (Decision #36, glossary.md — Merge Wishlist) — chạy đúng 1 lần
+  // khi status chuyển sang authenticated (đăng nhập/đăng ký thành công), không chạy lại mỗi lần Header
+  // re-render trong lúc đã đăng nhập.
   const wasAuthenticated = useRef(false);
   useEffect(() => {
     if (!wasAuthenticated.current && authStatus === 'authenticated') {
       mergeCartOnLogin().catch(() => undefined);
+      mergeWishlistOnLogin().catch(() => undefined);
     }
     wasAuthenticated.current = authStatus === 'authenticated';
   }, [authStatus]);
@@ -127,6 +131,17 @@ export function Header() {
               </Link>
             </Button>
           )}
+
+          <Button variant="ghost" size="icon" aria-label="Yêu thích" className="relative" asChild>
+            <Link href={`/${locale}/wishlist`}>
+              <Heart className="size-5" />
+              {wishlistCount > 0 && (
+                <span className="bg-brand-600 absolute -top-0.5 -right-0.5 flex size-4 items-center justify-center rounded-full text-[10px] font-bold text-white">
+                  {wishlistCount > 99 ? '99+' : wishlistCount}
+                </span>
+              )}
+            </Link>
+          </Button>
 
           <CartDrawer>
             <Button variant="ghost" size="icon" aria-label="Giỏ hàng" className="relative">

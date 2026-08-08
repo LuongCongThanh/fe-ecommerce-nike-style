@@ -18,6 +18,7 @@ import {
 import { mergeAccountCart, resolveSkus } from './cart-fixtures';
 import { minSkuPrice, mockCategories, mockProducts, resolveCategoryIds } from './catalog-fixtures';
 import { matchesSearchQuery } from './search-match';
+import { mergeAccountWishlist, resolveProducts } from './wishlist-fixtures';
 
 function errorResponse(status: number, code: string, message: string) {
   return HttpResponse.json({ error: { code, message } }, { status });
@@ -193,5 +194,28 @@ export const handlers = [
     return HttpResponse.json({
       data: resolveSkus(merged.map((i) => i.skuId)).map((sku) => ({ ...sku, quantity: merged.find((m) => m.skuId === sku.skuId)?.quantity ?? 0 })),
     });
+  }),
+
+  // Wishlist references Product only, no SKU/quantity (glossary.md) — resolves live Product data for
+  // display, same never-cache-on-the-client pattern as Cart's `/api/catalog/skus`.
+  http.get('*/api/wishlist/products', ({ request }) => {
+    const idsParam = new URL(request.url).searchParams.get('ids') ?? '';
+    const productIds = idsParam.split(',').filter((id) => id !== '');
+    return HttpResponse.json({ data: resolveProducts(productIds) });
+  }),
+
+  // Merge-after-login: union + dedupe by Product id, no quantity/conflict concept (glossary.md — Merge Wishlist).
+  http.post('*/api/wishlist/merge', async ({ request }) => {
+    const user = findUserByAccessToken(request.headers.get('authorization'));
+    if (user === undefined) {
+      return errorResponse(401, 'UNAUTHORIZED', 'Chưa đăng nhập hoặc phiên đã hết hạn.');
+    }
+
+    const body = (await request.json()) as { items: { productId: string }[] };
+    const merged = mergeAccountWishlist(
+      user.id,
+      body.items.map((i) => i.productId),
+    );
+    return HttpResponse.json({ data: resolveProducts(merged) });
   }),
 ];

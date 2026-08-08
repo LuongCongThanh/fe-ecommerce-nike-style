@@ -1,7 +1,8 @@
-import { render, screen } from '@testing-library/react';
-import { describe, expect, it } from 'vitest';
+import { fireEvent, render, screen } from '@testing-library/react';
+import { beforeEach, describe, expect, it } from 'vitest';
 
 import { ProductCard } from '@/app/[locale]/(shop)/_lib/components/common/ProductCard';
+import { resetWishlistState } from '@/app/[locale]/(shop)/_lib/hooks/useWishlist';
 
 const baseProps = {
   id: 1,
@@ -11,6 +12,11 @@ const baseProps = {
   images: ['/img/product.jpg'],
   locale: 'vi',
 };
+
+beforeEach(() => {
+  localStorage.clear();
+  resetWishlistState();
+});
 
 describe('ProductCard', () => {
   it('renders the product name', () => {
@@ -55,5 +61,31 @@ describe('ProductCard', () => {
     render(<ProductCard {...baseProps} rating={4.5} reviewCount={12} />);
     expect(screen.getByText('4.5')).toBeInTheDocument();
     expect(screen.getByText('(12)')).toBeInTheDocument();
+  });
+
+  describe('wishlist toggle (issue #14)', () => {
+    it('starts unwishlisted', () => {
+      render(<ProductCard {...baseProps} />);
+      expect(screen.getByRole('button', { name: 'Thêm vào yêu thích' })).toHaveAttribute('aria-pressed', 'false');
+    });
+
+    it('toggles to wishlisted on click without navigating the enclosing link', () => {
+      render(<ProductCard {...baseProps} />);
+      const button = screen.getByRole('button', { name: 'Thêm vào yêu thích' });
+
+      fireEvent.click(button);
+
+      expect(screen.getByRole('button', { name: 'Bỏ khỏi yêu thích' })).toHaveAttribute('aria-pressed', 'true');
+    });
+
+    it('toggles back off on a second click', () => {
+      render(<ProductCard {...baseProps} />);
+      const button = screen.getByRole('button', { name: 'Thêm vào yêu thích' });
+
+      fireEvent.click(button);
+      fireEvent.click(screen.getByRole('button', { name: 'Bỏ khỏi yêu thích' }));
+
+      expect(screen.getByRole('button', { name: 'Thêm vào yêu thích' })).toHaveAttribute('aria-pressed', 'false');
+    });
   });
 });
