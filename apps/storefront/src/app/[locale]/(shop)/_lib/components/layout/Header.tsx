@@ -123,7 +123,7 @@ export function Header() {
 
           {isLoggedIn ? (
             <>
-              <Button variant="ghost" size="icon" asChild>
+              <Button variant="ghost" size="icon" aria-label="Tài khoản" asChild>
                 <Link href={`/${locale}/account/profile`} aria-label="Tài khoản">
                   <User className="size-5" />
                 </Link>
@@ -133,14 +133,14 @@ export function Header() {
               </Button>
             </>
           ) : (
-            <Button variant="ghost" size="icon" asChild>
+            <Button variant="ghost" size="icon" aria-label="Đăng nhập" asChild>
               <Link href={`/${locale}/login`} aria-label="Đăng nhập">
                 <User className="size-5" />
               </Link>
             </Button>
           )}
 
-          <Button variant="ghost" size="icon" className="relative" asChild>
+          <Button variant="ghost" size="icon" aria-label="Yêu thích" className="relative" asChild>
             <Link href={`/${locale}/wishlist`} aria-label="Yêu thích">
               <Heart className="size-5" />
               {wishlistCount > 0 && (

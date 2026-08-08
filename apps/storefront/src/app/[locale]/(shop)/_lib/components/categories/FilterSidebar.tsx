@@ -1,5 +1,6 @@
 'use client';
 
+import { useTransition } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
 
 import type { Gender } from '@repo/schemas/catalog';
@@ -30,11 +31,14 @@ export function FilterSidebar({ activeCategorySlug }: FilterSidebarProps = {}): 
   const searchParams = useSearchParams();
   const locale = useLocale();
   const { data: categories } = useCategoryTree();
+  const [isPending, startTransition] = useTransition();
 
   const filters = parseCatalogFilters(searchParams);
 
   const applyFilter = (key: 'gender' | 'sortBy' | 'minPrice' | 'maxPrice', value: string | undefined) => {
-    router.push(`?${withCatalogFilter(searchParams, key, value).toString()}`);
+    startTransition(() => {
+      router.push(`?${withCatalogFilter(searchParams, key, value).toString()}`);
+    });
   };
 
   const handlePriceSubmit = (e: SyntheticEvent<HTMLFormElement>) => {
@@ -45,7 +49,9 @@ export function FilterSidebar({ activeCategorySlug }: FilterSidebarProps = {}): 
       'maxPrice',
       formData.get('maxPrice') as string,
     );
-    router.push(`?${next.toString()}`);
+    startTransition(() => {
+      router.push(`?${next.toString()}`);
+    });
   };
 
   return (
@@ -106,9 +112,12 @@ export function FilterSidebar({ activeCategorySlug }: FilterSidebarProps = {}): 
             <span className="text-muted-foreground">-</span>
             <Input name="maxPrice" type="number" placeholder="Đến" defaultValue={filters.maxPrice ?? ''} className="h-9" aria-label="Giá đến" />
           </div>
-          <Button type="submit" size="sm" className="w-full">
-            Áp dụng
+          <Button type="submit" size="sm" className="w-full" disabled={isPending} aria-busy={isPending}>
+            {isPending ? 'Đang áp dụng...' : 'Áp dụng'}
           </Button>
+          <span role="status" aria-live="polite" className="sr-only">
+            {isPending ? 'Đang áp dụng bộ lọc...' : ''}
+          </span>
         </form>
       </div>
 
@@ -117,8 +126,11 @@ export function FilterSidebar({ activeCategorySlug }: FilterSidebarProps = {}): 
         variant="ghost"
         size="sm"
         className="text-muted-foreground hover:text-foreground w-full"
+        disabled={isPending}
         onClick={() => {
-          router.push(`?${clearCatalogFilters(searchParams).toString()}`);
+          startTransition(() => {
+            router.push(`?${clearCatalogFilters(searchParams).toString()}`);
+          });
         }}
       >
         Xóa tất cả bộ lọc

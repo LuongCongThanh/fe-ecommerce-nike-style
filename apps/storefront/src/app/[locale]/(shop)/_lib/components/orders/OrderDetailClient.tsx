@@ -84,6 +84,9 @@ export function OrderDetailClient({ id }: OrderDetailClientProps): React.JSX.Ele
           {cancelOrder.isPending ? 'Đang huỷ...' : 'Huỷ đơn hàng'}
         </Button>
       )}
+      <span role="status" aria-live="polite" className="sr-only">
+        {cancelOrder.isPending ? 'Đang huỷ đơn hàng...' : ''}
+      </span>
 
       {/* Return request: DELIVERED only, within the 7-day return window (glossary.md — Return window; issue #17). */}
       {canRequestReturn(order) && (
@@ -98,6 +101,9 @@ export function OrderDetailClient({ id }: OrderDetailClientProps): React.JSX.Ele
           {requestReturn.isPending ? 'Đang gửi yêu cầu...' : 'Yêu cầu trả hàng'}
         </Button>
       )}
+      <span role="status" aria-live="polite" className="sr-only">
+        {requestReturn.isPending ? 'Đang gửi yêu cầu trả hàng...' : ''}
+      </span>
       {order.status === 'DELIVERED' && !canRequestReturn(order) && (
         <p className="text-muted-foreground mt-4 text-sm">Đã quá hạn 7 ngày để yêu cầu trả hàng cho đơn này.</p>
       )}

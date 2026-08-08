@@ -195,7 +195,11 @@ export function CheckoutClient() {
         </motion.div>
       </div>
 
-      {reservation.error !== null && <p className="text-error-500 text-center text-sm">{reservation.error}</p>}
+      {reservation.error !== null && (
+        <p role="alert" className="text-error-500 text-center text-sm">
+          {reservation.error}
+        </p>
+      )}
 
       <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.3 }} className="flex flex-col items-center gap-4 pt-4">
         <Button
@@ -203,11 +207,15 @@ export function CheckoutClient() {
           size="lg"
           loading={createOrder.isPending}
           disabled={reservation.isPending || reservation.reservationId === null}
+          aria-busy={createOrder.isPending}
           className="h-12 w-full text-base"
         >
-          {createOrder.isPending ? <Loader2 className="mr-2 size-4 animate-spin" /> : null}
+          {createOrder.isPending ? <Loader2 className="mr-2 size-4 animate-spin" aria-hidden="true" /> : null}
           {t('placeOrder')}
         </Button>
+        <p role="status" aria-live="polite" className="sr-only">
+          {createOrder.isPending ? 'Đang xử lý đơn hàng của bạn...' : ''}
+        </p>
         <p className="text-muted-foreground text-center text-xs">{t('placeOrderDesc')}</p>
       </motion.div>
     </form>

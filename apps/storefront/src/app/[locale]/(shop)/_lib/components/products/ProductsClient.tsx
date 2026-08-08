@@ -28,9 +28,11 @@ export default function ProductsClient(): React.JSX.Element {
       />
 
       {isLoading ? (
-        <p className="text-muted-foreground py-12 text-center">Đang tải sản phẩm…</p>
+        <p role="status" className="text-muted-foreground py-12 text-center">
+          Đang tải sản phẩm…
+        </p>
       ) : isError || data === undefined ? (
-        <div className="flex min-h-100 flex-col items-center justify-center rounded-2xl border border-dashed text-center">
+        <div role="alert" className="flex min-h-100 flex-col items-center justify-center rounded-2xl border border-dashed text-center">
           <h3 className="text-lg font-medium">Không thể tải sản phẩm</h3>
           <p className="text-muted-foreground mt-1">Vui lòng thử lại sau.</p>
         </div>
