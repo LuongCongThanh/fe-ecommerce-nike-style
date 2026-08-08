@@ -5,6 +5,7 @@ const ORDERS_API = {
   LIST: `${API_BASE_URL}/api/orders/`,
   DETAIL: (id: string) => `${API_BASE_URL}/api/orders/${id}/`,
   CANCEL: (id: string) => `${API_BASE_URL}/api/orders/${id}/cancel/`,
+  RETURN_REQUEST: (id: string) => `${API_BASE_URL}/api/orders/${id}/return-request/`,
 } as const;
 
 /** Mirrors `shared/types/order.ts`'s `OrderStatusSchema` (glossary.md — Cart & Order state machine). */
@@ -68,6 +69,11 @@ export async function getOrder(id: string): Promise<StorefrontOrder> {
 
 export async function cancelOrder(id: string): Promise<StorefrontOrder> {
   return apiClient.post<StorefrontOrder>(ORDERS_API.CANCEL(id));
+}
+
+/** Return request (issue #17, glossary.md) — only valid from DELIVERED within the 7-day return window; rejected server-side otherwise. */
+export async function requestReturn(id: string): Promise<StorefrontOrder> {
+  return apiClient.post<StorefrontOrder>(ORDERS_API.RETURN_REQUEST(id));
 }
 
 export async function createOrder(data: CreateOrderPayload): Promise<StorefrontOrder> {

@@ -1,4 +1,4 @@
-import { cancelOrder, createOrder, getOrder, getOrders } from '@repo/api-sdk/endpoints/orders';
+import { cancelOrder, createOrder, getOrder, getOrders, requestReturn } from '@repo/api-sdk/endpoints/orders';
 
 import type { CheckoutInput } from '@/app/[locale]/(shop)/_lib/schemas/checkout';
 import { toStorefrontApiError } from '@/shared/lib/errors/toStorefrontApiError';
@@ -22,6 +22,13 @@ export const orderActions = {
   cancel: async (id: string) => {
     try {
       return (await cancelOrder(id)) as Order;
+    } catch (error) {
+      throw toStorefrontApiError(error);
+    }
+  },
+  requestReturn: async (id: string) => {
+    try {
+      return (await requestReturn(id)) as Order;
     } catch (error) {
       throw toStorefrontApiError(error);
     }

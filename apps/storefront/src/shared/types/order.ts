@@ -50,3 +50,18 @@ export type PaymentMethod = z.infer<typeof PaymentMethodSchema>;
 export type PaymentStatus = z.infer<typeof PaymentStatusSchema>;
 export type OrderItem = z.infer<typeof OrderItemSchema>;
 export type Order = z.infer<typeof OrderSchema>;
+
+/** Return window per glossary.md — Return & Refund: 7 days from the moment an Order became DELIVERED. */
+export const RETURN_WINDOW_DAYS = 7;
+
+/** CANCELLED is only valid from PENDING/PROCESSING (glossary.md — Cart & Order); issue #17. */
+export function canCancelOrder(order: Pick<Order, 'status'>): boolean {
+  return order.status === 'PENDING' || order.status === 'PROCESSING';
+}
+
+/** RETURN_REQUESTED is only valid from DELIVERED, within the 7-day return window (glossary.md — Return window); issue #17. */
+export function canRequestReturn(order: Pick<Order, 'status' | 'delivered_at'>, now: number = Date.now()): boolean {
+  if (order.status !== 'DELIVERED' || order.delivered_at === null) return false;
+  const deliveredAt = new Date(order.delivered_at).getTime();
+  return now - deliveredAt <= RETURN_WINDOW_DAYS * 24 * 60 * 60 * 1000;
+}
