@@ -13,6 +13,7 @@
 import type { Product, Sku } from '@repo/schemas/catalog';
 
 import { mockProducts } from './catalog-fixtures';
+import { getAvailableStock } from './reservation-fixtures';
 
 export interface ResolvedSku {
   skuId: string;
@@ -30,7 +31,9 @@ function toResolvedSku(product: Product, sku: Sku): ResolvedSku {
   return {
     skuId: sku.id,
     price: sku.price,
-    stock: sku.stock,
+    // Available stock accounts for other in-flight Checkout Reservations, not just the base SKU stock
+    // (glossary.md — Reservation; issue #16).
+    stock: getAvailableStock(sku.id),
     color: sku.color,
     size: sku.size,
     productId: product.id,

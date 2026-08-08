@@ -368,3 +368,38 @@ export function resolveCategoryIds(categories: Category[], slug: string): string
 export function minSkuPrice(product: Product): number {
   return Math.min(...product.skus.map((sku) => sku.price));
 }
+
+/** Finds a Product+SKU pair by SKU id across the whole catalog — used to resolve/snapshot at Reservation/Order-commit time (issue #16). */
+export function findProductBySkuId(skuId: string): { product: Product; sku: Product['skus'][number] } | undefined {
+  for (const product of mockProducts) {
+    const sku = product.skus.find((s) => s.id === skuId);
+    if (sku !== undefined) return { product, sku };
+  }
+  return undefined;
+}
+
+/**
+ * Permanently commits `quantity` of `skuId`'s stock (Reservation → committed on a successful Place
+ * Order — Decision #38) — mutates the seeded SKU in place, clamped at 0 so a double-commit can't go
+ * negative. There is no un-commit; CANCELLED/RETURNED release stock via a separate path (issue #17).
+ */
+export function commitSkuStock(skuId: string, quantity: number): void {
+  const match = findProductBySkuId(skuId);
+  if (match === undefined) return;
+  match.sku.stock = Math.max(0, match.sku.stock - quantity);
+}
+
+// Snapshot taken once at module load, before any `commitSkuStock` mutation — `mockProducts[i].skus` is
+// the *same* array/objects as `productSeeds[i].skus` (no clone in the `.map()` above), so "reset from
+// productSeeds" would be a no-op once seeds themselves have been mutated. This is the actual baseline.
+const initialStockBySkuId = new Map<string, number>(mockProducts.flatMap((p) => p.skus.map((s): [string, number] => [s.id, s.stock])));
+
+/** Test-only — undoes in-place `commitSkuStock` mutations between FE-INT tests. */
+export function resetMockCatalogStockForTesting(): void {
+  for (const product of mockProducts) {
+    for (const sku of product.skus) {
+      const initial = initialStockBySkuId.get(sku.id);
+      if (initial !== undefined) sku.stock = initial;
+    }
+  }
+}

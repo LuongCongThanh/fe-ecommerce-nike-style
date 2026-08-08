@@ -26,7 +26,7 @@ export const orderActions = {
       throw toStorefrontApiError(error);
     }
   },
-  create: async (data: CheckoutInput & { items: Array<{ variantId: string; quantity: number }> }) => {
+  create: async (data: CheckoutInput & { items: Array<{ variantId: string; quantity: number }>; reservationId: string; requestKey: string }) => {
     try {
       return (await createOrder(data)) as Order;
     } catch (error) {
