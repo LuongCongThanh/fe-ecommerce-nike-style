@@ -50,6 +50,9 @@ function persistCart(items: CartItem[]): void {
 
 interface CartState {
   items: CartItem[];
+  /** Flips true once `initCartFromStorage()` has actually run — lets a mount-time "is the cart empty?"
+   * check (issue #16 — Checkout) tell "genuinely empty" apart from "hasn't read localStorage yet". */
+  isHydrated: boolean;
   addItem: (skuId: string, quantity: number) => void;
   setQuantity: (skuId: string, quantity: number) => void;
   removeItem: (skuId: string) => void;
@@ -61,6 +64,7 @@ interface CartState {
 // initCartFromStorage() trong useEffect (client-only, sau lần render đầu tiên). Xem ADR-0006.
 export const useCartStore = create<CartState>((set, get) => ({
   items: [],
+  isHydrated: false,
   addItem: (skuId, quantity) => {
     const existing = get().items.find((i) => i.skuId === skuId);
     const items =
@@ -91,11 +95,11 @@ export const useCartStore = create<CartState>((set, get) => ({
 }));
 
 export function resetCartState(): void {
-  useCartStore.setState({ items: [] });
+  useCartStore.setState({ items: [], isHydrated: false });
 }
 
 export function initCartFromStorage(): void {
-  useCartStore.setState({ items: readPersistedCart() });
+  useCartStore.setState({ items: readPersistedCart(), isHydrated: true });
 }
 
 export function clearCart(): void {
@@ -137,6 +141,7 @@ export function useCart() {
   }, []);
 
   const rawItems = useCartStore((s) => s.items);
+  const isHydrated = useCartStore((s) => s.isHydrated);
   const addItem = useCartStore((s) => s.addItem);
   const setQuantity = useCartStore((s) => s.setQuantity);
   const removeItem = useCartStore((s) => s.removeItem);
@@ -197,6 +202,7 @@ export function useCart() {
     items,
     isLoading,
     isError,
+    isHydrated,
     addToCart,
     updateQuantity,
     removeCartItem: removeItem,

@@ -18,10 +18,13 @@ import {
   updateUserProfile,
 } from './auth-fixtures';
 import { mergeAccountCart, resolveSkus } from './cart-fixtures';
-import { minSkuPrice, mockCategories, mockProducts, resolveCategoryIds } from './catalog-fixtures';
-import { getAccountOrder, getAccountOrders } from './order-fixtures';
+import { findProductBySkuId, minSkuPrice, mockCategories, mockProducts, resolveCategoryIds } from './catalog-fixtures';
+import { addAccountOrder, allocateOrderId, getAccountOrder, getAccountOrders, getOrderByRequestKey, recordRequestKey } from './order-fixtures';
+import { consumeReservation, createReservation } from './reservation-fixtures';
 import { matchesSearchQuery } from './search-match';
 import { mergeAccountWishlist, resolveProducts } from './wishlist-fixtures';
+
+const SHIPPING_FEE_BY_METHOD = { standard: 30_000, express: 60_000 } as const;
 
 function errorResponse(status: number, code: string, message: string) {
   return HttpResponse.json({ error: { code, message } }, { status });
@@ -314,5 +317,100 @@ export const handlers = [
       return errorResponse(404, 'NOT_FOUND', 'Không tìm thấy địa chỉ.');
     }
     return HttpResponse.json(updated);
+  }),
+
+  // Reservation (issue #16, glossary.md) — created only at Checkout start, never at add-to-cart.
+  http.post('*/api/checkout/reservations', async ({ request }) => {
+    const user = findUserByAccessToken(request.headers.get('authorization'));
+    if (user === undefined) {
+      return errorResponse(401, 'UNAUTHORIZED', 'Chưa đăng nhập hoặc phiên đã hết hạn.');
+    }
+
+    const body = (await request.json()) as { items: { skuId: string; quantity: number }[] };
+    const result = createReservation(body.items);
+    if (!result.ok) {
+      return errorResponse(409, 'INSUFFICIENT_STOCK', 'Một sản phẩm trong giỏ hàng không còn đủ tồn kho.');
+    }
+
+    return HttpResponse.json({ reservationId: result.reservationId, expiresAt: new Date(result.expiresAt).toISOString() });
+  }),
+
+  // Place Order COD (issue #16) — idempotent by `requestKey`, commits the Reservation's stock
+  // (Decision #38: Reservation → committed stock at the moment Order is created, no gateway/webhook to
+  // wait for), and snapshots each OrderItem's name/variant/price/image at commit time (glossary.md —
+  // OrderItem) rather than referencing the live Product/SKU.
+  http.post('*/api/orders/', async ({ request }) => {
+    const user = findUserByAccessToken(request.headers.get('authorization'));
+    if (user === undefined) {
+      return errorResponse(401, 'UNAUTHORIZED', 'Chưa đăng nhập hoặc phiên đã hết hạn.');
+    }
+
+    const body = (await request.json()) as {
+      fullName: string;
+      phoneNumber: string;
+      address: string;
+      city: string;
+      district: string;
+      ward: string;
+      shippingMethod: 'standard' | 'express';
+      note?: string;
+      reservationId: string;
+      requestKey: string;
+    };
+
+    const replay = getOrderByRequestKey(user.id, body.requestKey);
+    if (replay !== undefined) {
+      return HttpResponse.json(replay, { status: 200 });
+    }
+
+    const reservedItems = consumeReservation(body.reservationId);
+    if (reservedItems === undefined) {
+      return errorResponse(409, 'RESERVATION_EXPIRED', 'Phiên đặt hàng đã hết hạn, vui lòng thử lại.');
+    }
+
+    const items = reservedItems
+      .flatMap((item) => {
+        const match = findProductBySkuId(item.skuId);
+        if (match === undefined) return [];
+        const variantName = [match.sku.color, match.sku.size].filter((v): v is string => v !== null).join(' / ');
+        return [
+          {
+            product_name: match.product.name,
+            variant_name: variantName,
+            image: match.product.images.at(0) ?? '',
+            price: match.sku.price,
+            quantity: item.quantity,
+            subtotal: match.sku.price * item.quantity,
+          },
+        ];
+      })
+      .map((item, index) => ({ id: index + 1, ...item }));
+
+    const subtotal = items.reduce((sum, item) => sum + item.subtotal, 0);
+    const shippingFee = SHIPPING_FEE_BY_METHOD[body.shippingMethod];
+    const now = new Date().toISOString();
+    const id = allocateOrderId();
+
+    const order = {
+      id,
+      code: `DH${String(id)}`,
+      status: 'PENDING' as const,
+      payment_method: 'cod' as const,
+      payment_status: 'pending' as const,
+      items,
+      subtotal,
+      shipping_fee: shippingFee,
+      total: subtotal + shippingFee,
+      address: `${body.address}, ${body.ward}, ${body.district}, ${body.city}`,
+      note: body.note ?? '',
+      created_at: now,
+      updated_at: now,
+      delivered_at: null,
+    };
+
+    addAccountOrder(user.id, order);
+    recordRequestKey(body.requestKey, id);
+
+    return HttpResponse.json(order, { status: 201 });
   }),
 ];

@@ -9,7 +9,8 @@ const ORDERS_API = {
 
 /** Mirrors `shared/types/order.ts`'s `OrderStatusSchema` (glossary.md — Cart & Order state machine). */
 export type StorefrontOrderStatus = 'PENDING' | 'PROCESSING' | 'PACKED' | 'SHIPPED' | 'DELIVERED' | 'CANCELLED' | 'RETURN_REQUESTED' | 'RETURNED';
-export type StorefrontPaymentMethod = 'cod' | 'bankTransfer' | 'vnpay' | 'momo' | 'zalopay';
+/** MVP is COD-only, no payment gateway step (Decision #7 — decision-log.md). */
+export type StorefrontPaymentMethod = 'cod';
 export type StorefrontPaymentStatus = 'pending' | 'paid' | 'failed' | 'refunded';
 
 export interface StorefrontOrderItem {
@@ -46,11 +47,15 @@ export interface CreateOrderPayload {
   city: string;
   district: string;
   ward: string;
-  shippingMethod: StorefrontPaymentMethod | 'standard' | 'express';
+  shippingMethod: 'standard' | 'express';
   paymentMethod: StorefrontPaymentMethod;
   note?: string;
   voucherCode?: string;
   items: Array<{ variantId: string; quantity: number }>;
+  /** The Reservation created when Checkout started (glossary.md — Reservation) — the backend commits *this* reservation's stock, it doesn't re-derive from `items`. */
+  reservationId: string;
+  /** Idempotency key: the same key retried (double-click, reload, network retry) replays the original order instead of creating a duplicate. */
+  requestKey: string;
 }
 
 export async function getOrders(): Promise<StorefrontOrder[]> {

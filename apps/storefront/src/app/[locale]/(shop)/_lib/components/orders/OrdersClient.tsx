@@ -6,14 +6,24 @@ import { formatCurrency } from '@repo/shared/utils';
 import { useLocale } from 'next-intl';
 
 import { OrderStatusBadge } from '@/app/[locale]/(shop)/_lib/components/common/OrderStatusBadge';
-import type { Order } from '@/shared/types/order';
+import { useOrders } from '@/app/[locale]/(shop)/_lib/hooks/orders/useOrders';
 
-interface OrdersClientProps {
-  readonly orders: Order[];
-}
-
-export function OrdersClient({ orders }: OrdersClientProps): React.JSX.Element {
+/**
+ * Fetches client-side via `useOrders()` rather than taking a server-fetched prop — the mock auth token
+ * only ever lives in browser memory (Decision #90), so a server-side fetch here would always 401/empty
+ * regardless of whether the customer is actually signed in.
+ */
+export function OrdersClient(): React.JSX.Element {
   const locale = useLocale();
+  const { data: orders, isLoading, isError } = useOrders();
+
+  if (isLoading) {
+    return <p className="text-muted-foreground text-center">Đang tải...</p>;
+  }
+
+  if (isError || orders === undefined) {
+    return <p className="text-muted-foreground text-center">Đã có lỗi xảy ra khi tải đơn hàng. Vui lòng thử lại.</p>;
+  }
 
   if (orders.length === 0) {
     return <p className="text-muted-foreground text-center">Bạn chưa có đơn hàng nào.</p>;

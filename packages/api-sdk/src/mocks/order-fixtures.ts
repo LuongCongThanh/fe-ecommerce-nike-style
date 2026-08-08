@@ -75,7 +75,13 @@ const seedOrders: MockOrder[] = persisted?.orders ?? [
   },
 ];
 
-const orders = new Map<number, MockOrder>(seedOrders.map((o) => [o.id, o]));
+let orders = new Map<number, MockOrder>(seedOrders.map((o) => [o.id, o]));
+let nextOrderId = Math.max(0, ...seedOrders.map((o) => o.id)) + 1;
+
+// Idempotency (issue #16): the same `requestKey` retried (double-click, reload, network retry) replays
+// the order it already created instead of placing a second one. In-memory only — a retry racing a full
+// page reload is out of scope for the mock.
+const orderIdByRequestKey = new Map<string, number>();
 
 function persist(): void {
   if (!hasSessionStorage()) return;
@@ -101,4 +107,28 @@ export function getAccountOrder(userId: number, orderId: number): StorefrontOrde
 export function addAccountOrder(userId: number, order: StorefrontOrder): void {
   orders.set(order.id, { ...order, userId });
   persist();
+}
+
+export function allocateOrderId(): number {
+  const id = nextOrderId;
+  nextOrderId += 1;
+  return id;
+}
+
+/** Replays the order already created for `requestKey`, if any — the idempotency check for Place Order. */
+export function getOrderByRequestKey(userId: number, requestKey: string): StorefrontOrder | undefined {
+  const orderId = orderIdByRequestKey.get(requestKey);
+  return orderId === undefined ? undefined : getAccountOrder(userId, orderId);
+}
+
+export function recordRequestKey(requestKey: string, orderId: number): void {
+  orderIdByRequestKey.set(requestKey, orderId);
+}
+
+/** Test-only — resets the mock "DB" (orders + idempotency keys + id counter) back to its seed state between FE-INT tests. */
+export function resetMockOrderDbForTesting(): void {
+  orders = new Map<number, MockOrder>(seedOrders.map((o) => [o.id, { ...o }]));
+  nextOrderId = Math.max(0, ...seedOrders.map((o) => o.id)) + 1;
+  orderIdByRequestKey.clear();
+  if (hasSessionStorage()) sessionStorage.removeItem(STORAGE_KEY);
 }

@@ -10,6 +10,7 @@ import { useLocale, useTranslations } from 'next-intl';
 import { useFormContext } from 'react-hook-form';
 
 import { useCreateOrder } from '@/app/[locale]/(shop)/_lib/hooks/checkout/useCreateOrder';
+import { useReservation } from '@/app/[locale]/(shop)/_lib/hooks/checkout/useReservation';
 import { useCart } from '@/app/[locale]/(shop)/_lib/hooks/useCart';
 import type { CheckoutInput } from '@/app/[locale]/(shop)/_lib/schemas/checkout';
 import { SHIPPING_FEE_BY_METHOD } from '@/app/[locale]/(shop)/_lib/schemas/checkout';
@@ -20,14 +21,18 @@ export function CheckoutClient() {
   const t = useTranslations('checkout');
   const locale = useLocale();
   const router = useRouter();
-  const { items } = useCart();
-  const createOrder = useCreateOrder(locale);
+  const { items, itemCount, isHydrated } = useCart();
+  const reservation = useReservation(items);
+  const createOrder = useCreateOrder(locale, reservation.reservationId);
 
+  // Gated on `isHydrated` — both `items` (live-resolved via an async query) and the persisted
+  // `itemCount` start out empty on every fresh mount, which made this redirect fire immediately even
+  // for a cart that genuinely has items, before localStorage had a chance to load (issue #16).
   useEffect(() => {
-    if (items.length === 0) {
+    if (isHydrated && itemCount === 0) {
       router.replace(`/${locale}/cart`);
     }
-  }, [items, router, locale]);
+  }, [isHydrated, itemCount, router, locale]);
 
   const {
     register,
@@ -117,23 +122,20 @@ export function CheckoutClient() {
 
         <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.2 }} className="border-b pb-8">
           <h2 className="mb-4 text-lg font-semibold">{t('paymentMethod')}</h2>
-          <div className="space-y-4">
-            <label className="has-checked:border-foreground has-checked:bg-muted hover:bg-muted/50 flex cursor-pointer items-center gap-3 rounded-lg border p-4 transition-colors">
-              <input type="radio" value="cod" {...register('paymentMethod')} className="accent-primary size-4" />
-              <p className="font-medium">{t('cod')}</p>
-            </label>
-            <label className="has-checked:border-foreground has-checked:bg-muted hover:bg-muted/50 flex cursor-pointer items-center gap-3 rounded-lg border p-4 transition-colors">
-              <input type="radio" value="bankTransfer" {...register('paymentMethod')} className="accent-primary size-4" />
-              <p className="font-medium">{t('bankTransfer')}</p>
-            </label>
+          {/* MVP is COD-only, no payment gateway step (Decision #7) — nothing to choose between. */}
+          <input type="hidden" value="cod" {...register('paymentMethod')} />
+          <div className="bg-muted/50 flex items-center gap-3 rounded-lg border p-4">
+            <p className="font-medium">{t('cod')}</p>
           </div>
         </motion.div>
       </div>
 
+      {reservation.error !== null && <p className="text-error-500 text-center text-sm">{reservation.error}</p>}
+
       <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.3 }} className="flex flex-col items-center gap-4 pt-4">
         <button
           type="submit"
-          disabled={createOrder.isPending}
+          disabled={createOrder.isPending || reservation.isPending || reservation.reservationId === null}
           className="bg-primary text-primary-foreground hover:bg-primary/90 h-12 w-full rounded-lg text-base font-semibold transition-colors disabled:opacity-50"
         >
           {createOrder.isPending ? '...' : t('placeOrder')}
