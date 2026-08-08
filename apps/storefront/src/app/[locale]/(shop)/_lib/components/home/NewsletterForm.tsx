@@ -38,6 +38,7 @@ export function NewsletterForm({ title, description, submitLabel = 'Đăng ký',
         <input
           aria-label="Địa chỉ email"
           type="email"
+          autoComplete="email"
           required
           value={email}
           onChange={(e) => {

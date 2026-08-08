@@ -58,6 +58,7 @@ export function CheckoutClient() {
             </label>
             <Input
               id="fullName"
+              autoComplete="name"
               {...register('fullName')}
               placeholder="Nguyễn Văn A"
               state={errors.fullName !== undefined ? 'error' : 'default'}
@@ -75,6 +76,7 @@ export function CheckoutClient() {
             </label>
             <Input
               id="phoneNumber"
+              autoComplete="tel"
               {...register('phoneNumber')}
               placeholder="0901234567"
               state={errors.phoneNumber !== undefined ? 'error' : 'default'}
@@ -92,6 +94,7 @@ export function CheckoutClient() {
             </label>
             <Input
               id="address"
+              autoComplete="street-address"
               {...register('address')}
               placeholder="123 Đường ABC..."
               state={errors.address !== undefined ? 'error' : 'default'}

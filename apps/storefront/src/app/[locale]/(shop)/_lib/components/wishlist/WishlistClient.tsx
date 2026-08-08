@@ -97,7 +97,7 @@ export function WishlistClient({ locale }: WishlistClientProps) {
                   handleMoveToCart(product);
                 }}
               >
-                <ShoppingCart className="size-4" />
+                <ShoppingCart className="size-4" data-icon="inline-start" />
                 Thêm vào giỏ
               </Button>
               <Button

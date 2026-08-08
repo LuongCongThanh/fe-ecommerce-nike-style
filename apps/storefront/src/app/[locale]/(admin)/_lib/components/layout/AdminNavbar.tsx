@@ -12,7 +12,7 @@ export function AdminNavbar(): React.JSX.Element {
     <header className="flex h-16 items-center justify-between border-b px-6">
       <span className="text-muted-foreground text-sm">Xin chào, {user?.firstName ?? 'Admin'}</span>
       <Button variant="ghost" size="sm" onClick={logout}>
-        <LogOut className="size-4" />
+        <LogOut className="size-4" data-icon="inline-start" />
         Đăng xuất
       </Button>
     </header>

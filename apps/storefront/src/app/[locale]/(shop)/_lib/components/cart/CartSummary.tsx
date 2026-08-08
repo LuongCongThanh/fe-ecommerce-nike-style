@@ -47,13 +47,13 @@ export function CartSummary({ locale }: CartSummaryProps) {
       {isEmpty ? (
         <Button className="mt-6 h-12 w-full text-base font-semibold" disabled>
           Tiến hành thanh toán
-          <ArrowRight className="ml-2 size-4" />
+          <ArrowRight className="ml-2 size-4" data-icon="inline-end" />
         </Button>
       ) : (
         <Button asChild className="mt-6 h-12 w-full text-base font-semibold">
           <Link href={`/${locale}/checkout`}>
             Tiến hành thanh toán
-            <ArrowRight className="ml-2 size-4" />
+            <ArrowRight className="ml-2 size-4" data-icon="inline-end" />
           </Link>
         </Button>
       )}

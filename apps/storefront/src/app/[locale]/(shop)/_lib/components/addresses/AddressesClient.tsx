@@ -47,6 +47,7 @@ function AddressForm({ initial, id, onDone }: { readonly initial: AddressFormInp
         <Label htmlFor="fullName">Họ tên người nhận</Label>
         <Input
           id="fullName"
+          autoComplete="name"
           aria-invalid={errors.fullName != null}
           aria-describedby={errors.fullName != null ? 'fullName-error' : undefined}
           {...register('fullName')}
@@ -62,6 +63,7 @@ function AddressForm({ initial, id, onDone }: { readonly initial: AddressFormInp
         <Input
           id="phone"
           placeholder="0912345678"
+          autoComplete="tel"
           aria-invalid={errors.phone != null}
           aria-describedby={errors.phone != null ? 'phone-error' : undefined}
           {...register('phone')}
@@ -264,7 +266,7 @@ export function AddressesClient(): React.JSX.Element {
             setIsAdding(true);
           }}
         >
-          <Plus className="size-4" />
+          <Plus className="size-4" data-icon="inline-start" />
           Thêm địa chỉ mới
         </Button>
       )}

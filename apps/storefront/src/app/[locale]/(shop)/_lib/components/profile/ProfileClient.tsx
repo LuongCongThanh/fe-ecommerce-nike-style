@@ -42,18 +42,18 @@ export function ProfileClient(): React.JSX.Element {
       <div className="grid grid-cols-2 gap-3">
         <div>
           <Label htmlFor="lastName">Họ</Label>
-          <Input id="lastName" {...register('lastName')} />
+          <Input id="lastName" autoComplete="family-name" {...register('lastName')} />
           {errors.lastName != null ? <p className="text-destructive mt-1 text-sm">{errors.lastName.message}</p> : null}
         </div>
         <div>
           <Label htmlFor="firstName">Tên</Label>
-          <Input id="firstName" {...register('firstName')} />
+          <Input id="firstName" autoComplete="given-name" {...register('firstName')} />
           {errors.firstName != null ? <p className="text-destructive mt-1 text-sm">{errors.firstName.message}</p> : null}
         </div>
       </div>
       <div>
         <Label htmlFor="phone">Số điện thoại</Label>
-        <Input id="phone" placeholder="0901234567" {...register('phone')} />
+        <Input id="phone" placeholder="0901234567" autoComplete="tel" {...register('phone')} />
       </div>
       <Button type="submit" disabled={updateProfile.isPending}>
         {updateProfile.isPending ? 'Đang lưu...' : 'Lưu thay đổi'}
