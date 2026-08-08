@@ -86,6 +86,7 @@ export function Header() {
               <input
                 autoFocus
                 type="text"
+                aria-label={t('search')}
                 value={searchQuery}
                 onChange={(e) => {
                   setSearchQuery(e.target.value);
@@ -122,8 +123,8 @@ export function Header() {
 
           {isLoggedIn ? (
             <>
-              <Button variant="ghost" size="icon" aria-label="Tài khoản" asChild>
-                <Link href={`/${locale}/account/profile`}>
+              <Button variant="ghost" size="icon" asChild>
+                <Link href={`/${locale}/account/profile`} aria-label="Tài khoản">
                   <User className="size-5" />
                 </Link>
               </Button>
@@ -132,15 +133,15 @@ export function Header() {
               </Button>
             </>
           ) : (
-            <Button variant="ghost" size="icon" aria-label="Đăng nhập" asChild>
-              <Link href={`/${locale}/login`}>
+            <Button variant="ghost" size="icon" asChild>
+              <Link href={`/${locale}/login`} aria-label="Đăng nhập">
                 <User className="size-5" />
               </Link>
             </Button>
           )}
 
-          <Button variant="ghost" size="icon" aria-label="Yêu thích" className="relative" asChild>
-            <Link href={`/${locale}/wishlist`}>
+          <Button variant="ghost" size="icon" className="relative" asChild>
+            <Link href={`/${locale}/wishlist`} aria-label="Yêu thích">
               <Heart className="size-5" />
               {wishlistCount > 0 && (
                 <span className="bg-primary text-primary-foreground absolute -top-0.5 -right-0.5 flex size-4 items-center justify-center rounded-full text-xs font-bold">

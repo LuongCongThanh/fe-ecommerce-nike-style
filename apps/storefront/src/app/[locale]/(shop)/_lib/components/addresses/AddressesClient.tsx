@@ -45,35 +45,91 @@ function AddressForm({ initial, id, onDone }: { readonly initial: AddressFormInp
     >
       <div>
         <Label htmlFor="fullName">Họ tên người nhận</Label>
-        <Input id="fullName" {...register('fullName')} />
-        {errors.fullName != null ? <p className="text-destructive mt-1 text-sm">{errors.fullName.message}</p> : null}
+        <Input
+          id="fullName"
+          aria-invalid={errors.fullName != null}
+          aria-describedby={errors.fullName != null ? 'fullName-error' : undefined}
+          {...register('fullName')}
+        />
+        {errors.fullName != null ? (
+          <p id="fullName-error" role="alert" className="text-destructive mt-1 text-sm">
+            {errors.fullName.message}
+          </p>
+        ) : null}
       </div>
       <div>
         <Label htmlFor="phone">Số điện thoại</Label>
-        <Input id="phone" placeholder="0912345678" {...register('phone')} />
-        {errors.phone != null ? <p className="text-destructive mt-1 text-sm">{errors.phone.message}</p> : null}
+        <Input
+          id="phone"
+          placeholder="0912345678"
+          aria-invalid={errors.phone != null}
+          aria-describedby={errors.phone != null ? 'phone-error' : undefined}
+          {...register('phone')}
+        />
+        {errors.phone != null ? (
+          <p id="phone-error" role="alert" className="text-destructive mt-1 text-sm">
+            {errors.phone.message}
+          </p>
+        ) : null}
       </div>
       <div className="grid grid-cols-1 gap-3 sm:grid-cols-3">
         <div>
           <Label htmlFor="province">Tỉnh/Thành phố</Label>
-          <Input id="province" {...register('province')} />
-          {errors.province != null ? <p className="text-destructive mt-1 text-sm">{errors.province.message}</p> : null}
+          <Input
+            id="province"
+            aria-invalid={errors.province != null}
+            aria-describedby={errors.province != null ? 'province-error' : undefined}
+            {...register('province')}
+          />
+          {errors.province != null ? (
+            <p id="province-error" role="alert" className="text-destructive mt-1 text-sm">
+              {errors.province.message}
+            </p>
+          ) : null}
         </div>
         <div>
           <Label htmlFor="district">Quận/Huyện</Label>
-          <Input id="district" {...register('district')} />
-          {errors.district != null ? <p className="text-destructive mt-1 text-sm">{errors.district.message}</p> : null}
+          <Input
+            id="district"
+            aria-invalid={errors.district != null}
+            aria-describedby={errors.district != null ? 'district-error' : undefined}
+            {...register('district')}
+          />
+          {errors.district != null ? (
+            <p id="district-error" role="alert" className="text-destructive mt-1 text-sm">
+              {errors.district.message}
+            </p>
+          ) : null}
         </div>
         <div>
           <Label htmlFor="ward">Phường/Xã</Label>
-          <Input id="ward" {...register('ward')} />
-          {errors.ward != null ? <p className="text-destructive mt-1 text-sm">{errors.ward.message}</p> : null}
+          <Input
+            id="ward"
+            aria-invalid={errors.ward != null}
+            aria-describedby={errors.ward != null ? 'ward-error' : undefined}
+            {...register('ward')}
+          />
+          {errors.ward != null ? (
+            <p id="ward-error" role="alert" className="text-destructive mt-1 text-sm">
+              {errors.ward.message}
+            </p>
+          ) : null}
         </div>
       </div>
       <div>
         <Label htmlFor="detail">Địa chỉ chi tiết</Label>
-        <Input id="detail" placeholder="Số nhà, tên đường..." {...register('detail')} />
-        {errors.detail != null ? <p className="text-destructive mt-1 text-sm">{errors.detail.message}</p> : null}
+        <Input
+          id="detail"
+          placeholder="Số nhà, tên đường..."
+          aria-invalid={errors.detail != null}
+          aria-describedby={errors.detail != null ? 'detail-error' : undefined}
+          {...register('detail')}
+        />
+        {errors.detail != null ? (
+          <p id="detail-error" role="alert" className="text-destructive mt-1 text-sm">
+            {errors.detail.message}
+          </p>
+        ) : null}
       </div>
       <Controller
         control={control}

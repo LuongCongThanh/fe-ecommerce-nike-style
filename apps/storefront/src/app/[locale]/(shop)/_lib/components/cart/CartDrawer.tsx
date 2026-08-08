@@ -120,15 +120,13 @@ export function CartDrawer({ children }: CartDrawerProps) {
             </div>
             <div className="grid grid-cols-2 gap-3">
               <SheetTrigger asChild>
-                <Link href={`/${locale}/cart`}>
-                  <Button variant="outline" className="w-full">
-                    Xem giỏ hàng
-                  </Button>
-                </Link>
+                <Button variant="outline" className="w-full" asChild>
+                  <Link href={`/${locale}/cart`}>Xem giỏ hàng</Link>
+                </Button>
               </SheetTrigger>
-              <Link href={`/${locale}/checkout`}>
-                <Button className="w-full">Thanh toán</Button>
-              </Link>
+              <Button className="w-full" asChild>
+                <Link href={`/${locale}/checkout`}>Thanh toán</Link>
+              </Button>
             </div>
           </div>
         )}

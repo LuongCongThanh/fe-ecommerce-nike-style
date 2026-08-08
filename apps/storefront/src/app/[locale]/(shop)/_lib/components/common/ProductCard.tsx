@@ -68,69 +68,70 @@ export function ProductCard({
   const { isWishlisted, toggle: toggleWishlist } = useIsWishlisted(String(id));
 
   return (
-    <Link
-      href={`/${locale}/products/${slug}`}
-      className="group focus-visible:ring-ring block rounded-xl outline-none focus-visible:ring-2 focus-visible:ring-offset-2"
-      data-product-id={String(id)}
-    >
-      <div className="bg-card group-hover:border-foreground/30 overflow-hidden rounded-xl border shadow-sm transition-[box-shadow,border-color] duration-(--duration-normal) ease-out group-hover:shadow-md">
-        {/* Image */}
-        <div className="bg-muted relative aspect-[4/5] overflow-hidden">
-          <Image
-            src={coverImage}
-            alt={name}
-            fill
-            className="object-cover transition-transform duration-(--duration-normal) ease-out group-hover:-translate-y-0.5"
-            sizes="(max-width: 768px) 50vw, 25vw"
-          />
-          <button
-            type="button"
-            aria-label={isWishlisted ? 'Bỏ khỏi yêu thích' : 'Thêm vào yêu thích'}
-            aria-pressed={isWishlisted}
-            onClick={(e) => {
-              e.preventDefault();
-              e.stopPropagation();
-              toggleWishlist();
-            }}
-            className="bg-background/80 hover:bg-background absolute top-3 right-3 flex size-8 items-center justify-center rounded-full backdrop-blur-sm transition-colors"
-          >
-            <Heart className={isWishlisted ? 'text-accent-600 fill-accent-600 size-4' : 'text-foreground size-4'} />
-          </button>
-          {badges != null && badges.length > 0 ? (
-            <div className="absolute top-3 left-3 flex flex-wrap gap-1.5">
-              {badges.map((badge) => (
-                <Badge key={badge} variant={BADGE_VARIANTS[badge]} className="px-2.5 py-0.5 text-[10px] font-bold tracking-wider uppercase">
-                  {resolvedBadgeLabels[badge]}
-                </Badge>
-              ))}
-            </div>
-          ) : null}
-        </div>
-
-        {/* Content */}
-        <div className="flex flex-col gap-2 p-4">
-          <p className="text-foreground line-clamp-2 text-sm leading-tight font-medium">{name}</p>
-
-          {/* Price */}
-          <div className="flex flex-wrap items-baseline gap-2">
-            <span className="text-brand-600 text-lg font-bold tabular-nums">
-              {isPriceRange ? <span className="text-muted-foreground mr-1 text-xs font-normal normal-case">Từ</span> : null}
-              {formatCurrency(displayPrice)}
-            </span>
-            {hasDiscount ? <span className="text-muted-foreground text-xs tabular-nums line-through">{formatCurrency(price)}</span> : null}
+    <div className="group relative">
+      <Link
+        href={`/${locale}/products/${slug}`}
+        className="focus-visible:ring-ring block rounded-xl outline-none focus-visible:ring-2 focus-visible:ring-offset-2"
+        data-product-id={String(id)}
+      >
+        <div className="bg-card group-hover:border-foreground/30 overflow-hidden rounded-xl border shadow-sm transition-[box-shadow,border-color] duration-(--duration-normal) ease-out group-hover:shadow-md">
+          {/* Image */}
+          <div className="bg-muted relative aspect-[4/5] overflow-hidden">
+            <Image
+              src={coverImage}
+              alt={name}
+              fill
+              className="object-cover transition-transform duration-(--duration-normal) ease-out group-hover:-translate-y-0.5"
+              sizes="(max-width: 768px) 50vw, 25vw"
+            />
+            {badges != null && badges.length > 0 ? (
+              <div className="absolute top-3 left-3 flex flex-wrap gap-1.5">
+                {badges.map((badge) => (
+                  <Badge key={badge} variant={BADGE_VARIANTS[badge]} className="px-2.5 py-0.5 text-[10px] font-bold tracking-wider uppercase">
+                    {resolvedBadgeLabels[badge]}
+                  </Badge>
+                ))}
+              </div>
+            ) : null}
           </div>
 
-          {rating != null ? (
-            <div className="mt-1 flex items-center gap-1 border-t pt-3">
-              <Star className="size-3 fill-amber-400 text-amber-400" />
-              <span className="text-foreground text-xs font-bold tabular-nums">{rating.toFixed(1)}</span>
-              {reviewCount != null && reviewCount > 0 ? (
-                <span className="text-muted-foreground text-[10px] tabular-nums">({reviewCount})</span>
-              ) : null}
+          {/* Content */}
+          <div className="flex flex-col gap-2 p-4">
+            <p className="text-foreground line-clamp-2 text-sm leading-tight font-medium">{name}</p>
+
+            {/* Price */}
+            <div className="flex flex-wrap items-baseline gap-2">
+              <span className="text-brand-600 text-lg font-bold tabular-nums">
+                {isPriceRange ? <span className="text-muted-foreground mr-1 text-xs font-normal normal-case">Từ</span> : null}
+                {formatCurrency(displayPrice)}
+              </span>
+              {hasDiscount ? <span className="text-muted-foreground text-xs tabular-nums line-through">{formatCurrency(price)}</span> : null}
             </div>
-          ) : null}
+
+            {rating != null ? (
+              <div className="mt-1 flex items-center gap-1 border-t pt-3">
+                <Star className="size-3 fill-amber-400 text-amber-400" />
+                <span className="text-foreground text-xs font-bold tabular-nums">{rating.toFixed(1)}</span>
+                {reviewCount != null && reviewCount > 0 ? (
+                  <span className="text-muted-foreground text-[10px] tabular-nums">({reviewCount})</span>
+                ) : null}
+              </div>
+            ) : null}
+          </div>
         </div>
-      </div>
-    </Link>
+      </Link>
+
+      <button
+        type="button"
+        aria-label={isWishlisted ? 'Bỏ khỏi yêu thích' : 'Thêm vào yêu thích'}
+        aria-pressed={isWishlisted}
+        onClick={() => {
+          toggleWishlist();
+        }}
+        className="bg-background/80 hover:bg-background absolute top-3 right-3 flex size-8 items-center justify-center rounded-full backdrop-blur-sm transition-colors"
+      >
+        <Heart className={isWishlisted ? 'text-accent-600 fill-accent-600 size-4' : 'text-foreground size-4'} />
+      </button>
+    </div>
   );
 }

@@ -10,12 +10,22 @@ import type { ComponentProps } from 'react';
 
 type PasswordInputProps = ComponentProps<typeof Input>;
 
-export function PasswordInput({ className, ...props }: PasswordInputProps) {
+export function PasswordInput({ className, id, 'aria-label': ariaLabel, 'aria-labelledby': ariaLabelledBy, ...props }: PasswordInputProps) {
   const [visible, setVisible] = useState(false);
+  // FormControl (shadcn Form) wires `id` to a FormLabel via Slot when this is used inside a form field.
+  // Fall back to a default label so the input also has an accessible name when used standalone.
+  const hasExternalLabel = id !== undefined || ariaLabel !== undefined || ariaLabelledBy !== undefined;
 
   return (
     <div className="relative">
-      <Input {...props} type={visible ? 'text' : 'password'} className={cn('pr-10', className)} />
+      <Input
+        {...props}
+        id={id}
+        aria-label={hasExternalLabel ? ariaLabel : 'Mật khẩu'}
+        aria-labelledby={ariaLabelledBy}
+        type={visible ? 'text' : 'password'}
+        className={cn('pr-10', className)}
+      />
       <Button
         type="button"
         variant="ghost"
