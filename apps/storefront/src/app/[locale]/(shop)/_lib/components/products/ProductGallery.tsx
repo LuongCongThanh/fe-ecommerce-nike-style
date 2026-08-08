@@ -28,7 +28,7 @@ export function ProductGallery({ images, name }: ProductGalleryProps) {
   return (
     <div className="flex flex-col gap-4 lg:flex-row">
       {/* Main image */}
-      <div className="bg-muted group relative aspect-square w-full overflow-hidden rounded-xl lg:flex-1">
+      <div className="bg-muted group relative aspect-[4/5] w-full overflow-hidden rounded-xl lg:flex-1">
         <AnimatePresence mode="wait">
           <motion.div
             key={selected}

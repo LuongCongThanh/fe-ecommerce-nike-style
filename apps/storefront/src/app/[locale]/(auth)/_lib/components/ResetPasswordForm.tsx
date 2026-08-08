@@ -6,13 +6,13 @@ import { useRouter } from 'next/navigation';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { Button } from '@repo/ui/button';
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '@repo/ui/form';
-import { Input } from '@repo/ui/input';
 import { Loader2 } from 'lucide-react';
 import { useLocale } from 'next-intl';
 import { useForm } from 'react-hook-form';
 
 import { resetPasswordAction } from '@/app/[locale]/(auth)/_lib/api/auth';
 import { ApiErrorAlert } from '@/app/[locale]/(auth)/_lib/components/ApiErrorAlert';
+import { PasswordInput } from '@/app/[locale]/(auth)/_lib/components/PasswordInput';
 import { useApiErrorMessage } from '@/app/[locale]/(auth)/_lib/hooks/useApiErrorMessage';
 import type { ResetPasswordFormInput } from '@/app/[locale]/(auth)/_lib/schemas/auth';
 import { ResetPasswordFormSchema } from '@/app/[locale]/(auth)/_lib/schemas/auth';
@@ -56,7 +56,7 @@ export function ResetPasswordForm({ token, uid }: ResetPasswordFormProps) {
             <FormItem>
               <FormLabel>Mật khẩu mới</FormLabel>
               <FormControl>
-                <Input type="password" placeholder="Tối thiểu 8 ký tự" autoComplete="new-password" {...field} />
+                <PasswordInput placeholder="Tối thiểu 8 ký tự" autoComplete="new-password" {...field} />
               </FormControl>
               <FormMessage />
             </FormItem>
@@ -70,7 +70,7 @@ export function ResetPasswordForm({ token, uid }: ResetPasswordFormProps) {
             <FormItem>
               <FormLabel>Xác nhận mật khẩu mới</FormLabel>
               <FormControl>
-                <Input type="password" placeholder="Nhập lại mật khẩu mới" autoComplete="new-password" {...field} />
+                <PasswordInput placeholder="Nhập lại mật khẩu mới" autoComplete="new-password" {...field} />
               </FormControl>
               <FormMessage />
             </FormItem>

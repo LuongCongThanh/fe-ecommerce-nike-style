@@ -75,7 +75,7 @@ export function ProductCard({
     >
       <div className="bg-card group-hover:border-foreground/30 overflow-hidden rounded-xl border shadow-sm transition-[box-shadow,border-color] duration-(--duration-normal) ease-out group-hover:shadow-md">
         {/* Image */}
-        <div className="bg-muted relative aspect-square overflow-hidden">
+        <div className="bg-muted relative aspect-[4/5] overflow-hidden">
           <Image
             src={coverImage}
             alt={name}
@@ -94,7 +94,7 @@ export function ProductCard({
             }}
             className="bg-background/80 hover:bg-background absolute top-3 right-3 flex size-8 items-center justify-center rounded-full backdrop-blur-sm transition-colors"
           >
-            <Heart className={isWishlisted ? 'text-brand-600 fill-brand-600 size-4' : 'text-foreground size-4'} />
+            <Heart className={isWishlisted ? 'text-accent-600 fill-accent-600 size-4' : 'text-foreground size-4'} />
           </button>
           {badges != null && badges.length > 0 ? (
             <div className="absolute top-3 left-3 flex flex-wrap gap-1.5">

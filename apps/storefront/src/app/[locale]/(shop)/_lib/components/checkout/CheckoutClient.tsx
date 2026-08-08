@@ -4,8 +4,10 @@ import { useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 
 import { formatCurrency } from '@repo/shared/utils';
+import { Button } from '@repo/ui/button';
 import { Input } from '@repo/ui/input';
 import { motion } from 'framer-motion';
+import { Loader2 } from 'lucide-react';
 import { useLocale, useTranslations } from 'next-intl';
 import { useFormContext } from 'react-hook-form';
 
@@ -54,40 +56,100 @@ export function CheckoutClient() {
             <label htmlFor="fullName" className="text-sm font-medium">
               {t('fullName')}
             </label>
-            <Input id="fullName" {...register('fullName')} placeholder="Nguyễn Văn A" />
-            {errors.fullName !== undefined && <p className="text-error-500 text-xs">{t(`errors.${errors.fullName.message ?? 'required'}`)}</p>}
+            <Input
+              id="fullName"
+              {...register('fullName')}
+              placeholder="Nguyễn Văn A"
+              state={errors.fullName !== undefined ? 'error' : 'default'}
+              aria-describedby={errors.fullName !== undefined ? 'fullName-error' : undefined}
+            />
+            {errors.fullName !== undefined && (
+              <p id="fullName-error" className="text-error-500 text-xs">
+                {t(`errors.${errors.fullName.message ?? 'required'}`)}
+              </p>
+            )}
           </div>
           <div className="space-y-2">
             <label htmlFor="phoneNumber" className="text-sm font-medium">
               {t('phoneNumber')}
             </label>
-            <Input id="phoneNumber" {...register('phoneNumber')} placeholder="0901234567" />
-            {errors.phoneNumber !== undefined && <p className="text-error-500 text-xs">{t(`errors.${errors.phoneNumber.message ?? 'required'}`)}</p>}
+            <Input
+              id="phoneNumber"
+              {...register('phoneNumber')}
+              placeholder="0901234567"
+              state={errors.phoneNumber !== undefined ? 'error' : 'default'}
+              aria-describedby={errors.phoneNumber !== undefined ? 'phoneNumber-error' : undefined}
+            />
+            {errors.phoneNumber !== undefined && (
+              <p id="phoneNumber-error" className="text-error-500 text-xs">
+                {t(`errors.${errors.phoneNumber.message ?? 'required'}`)}
+              </p>
+            )}
           </div>
           <div className="col-span-full space-y-2">
             <label htmlFor="address" className="text-sm font-medium">
               {t('address')}
             </label>
-            <Input id="address" {...register('address')} placeholder="123 Đường ABC..." />
-            {errors.address !== undefined && <p className="text-error-500 text-xs">{t(`errors.${errors.address.message ?? 'required'}`)}</p>}
+            <Input
+              id="address"
+              {...register('address')}
+              placeholder="123 Đường ABC..."
+              state={errors.address !== undefined ? 'error' : 'default'}
+              aria-describedby={errors.address !== undefined ? 'address-error' : undefined}
+            />
+            {errors.address !== undefined && (
+              <p id="address-error" className="text-error-500 text-xs">
+                {t(`errors.${errors.address.message ?? 'required'}`)}
+              </p>
+            )}
           </div>
           <div className="space-y-2">
             <label htmlFor="city" className="text-sm font-medium">
               {t('city')}
             </label>
-            <Input id="city" {...register('city')} />
+            <Input
+              id="city"
+              {...register('city')}
+              state={errors.city !== undefined ? 'error' : 'default'}
+              aria-describedby={errors.city !== undefined ? 'city-error' : undefined}
+            />
+            {errors.city !== undefined && (
+              <p id="city-error" className="text-error-500 text-xs">
+                {t(`errors.${errors.city.message ?? 'required'}`)}
+              </p>
+            )}
           </div>
           <div className="space-y-2">
             <label htmlFor="district" className="text-sm font-medium">
               {t('district')}
             </label>
-            <Input id="district" {...register('district')} />
+            <Input
+              id="district"
+              {...register('district')}
+              state={errors.district !== undefined ? 'error' : 'default'}
+              aria-describedby={errors.district !== undefined ? 'district-error' : undefined}
+            />
+            {errors.district !== undefined && (
+              <p id="district-error" className="text-error-500 text-xs">
+                {t(`errors.${errors.district.message ?? 'required'}`)}
+              </p>
+            )}
           </div>
           <div className="space-y-2">
             <label htmlFor="ward" className="text-sm font-medium">
               {t('ward')}
             </label>
-            <Input id="ward" {...register('ward')} />
+            <Input
+              id="ward"
+              {...register('ward')}
+              state={errors.ward !== undefined ? 'error' : 'default'}
+              aria-describedby={errors.ward !== undefined ? 'ward-error' : undefined}
+            />
+            {errors.ward !== undefined && (
+              <p id="ward-error" className="text-error-500 text-xs">
+                {t(`errors.${errors.ward.message ?? 'required'}`)}
+              </p>
+            )}
           </div>
         </div>
       </motion.div>
@@ -133,13 +195,16 @@ export function CheckoutClient() {
       {reservation.error !== null && <p className="text-error-500 text-center text-sm">{reservation.error}</p>}
 
       <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.3 }} className="flex flex-col items-center gap-4 pt-4">
-        <button
+        <Button
           type="submit"
-          disabled={createOrder.isPending || reservation.isPending || reservation.reservationId === null}
-          className="bg-primary text-primary-foreground hover:bg-primary/90 h-12 w-full rounded-lg text-base font-semibold transition-colors disabled:opacity-50"
+          size="lg"
+          loading={createOrder.isPending}
+          disabled={reservation.isPending || reservation.reservationId === null}
+          className="h-12 w-full text-base"
         >
-          {createOrder.isPending ? '...' : t('placeOrder')}
-        </button>
+          {createOrder.isPending ? <Loader2 className="mr-2 size-4 animate-spin" /> : null}
+          {t('placeOrder')}
+        </Button>
         <p className="text-muted-foreground text-center text-xs">{t('placeOrderDesc')}</p>
       </motion.div>
     </form>

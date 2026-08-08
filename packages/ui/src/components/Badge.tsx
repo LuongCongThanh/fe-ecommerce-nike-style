@@ -19,6 +19,7 @@ const badgeVariants = cva(
         link: 'text-primary underline-offset-4 [a&]:hover:underline',
         warning: 'bg-warning-50 text-warning-700',
         info: 'bg-info-50 text-info-700',
+        success: 'bg-success-50 text-success-700',
         brand: 'bg-brand-50 text-brand-700',
       },
     },

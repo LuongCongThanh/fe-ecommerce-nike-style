@@ -74,7 +74,7 @@ export function DesktopMegaMenu({ locale }: DesktopMegaMenuProps) {
             animate={{ opacity: 1, y: 0, scale: 1 }}
             exit={{ opacity: 0, y: 5, scale: 0.98 }}
             transition={{ duration: 0.2, ease: [0.16, 1, 0.3, 1] }}
-            className="bg-popover absolute top-full -left-16 z-(--z-dropdown) mt-2 w-150 overflow-hidden rounded-xl border shadow-md"
+            className="bg-popover absolute top-full -left-16 z-(--z-index-dropdown) mt-2 w-150 overflow-hidden rounded-xl border shadow-md"
           >
             <div className="flex h-90">
               {/* Left Column: Categories */}

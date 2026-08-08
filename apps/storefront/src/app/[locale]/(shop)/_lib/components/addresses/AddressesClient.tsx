@@ -12,6 +12,7 @@ import { Label } from '@repo/ui/label';
 import { Plus } from 'lucide-react';
 import { Controller, useForm } from 'react-hook-form';
 
+import { ConfirmDialog } from '@/app/[locale]/(shop)/_lib/components/common/ConfirmDialog';
 import { useAddresses } from '@/app/[locale]/(shop)/_lib/hooks/addresses/useAddresses';
 import { useDeleteAddress } from '@/app/[locale]/(shop)/_lib/hooks/addresses/useDeleteAddress';
 import { useSaveAddress } from '@/app/[locale]/(shop)/_lib/hooks/addresses/useSaveAddress';
@@ -52,7 +53,7 @@ function AddressForm({ initial, id, onDone }: { readonly initial: AddressFormInp
         <Input id="phone" placeholder="0912345678" {...register('phone')} />
         {errors.phone != null ? <p className="text-destructive mt-1 text-sm">{errors.phone.message}</p> : null}
       </div>
-      <div className="grid grid-cols-3 gap-3">
+      <div className="grid grid-cols-1 gap-3 sm:grid-cols-3">
         <div>
           <Label htmlFor="province">Tỉnh/Thành phố</Label>
           <Input id="province" {...register('province')} />
@@ -139,7 +140,6 @@ function AddressCard({ address }: { readonly address: StorefrontAddress }) {
       </p>
       <div className="flex flex-wrap gap-2 pt-1">
         <Button
-          size="sm"
           variant="outline"
           onClick={() => {
             setEditing(true);
@@ -149,7 +149,6 @@ function AddressCard({ address }: { readonly address: StorefrontAddress }) {
         </Button>
         {!address.isDefault && (
           <Button
-            size="sm"
             variant="outline"
             disabled={setDefaultAddress.isPending}
             onClick={() => {
@@ -159,16 +158,20 @@ function AddressCard({ address }: { readonly address: StorefrontAddress }) {
             Đặt làm mặc định
           </Button>
         )}
-        <Button
-          size="sm"
-          variant="outline"
-          disabled={deleteAddress.isPending}
-          onClick={() => {
+        <ConfirmDialog
+          trigger={
+            <Button variant="outline" disabled={deleteAddress.isPending}>
+              Xoá
+            </Button>
+          }
+          title="Xoá địa chỉ này?"
+          description="Địa chỉ sẽ bị xoá vĩnh viễn và không thể khôi phục."
+          confirmLabel="Xoá"
+          onConfirm={() => {
             deleteAddress.mutate(address.id);
           }}
-        >
-          Xoá
-        </Button>
+          loading={deleteAddress.isPending}
+        />
       </div>
     </div>
   );

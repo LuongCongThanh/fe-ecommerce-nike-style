@@ -25,6 +25,7 @@ export function PasswordInput({ className, ...props }: PasswordInputProps) {
           setVisible((current) => !current);
         }}
         aria-label={visible ? 'Ẩn mật khẩu' : 'Hiện mật khẩu'}
+        aria-pressed={visible}
       >
         {visible ? <EyeOff className="size-4" /> : <Eye className="size-4" />}
       </Button>

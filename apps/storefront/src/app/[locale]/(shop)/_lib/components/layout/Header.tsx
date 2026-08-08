@@ -48,7 +48,7 @@ export function Header() {
   };
 
   return (
-    <header className="bg-background/95 sticky top-0 z-(--z-header) w-full border-b backdrop-blur-sm">
+    <header className="bg-background/95 sticky top-0 z-(--z-index-sticky) w-full border-b backdrop-blur-sm">
       <div className="mx-auto flex h-16 max-w-7xl items-center justify-between px-4 sm:px-6 lg:px-8">
         {/* Logo */}
         <div className="flex items-center gap-4 md:gap-8">
@@ -143,7 +143,7 @@ export function Header() {
             <Link href={`/${locale}/wishlist`}>
               <Heart className="size-5" />
               {wishlistCount > 0 && (
-                <span className="bg-brand-600 absolute -top-0.5 -right-0.5 flex size-4 items-center justify-center rounded-full text-[10px] font-bold text-white">
+                <span className="bg-primary text-primary-foreground absolute -top-0.5 -right-0.5 flex size-4 items-center justify-center rounded-full text-xs font-bold">
                   {wishlistCount > 99 ? '99+' : wishlistCount}
                 </span>
               )}
@@ -154,7 +154,7 @@ export function Header() {
             <Button variant="ghost" size="icon" aria-label="Giỏ hàng" className="relative">
               <ShoppingCart className="size-5" />
               {itemCount > 0 && (
-                <span className="bg-brand-600 absolute -top-0.5 -right-0.5 flex size-4 items-center justify-center rounded-full text-[10px] font-bold text-white">
+                <span className="bg-primary text-primary-foreground absolute -top-0.5 -right-0.5 flex size-4 items-center justify-center rounded-full text-xs font-bold">
                   {itemCount > 99 ? '99+' : itemCount}
                 </span>
               )}

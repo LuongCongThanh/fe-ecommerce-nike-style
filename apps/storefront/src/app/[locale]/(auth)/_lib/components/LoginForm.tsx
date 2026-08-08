@@ -13,6 +13,7 @@ import { useForm } from 'react-hook-form';
 
 import { loginAction } from '@/app/[locale]/(auth)/_lib/api/auth';
 import { ApiErrorAlert } from '@/app/[locale]/(auth)/_lib/components/ApiErrorAlert';
+import { PasswordInput } from '@/app/[locale]/(auth)/_lib/components/PasswordInput';
 import { useApiErrorMessage } from '@/app/[locale]/(auth)/_lib/hooks/useApiErrorMessage';
 import type { LoginFormInput } from '@/app/[locale]/(auth)/_lib/schemas/auth';
 import { LoginFormSchema } from '@/app/[locale]/(auth)/_lib/schemas/auth';
@@ -72,7 +73,7 @@ export function LoginForm() {
                 </Link>
               </div>
               <FormControl>
-                <Input type="password" placeholder="••••••••" autoComplete="current-password" {...field} />
+                <PasswordInput placeholder="••••••••" autoComplete="current-password" {...field} />
               </FormControl>
               <FormMessage />
             </FormItem>

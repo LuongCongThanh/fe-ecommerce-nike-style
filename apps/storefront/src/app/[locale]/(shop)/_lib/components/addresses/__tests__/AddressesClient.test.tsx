@@ -81,13 +81,30 @@ describe('AddressesClient — address book CRUD (FE-INT, issue #15)', () => {
     await waitFor(() => expect(screen.getByText('Nguyễn Văn A (đã sửa)')).toBeInTheDocument());
   });
 
-  it('deletes an address', async () => {
+  it('deletes an address after confirming in the dialog', async () => {
+    renderWithProviders(<AddressesClient />);
+    await screen.findByText('Nguyễn Văn A');
+
+    // Opens a confirm dialog instead of deleting immediately (destructive action guard).
+    fireEvent.click(screen.getByRole('button', { name: 'Xoá' }));
+    const dialog = await screen.findByRole('dialog');
+    expect(within(dialog).getByText('Xoá địa chỉ này?')).toBeInTheDocument();
+
+    fireEvent.click(within(dialog).getByRole('button', { name: 'Xoá' }));
+
+    await waitFor(() => expect(screen.getByText('Bạn chưa có địa chỉ nào.')).toBeInTheDocument());
+  });
+
+  it('cancels the delete dialog without deleting the address', async () => {
     renderWithProviders(<AddressesClient />);
     await screen.findByText('Nguyễn Văn A');
 
     fireEvent.click(screen.getByRole('button', { name: 'Xoá' }));
+    const dialog = await screen.findByRole('dialog');
+    fireEvent.click(within(dialog).getByRole('button', { name: 'Hủy' }));
 
-    await waitFor(() => expect(screen.getByText('Bạn chưa có địa chỉ nào.')).toBeInTheDocument());
+    await waitFor(() => expect(screen.queryByRole('dialog')).not.toBeInTheDocument());
+    expect(screen.getByText('Nguyễn Văn A')).toBeInTheDocument();
   });
 
   it('sets a non-default address as default', async () => {

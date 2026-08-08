@@ -13,6 +13,7 @@ import { useForm } from 'react-hook-form';
 
 import { registerAction } from '@/app/[locale]/(auth)/_lib/api/auth';
 import { ApiErrorAlert } from '@/app/[locale]/(auth)/_lib/components/ApiErrorAlert';
+import { PasswordInput } from '@/app/[locale]/(auth)/_lib/components/PasswordInput';
 import { useApiErrorMessage } from '@/app/[locale]/(auth)/_lib/hooks/useApiErrorMessage';
 import type { RegisterFormInput } from '@/app/[locale]/(auth)/_lib/schemas/auth';
 import { RegisterFormSchema } from '@/app/[locale]/(auth)/_lib/schemas/auth';
@@ -99,7 +100,7 @@ export function RegisterForm() {
             <FormItem>
               <FormLabel>Mật khẩu</FormLabel>
               <FormControl>
-                <Input type="password" placeholder="Tối thiểu 8 ký tự" autoComplete="new-password" {...field} />
+                <PasswordInput placeholder="Tối thiểu 8 ký tự" autoComplete="new-password" {...field} />
               </FormControl>
               <FormMessage />
             </FormItem>
@@ -113,7 +114,7 @@ export function RegisterForm() {
             <FormItem>
               <FormLabel>Xác nhận mật khẩu</FormLabel>
               <FormControl>
-                <Input type="password" placeholder="Nhập lại mật khẩu" autoComplete="new-password" {...field} />
+                <PasswordInput placeholder="Nhập lại mật khẩu" autoComplete="new-password" {...field} />
               </FormControl>
               <FormMessage />
             </FormItem>
