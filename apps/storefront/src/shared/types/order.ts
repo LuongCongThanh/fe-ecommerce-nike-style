@@ -2,7 +2,18 @@ import { z } from 'zod';
 
 import { PaymentMethodSchema, PaymentStatusSchema } from '@/shared/types/payment';
 
-export const OrderStatusSchema = z.enum(['pending', 'confirmed', 'processing', 'shipped', 'delivered', 'cancelled']);
+/**
+ * MVP COD-only state machine (glossary.md — Cart & Order):
+ *
+ *   PENDING → PROCESSING → PACKED → SHIPPED → DELIVERED
+ *                                                 ↓
+ *                                       RETURN_REQUESTED → RETURNED
+ *   PENDING/PROCESSING → CANCELLED (nhánh riêng, chỉ từ 2 trạng thái này)
+ *
+ * CANCELLED is only valid from PENDING/PROCESSING — from PACKED onward an order can never cancel
+ * directly, it must reach DELIVERED and go through RETURN_REQUESTED → RETURNED instead.
+ */
+export const OrderStatusSchema = z.enum(['PENDING', 'PROCESSING', 'PACKED', 'SHIPPED', 'DELIVERED', 'CANCELLED', 'RETURN_REQUESTED', 'RETURNED']);
 
 export const OrderItemSchema = z.object({
   id: z.number(),
@@ -28,6 +39,8 @@ export const OrderSchema = z.object({
   note: z.string(),
   created_at: z.string(),
   updated_at: z.string(),
+  /** Set the moment `status` transitions to DELIVERED — anchors the 7-day return window (glossary.md — Return window); `null` before then. */
+  delivered_at: z.string().nullable(),
 });
 
 export const OrderListSchema = z.array(OrderSchema);

@@ -10,7 +10,7 @@ const intlMiddleware = createMiddleware({
   defaultLocale: 'vi',
 });
 
-const PROTECTED_PATTERNS = [/^\/(vi|en)\/admin/, /^\/(vi|en)\/checkout/, /^\/(vi|en)\/orders/, /^\/(vi|en)\/profile/];
+const PROTECTED_PATTERNS = [/^\/(vi|en)\/admin/, /^\/(vi|en)\/checkout/, /^\/(vi|en)\/account/];
 
 const ADMIN_PATTERN = /^\/(vi|en)\/admin/;
 

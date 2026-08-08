@@ -15,7 +15,7 @@ const UTILITY_GROUPS = [
     links: [
       { href: '/auth/login', label: 'Đăng nhập' },
       { href: '/auth/register', label: 'Đăng ký' },
-      { href: '/orders', label: 'Đơn hàng của tôi' },
+      { href: '/account/orders', label: 'Đơn hàng của tôi' },
     ],
   },
 ] as const;

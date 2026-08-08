@@ -2,6 +2,7 @@ import { http, HttpResponse } from 'msw';
 
 import type { Product } from '@repo/schemas/catalog';
 
+import { createAddress, deleteAddress, getAddresses, setDefaultAddress, updateAddress } from './address-fixtures';
 import {
   consumeResetToken,
   createResetToken,
@@ -14,9 +15,11 @@ import {
   rotateRefreshToken,
   setUserPassword,
   toPublicUser,
+  updateUserProfile,
 } from './auth-fixtures';
 import { mergeAccountCart, resolveSkus } from './cart-fixtures';
 import { minSkuPrice, mockCategories, mockProducts, resolveCategoryIds } from './catalog-fixtures';
+import { getAccountOrder, getAccountOrders } from './order-fixtures';
 import { matchesSearchQuery } from './search-match';
 import { mergeAccountWishlist, resolveProducts } from './wishlist-fixtures';
 
@@ -172,6 +175,17 @@ export const handlers = [
     return HttpResponse.json(toPublicUser(user));
   }),
 
+  // Profile update (issue #15) — email/id/role aren't editable this way.
+  http.patch('*/api/auth/me/update/', async ({ request }) => {
+    const user = findUserByAccessToken(request.headers.get('authorization'));
+    if (user === undefined) {
+      return errorResponse(401, 'UNAUTHORIZED', 'Chưa đăng nhập hoặc phiên đã hết hạn.');
+    }
+
+    const body = (await request.json()) as { firstName?: string; lastName?: string; phone?: string };
+    return HttpResponse.json(toPublicUser(updateUserProfile(user, body)));
+  }),
+
   // CartItem is {skuId, quantity} only (glossary.md) — price/stock are never cached client-side, so the
   // Cart hook re-resolves against the live SKU through this endpoint every time it needs to display or
   // total the cart. Unknown ids are silently dropped (SKU no longer exists).
@@ -217,5 +231,88 @@ export const handlers = [
       body.items.map((i) => i.productId),
     );
     return HttpResponse.json({ data: resolveProducts(merged) });
+  }),
+
+  // Order history (issue #15, read side only) — Customer chỉ xem được Order của chính mình
+  // (glossary.md — Customer): `getAccountOrder(s)` never looks outside `user.id`'s own orders, so
+  // there's no cross-user data path to guard against, not a permission check bolted on afterward.
+  http.get('*/api/orders/', ({ request }) => {
+    const user = findUserByAccessToken(request.headers.get('authorization'));
+    if (user === undefined) {
+      return errorResponse(401, 'UNAUTHORIZED', 'Chưa đăng nhập hoặc phiên đã hết hạn.');
+    }
+    return HttpResponse.json(getAccountOrders(user.id));
+  }),
+
+  http.get('*/api/orders/:id/', ({ request, params }) => {
+    const user = findUserByAccessToken(request.headers.get('authorization'));
+    if (user === undefined) {
+      return errorResponse(401, 'UNAUTHORIZED', 'Chưa đăng nhập hoặc phiên đã hết hạn.');
+    }
+
+    const order = getAccountOrder(user.id, Number(params.id));
+    if (order === undefined) {
+      return errorResponse(404, 'NOT_FOUND', 'Không tìm thấy đơn hàng.');
+    }
+    return HttpResponse.json(order);
+  }),
+
+  // Address book (issue #15) — same per-Customer-only shape as Orders above.
+  http.get('*/api/addresses/', ({ request }) => {
+    const user = findUserByAccessToken(request.headers.get('authorization'));
+    if (user === undefined) {
+      return errorResponse(401, 'UNAUTHORIZED', 'Chưa đăng nhập hoặc phiên đã hết hạn.');
+    }
+    return HttpResponse.json(getAddresses(user.id));
+  }),
+
+  http.post('*/api/addresses/', async ({ request }) => {
+    const user = findUserByAccessToken(request.headers.get('authorization'));
+    if (user === undefined) {
+      return errorResponse(401, 'UNAUTHORIZED', 'Chưa đăng nhập hoặc phiên đã hết hạn.');
+    }
+
+    const body = (await request.json()) as Parameters<typeof createAddress>[1];
+    return HttpResponse.json(createAddress(user.id, body), { status: 201 });
+  }),
+
+  http.patch('*/api/addresses/:id/', async ({ request, params }) => {
+    const user = findUserByAccessToken(request.headers.get('authorization'));
+    if (user === undefined) {
+      return errorResponse(401, 'UNAUTHORIZED', 'Chưa đăng nhập hoặc phiên đã hết hạn.');
+    }
+
+    const body = (await request.json()) as Parameters<typeof updateAddress>[2];
+    const updated = updateAddress(user.id, String(params.id), body);
+    if (updated === undefined) {
+      return errorResponse(404, 'NOT_FOUND', 'Không tìm thấy địa chỉ.');
+    }
+    return HttpResponse.json(updated);
+  }),
+
+  http.delete('*/api/addresses/:id/', ({ request, params }) => {
+    const user = findUserByAccessToken(request.headers.get('authorization'));
+    if (user === undefined) {
+      return errorResponse(401, 'UNAUTHORIZED', 'Chưa đăng nhập hoặc phiên đã hết hạn.');
+    }
+
+    const deleted = deleteAddress(user.id, String(params.id));
+    if (!deleted) {
+      return errorResponse(404, 'NOT_FOUND', 'Không tìm thấy địa chỉ.');
+    }
+    return HttpResponse.json({});
+  }),
+
+  http.post('*/api/addresses/:id/default/', ({ request, params }) => {
+    const user = findUserByAccessToken(request.headers.get('authorization'));
+    if (user === undefined) {
+      return errorResponse(401, 'UNAUTHORIZED', 'Chưa đăng nhập hoặc phiên đã hết hạn.');
+    }
+
+    const updated = setDefaultAddress(user.id, String(params.id));
+    if (updated === undefined) {
+      return errorResponse(404, 'NOT_FOUND', 'Không tìm thấy địa chỉ.');
+    }
+    return HttpResponse.json(updated);
   }),
 ];

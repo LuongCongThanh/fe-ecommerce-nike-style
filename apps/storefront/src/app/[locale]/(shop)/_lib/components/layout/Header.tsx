@@ -121,9 +121,16 @@ export function Header() {
           )}
 
           {isLoggedIn ? (
-            <Button variant="ghost" size="icon" aria-label="Đăng xuất" onClick={logout}>
-              <LogOut className="size-5" />
-            </Button>
+            <>
+              <Button variant="ghost" size="icon" aria-label="Tài khoản" asChild>
+                <Link href={`/${locale}/account/profile`}>
+                  <User className="size-5" />
+                </Link>
+              </Button>
+              <Button variant="ghost" size="icon" aria-label="Đăng xuất" onClick={logout}>
+                <LogOut className="size-5" />
+              </Button>
+            </>
           ) : (
             <Button variant="ghost" size="icon" aria-label="Đăng nhập" asChild>
               <Link href={`/${locale}/login`}>

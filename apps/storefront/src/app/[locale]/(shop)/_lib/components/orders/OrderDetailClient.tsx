@@ -67,7 +67,9 @@ export function OrderDetailClient({ id }: OrderDetailClientProps): React.JSX.Ele
         ) : null}
       </div>
 
-      {order.status === 'pending' && (
+      {/* Full cancel/return-request state-machine gating (glossary.md) is issue #17 — this keeps the
+          existing PENDING-only cancel action working after the status enum realignment (issue #15). */}
+      {order.status === 'PENDING' && (
         <Button
           variant="destructive"
           className="mt-4"
