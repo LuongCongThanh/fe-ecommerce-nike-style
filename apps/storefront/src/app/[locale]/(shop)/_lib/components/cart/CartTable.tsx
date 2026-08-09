@@ -6,10 +6,11 @@ import { formatCurrency } from '@repo/shared/utils';
 import { Button } from '@repo/ui/button';
 import { AnimatePresence, motion } from 'framer-motion';
 import { Trash2 } from 'lucide-react';
+import { toast } from 'sonner';
 
 import { QuantitySelector } from '@/app/[locale]/(shop)/_lib/components/common/QuantitySelector';
 import type { CartLine } from '@/app/[locale]/(shop)/_lib/hooks/useCart';
-import { useCart } from '@/app/[locale]/(shop)/_lib/hooks/useCart';
+import { useCart, useCartStore } from '@/app/[locale]/(shop)/_lib/hooks/useCart';
 
 export function CartTable() {
   const { items, updateQuantity, removeCartItem } = useCart();
@@ -33,6 +34,15 @@ export function CartTable() {
             }}
             onRemove={() => {
               removeCartItem(item.skuId);
+              toast.success('Đã xóa sản phẩm khỏi giỏ hàng', {
+                description: item.name,
+                action: {
+                  label: 'Hoàn tác',
+                  onClick: () => {
+                    useCartStore.getState().addItem(item.skuId, item.quantity);
+                  },
+                },
+              });
             }}
           />
         ))}

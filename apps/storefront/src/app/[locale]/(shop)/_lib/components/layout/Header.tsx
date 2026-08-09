@@ -54,7 +54,7 @@ export function Header() {
         <div className="flex items-center gap-4 md:gap-8">
           <Link href={`/${locale}/home`} className="group flex items-center gap-2">
             <span className="font-display text-xl font-black tracking-tighter">
-              ANTIGRAVITY<span className="text-muted-foreground">.STORE</span>
+              ANTIGRAVITY<span className="text-muted-foreground hidden sm:inline">.STORE</span>
             </span>
           </Link>
 

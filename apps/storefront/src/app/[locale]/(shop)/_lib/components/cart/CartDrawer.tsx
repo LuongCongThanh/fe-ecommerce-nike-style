@@ -10,9 +10,10 @@ import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger } from '@rep
 import { AnimatePresence, motion } from 'framer-motion';
 import { ShoppingBag, Trash2 } from 'lucide-react';
 import { useLocale } from 'next-intl';
+import { toast } from 'sonner';
 
 import { QuantitySelector } from '@/app/[locale]/(shop)/_lib/components/common/QuantitySelector';
-import { useCart } from '@/app/[locale]/(shop)/_lib/hooks/useCart';
+import { useCart, useCartStore } from '@/app/[locale]/(shop)/_lib/hooks/useCart';
 
 interface CartDrawerProps {
   readonly children: React.ReactNode;
@@ -91,6 +92,15 @@ export function CartDrawer({ children }: CartDrawerProps) {
                             aria-label="Xóa sản phẩm"
                             onClick={() => {
                               removeCartItem(item.skuId);
+                              toast.success('Đã xóa sản phẩm khỏi giỏ hàng', {
+                                description: item.name,
+                                action: {
+                                  label: 'Hoàn tác',
+                                  onClick: () => {
+                                    useCartStore.getState().addItem(item.skuId, item.quantity);
+                                  },
+                                },
+                              });
                             }}
                             className="hover:text-destructive text-muted-foreground"
                           >

@@ -6,7 +6,7 @@ import { useRouter, useSearchParams } from 'next/navigation';
 import type { Gender } from '@repo/schemas/catalog';
 import { Button } from '@repo/ui/button';
 import { Input } from '@repo/ui/input';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@repo/ui/select';
+import { Select, SelectContent, SelectGroup, SelectItem, SelectTrigger, SelectValue } from '@repo/ui/select';
 import { useLocale } from 'next-intl';
 import type { SyntheticEvent } from 'react';
 
@@ -73,12 +73,14 @@ export function FilterSidebar({ activeCategorySlug }: FilterSidebarProps = {}): 
             <SelectValue placeholder="Tất cả" />
           </SelectTrigger>
           <SelectContent>
-            <SelectItem value="all">Tất cả</SelectItem>
-            {Object.entries(GENDER_LABELS).map(([value, label]) => (
-              <SelectItem key={value} value={value}>
-                {label}
-              </SelectItem>
-            ))}
+            <SelectGroup>
+              <SelectItem value="all">Tất cả</SelectItem>
+              {Object.entries(GENDER_LABELS).map(([value, label]) => (
+                <SelectItem key={value} value={value}>
+                  {label}
+                </SelectItem>
+              ))}
+            </SelectGroup>
           </SelectContent>
         </Select>
       </div>
@@ -96,9 +98,11 @@ export function FilterSidebar({ activeCategorySlug }: FilterSidebarProps = {}): 
             <SelectValue placeholder="Chọn kiểu sắp xếp" />
           </SelectTrigger>
           <SelectContent>
-            <SelectItem value="newest">Mới nhất</SelectItem>
-            <SelectItem value="price_asc">Giá tăng dần</SelectItem>
-            <SelectItem value="price_desc">Giá giảm dần</SelectItem>
+            <SelectGroup>
+              <SelectItem value="newest">Mới nhất</SelectItem>
+              <SelectItem value="price_asc">Giá tăng dần</SelectItem>
+              <SelectItem value="price_desc">Giá giảm dần</SelectItem>
+            </SelectGroup>
           </SelectContent>
         </Select>
       </div>
