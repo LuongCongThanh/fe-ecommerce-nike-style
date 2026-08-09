@@ -13,7 +13,7 @@ export function SectionNewArrivals(): React.JSX.Element {
 
   return (
     <section>
-      <div className="container mx-auto px-4 py-16 md:py-20">
+      <div className="container mx-auto px-4 py-(--space-section-new-arrivals) md:py-(--space-section-new-arrivals-lg)">
         <SectionHeading title="Hàng mới về" ctaLabel="Xem thêm" ctaHref={`/${locale}/products`} />
         <div className="mt-8 grid grid-cols-1 gap-6 lg:grid-cols-5 lg:gap-8">
           {spotlight != null ? (

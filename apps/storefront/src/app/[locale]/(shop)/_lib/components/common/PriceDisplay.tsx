@@ -1,6 +1,6 @@
 import { cn, formatCurrency } from '@repo/shared/utils';
 
-import { calculateDiscountPercent } from '@/app/[locale]/(shop)/_lib/utils/discount';
+import { resolveDiscount } from '@/app/[locale]/(shop)/_lib/utils/discount';
 
 interface PriceDisplayProps {
   readonly price: number;
@@ -10,9 +10,7 @@ interface PriceDisplayProps {
 }
 
 export function PriceDisplay({ price, salePrice, className, showDiscountBadge = false }: PriceDisplayProps): React.JSX.Element {
-  const hasDiscount = typeof salePrice === 'number' && salePrice > 0 && salePrice < price;
-  const finalPrice = hasDiscount ? salePrice : price;
-  const discountPercent = hasDiscount ? calculateDiscountPercent(price, salePrice) : 0;
+  const { hasDiscount, finalPrice, discountPercent } = resolveDiscount(price, salePrice);
 
   return (
     <div className={cn('flex flex-wrap items-center gap-2', className)}>

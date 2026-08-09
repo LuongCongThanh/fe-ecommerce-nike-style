@@ -14,8 +14,8 @@ export function CategoryNav({ categories, locale, activeSlug }: CategoryNavProps
   const topLevel = categories.filter((c) => c.parentId === null);
 
   return (
-    <nav className="space-y-3" aria-label="Danh mục sản phẩm">
-      <h3 className="text-muted-foreground text-sm font-bold tracking-wider uppercase">Danh mục</h3>
+    <nav className="space-y-3" aria-label="Product categories">
+      <h3 className="text-muted-foreground text-sm font-bold tracking-wider uppercase">Categories</h3>
       <ul className="space-y-3">
         {topLevel.map((top) => {
           const children = categories.filter((c) => c.parentId === top.id);

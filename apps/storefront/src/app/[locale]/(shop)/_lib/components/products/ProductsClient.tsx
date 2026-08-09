@@ -23,18 +23,18 @@ export default function ProductsClient(): React.JSX.Element {
   return (
     <div className="flex flex-col gap-8">
       <SectionHeading
-        title={category !== undefined ? `Sản phẩm: ${category}` : 'Tất cả sản phẩm'}
-        subtitle={category !== undefined ? `Khám phá các sản phẩm trong danh mục ${category}` : 'Duyệt qua toàn bộ bộ sưu tập của chúng tôi'}
+        title={category !== undefined ? `Products: ${category}` : 'All Products'}
+        subtitle={category !== undefined ? `Discover products in the ${category} category` : 'Browse our entire collection'}
       />
 
       {isLoading ? (
         <p role="status" className="text-muted-foreground py-12 text-center">
-          Đang tải sản phẩm…
+          Loading products…
         </p>
       ) : isError || data === undefined ? (
         <div role="alert" className="flex min-h-100 flex-col items-center justify-center rounded-2xl border border-dashed text-center">
-          <h3 className="text-lg font-medium">Không thể tải sản phẩm</h3>
-          <p className="text-muted-foreground mt-1">Vui lòng thử lại sau.</p>
+          <h3 className="text-lg font-medium">Unable to load products</h3>
+          <p className="text-muted-foreground mt-1">Please try again later.</p>
         </div>
       ) : (
         <>

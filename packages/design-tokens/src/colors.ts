@@ -46,8 +46,10 @@ export const accent = {
   950: 'oklch(0.2 0.05 55)',
 } as const;
 
+/** 50/900/950 chroma nudged to >=0.005 (homepage-improvement-plan.md P2-5) — kept in sync with
+ * packages/tailwind-config/src/theme.css's --color-neutral-* values. */
 export const neutral = {
-  50: 'oklch(0.98 0.004 30)',
+  50: 'oklch(0.98 0.006 30)',
   100: 'oklch(0.96 0.006 30)',
   200: 'oklch(0.92 0.008 30)',
   300: 'oklch(0.85 0.01 30)',
@@ -56,8 +58,8 @@ export const neutral = {
   600: 'oklch(0.45 0.008 30)',
   700: 'oklch(0.35 0.007 30)',
   800: 'oklch(0.25 0.006 30)',
-  900: 'oklch(0.16 0.004 30)',
-  950: 'oklch(0.1 0.003 30)',
+  900: 'oklch(0.16 0.006 30)',
+  950: 'oklch(0.1 0.005 30)',
 } as const;
 
 /** warning-500 is for backgrounds/icons only — use warning-700 for text (WCAG AA). */

@@ -8,6 +8,7 @@ import { Badge } from '@repo/ui/badge';
 import { Heart, Star } from 'lucide-react';
 
 import { useIsWishlisted } from '@/app/[locale]/(shop)/_lib/hooks/useWishlist';
+import { resolveDiscount } from '@/app/[locale]/(shop)/_lib/utils/discount';
 import type { BadgeValue } from '@/shared/types/product';
 
 interface BadgeLabels {
@@ -61,8 +62,7 @@ export function ProductCard({
   badgeLabels,
   isPriceRange = false,
 }: ProductCardProps): React.JSX.Element {
-  const hasDiscount = typeof salePrice === 'number' && salePrice > 0 && salePrice < price;
-  const displayPrice = hasDiscount ? salePrice : price;
+  const { hasDiscount, finalPrice: displayPrice } = resolveDiscount(price, salePrice);
   const coverImage = images[0] ?? '/placeholder-product.png';
   const resolvedBadgeLabels = { ...DEFAULT_BADGE_LABELS, ...badgeLabels };
   const { isWishlisted, toggle: toggleWishlist } = useIsWishlisted(String(id));

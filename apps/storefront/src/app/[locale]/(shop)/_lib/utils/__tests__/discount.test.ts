@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest';
 
-import { calculateDiscountPercent } from '@/app/[locale]/(shop)/_lib/utils/discount';
+import { calculateDiscountPercent, resolveDiscount } from '@/app/[locale]/(shop)/_lib/utils/discount';
 
 describe('calculateDiscountPercent', () => {
   it('returns rounded discount percent', () => {
@@ -14,5 +14,27 @@ describe('calculateDiscountPercent', () => {
   it('returns zero when originalPrice is zero or negative', () => {
     expect(calculateDiscountPercent(0, 0)).toBe(0);
     expect(calculateDiscountPercent(-1, 0)).toBe(0);
+  });
+});
+
+describe('resolveDiscount', () => {
+  it('reports no discount when salePrice is absent', () => {
+    expect(resolveDiscount(200000)).toEqual({ hasDiscount: false, finalPrice: 200000, discountPercent: 0 });
+  });
+
+  it('reports no discount when salePrice is null', () => {
+    expect(resolveDiscount(200000, null)).toEqual({ hasDiscount: false, finalPrice: 200000, discountPercent: 0 });
+  });
+
+  it('reports no discount when salePrice is not lower than price', () => {
+    expect(resolveDiscount(200000, 200000)).toEqual({ hasDiscount: false, finalPrice: 200000, discountPercent: 0 });
+  });
+
+  it('reports no discount when salePrice is zero or negative', () => {
+    expect(resolveDiscount(200000, 0)).toEqual({ hasDiscount: false, finalPrice: 200000, discountPercent: 0 });
+  });
+
+  it('reports the discount, final price, and rounded percent when salePrice is lower', () => {
+    expect(resolveDiscount(200000, 150000)).toEqual({ hasDiscount: true, finalPrice: 150000, discountPercent: 25 });
   });
 });

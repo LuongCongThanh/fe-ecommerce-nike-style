@@ -12,8 +12,8 @@ export function SectionFeaturedCategories(): React.JSX.Element {
 
   return (
     <section className="bg-muted/50">
-      <div className="container mx-auto px-4 py-8 md:py-10">
-        <SectionHeading title="Danh mục nổi bật" />
+      <div className="container mx-auto px-4 py-(--space-section-categories) md:py-(--space-section-categories-lg)">
+        <SectionHeading title="Featured Categories" />
         <div className="mt-6 grid grid-cols-2 gap-3 sm:grid-cols-4 md:grid-cols-6">
           {featured != null ? (
             <div className="col-span-2 row-span-2 sm:col-span-2">

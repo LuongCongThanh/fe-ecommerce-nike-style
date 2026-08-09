@@ -1,5 +1,6 @@
 'use client';
 
+import React from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
 
@@ -28,9 +29,9 @@ export function SectionHero(): React.JSX.Element {
   const childTransition = prefersReducedMotion ? { duration: 0 } : { duration: 0.3, ease: [0, 0, 0.2, 1] as const };
 
   return (
-    <section className="relative isolate min-h-[70vh] overflow-hidden bg-neutral-950 text-white md:min-h-[85vh]">
+    <section className="bg-surface-inverse text-surface-inverse-foreground relative isolate min-h-[70dvh] overflow-hidden md:min-h-[85dvh]">
       <Image src={homeHeroData.image} alt="" aria-hidden="true" fill priority sizes="100vw" className="object-cover" />
-      <div className="absolute inset-0 bg-gradient-to-t from-black/85 via-black/30 to-transparent" />
+      <div className="absolute inset-0 bg-linear-to-t from-black/85 via-black/30 to-transparent" />
 
       <motion.div
         initial="hidden"

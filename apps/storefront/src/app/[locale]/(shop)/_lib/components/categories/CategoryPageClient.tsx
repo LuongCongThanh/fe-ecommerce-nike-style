@@ -20,7 +20,7 @@ export function CategoryPageClient({ slug }: CategoryPageClientProps): React.JSX
   if (isLoading) {
     return (
       <PageShell.Browse>
-        <p className="text-muted-foreground py-24 text-center">Đang tải…</p>
+        <p className="text-muted-foreground py-24 text-center">Loading…</p>
       </PageShell.Browse>
     );
   }
@@ -31,8 +31,8 @@ export function CategoryPageClient({ slug }: CategoryPageClientProps): React.JSX
     return (
       <PageShell.Browse>
         <div className="flex min-h-100 flex-col items-center justify-center text-center">
-          <h1 className="text-2xl font-bold">Không tìm thấy danh mục</h1>
-          <p className="text-muted-foreground mt-2">Danh mục bạn tìm không tồn tại.</p>
+          <h1 className="text-2xl font-bold">Category not found</h1>
+          <p className="text-muted-foreground mt-2">The category you're looking for doesn't exist.</p>
         </div>
       </PageShell.Browse>
     );
@@ -44,9 +44,9 @@ export function CategoryPageClient({ slug }: CategoryPageClientProps): React.JSX
     <PageShell.Browse>
       <nav className="text-muted-foreground mb-8 text-sm">
         <ol className="flex items-center space-x-2">
-          <li>Trang chủ</li>
+          <li>Home</li>
           <li>/</li>
-          <li>Danh mục</li>
+          <li>Categories</li>
           {parent !== null ? (
             <>
               <li>/</li>

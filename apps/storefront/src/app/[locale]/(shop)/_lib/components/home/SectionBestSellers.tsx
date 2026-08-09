@@ -11,7 +11,7 @@ export function SectionBestSellers(): React.JSX.Element {
   const bestSellers = bestSellersData;
 
   return (
-    <section className="container mx-auto px-4 py-12">
+    <section className="container mx-auto px-4 py-(--space-section-best-sellers)">
       <ProductCarousel title="Sản phẩm bán chạy" ctaLabel="Xem tất cả" ctaHref={`/${locale}/products`}>
         {bestSellers.map((product) => (
           <div key={product.id} className="w-[45%] min-w-[45%] shrink-0 snap-start sm:w-[30%] sm:min-w-[30%] lg:w-[23%] lg:min-w-[23%]">

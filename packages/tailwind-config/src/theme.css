@@ -39,7 +39,10 @@
   --color-accent-950: oklch(0.2 0.05 55);
 
   /* ── Neutral: xám ấm (hue ~30°) ──────────────────────────────────────── */
-  --color-neutral-50: oklch(0.98 0.004 30);
+  /* 50/900/950 chroma nudged to >=0.005 (homepage-improvement-plan.md P2-5) — below that floor
+     the warm hue-30 tint is imperceptible and the step reads as flat black/white. Lightness
+     values are unchanged. */
+  --color-neutral-50: oklch(0.98 0.006 30);
   --color-neutral-100: oklch(0.96 0.006 30);
   --color-neutral-200: oklch(0.92 0.008 30);
   --color-neutral-300: oklch(0.85 0.01 30);
@@ -48,8 +51,8 @@
   --color-neutral-600: oklch(0.45 0.008 30);
   --color-neutral-700: oklch(0.35 0.007 30);
   --color-neutral-800: oklch(0.25 0.006 30);
-  --color-neutral-900: oklch(0.16 0.004 30);
-  --color-neutral-950: oklch(0.1 0.003 30);
+  --color-neutral-900: oklch(0.16 0.006 30);
+  --color-neutral-950: oklch(0.1 0.005 30);
 
   /* ── Feedback ────────────────────────────────────────────────────────── */
   --color-success-50: oklch(0.97 0.03 145);
@@ -73,6 +76,47 @@
   --font-sans: var(--font-be-vietnam-pro), sans-serif;
   --font-display: var(--font-be-vietnam-pro), sans-serif;
   --font-mono: 'JetBrains Mono', monospace;
+
+  /* ── Type scale — wires packages/design-tokens/src/typography.ts's textStyles into real
+     Tailwind utilities (text-body-sm, text-title-lg, …) so the documented scale is actually
+     usable instead of every component reaching for raw text-2xl/text-8xl sizes
+     (homepage-improvement-plan.md P2-3). Font-weight is not baked in here — pair with a
+     font-* utility, same as the rest of the scale. Adoption is incremental; existing
+     components keep working unchanged until migrated. */
+  --text-body-sm: 0.875rem; /* 14px */
+  --text-body-sm--line-height: 1.25rem; /* 20px */
+  --text-body-md: 1rem; /* 16px */
+  --text-body-md--line-height: 1.5rem; /* 24px */
+  --text-body-lg: 1.125rem; /* 18px */
+  --text-body-lg--line-height: 1.75rem; /* 28px */
+  --text-label-sm: 0.75rem; /* 12px */
+  --text-label-sm--line-height: 1rem; /* 16px */
+  --text-label-md: 0.875rem; /* 14px */
+  --text-label-md--line-height: 1.25rem; /* 20px */
+  --text-title-sm: 1.25rem; /* 20px */
+  --text-title-sm--line-height: 1.75rem; /* 28px */
+  --text-title-md: 1.5rem; /* 24px */
+  --text-title-md--line-height: 2rem; /* 32px */
+  --text-title-lg: 1.875rem; /* 30px */
+  --text-title-lg--line-height: 2.375rem; /* 38px */
+  --text-display-sm: 2.25rem; /* 36px */
+  --text-display-sm--line-height: 2.75rem; /* 44px */
+
+  /* ── Homepage section vertical rhythm — names each section's already-intentional, distinct
+     padding pair instead of leaving it as an inline magic number (homepage-improvement-plan.md
+     P3-3). Same pixel values as before per section; this is a naming/documentation change, not
+     a value change — the sections still differ from each other on purpose. */
+  --space-section-categories: 2rem; /* py-8 = 32px */
+  --space-section-categories-lg: 2.5rem; /* md:py-10 = 40px */
+  --space-section-flash-sale: 2.5rem; /* py-10 = 40px */
+  --space-section-best-sellers: 3rem; /* py-12 = 48px */
+  --space-section-new-arrivals: 4rem; /* py-16 = 64px */
+  --space-section-new-arrivals-lg: 5rem; /* md:py-20 = 80px */
+  --space-section-why-choose-us: 2.5rem; /* py-10 = 40px */
+  --space-section-testimonials: 3rem; /* py-12 = 48px */
+  --space-section-testimonials-lg: 4rem; /* md:py-16 = 64px */
+  --space-section-newsletter: 3.5rem; /* py-14 = 56px */
+  --space-section-newsletter-lg: 5rem; /* md:py-20 = 80px */
 
   /* ── Radius (relative to --radius, set in preset.css :root) ─────────── */
   --radius-sm: calc(var(--radius) - 4px);
@@ -124,4 +168,11 @@
   --color-border: var(--border);
   --color-input: var(--input);
   --color-ring: var(--ring);
+
+  /* ── Inverse surface — the one dark treatment shared by Hero/Newsletter/Footer ───────
+     (homepage-improvement-plan.md P2-4). Previously each section hardcoded its own
+     bg-neutral-900/950 + text-white pairing independently; this is the single place to
+     adjust "the dark section treatment" for the whole site. */
+  --color-surface-inverse: var(--color-neutral-950);
+  --color-surface-inverse-foreground: oklch(1 0 0);
 }

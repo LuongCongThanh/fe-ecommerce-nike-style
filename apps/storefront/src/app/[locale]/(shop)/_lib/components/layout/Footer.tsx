@@ -22,19 +22,21 @@ const UTILITY_GROUPS = [
 
 export function Footer() {
   return (
-    <footer className="border-border bg-neutral-950 text-white">
-      <div className="mx-auto max-w-7xl px-4 py-14 sm:px-6 md:py-16 lg:px-8">
-        <div className="flex flex-col gap-10 lg:flex-row lg:items-end lg:justify-between">
-          <div className="max-w-xl">
-            <p className="font-display text-3xl font-black tracking-tighter md:text-4xl">
-              ANTIGRAVITY<span className="text-white/50">.STORE</span>
-            </p>
-            <p className="mt-3 text-sm text-white/70 md:text-base">
-              Hàng ngàn sản phẩm chính hãng, giao hàng nhanh toàn quốc — mua sắm không giới hạn.
-            </p>
-          </div>
+    // Statement close instead of the generic "columns of links + tiny copyright" template
+    // (homepage-improvement-plan.md P2-1) — the brand statement leads on its own, the utility
+    // links + contact info sit in one row below a divider instead of competing as equal-weight
+    // columns beside it. Same links/content as before, just re-weighted.
+    <footer className="bg-surface-inverse text-surface-inverse-foreground">
+      <div className="mx-auto max-w-7xl px-4 py-16 sm:px-6 md:py-20 lg:px-8">
+        <p className="font-display max-w-3xl min-w-0 text-4xl font-black tracking-tighter [overflow-wrap:anywhere] sm:text-5xl md:text-6xl">
+          ANTIGRAVITY<span className="text-white/40">.STORE</span>
+        </p>
+        <p className="mt-4 max-w-md text-sm text-white/70 md:text-base">
+          Hàng ngàn sản phẩm chính hãng, giao hàng nhanh toàn quốc — mua sắm không giới hạn.
+        </p>
 
-          <div className="flex flex-wrap gap-x-12 gap-y-6">
+        <div className="mt-12 flex flex-col gap-8 border-t border-white/10 pt-8 sm:flex-row sm:flex-wrap sm:items-start sm:justify-between md:mt-16 md:pt-10">
+          <nav aria-label="Liên kết footer" className="flex flex-wrap gap-x-10 gap-y-6">
             {UTILITY_GROUPS.map((group) => (
               <div key={group.heading}>
                 <h3 className="text-xs font-semibold tracking-wide text-white/50 uppercase">{group.heading}</h3>
@@ -43,7 +45,7 @@ export function Footer() {
                     <li key={link.href}>
                       <Link
                         href={link.href}
-                        className="rounded text-white/80 outline-none hover:text-white focus-visible:ring-2 focus-visible:ring-white/70"
+                        className="rounded text-white/80 transition-colors duration-(--duration-fast) outline-none hover:text-white focus-visible:ring-2 focus-visible:ring-white/70"
                       >
                         {link.label}
                       </Link>
@@ -52,20 +54,20 @@ export function Footer() {
                 </ul>
               </div>
             ))}
+          </nav>
 
-            <div>
-              <h3 className="text-xs font-semibold tracking-wide text-white/50 uppercase">Hỗ trợ</h3>
-              <ul className="mt-3 space-y-2 text-sm">
-                <li className="flex items-center gap-2 text-white/80">
-                  <Phone className="size-4 shrink-0" />
-                  <span className="tabular-nums">1800 xxxx</span>
-                </li>
-                <li className="flex items-center gap-2 text-white/80">
-                  <Mail className="size-4 shrink-0" />
-                  <span>support@antigravity.store</span>
-                </li>
-              </ul>
-            </div>
+          <div>
+            <h3 className="text-xs font-semibold tracking-wide text-white/50 uppercase">Hỗ trợ</h3>
+            <ul className="mt-3 space-y-2 text-sm">
+              <li className="flex items-center gap-2 text-white/80">
+                <Phone className="size-4 shrink-0" />
+                <span className="tabular-nums">1800 xxxx</span>
+              </li>
+              <li className="flex items-center gap-2 text-white/80">
+                <Mail className="size-4 shrink-0" />
+                <span>support@antigravity.store</span>
+              </li>
+            </ul>
           </div>
         </div>
 

@@ -40,7 +40,7 @@ export function MobileNav({ locale }: MobileNavProps) {
               }}
               className="text-foreground hover:text-muted-foreground block rounded-lg px-2 py-3 text-sm font-semibold transition-colors"
             >
-              Tất cả sản phẩm
+              All Products
             </Link>
           </div>
 
@@ -62,7 +62,7 @@ export function MobileNav({ locale }: MobileNavProps) {
                       }}
                       className="text-muted-foreground hover:text-foreground mb-2 py-1 text-xs font-bold transition-colors"
                     >
-                      TẤT CẢ {cat.name.toUpperCase()} ({cat.productCount})
+                      ALL {cat.name.toUpperCase()} ({cat.productCount})
                     </Link>
                     {cat.sub.map((sub) => (
                       <Link

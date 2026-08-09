@@ -5,7 +5,7 @@ import { homeTestimonialsData } from '@/app/[locale]/(shop)/_lib/data/home';
 export function SectionTestimonials(): React.JSX.Element {
   return (
     <section className="bg-muted/50">
-      <div className="container mx-auto px-4 py-12 md:py-16">
+      <div className="container mx-auto px-4 py-(--space-section-testimonials) md:py-(--space-section-testimonials-lg)">
         <SectionHeading title="Khách hàng nói gì?" align="center" />
         <div className="mt-6 grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
           {homeTestimonialsData.map((testimonial) => (

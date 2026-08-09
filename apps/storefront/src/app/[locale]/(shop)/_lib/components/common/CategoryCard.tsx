@@ -26,7 +26,7 @@ export function CategoryCard({ name, image, productCount, href, countLabel }: Ca
           <p className="text-foreground text-sm font-semibold">{name}</p>
           {productCount !== undefined && (
             <p className="text-muted-foreground mt-1 text-xs tabular-nums">
-              {productCount.toLocaleString('vi-VN')} {countLabel ?? 'sản phẩm'}
+              {productCount.toLocaleString('en-US')} {countLabel ?? 'products'}
             </p>
           )}
         </div>

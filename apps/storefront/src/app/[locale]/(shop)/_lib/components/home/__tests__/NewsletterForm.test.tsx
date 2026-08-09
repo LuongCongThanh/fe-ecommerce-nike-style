@@ -58,4 +58,36 @@ describe('NewsletterForm', () => {
     expect(screen.queryByRole('textbox')).not.toBeInTheDocument();
     expect(screen.queryByRole('button', { name: 'Đăng ký' })).not.toBeInTheDocument();
   });
+
+  describe('email validation (homepage-improvement-plan.md P1-5)', () => {
+    it('shows an inline error and does not submit when the email is empty', async () => {
+      render(<NewsletterForm />);
+      await userEvent.click(screen.getByRole('button', { name: 'Đăng ký' }));
+
+      expect(screen.getByRole('alert')).toHaveTextContent('Vui lòng nhập một địa chỉ email hợp lệ.');
+      expect(screen.getByLabelText('Địa chỉ email')).toHaveAttribute('aria-invalid', 'true');
+      expect(screen.queryByText('Đăng ký thành công!')).not.toBeInTheDocument();
+    });
+
+    it('shows an inline error and does not call onSubmit when the email is malformed', async () => {
+      const onSubmit = vi.fn();
+      render(<NewsletterForm onSubmit={onSubmit} />);
+      await userEvent.type(screen.getByLabelText('Địa chỉ email'), 'not-an-email');
+      await userEvent.click(screen.getByRole('button', { name: 'Đăng ký' }));
+
+      expect(screen.getByRole('alert')).toHaveTextContent('Vui lòng nhập một địa chỉ email hợp lệ.');
+      expect(onSubmit).not.toHaveBeenCalled();
+    });
+
+    it('clears the error once the visitor edits the email again', async () => {
+      render(<NewsletterForm />);
+      await userEvent.click(screen.getByRole('button', { name: 'Đăng ký' }));
+      expect(screen.getByRole('alert')).toBeInTheDocument();
+
+      await userEvent.type(screen.getByLabelText('Địa chỉ email'), 'u');
+
+      expect(screen.queryByRole('alert')).not.toBeInTheDocument();
+      expect(screen.getByLabelText('Địa chỉ email')).toHaveAttribute('aria-invalid', 'false');
+    });
+  });
 });
