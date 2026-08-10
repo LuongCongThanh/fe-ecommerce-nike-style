@@ -22,7 +22,6 @@
     "./form": "./src/components/Form.tsx",
     "./input": "./src/components/Input.tsx",
     "./label": "./src/components/Label.tsx",
-    "./modal": "./src/components/Modal.tsx",
     "./popover": "./src/components/Popover.tsx",
     "./progress": "./src/components/Progress.tsx",
     "./radio-group": "./src/components/RadioGroup.tsx",
@@ -73,6 +72,7 @@
     "@types/react-dom": "^19",
     "react": "^19.0.0",
     "react-dom": "^19.0.0",
+    "shadcn": "4.16.2",
     "typescript": "^5"
   },
   "peerDependencies": {
