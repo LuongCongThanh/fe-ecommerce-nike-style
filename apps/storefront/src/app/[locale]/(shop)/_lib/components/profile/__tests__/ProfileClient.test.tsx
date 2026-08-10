@@ -1,3 +1,4 @@
+import { resetAuthRuntime } from '@repo/api-sdk/client';
 import { encodeAccessToken } from '@repo/api-sdk/mocks/auth-fixtures';
 import { registerAuthRuntimeAdapter } from '@repo/api-sdk/client/runtime';
 import { server } from '@repo/api-sdk/testing/msw-server';
@@ -10,17 +11,15 @@ import { ProfileClient } from '@/app/[locale]/(shop)/_lib/components/profile/Pro
 // Demo account seeded in `packages/api-sdk/src/mocks/auth-fixtures.ts`.
 const ACCOUNT_USER_ID = 1;
 
-let unregister: (() => void) | undefined;
-
 beforeAll(() => server.listen({ onUnhandledRequest: 'error' }));
 afterEach(() => {
   server.resetHandlers();
-  unregister?.();
+  resetAuthRuntime();
 });
 afterAll(() => server.close());
 
 function loginAsDemoAccount() {
-  unregister = registerAuthRuntimeAdapter({
+  registerAuthRuntimeAdapter({
     getAccessToken: () => encodeAccessToken({ sub: ACCOUNT_USER_ID, exp: Date.now() + 60_000 }),
     refreshSession: () => Promise.reject(new Error('not used in this test')),
   });
