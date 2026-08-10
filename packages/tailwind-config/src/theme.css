@@ -77,12 +77,13 @@
   --font-display: var(--font-be-vietnam-pro), sans-serif;
   --font-mono: 'JetBrains Mono', monospace;
 
-  /* ── Type scale — wires packages/design-tokens/src/typography.ts's textStyles into real
-     Tailwind utilities (text-body-sm, text-title-lg, …) so the documented scale is actually
-     usable instead of every component reaching for raw text-2xl/text-8xl sizes
-     (homepage-improvement-plan.md P2-3). Font-weight is not baked in here — pair with a
-     font-* utility, same as the rest of the scale. Adoption is incremental; existing
-     components keep working unchanged until migrated. */
+  /* ── Type scale — real Tailwind utilities (text-body-sm, text-title-lg, …) so the documented
+     scale is actually usable instead of every component reaching for raw text-2xl/text-8xl
+     sizes (homepage-improvement-plan.md P2-3). This is the source of truth for the scale —
+     packages/design-tokens was removed (Decision #93), it never fed these values, they were
+     hand-kept in sync with it. Font-weight is not baked in here — pair with a font-* utility,
+     same as the rest of the scale. Adoption is incremental; existing components keep working
+     unchanged until migrated. */
   --text-body-sm: 0.875rem; /* 14px */
   --text-body-sm--line-height: 1.25rem; /* 20px */
   --text-body-md: 1rem; /* 16px */
