@@ -1,3 +1,4 @@
+import { resetAuthRuntime } from '@repo/api-sdk/client';
 import { registerAuthRuntimeAdapter } from '@repo/api-sdk/client/runtime';
 import { encodeAccessToken } from '@repo/api-sdk/mocks/auth-fixtures';
 import { server } from '@repo/api-sdk/testing/msw-server';
@@ -10,12 +11,10 @@ import { OrdersClient } from '@/app/[locale]/(shop)/_lib/components/orders/Order
 
 const ACCOUNT_USER_ID = 1;
 
-let unregister: (() => void) | undefined;
-
 beforeAll(() => server.listen({ onUnhandledRequest: 'error' }));
 afterEach(() => {
   server.resetHandlers();
-  unregister?.();
+  resetAuthRuntime();
 });
 afterAll(() => server.close());
 
@@ -29,7 +28,7 @@ function renderOrdersClient() {
 
 describe('OrdersClient — fetches client-side (issue #16, closing the #15 SSR-auth gap)', () => {
   it('shows the signed-in Customer’s own order history', async () => {
-    unregister = registerAuthRuntimeAdapter({
+    registerAuthRuntimeAdapter({
       getAccessToken: () => encodeAccessToken({ sub: ACCOUNT_USER_ID, exp: Date.now() + 60_000 }),
       refreshSession: () => Promise.reject(new Error('not used in this test')),
     });

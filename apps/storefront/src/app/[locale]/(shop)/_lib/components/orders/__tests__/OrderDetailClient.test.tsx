@@ -1,3 +1,4 @@
+import { resetAuthRuntime } from '@repo/api-sdk/client';
 import { registerAuthRuntimeAdapter } from '@repo/api-sdk/client/runtime';
 import { encodeAccessToken } from '@repo/api-sdk/mocks/auth-fixtures';
 import { resetMockOrderDbForTesting, setOrderStatusForTesting } from '@repo/api-sdk/mocks/order-fixtures';
@@ -12,18 +13,16 @@ import { OrderDetailClient } from '@/app/[locale]/(shop)/_lib/components/orders/
 const ACCOUNT_USER_ID = 1;
 const ORDER_ID = '1002';
 
-let unregister: (() => void) | undefined;
-
 beforeAll(() => server.listen({ onUnhandledRequest: 'error' }));
 afterEach(() => {
   server.resetHandlers();
-  unregister?.();
+  resetAuthRuntime();
 });
 afterAll(() => server.close());
 
 beforeEach(() => {
   resetMockOrderDbForTesting();
-  unregister = registerAuthRuntimeAdapter({
+  registerAuthRuntimeAdapter({
     getAccessToken: () => encodeAccessToken({ sub: ACCOUNT_USER_ID, exp: Date.now() + 60_000 }),
     refreshSession: () => Promise.reject(new Error('not used in this test')),
   });
