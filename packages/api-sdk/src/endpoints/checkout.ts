@@ -1,3 +1,5 @@
+import type { CartItem } from '@repo/schemas/cart';
+
 import { apiClient } from '../client/fetcher';
 import { API_BASE_URL } from '../env/config';
 
@@ -5,10 +7,8 @@ const CHECKOUT_API = {
   RESERVATIONS: `${API_BASE_URL}/api/checkout/reservations`,
 } as const;
 
-export interface ReservationItem {
-  skuId: string;
-  quantity: number;
-}
+/** Same wire shape as CartItem (glossary.md) — a Reservation holds the exact SKU/quantity pairs the Cart had at Checkout start. */
+export type ReservationItem = CartItem;
 
 export interface Reservation {
   reservationId: string;

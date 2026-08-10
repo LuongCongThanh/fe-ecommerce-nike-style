@@ -1,3 +1,5 @@
+import type { CartItem } from '@repo/schemas/cart';
+
 import { apiClient } from '../client/fetcher';
 import { API_BASE_URL } from '../env/config';
 
@@ -22,11 +24,6 @@ export interface ResolvedCartLineWithQuantity extends ResolvedCartLine {
   quantity: number;
 }
 
-export interface CartItemPayload {
-  skuId: string;
-  quantity: number;
-}
-
 /** Resolves live price/stock/display data for a set of SKU ids — CartItem never caches this (glossary.md). */
 export async function getSkusByIds(skuIds: string[]): Promise<ResolvedCartLine[]> {
   if (skuIds.length === 0) return [];
@@ -35,7 +32,7 @@ export async function getSkusByIds(skuIds: string[]): Promise<ResolvedCartLine[]
 }
 
 /** Merges the guest cart into the signed-in account's cart (Decision #36) — sum by SKU, then clamp to `available`. */
-export async function mergeCartAfterLogin(items: CartItemPayload[]): Promise<ResolvedCartLineWithQuantity[]> {
+export async function mergeCartAfterLogin(items: CartItem[]): Promise<ResolvedCartLineWithQuantity[]> {
   const data = await apiClient.post<{ data: ResolvedCartLineWithQuantity[] }>(CART_API.MERGE, { items });
   return data.data;
 }

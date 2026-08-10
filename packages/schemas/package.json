@@ -9,16 +9,10 @@
     "test": "vitest run"
   },
   "exports": {
-    "./common": "./src/common/pagination.ts",
     "./errors": "./src/errors/envelope.ts",
-    "./auth": "./src/auth/auth.ts",
     "./catalog": "./src/catalog/catalog.ts",
     "./cart": "./src/cart/cart.ts",
-    "./wishlist": "./src/wishlist/wishlist.ts",
-    "./account": "./src/account/account.ts",
-    "./checkout": "./src/checkout/checkout.ts",
-    "./admin": "./src/admin/admin.ts",
-    "./cms": "./src/cms/cms.ts"
+    "./wishlist": "./src/wishlist/wishlist.ts"
   },
   "dependencies": {
     "zod": "^4.4.3"
