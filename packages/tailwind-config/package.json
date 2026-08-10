@@ -12,9 +12,6 @@
     "./content": "./src/content.ts",
     "./plugins": "./src/plugins.ts"
   },
-  "dependencies": {
-    "@repo/design-tokens": "workspace:*"
-  },
   "devDependencies": {
     "@repo/ts-config": "workspace:*",
     "tailwindcss": "^4",
