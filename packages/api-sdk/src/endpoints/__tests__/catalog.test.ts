@@ -101,15 +101,21 @@ describe('getProduct', () => {
 });
 
 describe('getCategories', () => {
-  it('resolves the Decision #50 category tree — 3 top-level categories with 2 children each', async () => {
+  it('resolves the Decision #95/#96 category tree — 6 top-level categories matching the header taxonomy', async () => {
     const result = await getCategories();
 
     const topLevel = result.data.filter((c) => c.parentId === null);
-    expect(topLevel).toHaveLength(3);
+    expect(new Set(topLevel.map((c) => c.slug))).toEqual(new Set(['tops', 'bottoms', 'shoes', 'bags', 'accessories', 'sale']));
 
-    for (const top of topLevel) {
-      const children = result.data.filter((c) => c.parentId === top.id);
-      expect(children).toHaveLength(2);
-    }
+    // Every top-level category has every NAV_CATEGORIES sub-item as a leaf Category (Decision #96) —
+    // `shoes` has the most (7): the 2 originally-seeded leaves (running/basketball) plus 5 from the
+    // header taxonomy with no Product data yet.
+    const shoes = topLevel.find((c) => c.slug === 'shoes');
+    expect(shoes).toBeDefined();
+    const shoesChildren = result.data.filter((c) => c.parentId === shoes?.id);
+    expect(shoesChildren).toHaveLength(7);
+    expect(new Set(shoesChildren.map((c) => c.slug))).toEqual(
+      new Set(['running', 'basketball', 'sneakers', 'leather-shoes', 'sandals', 'boots', 'loafers']),
+    );
   });
 });

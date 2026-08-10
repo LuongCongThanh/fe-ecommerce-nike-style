@@ -17,6 +17,13 @@ export interface NavCategory {
 // English taxonomy — the single source of truth for category name/slug across the header
 // (DesktopMegaMenu, MobileNav) and the homepage (home.ts's homeCategoriesData derives from this
 // array instead of hand-duplicating it, so the two surfaces can't drift out of sync again).
+//
+// Top-level slugs/names match `mockCategories` (packages/api-sdk/src/mocks/catalog-fixtures.ts,
+// Decision #95) 1:1, so `/categories/[slug]` resolves for every top-level link. `sub` slugs are
+// flat (no `{parent}/` prefix) because `/categories/[slug]` is a single dynamic segment, not a
+// catch-all — a nested slug would 404 before even reaching the category-not-found data check. Most
+// `sub` entries still have no matching leaf Category/Product in the mock fixture (placeholder
+// taxonomy, richer than the seeded mock data) and will hit "Category not found" until backed.
 export const NAV_CATEGORIES: [NavCategory, ...NavCategory[]] = [
   {
     slug: 'tops',
@@ -24,12 +31,12 @@ export const NAV_CATEGORIES: [NavCategory, ...NavCategory[]] = [
     icon: Shirt,
     productCount: 120,
     sub: [
-      { slug: 'tops/t-shirts', name: 'T-Shirts' },
-      { slug: 'tops/shirts', name: 'Shirts' },
-      { slug: 'tops/jackets', name: 'Jackets' },
-      { slug: 'tops/hoodies', name: 'Hoodies & Sweatshirts' },
-      { slug: 'tops/polos', name: 'Polo Shirts' },
-      { slug: 'tops/tank-tops', name: 'Tank Tops' },
+      { slug: 't-shirts', name: 'T-Shirts' },
+      { slug: 'shirts', name: 'Shirts' },
+      { slug: 'jackets', name: 'Jackets' },
+      { slug: 'hoodies', name: 'Hoodies & Sweatshirts' },
+      { slug: 'polos', name: 'Polo Shirts' },
+      { slug: 'tank-tops', name: 'Tank Tops' },
     ],
   },
   {
@@ -38,11 +45,11 @@ export const NAV_CATEGORIES: [NavCategory, ...NavCategory[]] = [
     icon: Shirt,
     productCount: 85,
     sub: [
-      { slug: 'bottoms/jeans', name: 'Jeans' },
-      { slug: 'bottoms/dress-pants', name: 'Dress Pants' },
-      { slug: 'bottoms/shorts', name: 'Shorts' },
-      { slug: 'bottoms/athletic-pants', name: 'Athletic Pants' },
-      { slug: 'bottoms/chinos', name: 'Chinos' },
+      { slug: 'jeans', name: 'Jeans' },
+      { slug: 'dress-pants', name: 'Dress Pants' },
+      { slug: 'shorts', name: 'Shorts' },
+      { slug: 'athletic-pants', name: 'Athletic Pants' },
+      { slug: 'chinos', name: 'Chinos' },
     ],
   },
   {
@@ -51,11 +58,13 @@ export const NAV_CATEGORIES: [NavCategory, ...NavCategory[]] = [
     icon: Footprints,
     productCount: 64,
     sub: [
-      { slug: 'shoes/sneakers', name: 'Sneakers' },
-      { slug: 'shoes/leather-shoes', name: 'Leather Shoes' },
-      { slug: 'shoes/sandals', name: 'Sandals & Slides' },
-      { slug: 'shoes/boots', name: 'Boots & Chelsea' },
-      { slug: 'shoes/loafers', name: 'Loafers' },
+      { slug: 'running', name: 'Running' },
+      { slug: 'basketball', name: 'Basketball' },
+      { slug: 'sneakers', name: 'Sneakers' },
+      { slug: 'leather-shoes', name: 'Leather Shoes' },
+      { slug: 'sandals', name: 'Sandals & Slides' },
+      { slug: 'boots', name: 'Boots & Chelsea' },
+      { slug: 'loafers', name: 'Loafers' },
     ],
   },
   {
@@ -64,11 +73,11 @@ export const NAV_CATEGORIES: [NavCategory, ...NavCategory[]] = [
     icon: ShoppingBag,
     productCount: 48,
     sub: [
-      { slug: 'bags/backpacks', name: 'Backpacks' },
-      { slug: 'bags/tote-bags', name: 'Tote Bags' },
-      { slug: 'bags/crossbody-bags', name: 'Crossbody Bags' },
-      { slug: 'bags/handbags', name: 'Handbags' },
-      { slug: 'bags/clutches', name: 'Clutches' },
+      { slug: 'backpacks', name: 'Backpacks' },
+      { slug: 'tote-bags', name: 'Tote Bags' },
+      { slug: 'crossbody-bags', name: 'Crossbody Bags' },
+      { slug: 'handbags', name: 'Handbags' },
+      { slug: 'clutches', name: 'Clutches' },
     ],
   },
   {
@@ -77,12 +86,12 @@ export const NAV_CATEGORIES: [NavCategory, ...NavCategory[]] = [
     icon: Watch,
     productCount: 200,
     sub: [
-      { slug: 'accessories/watches', name: 'Watches' },
-      { slug: 'accessories/hats', name: 'Hats & Caps' },
-      { slug: 'accessories/sunglasses', name: 'Sunglasses' },
-      { slug: 'accessories/belts', name: 'Belts' },
-      { slug: 'accessories/wallets', name: 'Wallets & Cardholders' },
-      { slug: 'accessories/jewelry', name: 'Jewelry' },
+      { slug: 'watches', name: 'Watches' },
+      { slug: 'hats', name: 'Hats & Caps' },
+      { slug: 'sunglasses', name: 'Sunglasses' },
+      { slug: 'belts', name: 'Belts' },
+      { slug: 'wallets', name: 'Wallets & Cardholders' },
+      { slug: 'jewelry', name: 'Jewelry' },
     ],
   },
   {
@@ -91,10 +100,10 @@ export const NAV_CATEGORIES: [NavCategory, ...NavCategory[]] = [
     icon: Flame,
     productCount: 310,
     sub: [
-      { slug: 'sale/flash-sale', name: 'Flash Sale' },
-      { slug: 'sale/up-to-50-off', name: 'Up to 50% Off' },
-      { slug: 'sale/clearance', name: 'Clearance' },
-      { slug: 'sale/bundle-deals', name: 'Bundle Deals' },
+      { slug: 'flash-sale', name: 'Flash Sale' },
+      { slug: 'up-to-50-off', name: 'Up to 50% Off' },
+      { slug: 'clearance', name: 'Clearance' },
+      { slug: 'bundle-deals', name: 'Bundle Deals' },
     ],
   },
 ];

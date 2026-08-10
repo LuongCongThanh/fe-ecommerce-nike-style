@@ -163,7 +163,7 @@ export function DesktopMegaMenu({ locale }: DesktopMegaMenuProps) {
                         <p className="text-brand-700 text-sm font-bold tracking-wider uppercase">Flash Sale</p>
                         <p className="text-brand-700 mt-1 text-lg leading-tight font-black">Up to 70% off</p>
                         <Link
-                          href={`/${locale}/categories/sale/flash-sale`}
+                          href={`/${locale}/categories/sale`}
                           onClick={() => {
                             setIsOpen(false);
                           }}

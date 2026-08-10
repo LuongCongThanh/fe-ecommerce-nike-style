@@ -1,21 +1,63 @@
 import type { Category, Gender, Product } from '@repo/schemas/catalog';
 
 /**
- * Mock catalog per Decision #50 (decision-log.md): 3 top-level Categories (`Shoes`/`Apparel`/`Accessories`)
- * x 2 children each, ~24 Products spread evenly across the 6 leaf Categories, mixed Variant / no-Variant
- * Products, all 4 Gender values represented. Placeholder content/images only — no real Nike data.
+ * Mock catalog per Decision #95/#96 (decision-log.md; supersedes Decision #50's 3-top-level shape): 6
+ * top-level Categories (`Tops`/`Bottoms`/`Shoes`/`Bags`/`Accessories`/`Sale`), each with every leaf
+ * sub-category from the storefront header's `NAV_CATEGORIES` (`data/nav-categories.ts`) — full 1:1
+ * slug+name parity, so every header/mega-menu link resolves on the real category page instead of
+ * hitting "Category not found". Only the 6 leaves seeded before Decision #96 (`running`/`basketball`
+ * under `shoes`, `t-shirts`/`hoodies` under `tops`, `hats` under `accessories`, and `bags` itself)
+ * have actual mock Products — every other leaf added by #96 is a valid, empty Category node (no
+ * fabricated Product data for sub-categories nobody asked to seed; Simplicity First). ~24 Products
+ * spread across those original 6 leaves, mixed Variant / no-Variant Products, all 4 Gender values
+ * represented.
  */
 
 export const mockCategories: Category[] = [
+  { id: 'cat-tops', slug: 'tops', name: 'Tops', parentId: null },
+  { id: 'cat-tshirts', slug: 't-shirts', name: 'T-Shirts', parentId: 'cat-tops' },
+  { id: 'cat-shirts', slug: 'shirts', name: 'Shirts', parentId: 'cat-tops' },
+  { id: 'cat-jackets', slug: 'jackets', name: 'Jackets', parentId: 'cat-tops' },
+  { id: 'cat-hoodies', slug: 'hoodies', name: 'Hoodies & Sweatshirts', parentId: 'cat-tops' },
+  { id: 'cat-polos', slug: 'polos', name: 'Polo Shirts', parentId: 'cat-tops' },
+  { id: 'cat-tank-tops', slug: 'tank-tops', name: 'Tank Tops', parentId: 'cat-tops' },
+
+  { id: 'cat-bottoms', slug: 'bottoms', name: 'Bottoms', parentId: null },
+  { id: 'cat-jeans', slug: 'jeans', name: 'Jeans', parentId: 'cat-bottoms' },
+  { id: 'cat-dress-pants', slug: 'dress-pants', name: 'Dress Pants', parentId: 'cat-bottoms' },
+  { id: 'cat-shorts', slug: 'shorts', name: 'Shorts', parentId: 'cat-bottoms' },
+  { id: 'cat-athletic-pants', slug: 'athletic-pants', name: 'Athletic Pants', parentId: 'cat-bottoms' },
+  { id: 'cat-chinos', slug: 'chinos', name: 'Chinos', parentId: 'cat-bottoms' },
+
   { id: 'cat-shoes', slug: 'shoes', name: 'Shoes', parentId: null },
   { id: 'cat-running', slug: 'running', name: 'Running', parentId: 'cat-shoes' },
   { id: 'cat-basketball', slug: 'basketball', name: 'Basketball', parentId: 'cat-shoes' },
-  { id: 'cat-apparel', slug: 'apparel', name: 'Apparel', parentId: null },
-  { id: 'cat-tshirts', slug: 't-shirts', name: 'T-Shirts', parentId: 'cat-apparel' },
-  { id: 'cat-hoodies', slug: 'hoodies', name: 'Hoodies', parentId: 'cat-apparel' },
+  { id: 'cat-sneakers', slug: 'sneakers', name: 'Sneakers', parentId: 'cat-shoes' },
+  { id: 'cat-leather-shoes', slug: 'leather-shoes', name: 'Leather Shoes', parentId: 'cat-shoes' },
+  { id: 'cat-sandals', slug: 'sandals', name: 'Sandals & Slides', parentId: 'cat-shoes' },
+  { id: 'cat-boots', slug: 'boots', name: 'Boots & Chelsea', parentId: 'cat-shoes' },
+  { id: 'cat-loafers', slug: 'loafers', name: 'Loafers', parentId: 'cat-shoes' },
+
+  { id: 'cat-bags', slug: 'bags', name: 'Bags', parentId: null },
+  { id: 'cat-backpacks', slug: 'backpacks', name: 'Backpacks', parentId: 'cat-bags' },
+  { id: 'cat-tote-bags', slug: 'tote-bags', name: 'Tote Bags', parentId: 'cat-bags' },
+  { id: 'cat-crossbody-bags', slug: 'crossbody-bags', name: 'Crossbody Bags', parentId: 'cat-bags' },
+  { id: 'cat-handbags', slug: 'handbags', name: 'Handbags', parentId: 'cat-bags' },
+  { id: 'cat-clutches', slug: 'clutches', name: 'Clutches', parentId: 'cat-bags' },
+
   { id: 'cat-accessories', slug: 'accessories', name: 'Accessories', parentId: null },
-  { id: 'cat-bags', slug: 'bags', name: 'Bags', parentId: 'cat-accessories' },
-  { id: 'cat-hats', slug: 'hats', name: 'Hats', parentId: 'cat-accessories' },
+  { id: 'cat-watches', slug: 'watches', name: 'Watches', parentId: 'cat-accessories' },
+  { id: 'cat-hats', slug: 'hats', name: 'Hats & Caps', parentId: 'cat-accessories' },
+  { id: 'cat-sunglasses', slug: 'sunglasses', name: 'Sunglasses', parentId: 'cat-accessories' },
+  { id: 'cat-belts', slug: 'belts', name: 'Belts', parentId: 'cat-accessories' },
+  { id: 'cat-wallets', slug: 'wallets', name: 'Wallets & Cardholders', parentId: 'cat-accessories' },
+  { id: 'cat-jewelry', slug: 'jewelry', name: 'Jewelry', parentId: 'cat-accessories' },
+
+  { id: 'cat-sale', slug: 'sale', name: 'Sale', parentId: null },
+  { id: 'cat-flash-sale', slug: 'flash-sale', name: 'Flash Sale', parentId: 'cat-sale' },
+  { id: 'cat-up-to-50-off', slug: 'up-to-50-off', name: 'Up to 50% Off', parentId: 'cat-sale' },
+  { id: 'cat-clearance', slug: 'clearance', name: 'Clearance', parentId: 'cat-sale' },
+  { id: 'cat-bundle-deals', slug: 'bundle-deals', name: 'Bundle Deals', parentId: 'cat-sale' },
 ];
 
 function placeholderImages(seed: string, count = 2): string[] {
