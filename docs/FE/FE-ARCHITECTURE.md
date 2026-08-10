@@ -154,18 +154,19 @@ Không nên chứa:
 
 ## 6. Shared package architecture
 
-| Package                    | Vai trò kiến trúc                         | Ai được dùng                                    |
-| -------------------------- | ----------------------------------------- | ----------------------------------------------- |
-| `packages/design-tokens`   | token source of truth                     | cả 3 app + shared UI                            |
-| `packages/tailwind-config` | theme/preset chung                        | cả 3 app                                        |
-| `packages/ui`              | primitive UI + layout helpers             | cả 3 app                                        |
-| `packages/commerce`        | reusable commerce components              | chủ yếu `storefront`, có thể `admin` khi hợp lý |
-| `packages/schemas`         | typed contract và validation schemas      | cả app và `api-sdk`                             |
-| `packages/api-sdk`         | network entrypoint duy nhất               | cả 3 app                                        |
-| `packages/hooks`           | hook thật sự cross-app hoặc cross-feature | cả 3 app khi hợp lý                             |
-| `packages/utils`           | helper thuần, không phụ thuộc app         | cả 3 app                                        |
+| Package                    | Vai trò kiến trúc                                                                            | Ai được dùng                                    |
+| -------------------------- | -------------------------------------------------------------------------------------------- | ----------------------------------------------- |
+| `packages/tailwind-config` | theme/preset chung (source of truth cho token, thay `packages/design-tokens` — Decision #93) | cả 3 app                                        |
+| `packages/ui`              | primitive UI + layout helpers                                                                | cả 3 app                                        |
+| `packages/commerce`        | reusable commerce components                                                                 | chủ yếu `storefront`, có thể `admin` khi hợp lý |
+| `packages/schemas`         | typed contract và validation schemas                                                         | cả app và `api-sdk`                             |
+| `packages/api-sdk`         | network entrypoint duy nhất                                                                  | cả 3 app                                        |
+| `packages/hooks`           | hook thật sự cross-app hoặc cross-feature                                                    | cả 3 app khi hợp lý                             |
+| `packages/utils`           | helper thuần, không phụ thuộc app                                                            | cả 3 app                                        |
 
-### 6.1. `packages/design-tokens`
+### 6.1. `packages/design-tokens` (đã gỡ — Decision #93)
+
+> Scaffold đề xuất ban đầu dưới đây chưa từng được `packages/tailwind-config` import thật — token sống trực tiếp trong `theme.css`/`preset.css`, đồng bộ tay qua comment. Package bị xoá sau khi xác nhận zero import và một bug drift thật đã xảy ra do đồng bộ tay. Giữ lại mục này làm ghi chú lịch sử; không dựng lại package này trừ khi có nhu cầu generate CSS từ TS thật.
 
 Chứa: color tokens, spacing tokens, typography tokens, radius, shadow, motion, breakpoints.
 
@@ -237,7 +238,7 @@ Internal-only:
 
 Chứa: primitive UI components, layout primitives như `Container`, `Grid`, `Stack`, `Section`, component thuần UI không gắn domain commerce.
 
-Ví dụ: `Button`, `Input`, `Modal`, `Tabs`, `Tooltip`.
+Ví dụ: `Button`, `Input`, `Dialog`, `Tabs`, `Tooltip`.
 
 Cây thư mục đề xuất:
 
@@ -248,7 +249,7 @@ packages/ui/
 │   ├── components/
 │   │   ├── Button.tsx
 │   │   ├── Input.tsx
-│   │   ├── Modal.tsx
+│   │   ├── Dialog.tsx
 │   │   ├── Tabs.tsx
 │   │   ├── Tooltip.tsx
 │   │   ├── Spinner.tsx
@@ -274,7 +275,7 @@ Public subpath nên export:
 
 - `@repo/ui/button`
 - `@repo/ui/input`
-- `@repo/ui/modal`
+- `@repo/ui/dialog`
 - `@repo/ui/tabs`
 - `@repo/ui/tooltip`
 - `@repo/ui/spinner`
@@ -304,7 +305,7 @@ Mẫu `package.json` scaffold-ready cho `packages/ui`:
   "exports": {
     "./button": "./src/components/Button.tsx",
     "./input": "./src/components/Input.tsx",
-    "./modal": "./src/components/Modal.tsx",
+    "./dialog": "./src/components/Dialog.tsx",
     "./tabs": "./src/components/Tabs.tsx",
     "./tooltip": "./src/components/Tooltip.tsx",
     "./spinner": "./src/components/Spinner.tsx",
@@ -1510,13 +1511,13 @@ Quy tắc: component ưu tiên dùng `semantic token`; chỉ tạo `component al
 
 #### 16.4.2. Responsive baseline
 
-| Hạng mục           | Quy định chốt                                                                         |
-| ------------------ | ------------------------------------------------------------------------------------- |
-| Breakpoint source  | Lấy từ `packages/design-tokens`                                                       |
-| Container behavior | `storefront` dùng container rõ theo viewport, `admin/cms` ưu tiên fluid layout        |
-| Grid usage         | Product grid, collection grid, dashboard cards phải dùng primitive hoặc utility chuẩn |
-| Spacing scale      | Tăng theo viewport nhưng không tạo scale riêng cho từng app                           |
-| Mobile-first       | Bắt buộc                                                                              |
+| Hạng mục           | Quy định chốt                                                                                      |
+| ------------------ | -------------------------------------------------------------------------------------------------- |
+| Breakpoint source  | Tailwind default (không override trong `theme.css`) — `packages/design-tokens` đã gỡ, Decision #93 |
+| Container behavior | `storefront` dùng container rõ theo viewport, `admin/cms` ưu tiên fluid layout                     |
+| Grid usage         | Product grid, collection grid, dashboard cards phải dùng primitive hoặc utility chuẩn              |
+| Spacing scale      | Tăng theo viewport nhưng không tạo scale riêng cho từng app                                        |
+| Mobile-first       | Bắt buộc                                                                                           |
 
 #### 16.4.3. Container width đã chốt
 

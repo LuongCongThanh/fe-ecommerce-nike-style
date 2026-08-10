@@ -1,3 +1,4 @@
+import { resetAuthRuntime } from '@repo/api-sdk/client';
 import { getSkusByIds } from '@repo/api-sdk/endpoints/cart';
 import { registerAuthRuntimeAdapter } from '@repo/api-sdk/client/runtime';
 import { encodeAccessToken } from '@repo/api-sdk/mocks/auth-fixtures';
@@ -18,12 +19,10 @@ const ACCOUNT_USER_ID = 1;
 
 const ADDRESS = { fullName: 'Nguyễn Văn A', phoneNumber: '0912345678', address: '123 ABC', city: 'Hà Nội', district: 'Q1', ward: 'P1' } as const;
 
-let unregister: (() => void) | undefined;
-
 beforeAll(() => server.listen({ onUnhandledRequest: 'error' }));
 afterEach(() => {
   server.resetHandlers();
-  unregister?.();
+  resetAuthRuntime();
   vi.useRealTimers();
 });
 afterAll(() => server.close());
@@ -32,7 +31,7 @@ beforeEach(() => {
   resetMockReservationsForTesting();
   resetMockOrderDbForTesting();
   resetMockCatalogStockForTesting();
-  unregister = registerAuthRuntimeAdapter({
+  registerAuthRuntimeAdapter({
     getAccessToken: () => encodeAccessToken({ sub: ACCOUNT_USER_ID, exp: Date.now() + 60_000 }),
     refreshSession: () => Promise.reject(new Error('not used in this test')),
   });
@@ -126,8 +125,7 @@ describe('Place Order — commit + snapshot (FE-INT, issue #16)', () => {
   });
 
   it('rejects Place Order for a signed-out request', async () => {
-    unregister?.();
-    unregister = undefined;
+    resetAuthRuntime();
 
     await expect(
       orderActions.create({

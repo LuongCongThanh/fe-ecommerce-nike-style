@@ -1,5 +1,5 @@
 import { ApiError } from './api-error';
-import { type AuthRuntimeAdapter, getAuthRuntimeAdapter } from './runtime';
+import { type AuthRuntimeAdapter, clearAuthRuntimeAdapter, getAuthRuntimeAdapter } from './runtime';
 
 export type RequestMethod = 'GET' | 'POST' | 'PUT' | 'PATCH' | 'DELETE';
 
@@ -163,16 +163,8 @@ export const apiClient = {
     }),
 };
 
-/** Compatibility surface for existing callers and tests while the deeper transport module settles in. */
-export async function fetcher<T>(input: RequestInfo, init?: RequestInit): Promise<T> {
-  const response = await fetch(input, {
-    ...init,
-    credentials: 'include',
-  });
-
-  if (!response.ok) {
-    throw await ApiError.fromResponse(response);
-  }
-
-  return response.json() as Promise<T>;
+/** Test-only: clears the in-flight refresh guard and the registered auth adapter, so a refresh started in one test can't bleed into the next. */
+export function resetAuthRuntime(): void {
+  inFlightRefresh = null;
+  clearAuthRuntimeAdapter();
 }

@@ -1,3 +1,4 @@
+import { resetAuthRuntime } from '@repo/api-sdk/client';
 import { encodeAccessToken } from '@repo/api-sdk/mocks/auth-fixtures';
 import { registerAuthRuntimeAdapter } from '@repo/api-sdk/client/runtime';
 import { server } from '@repo/api-sdk/testing/msw-server';
@@ -125,7 +126,7 @@ describe('mergeWishlistOnLogin (FE-INT — union+dedupe by Product, issue #14)',
       useWishlistStore.getState().addItem(PRODUCT_NO_VARIANT);
     });
 
-    const unregister = registerAuthRuntimeAdapter({
+    registerAuthRuntimeAdapter({
       getAccessToken: () => encodeAccessToken({ sub: ACCOUNT_USER_ID, exp: Date.now() + 60_000 }),
       refreshSession: () => Promise.reject(new Error('not used in this test')),
     });
@@ -133,7 +134,7 @@ describe('mergeWishlistOnLogin (FE-INT — union+dedupe by Product, issue #14)',
     try {
       await mergeWishlistOnLogin();
     } finally {
-      unregister();
+      resetAuthRuntime();
     }
 
     const merged = getWishlistItems();

@@ -1,7 +1,7 @@
 import { afterAll, afterEach, beforeAll, describe, expect, it, vi } from 'vitest';
 
 import { ApiError } from '../../client/api-error';
-import { apiClient } from '../../client/fetcher';
+import { apiClient, resetAuthRuntime } from '../../client/fetcher';
 import { registerAuthRuntimeAdapter } from '../../client/runtime';
 import { API_BASE_URL } from '../../env/config';
 import { ACCESS_TOKEN_TTL_MS } from '../../mocks/auth-fixtures';
@@ -146,7 +146,7 @@ describe('getProfile via GET /api/auth/me/', () => {
     let currentAccess = session.access;
     let currentRefresh = session.refresh;
 
-    const unregister = registerAuthRuntimeAdapter({
+    registerAuthRuntimeAdapter({
       getAccessToken: () => currentAccess,
       refreshSession: async () => {
         const rotated = await refreshSession(currentRefresh);
@@ -166,7 +166,7 @@ describe('getProfile via GET /api/auth/me/', () => {
       expect(currentAccess).not.toBe(session.access); // proves a refresh actually happened, not a stale cache hit
     } finally {
       vi.useRealTimers();
-      unregister();
+      resetAuthRuntime();
     }
   });
 
@@ -176,7 +176,7 @@ describe('getProfile via GET /api/auth/me/', () => {
     let currentRefresh = session.refresh;
     let refreshCallCount = 0;
 
-    const unregister = registerAuthRuntimeAdapter({
+    registerAuthRuntimeAdapter({
       getAccessToken: () => currentAccess,
       refreshSession: async () => {
         refreshCallCount++;
@@ -200,7 +200,7 @@ describe('getProfile via GET /api/auth/me/', () => {
       expect(refreshCallCount).toBe(1);
     } finally {
       vi.useRealTimers();
-      unregister();
+      resetAuthRuntime();
     }
   });
 });
