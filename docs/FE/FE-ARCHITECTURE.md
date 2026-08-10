@@ -237,7 +237,7 @@ Internal-only:
 
 Chứa: primitive UI components, layout primitives như `Container`, `Grid`, `Stack`, `Section`, component thuần UI không gắn domain commerce.
 
-Ví dụ: `Button`, `Input`, `Modal`, `Tabs`, `Tooltip`.
+Ví dụ: `Button`, `Input`, `Dialog`, `Tabs`, `Tooltip`.
 
 Cây thư mục đề xuất:
 
@@ -248,7 +248,7 @@ packages/ui/
 │   ├── components/
 │   │   ├── Button.tsx
 │   │   ├── Input.tsx
-│   │   ├── Modal.tsx
+│   │   ├── Dialog.tsx
 │   │   ├── Tabs.tsx
 │   │   ├── Tooltip.tsx
 │   │   ├── Spinner.tsx
@@ -274,7 +274,7 @@ Public subpath nên export:
 
 - `@repo/ui/button`
 - `@repo/ui/input`
-- `@repo/ui/modal`
+- `@repo/ui/dialog`
 - `@repo/ui/tabs`
 - `@repo/ui/tooltip`
 - `@repo/ui/spinner`
@@ -304,7 +304,7 @@ Mẫu `package.json` scaffold-ready cho `packages/ui`:
   "exports": {
     "./button": "./src/components/Button.tsx",
     "./input": "./src/components/Input.tsx",
-    "./modal": "./src/components/Modal.tsx",
+    "./dialog": "./src/components/Dialog.tsx",
     "./tabs": "./src/components/Tabs.tsx",
     "./tooltip": "./src/components/Tooltip.tsx",
     "./spinner": "./src/components/Spinner.tsx",
