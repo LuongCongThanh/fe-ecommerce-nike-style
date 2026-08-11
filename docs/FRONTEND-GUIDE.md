@@ -18,11 +18,13 @@ pnpm test:e2e
 ```
 
 Ba app:
+
 - `storefront`: khách hàng, SEO, performance, i18n, commerce.
 - `admin`: vận hành nội bộ, CRUD/table/filter/form.
 - `cms`: content/marketing, authoring/preview/SEO metadata.
 
 Core rules:
+
 1. Turborepo + pnpm workspace + Next.js App Router + TypeScript strict.
 2. Foundation trước, feature sau.
 3. Mock-first + contract-first.
@@ -125,25 +127,26 @@ strict-peer-dependencies=false
 
 ## 3. Stack
 
-| Nhóm | Công nghệ |
-|---|---|
-| Workspace | Turborepo, pnpm |
-| App | Next.js App Router, React |
-| Language | TypeScript strict |
-| Styling | Tailwind CSS v4, CSS variables |
-| UI | Radix UI, cva, clsx, tailwind-merge, lucide-react |
-| Contract | Zod |
-| Mock API | MSW |
-| Server state | TanStack Query |
-| Client state | Zustand |
-| Forms | react-hook-form + zodResolver |
-| i18n | next-intl, storefront only |
-| Unit/Integration | Vitest, jsdom, Testing Library |
-| E2E | Playwright |
-| Storefront PDP 3D | three, react-three-fiber, drei |
-| Storefront PWA | @ducanh2912/next-pwa, production only |
+| Nhóm              | Công nghệ                                         |
+| ----------------- | ------------------------------------------------- |
+| Workspace         | Turborepo, pnpm                                   |
+| App               | Next.js App Router, React                         |
+| Language          | TypeScript strict                                 |
+| Styling           | Tailwind CSS v4, CSS variables                    |
+| UI                | Radix UI, cva, clsx, tailwind-merge, lucide-react |
+| Contract          | Zod                                               |
+| Mock API          | MSW                                               |
+| Server state      | TanStack Query                                    |
+| Client state      | Zustand                                           |
+| Forms             | react-hook-form + zodResolver                     |
+| i18n              | next-intl, storefront only                        |
+| Unit/Integration  | Vitest, jsdom, Testing Library                    |
+| E2E               | Playwright                                        |
+| Storefront PDP 3D | three, react-three-fiber, drei                    |
+| Storefront PWA    | @ducanh2912/next-pwa, production only             |
 
 Version policy:
+
 - Pin exact version ở scaffold commit đầu tiên.
 - Không dùng `latest` trôi nổi.
 - `pnpm-lock.yaml` là source of truth thực tế sau scaffold.
@@ -154,28 +157,34 @@ Version policy:
 ## 4. Package Responsibilities
 
 ### `@repo/tailwind-config`
+
 Source of truth cho theme/design tokens: colors, semantic colors, spacing, typography, radius, shadow, motion, breakpoints, Tailwind mapping.
 
 **Rule:** không tạo token source khác song song.
 
 ### `@repo/ui`
+
 UI thuần + layout primitives.
 
 Ví dụ:
+
 ```text
 Button Input Label Dialog Tabs Tooltip Spinner EmptyState
 Container Grid Stack Section
 ```
 
 Không chứa:
+
 ```text
 ProductCard CartSummary OrderWorkflow CMS business logic
 ```
 
 ### `@repo/commerce`
+
 Commerce component **đã có reuse thật**.
 
 Ví dụ:
+
 ```text
 ProductPrice SizeSelector ColorSelector QuantitySelector OrderTimeline
 ```
@@ -183,6 +192,7 @@ ProductPrice SizeSelector ColorSelector QuantitySelector OrderTimeline
 Rule: mới có một consumer → giữ local.
 
 ### `@repo/schemas`
+
 Zod schemas cho contract/runtime validation.
 
 ```text
@@ -201,6 +211,7 @@ errors/
 Dùng cho API contract và form validation khi phù hợp. Sau API v1 handshake, transport schema phải bám versioned OpenAPI artifact từ backend.
 
 ### `@repo/api-sdk`
+
 Network entrypoint duy nhất.
 
 ```text
@@ -219,23 +230,28 @@ src/
 ```
 
 Public import:
+
 ```ts
 import { getProducts } from '@repo/api-sdk/catalog';
 ```
 
 Không:
+
 ```ts
 fetch('/api/products');
 import x from '@repo/api-sdk/src/client/x';
 ```
 
 ### `@repo/hooks`
+
 Chỉ hook cross-app/cross-feature thật sự: query key factory, pagination, session, currency, media query...
 
 ### `@repo/utils`
+
 Pure helpers: formatter, parser, guard, string/object helper. Không React hook, UI hay network call.
 
 Storefront i18n helper:
+
 ```text
 packages/utils/src/i18n/
   locales.ts
@@ -244,6 +260,7 @@ packages/utils/src/i18n/
 ```
 
 ### `@repo/eslint-config`
+
 Shared lint baseline: TypeScript, React/Next, import order, a11y, `import type`, hạn chế `any`.
 
 Folder boundary riêng của từng app được cấu hình trong `eslint.config.mjs` của app.
@@ -257,6 +274,7 @@ react-library.json
 ```
 
 Baseline:
+
 ```text
 strict=true
 noImplicitAny=true
@@ -270,6 +288,7 @@ noEmit=true
 ## 5. App Structure
 
 ### Storefront
+
 Storefront được phép giữ route-group convention hiện hữu:
 
 ```text
@@ -279,6 +298,7 @@ src/app/[locale]/(group)/_lib/**
 Không ép refactor sang `features/{feature}/pages` chỉ để giống app khác. Boundary tương đương phải được enforce bằng ESLint.
 
 ### Admin / CMS
+
 Baseline:
 
 ```text
@@ -297,6 +317,7 @@ Chỉ tạo folder khi thật sự cần.
 ## 6. Import & Boundary Rules
 
 Allowed:
+
 ```text
 app → feature
 app → shared package
@@ -306,6 +327,7 @@ api-sdk → schemas
 ```
 
 Forbidden:
+
 ```text
 package → app
 feature A → private implementation của feature B
@@ -315,6 +337,7 @@ app → @repo/package/src/*
 ```
 
 Alias:
+
 ```text
 @/*
 @/features/*
@@ -345,12 +368,12 @@ Không barrel `index.ts`; package export subpath bằng `package.json#exports`.
 
 ## 8. State Ownership
 
-| Loại state | Công cụ |
-|---|---|
+| Loại state             | Công cụ           |
+| ---------------------- | ----------------- |
 | filter/sort/pagination | URL/search params |
-| server/API data | TanStack Query |
-| shared client/UI state | Zustand |
-| local interaction | React state |
+| server/API data        | TanStack Query    |
+| shared client/UI state | Zustand           |
+| local interaction      | React state       |
 
 Không copy API response từ TanStack Query sang Zustand để làm cache phụ.
 
@@ -400,6 +423,7 @@ NEXT_PUBLIC_SUPPORTED_LOCALES=vi,en
 ## 10. i18n
 
 Storefront:
+
 - locales: `vi`, `en`.
 - default: `vi`.
 - thiếu translation → fallback `vi`.
@@ -413,6 +437,7 @@ Admin/CMS UI chrome: tiếng Việt.
 ## 11. Auth & Authorization
 
 Current architecture:
+
 - access JWT ngắn hạn giữ trong memory.
 - gửi access token bằng Bearer header.
 - opaque refresh token nằm trong `HttpOnly`/`Secure`/`SameSite` cookie.
@@ -422,6 +447,7 @@ Current architecture:
 - backend enforce permission thật.
 
 Admin/CMS permission-based roles được tài liệu ghi nhận:
+
 ```text
 SUPER_ADMIN
 ADMIN_STAFF
@@ -429,6 +455,7 @@ CMS_EDITOR
 ```
 
 Cần spike trước khi build auth sâu:
+
 - refresh/retry concurrency.
 - protected-route bootstrapping.
 - permission → route visibility.
@@ -440,6 +467,7 @@ Một số wording auth trong docs cũ khác kiến trúc trên; khi implement p
 ## 12. Providers
 
 Mỗi app:
+
 ```text
 src/providers/
 ├── app-providers.tsx
@@ -447,6 +475,7 @@ src/providers/
 ```
 
 Storefront thêm:
+
 ```text
 intl-provider.tsx
 ```
@@ -458,6 +487,7 @@ Một app chỉ có một QueryClient baseline; không để mỗi feature tự 
 ## 13. Loading / Empty / Error
 
 Mỗi feature phải có:
+
 ```text
 loading
 empty
@@ -468,6 +498,7 @@ success
 Route-level dùng `loading.tsx`, `error.tsx`, `not-found.tsx` khi phù hợp.
 
 Rules:
+
 - loading không gây layout shift lớn.
 - empty có hướng dẫn/CTA khi phù hợp.
 - error có retry hoặc next action khi có thể.
@@ -477,26 +508,33 @@ Rules:
 ## 14. UI Contract
 
 ### Design language
+
 - Storefront: retail editorial/sport, photographic, product-led.
 - Admin/CMS: workbench/utilitarian.
 
 ### Typography
+
 Duy nhất: **Be Vietnam Pro** cho body và display; không đổi font theo locale.
 
 ### Colors
+
 Canonical trong `packages/tailwind-config`.
+
 - `brand`: price/sale/promotion.
 - primary CTA: `primary` / `primary-foreground`, không dùng `brand` mặc định.
 - `accent`: highlight UI phi thương mại.
 - surface dùng semantic warm-neutral tokens; không hard-code `bg-white` cho shared surface.
 
 ### CTA
+
 - Động từ ngắn, rõ hành động: `Mua ngay`, `Xem sản phẩm`, `Xem bộ sưu tập`.
 - Không dùng CTA mơ hồ nếu có wording cụ thể hơn.
 - CTA/clickable label không wrap ở breakpoint bắt buộc.
 
 ### Honest UI
+
 Không hiển thị như production evidence nếu không có nguồn thật:
+
 - testimonial.
 - rating/review count.
 - customer count.
@@ -509,11 +547,13 @@ Mock data được phép trong dev/test nhưng không được giả làm proof 
 ## 15. Storefront Homepage
 
 Tránh template lặp:
+
 ```text
 hero → equal grids → equal benefit cards → testimonial cards → SaaS footer
 ```
 
 Preferred structure:
+
 1. Retail masthead/category-led header.
 2. Photographic hero, bias trái.
 3. Featured categories: rail/asymmetric layout.
@@ -525,6 +565,7 @@ Preferred structure:
 9. Newsletter-first/brand-statement footer.
 
 Không:
+
 - căn giữa nhiều section liên tiếp.
 - `hover:scale-105` cho mọi card.
 - `transition-all` trong shared Button.
@@ -538,11 +579,13 @@ Brand name duy nhất: `ANTIGRAVITY.STORE`.
 ## 16. Accessibility & Responsive
 
 Breakpoint kiểm tra bắt buộc:
+
 ```text
 320 / 375 / 414 / 768 / 1440 px
 ```
 
 Manual checks:
+
 - keyboard-only navigation.
 - focus order/visibility.
 - reduced motion.
@@ -551,6 +594,7 @@ Manual checks:
 - clickable label không wrap sai.
 
 Interactive component nên có:
+
 ```text
 default / hover / focus / active / disabled / loading nếu applicable
 ```
@@ -560,6 +604,7 @@ default / hover / focus / active / disabled / loading nếu applicable
 ## 17. Performance
 
 Storefront target:
+
 ```text
 LCP < 2.5s
 CLS < 0.1
@@ -568,12 +613,14 @@ Lighthouse > 95
 ```
 
 Admin/CMS:
+
 ```text
 LCP < 4s
 INP < 500ms
 ```
 
 Rules:
+
 - tránh over-fetching.
 - shared primitives gọn.
 - typography support Vietnamese glyphs.
@@ -585,11 +632,13 @@ Rules:
 ## 18. Testing
 
 Unit/Integration:
+
 - Vitest.
 - jsdom.
 - Testing Library + user-event.
 
 Ưu tiên test:
+
 - schemas.
 - pure utils.
 - API adapters/mappers.
@@ -599,6 +648,7 @@ Unit/Integration:
 E2E: Playwright.
 
 Smoke baseline:
+
 - homepage.
 - navigation.
 - primary CTA.
@@ -606,6 +656,7 @@ Smoke baseline:
 - auth/protected shell khi sẵn sàng.
 
 Visual checks tại:
+
 ```text
 320 / 375 / 414 / 768 / 1440
 ```
@@ -617,11 +668,13 @@ Visual checks tại:
 Dùng Husky + lint-staged + commitlint + Conventional Commits.
 
 Pre-commit:
+
 ```bash
 pnpm lint-staged
 ```
 
 Commit examples:
+
 ```text
 feat: add product filters
 fix: handle empty cart
@@ -666,6 +719,7 @@ pnpm test:e2e
 ```
 
 Foundation DONE khi:
+
 - 3 app boot local.
 - storefront `/vi` và `/en` chạy.
 - app import được schema.
@@ -698,6 +752,7 @@ Sau Foundation:
 ## 22. Feature PR Checklist
 
 Architecture:
+
 - [ ] Code đặt đúng app/package.
 - [ ] Không private cross-feature import.
 - [ ] Không direct fetch.
@@ -705,12 +760,14 @@ Architecture:
 - [ ] Không premature shared abstraction.
 
 States:
+
 - [ ] loading.
 - [ ] empty.
 - [ ] error.
 - [ ] success.
 
 Quality:
+
 - [ ] lint.
 - [ ] typecheck.
 - [ ] relevant tests.
@@ -718,6 +775,7 @@ Quality:
 - [ ] keyboard/focus check nếu có interaction.
 
 API:
+
 - [ ] schema rõ.
 - [ ] endpoint typed.
 - [ ] MSW handler nếu cần mock mode.
@@ -747,19 +805,19 @@ auth orchestration sâu trước auth spike
 
 ## 24. Decision Matrix: Đặt Code Ở Đâu?
 
-| Code | Nơi đặt |
-|---|---|
-| UI primitive | `packages/ui` |
-| Commerce component đã reuse | `packages/commerce` |
-| API call typed | `packages/api-sdk` |
-| Contract/validation | `packages/schemas` |
-| Pure helper đa app | `packages/utils` |
-| Hook đa app/cross-feature | `packages/hooks` |
+| Code                           | Nơi đặt                     |
+| ------------------------------ | --------------------------- |
+| UI primitive                   | `packages/ui`               |
+| Commerce component đã reuse    | `packages/commerce`         |
+| API call typed                 | `packages/api-sdk`          |
+| Contract/validation            | `packages/schemas`          |
+| Pure helper đa app             | `packages/utils`            |
+| Hook đa app/cross-feature      | `packages/hooks`            |
 | Business/page logic một domain | app-local feature/route lib |
-| Route/layout/provider | app tương ứng |
-| Theme/token/Tailwind | `packages/tailwind-config` |
-| TS baseline | `packages/ts-config` |
-| Shared lint baseline | `packages/eslint-config` |
+| Route/layout/provider          | app tương ứng               |
+| Theme/token/Tailwind           | `packages/tailwind-config`  |
+| TS baseline                    | `packages/ts-config`        |
+| Shared lint baseline           | `packages/eslint-config`    |
 
 Rule cuối:
 
@@ -792,6 +850,7 @@ Các docs cũ có một số phần đã bị supersede. File này chuẩn hóa 
 ## 26. Definition of Done Toàn Foundation
 
 Workspace:
+
 - [ ] `pnpm install`.
 - [ ] `pnpm build`.
 - [ ] `pnpm lint`.
@@ -799,12 +858,14 @@ Workspace:
 - [ ] `pnpm test`.
 
 Apps:
+
 - [ ] storefront boot.
 - [ ] admin boot.
 - [ ] cms boot.
 - [ ] storefront locale routing boot.
 
 Packages:
+
 - [ ] theme/tokens shared hoạt động.
 - [ ] schemas import được.
 - [ ] api-sdk mock mode chạy.
@@ -812,12 +873,14 @@ Packages:
 - [ ] exports không leak private internals.
 
 Architecture:
+
 - [ ] không raw backend fetch ngoài api-sdk.
 - [ ] không server cache trong Zustand.
 - [ ] không reverse dependency package → app.
 - [ ] ESLint boundaries hoạt động.
 
 Test harness:
+
 - [ ] Vitest boot.
 - [ ] Playwright boot.
 
@@ -828,6 +891,7 @@ Nếu thiếu bất kỳ mục nào: trạng thái là **Foundation đang triể
 ## 27. Source Notes
 
 Tài liệu này được hệ thống lại từ:
+
 - `README.md`
 - `FE.md`
 - `FE-ARCHITECTURE.md`

@@ -1,6 +1,7 @@
 const tseslint = require('typescript-eslint');
 const nextVitals = require('eslint-config-next/core-web-vitals');
 const createBaseConfig = require('./base');
+const strictReactRules = require('./react-rules');
 
 /**
  * @param {{ tsconfigRootDir?: string }} [options] `nextVitals` already registers the
@@ -10,6 +11,7 @@ const createBaseConfig = require('./base');
 module.exports = function createNextConfig(options) {
   return tseslint.config(...createBaseConfig(options), ...nextVitals, {
     rules: {
+      ...strictReactRules,
       'react/react-in-jsx-scope': 'off',
       'react/prop-types': 'off',
     },

@@ -52,7 +52,7 @@ export interface CreateOrderPayload {
   paymentMethod: StorefrontPaymentMethod;
   note?: string;
   voucherCode?: string;
-  items: Array<{ variantId: string; quantity: number }>;
+  items: { variantId: string; quantity: number }[];
   /** The Reservation created when Checkout started (glossary.md — Reservation) — the backend commits *this* reservation's stock, it doesn't re-derive from `items`. */
   reservationId: string;
   /** Idempotency key: the same key retried (double-click, reload, network retry) replays the original order instead of creating a duplicate. */

@@ -61,7 +61,7 @@ export function Button({
       return null;
     }
 
-    const childProps = child.props as Record<string, unknown>;
+    const childProps = child.props;
 
     return cloneElement(child, {
       ...props,
@@ -74,7 +74,15 @@ export function Button({
   }
 
   return (
-    <button data-slot="button" data-variant={variant} data-size={size} className={resolvedClassName} disabled={resolvedDisabled} {...props}>
+    <button
+      {...props}
+      type={props.type === 'submit' ? 'submit' : props.type === 'reset' ? 'reset' : 'button'}
+      data-slot="button"
+      data-variant={variant}
+      data-size={size}
+      className={resolvedClassName}
+      disabled={resolvedDisabled}
+    >
       {children}
     </button>
   );

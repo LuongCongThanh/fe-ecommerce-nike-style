@@ -115,8 +115,17 @@ function persist(): void {
 }
 
 export function toPublicUser(user: MockAuthUser): PublicAuthUser {
-  const { password, ...publicUser } = user;
-  return publicUser;
+  return {
+    id: user.id,
+    email: user.email,
+    firstName: user.firstName,
+    lastName: user.lastName,
+    phone: user.phone,
+    avatar: user.avatar,
+    role: user.role,
+    isActive: user.isActive,
+    createdAt: user.createdAt,
+  };
 }
 
 export function findUserByEmail(email: string): MockAuthUser | undefined {
@@ -184,7 +193,7 @@ export function decodeAccessToken(token: string): AccessTokenPayload | null {
 
 /** Resolves the user for a valid, non-expired `Authorization: Bearer <access>` header — the check the fetcher's 401→refresh flow relies on. */
 export function findUserByAccessToken(authorizationHeader: string | null): MockAuthUser | undefined {
-  if (authorizationHeader === null || !authorizationHeader.startsWith('Bearer ')) return undefined;
+  if (!authorizationHeader?.startsWith('Bearer ')) return undefined;
   const token = authorizationHeader.slice('Bearer '.length);
   const payload = decodeAccessToken(token);
   if (payload === null || payload.exp <= Date.now()) return undefined;

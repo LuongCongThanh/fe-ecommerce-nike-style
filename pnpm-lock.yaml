@@ -512,12 +512,18 @@ importers:
         specifier: ^2.15.0
         version: 2.15.0(@types/node@24.13.3)(typescript@5.9.3)
     devDependencies:
+      '@repo/eslint-config':
+        specifier: workspace:*
+        version: link:../eslint-config
       '@repo/ts-config':
         specifier: workspace:*
         version: link:../ts-config
       '@types/node':
         specifier: ^24.13.3
         version: 24.13.3
+      eslint:
+        specifier: 9.39.5
+        version: 9.39.5(jiti@2.7.0)
       typescript:
         specifier: ^5
         version: 5.9.3
@@ -527,9 +533,6 @@ importers:
 
   packages/eslint-config:
     dependencies:
-      eslint:
-        specifier: ^9
-        version: 9.39.5(jiti@2.7.0)
       eslint-config-next:
         specifier: 16.2.12
         version: 16.2.12(@typescript-eslint/parser@8.65.0(eslint@9.39.5(jiti@2.7.0))(typescript@5.9.3))(eslint-plugin-import-x@4.17.1(@typescript-eslint/utils@8.65.0(eslint@9.39.5(jiti@2.7.0))(typescript@5.9.3))(eslint-import-resolver-node@0.3.10)(eslint@9.39.5(jiti@2.7.0)))(eslint@9.39.5(jiti@2.7.0))(typescript@5.9.3)
@@ -548,6 +551,10 @@ importers:
       typescript-eslint:
         specifier: 8.65.0
         version: 8.65.0(eslint@9.39.5(jiti@2.7.0))(typescript@5.9.3)
+    devDependencies:
+      eslint:
+        specifier: 9.39.5
+        version: 9.39.5(jiti@2.7.0)
 
   packages/schemas:
     dependencies:
@@ -555,9 +562,15 @@ importers:
         specifier: ^4.4.3
         version: 4.4.3
     devDependencies:
+      '@repo/eslint-config':
+        specifier: workspace:*
+        version: link:../eslint-config
       '@repo/ts-config':
         specifier: workspace:*
         version: link:../ts-config
+      eslint:
+        specifier: 9.39.5
+        version: 9.39.5(jiti@2.7.0)
       typescript:
         specifier: ^5
         version: 5.9.3
@@ -586,6 +599,9 @@ importers:
         specifier: ^3.6.0
         version: 3.6.0
     devDependencies:
+      '@repo/eslint-config':
+        specifier: workspace:*
+        version: link:../eslint-config
       '@repo/ts-config':
         specifier: workspace:*
         version: link:../ts-config
@@ -595,6 +611,9 @@ importers:
       '@types/react-dom':
         specifier: ^19
         version: 19.2.4(@types/react@19.2.18)
+      eslint:
+        specifier: 9.39.5
+        version: 9.39.5(jiti@2.7.0)
       react:
         specifier: ^19.0.0
         version: 19.2.7
@@ -607,9 +626,15 @@ importers:
 
   packages/tailwind-config:
     devDependencies:
+      '@repo/eslint-config':
+        specifier: workspace:*
+        version: link:../eslint-config
       '@repo/ts-config':
         specifier: workspace:*
         version: link:../ts-config
+      eslint:
+        specifier: 9.39.5
+        version: 9.39.5(jiti@2.7.0)
       tailwindcss:
         specifier: ^4
         version: 4.3.3
@@ -691,6 +716,9 @@ importers:
         specifier: ^3.6.0
         version: 3.6.0
     devDependencies:
+      '@repo/eslint-config':
+        specifier: workspace:*
+        version: link:../eslint-config
       '@repo/ts-config':
         specifier: workspace:*
         version: link:../ts-config
@@ -700,6 +728,9 @@ importers:
       '@types/react-dom':
         specifier: ^19
         version: 19.2.4(@types/react@19.2.18)
+      eslint:
+        specifier: 9.39.5
+        version: 9.39.5(jiti@2.7.0)
       react:
         specifier: ^19.0.0
         version: 19.2.7

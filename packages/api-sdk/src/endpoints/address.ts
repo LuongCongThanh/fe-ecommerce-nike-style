@@ -34,7 +34,7 @@ export async function updateAddress(id: string, data: StorefrontAddressInput): P
 }
 
 export async function deleteAddress(id: string): Promise<void> {
-  await apiClient.delete<void>(ADDRESS_API.DETAIL(id));
+  await apiClient.delete<unknown>(ADDRESS_API.DETAIL(id));
 }
 
 export async function setDefaultAddress(id: string): Promise<StorefrontAddress[]> {

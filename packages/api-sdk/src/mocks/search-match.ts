@@ -29,12 +29,15 @@ function levenshteinDistance(a: string, b: string): number {
     for (let j = 1; j <= b.length; j++) {
       const cost = a[i - 1] === b[j - 1] ? 0 : 1;
       // Loop bounds guarantee every index read here is in range — TS can't infer that across the loop.
-      currentRow.push(Math.min(previousRow[j]! + 1, currentRow[j - 1]! + 1, previousRow[j - 1]! + cost));
+      const deletion = (previousRow[j] ?? Number.POSITIVE_INFINITY) + 1;
+      const insertion = (currentRow[j - 1] ?? Number.POSITIVE_INFINITY) + 1;
+      const substitution = (previousRow[j - 1] ?? Number.POSITIVE_INFINITY) + cost;
+      currentRow.push(Math.min(deletion, insertion, substitution));
     }
     previousRow = currentRow;
   }
 
-  return previousRow[b.length]!;
+  return previousRow[b.length] ?? b.length;
 }
 
 /** A query token tolerates roughly one typo per ~4 letters — mimics `pg_trgm`'s tolerance for slight misspelling without a real trigram index. */

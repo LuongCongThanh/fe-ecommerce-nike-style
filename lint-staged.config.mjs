@@ -3,6 +3,8 @@
 // single `eslint --fix` across the whole tree. Real linting runs via
 // `pnpm lint` (turbo, scoped correctly per package) in CI and on demand.
 export default {
-  '*.{ts,tsx,js,mjs,cjs}': ['prettier --write'],
-  '*.{json,md,mdx,css,scss,yaml,yml}': ['prettier --write'],
+  'apps/**/*.{ts,tsx,js,mjs,cjs}': ['prettier --write'],
+  'apps/**/*.{json,md,mdx,css,scss,yaml,yml}': ['prettier --write'],
+  'packages/**/*.{ts,tsx,js,mjs,cjs}': ['prettier --write'],
+  'packages/**/*.{json,md,mdx,css,scss,yaml,yml}': ['prettier --write'],
 };

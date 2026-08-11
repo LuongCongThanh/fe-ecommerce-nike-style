@@ -69,7 +69,7 @@ export function createAddress(userId: number, input: StorefrontAddressInput): St
   const address: StorefrontAddress = { ...input, id: `addr-${String(nextId)}`, isDefault: list.length === 0 || input.isDefault };
   nextId += 1;
 
-  const next = input.isDefault === true || list.length === 0 ? list.map((a) => ({ ...a, isDefault: false })) : list;
+  const next = input.isDefault || list.length === 0 ? list.map((a) => ({ ...a, isDefault: false })) : list;
   accountAddresses.set(userId, [...next, address]);
   persist();
   return address;
@@ -80,7 +80,7 @@ export function updateAddress(userId: number, addressId: string, input: Storefro
   const list = getAddresses(userId);
   if (!list.some((a) => a.id === addressId)) return undefined;
 
-  const makeDefault = input.isDefault === true;
+  const makeDefault = input.isDefault;
   const updated = list.map((a) => {
     if (a.id === addressId) return { ...a, ...input, id: addressId };
     return makeDefault ? { ...a, isDefault: false } : a;
@@ -97,10 +97,11 @@ export function deleteAddress(userId: number, addressId: string): boolean {
 
   const wasDefault = list.find((a) => a.id === addressId)?.isDefault === true;
   const remaining = list.filter((a) => a.id !== addressId);
+  const firstRemaining = remaining.at(0);
   // Deleting the default address promotes the oldest remaining one, so there's always exactly one
   // default whenever the list is non-empty (mirrors what a real backend constraint would enforce).
-  if (wasDefault && remaining.length > 0 && remaining[0] !== undefined) {
-    remaining[0] = { ...remaining[0], isDefault: true };
+  if (wasDefault && firstRemaining !== undefined) {
+    remaining[0] = { ...firstRemaining, isDefault: true };
   }
 
   accountAddresses.set(userId, remaining);

@@ -2,6 +2,7 @@ import { ApiError } from './api-error';
 import { type AuthRuntimeAdapter, clearAuthRuntimeAdapter, getAuthRuntimeAdapter } from './runtime';
 
 export type RequestMethod = 'GET' | 'POST' | 'PUT' | 'PATCH' | 'DELETE';
+export type QueryParamValue = string | number | boolean | null | undefined;
 
 export interface ErrorEnvelope {
   message?: string;
@@ -21,14 +22,14 @@ export interface ResponseSchema<TResponse> {
 export interface RequestConfig<TResponse> {
   url: string;
   method: RequestMethod;
-  params?: Record<string, unknown>;
+  params?: Record<string, QueryParamValue>;
   data?: unknown;
   schema?: ResponseSchema<TResponse>;
   skipRefresh?: boolean;
   headers?: Record<string, string>;
 }
 
-function withQueryString(url: string, params?: Record<string, unknown>): string {
+function withQueryString(url: string, params?: Record<string, QueryParamValue>): string {
   if (params === undefined) return url;
 
   const searchParams = new URLSearchParams();
@@ -121,7 +122,7 @@ export async function request<TResponse>(config: RequestConfig<TResponse>): Prom
 export const apiClient = {
   get: async <TResponse>(
     url: string,
-    params?: Record<string, unknown>,
+    params?: Record<string, QueryParamValue>,
     options?: Omit<RequestConfig<TResponse>, 'url' | 'method' | 'params'>,
   ): Promise<TResponse> =>
     request<TResponse>({

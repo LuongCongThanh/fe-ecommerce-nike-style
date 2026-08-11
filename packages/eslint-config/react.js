@@ -3,6 +3,7 @@ const react = require('eslint-plugin-react');
 const reactHooks = require('eslint-plugin-react-hooks');
 const jsxA11y = require('eslint-plugin-jsx-a11y');
 const createBaseConfig = require('./base');
+const strictReactRules = require('./react-rules');
 
 /** @param {{ tsconfigRootDir?: string }} [options] */
 module.exports = function createReactConfig(options) {
@@ -12,6 +13,7 @@ module.exports = function createReactConfig(options) {
       ...react.configs.recommended.rules,
       ...reactHooks.configs.recommended.rules,
       ...jsxA11y.configs.recommended.rules,
+      ...strictReactRules,
       'react/react-in-jsx-scope': 'off',
       'react/prop-types': 'off',
     },

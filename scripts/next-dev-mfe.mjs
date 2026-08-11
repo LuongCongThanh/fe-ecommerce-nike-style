@@ -1,25 +1,45 @@
 #!/usr/bin/env node
-// Cross-platform stand-in for the shell snippet the Turborepo microfrontends guide shows
-// (`next dev --port $(turbo get-mfe-port)`) — that syntax is bash-only and breaks on the
-// PowerShell/cmd shells `pnpm run` uses by default on Windows. `turbo get-mfe-port` itself is
-// the Node-based turbo CLI, so it works everywhere; only the shell substitution needed replacing.
 import { execFileSync, execSync, spawn } from 'node:child_process';
 
-const isWindows = process.platform === 'win32';
-const turboBin = isWindows ? 'turbo.cmd' : 'turbo';
+// Starts a Next.js app on the port assigned to it in microfrontends.json.
+// This Node wrapper replaces Bash-only command substitution so `pnpm dev`
+// behaves consistently on Windows, macOS, and Linux.
+const IS_WINDOWS = process.platform === 'win32';
 
-// Same DEP0190 avoidance as the `next dev` spawn below: no array args under `shell: true` on Windows.
-const port = (
-  isWindows ? execSync(`${turboBin} get-mfe-port`, { encoding: 'utf-8' }) : execFileSync(turboBin, ['get-mfe-port'], { encoding: 'utf-8' })
-).trim();
+function getMicrofrontendPort() {
+  const output = IS_WINDOWS
+    ? execSync('turbo.cmd get-mfe-port', { encoding: 'utf-8' })
+    : execFileSync('turbo', ['get-mfe-port'], { encoding: 'utf-8' });
+  const port = output.trim();
 
-const nextBin = isWindows ? 'next.cmd' : 'next';
-// `shell: true` + an args array is flagged by Node as unescaped-argument-injection risk (DEP0190);
-// this repo's args are fixed and never user input, but building one string sidesteps the warning.
-const child = isWindows
-  ? spawn(`${nextBin} dev --port ${port}`, { stdio: 'inherit', shell: true })
-  : spawn(nextBin, ['dev', '--port', port], { stdio: 'inherit' });
+  if (!/^\d+$/.test(port)) {
+    throw new Error(`Turborepo returned an invalid microfrontend port: "${port}"`);
+  }
 
-child.on('exit', (code) => {
+  return port;
+}
+
+function startNextDevServer(port) {
+  // Windows resolves .cmd executables through a shell. A command string is used
+  // here to avoid Node's DEP0190 warning for argument arrays with `shell: true`.
+  if (IS_WINDOWS) {
+    return spawn(`next.cmd dev --port ${port}`, {
+      shell: true,
+      stdio: 'inherit',
+    });
+  }
+
+  return spawn('next', ['dev', '--port', port], { stdio: 'inherit' });
+}
+
+const port = getMicrofrontendPort();
+const nextDevServer = startNextDevServer(port);
+
+nextDevServer.on('error', (error) => {
+  console.error('Unable to start the Next.js development server.', error);
+  process.exit(1);
+});
+
+nextDevServer.on('exit', (code) => {
   process.exit(code ?? 0);
 });

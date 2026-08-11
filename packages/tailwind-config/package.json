@@ -4,6 +4,8 @@
   "private": true,
   "type": "module",
   "scripts": {
+    "lint": "eslint .",
+    "lint:fix": "eslint . --fix",
     "typecheck": "tsc --noEmit"
   },
   "exports": {
@@ -13,7 +15,9 @@
     "./plugins": "./src/plugins.ts"
   },
   "devDependencies": {
+    "@repo/eslint-config": "workspace:*",
     "@repo/ts-config": "workspace:*",
+    "eslint": "9.39.5",
     "tailwindcss": "^4",
     "typescript": "^5"
   }

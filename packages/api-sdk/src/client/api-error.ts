@@ -22,6 +22,6 @@ export class ApiError extends Error {
       return new ApiError(response.status, parsed.data.error.code, parsed.data.error.message, parsed.data.error.details);
     }
 
-    return new ApiError(response.status, 'UNKNOWN_ERROR', `Request failed: ${response.status}`);
+    return new ApiError(response.status, 'UNKNOWN_ERROR', `Request failed: ${String(response.status)}`);
   }
 }

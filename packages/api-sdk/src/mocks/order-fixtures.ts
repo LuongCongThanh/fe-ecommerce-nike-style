@@ -91,20 +91,25 @@ function persist(): void {
   sessionStorage.setItem(STORAGE_KEY, JSON.stringify({ orders: Array.from(orders.values()) }));
 }
 
+function toStorefrontOrder(order: MockOrder): StorefrontOrder {
+  const { userId, ...storefrontOrder } = order;
+  void userId;
+  return storefrontOrder;
+}
+
 /** All of `userId`'s own orders, newest first — never another Customer's. */
 export function getAccountOrders(userId: number): StorefrontOrder[] {
   return Array.from(orders.values())
     .filter((o) => o.userId === userId)
     .sort((a, b) => b.created_at.localeCompare(a.created_at))
-    .map(({ userId: _userId, ...order }) => order);
+    .map(toStorefrontOrder);
 }
 
 /** A single order, but only if it belongs to `userId` — returns `undefined` for both "doesn't exist" and "exists but isn't yours" (no ownership-leaking distinction). */
 export function getAccountOrder(userId: number, orderId: number): StorefrontOrder | undefined {
   const order = orders.get(orderId);
-  if (order === undefined || order.userId !== userId) return undefined;
-  const { userId: _userId, ...rest } = order;
-  return rest;
+  if (order?.userId !== userId) return undefined;
+  return toStorefrontOrder(order);
 }
 
 export function addAccountOrder(userId: number, order: StorefrontOrder): void {
@@ -139,8 +144,7 @@ function updateOrderStatus(userId: number, orderId: number, status: StorefrontOr
   const updated: MockOrder = { ...order, status, updated_at: new Date().toISOString() };
   orders.set(orderId, updated);
   persist();
-  const { userId: _userId, ...rest } = updated;
-  return rest;
+  return toStorefrontOrder(updated);
 }
 
 /** CANCELLED is only valid from PENDING/PROCESSING — from PACKED onward it must go DELIVERED → RETURN_REQUESTED → RETURNED instead (glossary.md). */

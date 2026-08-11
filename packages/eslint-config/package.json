@@ -3,6 +3,10 @@
   "version": "0.0.0",
   "private": true,
   "license": "UNLICENSED",
+  "scripts": {
+    "lint": "eslint .",
+    "lint:fix": "eslint . --fix"
+  },
   "exports": {
     "./base": "./base.js",
     "./next": "./next.js",
@@ -18,5 +22,8 @@
   },
   "peerDependencies": {
     "eslint": "^9"
+  },
+  "devDependencies": {
+    "eslint": "9.39.5"
   }
 }

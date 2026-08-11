@@ -6,7 +6,7 @@ import { API_BASE_URL } from '../env/config';
 
 export async function getProducts(query: ProductListRequest = { page: 1, pageSize: 20, sort: 'newest' }): Promise<ProductListResponse> {
   const parsedQuery = ProductListRequestSchema.parse(query);
-  const params: Record<string, unknown> = {
+  const params = {
     page: parsedQuery.page,
     pageSize: parsedQuery.pageSize,
     sort: parsedQuery.sort,

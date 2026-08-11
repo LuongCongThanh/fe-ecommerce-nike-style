@@ -120,7 +120,7 @@ export const handlers = [
     const body = (await request.json()) as { email: string; password: string };
     const user = findUserByEmail(body.email);
 
-    if (user === undefined || user.password !== body.password) {
+    if (user?.password !== body.password) {
       return errorResponse(401, 'INVALID_CREDENTIALS', 'Email hoặc mật khẩu không đúng.');
     }
 
