@@ -3,8 +3,8 @@
 import { useRef } from 'react';
 import { useRouter } from 'next/navigation';
 
+import { notify } from '@repo/shared/notification';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
-import { toast } from 'sonner';
 
 import { orderActions } from '@/app/[locale]/(shop)/_lib/api/order';
 import { orderKeys } from '@/app/[locale]/(shop)/_lib/hooks/orders/orderKeys';
@@ -41,11 +41,11 @@ export const useCreateOrder = (locale: string, reservationId: string | null) => 
     onSuccess: async (order) => {
       clearCart();
       await qc.invalidateQueries({ queryKey: orderKeys.list() });
-      toast.success('Đặt hàng thành công!');
+      notify.success('Đặt hàng thành công!');
       router.push(`/${locale}/checkout/success?orderId=${String(order.id)}`);
     },
     onError: (error) => {
-      toast.error(error instanceof ApiError ? error.message : 'Đặt hàng thất bại. Vui lòng thử lại.');
+      notify.error(error instanceof ApiError ? error.message : 'Đặt hàng thất bại. Vui lòng thử lại.');
     },
   });
 };

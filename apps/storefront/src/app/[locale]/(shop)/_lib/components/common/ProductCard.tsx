@@ -128,7 +128,7 @@ export function ProductCard({
         onClick={() => {
           toggleWishlist();
         }}
-        className="bg-background/80 hover:bg-background absolute top-3 right-3 flex size-8 items-center justify-center rounded-full backdrop-blur-sm transition-colors"
+        className="bg-background/80 hover:bg-background absolute top-3 right-3 flex size-10 items-center justify-center rounded-full backdrop-blur-sm transition-colors"
       >
         <Heart className={isWishlisted ? 'text-accent-600 fill-accent-600 size-4' : 'text-foreground size-4'} />
       </button>

@@ -1,7 +1,7 @@
 'use client';
 
+import { notify } from '@repo/shared/notification';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
-import { toast } from 'sonner';
 
 import { orderActions } from '@/app/[locale]/(shop)/_lib/api/order';
 import { orderKeys } from '@/app/[locale]/(shop)/_lib/hooks/orders/orderKeys';
@@ -14,10 +14,10 @@ export const useRequestReturn = (id: string) => {
     onSuccess: async () => {
       await qc.invalidateQueries({ queryKey: orderKeys.detail(id) });
       await qc.invalidateQueries({ queryKey: orderKeys.list() });
-      toast.success('Đã gửi yêu cầu trả hàng');
+      notify.success('Đã gửi yêu cầu trả hàng');
     },
     onError: (error) => {
-      toast.error(error instanceof ApiError ? error.message : 'Gửi yêu cầu trả hàng thất bại. Vui lòng thử lại.');
+      notify.error(error instanceof ApiError ? error.message : 'Gửi yêu cầu trả hàng thất bại. Vui lòng thử lại.');
     },
   });
 };

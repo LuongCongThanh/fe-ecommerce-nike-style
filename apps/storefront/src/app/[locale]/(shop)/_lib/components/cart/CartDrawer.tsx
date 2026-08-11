@@ -3,6 +3,7 @@
 import Image from 'next/image';
 import Link from 'next/link';
 
+import { notify } from '@repo/shared/notification';
 import { formatCurrency } from '@repo/shared/utils';
 import { Button } from '@repo/ui/button';
 import { ScrollArea } from '@repo/ui/scroll-area';
@@ -10,7 +11,6 @@ import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger } from '@rep
 import { AnimatePresence, motion } from 'framer-motion';
 import { ShoppingBag, Trash2 } from 'lucide-react';
 import { useLocale } from 'next-intl';
-import { toast } from 'sonner';
 
 import { QuantitySelector } from '@/app/[locale]/(shop)/_lib/components/common/QuantitySelector';
 import { useCart, useCartStore } from '@/app/[locale]/(shop)/_lib/hooks/useCart';
@@ -92,7 +92,7 @@ export function CartDrawer({ children }: CartDrawerProps) {
                             aria-label="Xóa sản phẩm"
                             onClick={() => {
                               removeCartItem(item.skuId);
-                              toast.success('Đã xóa sản phẩm khỏi giỏ hàng', {
+                              notify.success('Đã xóa sản phẩm khỏi giỏ hàng', {
                                 description: item.name,
                                 action: {
                                   label: 'Hoàn tác',

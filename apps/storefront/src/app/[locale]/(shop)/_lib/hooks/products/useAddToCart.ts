@@ -4,8 +4,8 @@ import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 
 import type { Product } from '@repo/schemas/catalog';
+import { notify } from '@repo/shared/notification';
 import { useLocale } from 'next-intl';
-import { toast } from 'sonner';
 
 import { useCart } from '@/app/[locale]/(shop)/_lib/hooks/useCart';
 import type { VariantSelection } from '@/app/[locale]/(shop)/_lib/utils/variantResolution';
@@ -37,11 +37,11 @@ export function useAddToCart(product: Product) {
 
   const add = (): boolean => {
     if (selectedSku === null) {
-      toast.error('Vui lòng chọn đầy đủ phân loại sản phẩm');
+      notify.error('Vui lòng chọn đầy đủ phân loại sản phẩm');
       return false;
     }
     if (selectedSku.stock === 0) {
-      toast.error('Sản phẩm đã hết hàng');
+      notify.error('Sản phẩm đã hết hàng');
       return false;
     }
 
@@ -51,12 +51,12 @@ export function useAddToCart(product: Product) {
     // whatever room is left after what's already in the cart; refuses rather than silently over-adding.
     const result = addToCart(selectedSku.id, quantity, selectedSku.stock);
     if (!result.ok) {
-      toast.error('Sản phẩm này đã có đủ số lượng tồn kho trong giỏ hàng.');
+      notify.error('Sản phẩm này đã có đủ số lượng tồn kho trong giỏ hàng.');
       return false;
     }
 
     setIsAdded(true);
-    toast.success(`Đã thêm ${result.addedQuantity.toString()} sản phẩm vào giỏ hàng`, {
+    notify.success(`Đã thêm ${result.addedQuantity.toString()} sản phẩm vào giỏ hàng`, {
       description:
         product.name +
         (variantName === '' ? '' : ` (${variantName})`) +

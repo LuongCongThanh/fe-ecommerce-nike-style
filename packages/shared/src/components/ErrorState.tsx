@@ -23,7 +23,11 @@ export function ErrorState({
   className,
 }: ErrorStateProps): React.JSX.Element {
   return (
-    <div className={cn('flex flex-col items-center justify-center rounded-xl border border-dashed px-6 py-12 text-center', className)}>
+    <div
+      role="alert"
+      aria-live="assertive"
+      className={cn('flex flex-col items-center justify-center rounded-xl border border-dashed px-6 py-12 text-center', className)}
+    >
       <div className="bg-error-50 dark:bg-error-700/20 mb-4 rounded-full p-4">
         <Icon className="text-error-500 size-8" />
       </div>

@@ -1,5 +1,7 @@
 'use client';
 
+import { QueryState } from '@repo/shared/query-state';
+
 import { CategoryClient } from '@/app/[locale]/(shop)/_lib/components/categories/CategoryClient';
 import { FilterSidebar } from '@/app/[locale]/(shop)/_lib/components/categories/FilterSidebar';
 import { PageShell } from '@/app/[locale]/(shop)/_lib/components/layout/PageShell';
@@ -15,38 +17,44 @@ interface CategoryPageClientProps {
  * catalog reads only intercept reliably in the browser. See Decision #87 (decision-log.md).
  */
 export function CategoryPageClient({ slug }: CategoryPageClientProps): React.JSX.Element {
-  const { data: categories, isLoading } = useCategoryTree();
-
-  if (isLoading) {
-    return (
-      <PageShell.Browse>
-        <p className="text-muted-foreground py-24 text-center">Loading…</p>
-      </PageShell.Browse>
-    );
-  }
-
-  const category = categories?.find((c) => c.slug === slug) ?? null;
-
-  if (category === null) {
-    return (
-      <PageShell.Browse>
-        <div className="flex min-h-100 flex-col items-center justify-center text-center">
-          <h1 className="text-2xl font-bold">Category not found</h1>
-          <p className="text-muted-foreground mt-2">The category you're looking for doesn't exist.</p>
-        </div>
-      </PageShell.Browse>
-    );
-  }
-
-  const parent = category.parentId !== null ? (categories?.find((c) => c.id === category.parentId) ?? null) : null;
+  const { data: categories, isLoading, error, refetch } = useCategoryTree();
 
   return (
     <PageShell.Browse>
+      <QueryState isLoading={isLoading} error={error} onRetry={refetch}>
+        <CategoryPageContent slug={slug} categories={categories ?? []} />
+      </QueryState>
+    </PageShell.Browse>
+  );
+}
+
+function CategoryPageContent({
+  slug,
+  categories,
+}: {
+  readonly slug: string;
+  readonly categories: NonNullable<ReturnType<typeof useCategoryTree>['data']>;
+}): React.JSX.Element {
+  const category = categories.find((c) => c.slug === slug) ?? null;
+
+  if (category === null) {
+    return (
+      <div className="flex min-h-100 flex-col items-center justify-center text-center">
+        <h1 className="text-2xl font-bold">Không tìm thấy danh mục</h1>
+        <p className="text-muted-foreground mt-2">Danh mục bạn tìm không tồn tại.</p>
+      </div>
+    );
+  }
+
+  const parent = category.parentId !== null ? (categories.find((c) => c.id === category.parentId) ?? null) : null;
+
+  return (
+    <>
       <nav className="text-muted-foreground mb-8 text-sm">
         <ol className="flex items-center space-x-2">
-          <li>Home</li>
+          <li>Trang chủ</li>
           <li>/</li>
-          <li>Categories</li>
+          <li>Danh mục</li>
           {parent !== null ? (
             <>
               <li>/</li>
@@ -73,6 +81,6 @@ export function CategoryPageClient({ slug }: CategoryPageClientProps): React.JSX
           <CategoryClient categorySlug={slug} />
         </div>
       </div>
-    </PageShell.Browse>
+    </>
   );
 }
