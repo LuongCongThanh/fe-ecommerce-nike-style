@@ -1,6 +1,6 @@
 import { toast } from 'sonner';
 
-interface NotifyOptions {
+export interface NotifyOptions {
   readonly description?: string;
   /** Optional action button on the toast (e.g. "Hoàn tác" after removing a cart line). */
   readonly action?: {
