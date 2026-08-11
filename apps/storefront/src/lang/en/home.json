@@ -1,22 +1,89 @@
 {
   "hero": {
-    "badge": "New in 2026",
-    "title": "Shop smart, save more",
-    "subtitle": "Thousands of authentic products, fast nationwide delivery.",
-    "cta": "Shop Now",
-    "ctaSale": "View Flash Sale"
+    "badge": "New collection · 2026",
+    "titleLineOne": "Live distinct.",
+    "titleLineTwo": "Choose well.",
+    "subtitle": "Considered pieces for modern life — authentic, delivered fast, and easy to return.",
+    "cta": "Explore the edit",
+    "ctaSale": "View offers",
+    "trustItems": ["Free delivery", "30-day returns", "Authenticity guaranteed"],
+    "carouselLabel": "Featured collections",
+    "previousSlide": "Previous slide",
+    "nextSlide": "Next slide",
+    "slideNavigation": "Choose a slide",
+    "goToSlide": "Go to slide {number}",
+    "slides": {
+      "watch": {
+        "alt": "Lyra Chronos smartwatch in a minimal product display",
+        "eyebrow": "Featured pick",
+        "title": "Lyra Chronos",
+        "ctaLabel": "Explore accessories"
+      },
+      "shoes": {
+        "alt": "A collection of leather shoes, sneakers, and boots on a bright backdrop",
+        "eyebrow": "Office to off-duty",
+        "title": "Shoes for every pace",
+        "ctaLabel": "Explore shoes"
+      },
+      "bags": {
+        "alt": "A collection of handbags and backpacks in a store",
+        "eyebrow": "Carry your style",
+        "title": "Details make the difference",
+        "ctaLabel": "Explore bags"
+      }
+    }
   },
   "categories": {
-    "title": "Featured Categories"
+    "title": "Shop by style",
+    "subtitle": "Start with the categories our customers love most.",
+    "viewAll": "View all",
+    "countLabel": "products"
   },
   "flashSale": {
-    "badge": "Limited time",
-    "title": "Flash Sale — Up to 50% off",
-    "subtitle": "Today only, while stocks last!",
-    "cta": "Shop Now"
+    "eyebrow": "Good prices, live now",
+    "title": "Offers worth seeing",
+    "subtitle": "Discover products at a better price — without a manufactured countdown.",
+    "cta": "View offers"
   },
-  "featured": {
-    "title": "Featured Products",
+  "bestSellers": {
+    "title": "Most wanted",
     "viewAll": "View all"
+  },
+  "newArrivals": {
+    "title": "Just landed",
+    "subtitle": "Fresh pieces for the season ahead.",
+    "viewAll": "Discover more"
+  },
+  "benefits": {
+    "shipping": {
+      "title": "Free delivery",
+      "description": "Complimentary nationwide delivery on orders over 300,000₫."
+    },
+    "returns": {
+      "title": "30-day returns",
+      "description": "Simple returns within 30 days when an item is not quite right."
+    },
+    "authentic": {
+      "title": "100% authentic",
+      "description": "Every product comes with transparent sourcing and information."
+    },
+    "support": {
+      "title": "Thoughtful support",
+      "description": "Our customer care team is always ready to help."
+    }
+  },
+  "testimonials": {
+    "title": "What customers say"
+  },
+  "newsletter": {
+    "eyebrow": "Antigravity Journal",
+    "title": "Stay one step ahead.",
+    "subtitle": "Get new collections, design stories, and offers genuinely worth knowing about.",
+    "submit": "Join the list",
+    "emailLabel": "Email address",
+    "placeholder": "you@example.com",
+    "invalidEmail": "Enter a valid email address.",
+    "successTitle": "You are on the list!",
+    "successDescription": "Thanks for subscribing to our updates."
   }
 }

@@ -1,22 +1,89 @@
 {
   "hero": {
-    "badge": "Mới nhất 2026",
-    "title": "Mua sắm thông minh, tiết kiệm hơn",
-    "subtitle": "Hàng ngàn sản phẩm chính hãng, giao hàng nhanh toàn quốc.",
-    "cta": "Mua ngay",
-    "ctaSale": "Xem Flash Sale"
+    "badge": "Bộ sưu tập mới · 2026",
+    "titleLineOne": "Sống khác biệt.",
+    "titleLineTwo": "Chọn tinh tế.",
+    "subtitle": "Những thiết kế chọn lọc cho nhịp sống hiện đại — chính hãng, giao nhanh và dễ dàng đổi trả.",
+    "cta": "Khám phá ngay",
+    "ctaSale": "Xem ưu đãi",
+    "trustItems": ["Miễn phí giao hàng", "Đổi trả trong 30 ngày", "Cam kết chính hãng"],
+    "carouselLabel": "Bộ sưu tập nổi bật",
+    "previousSlide": "Slide trước",
+    "nextSlide": "Slide tiếp theo",
+    "slideNavigation": "Chọn slide",
+    "goToSlide": "Đi đến slide {number}",
+    "slides": {
+      "watch": {
+        "alt": "Đồng hồ thông minh Lyra Chronos trong không gian trưng bày tối giản",
+        "eyebrow": "Lựa chọn nổi bật",
+        "title": "Lyra Chronos",
+        "ctaLabel": "Khám phá phụ kiện"
+      },
+      "shoes": {
+        "alt": "Bộ sưu tập giày da, sneaker và boots trên nền sáng",
+        "eyebrow": "Từ công sở đến đường phố",
+        "title": "Giày cho mọi nhịp sống",
+        "ctaLabel": "Khám phá giày"
+      },
+      "bags": {
+        "alt": "Bộ sưu tập túi xách và ba lô trong cửa hàng",
+        "eyebrow": "Mang theo phong cách",
+        "title": "Chi tiết tạo khác biệt",
+        "ctaLabel": "Khám phá túi"
+      }
+    }
   },
   "categories": {
-    "title": "Danh mục nổi bật"
+    "title": "Mua sắm theo phong cách",
+    "subtitle": "Bắt đầu từ những danh mục được yêu thích nhất.",
+    "viewAll": "Xem tất cả",
+    "countLabel": "sản phẩm"
   },
   "flashSale": {
-    "badge": "Giới hạn thời gian",
-    "title": "Flash Sale — Giảm đến 50%",
-    "subtitle": "Ưu đãi chỉ có hôm nay, số lượng có hạn!",
-    "cta": "Xem ngay"
+    "eyebrow": "Giá tốt đang diễn ra",
+    "title": "Ưu đãi đáng chú ý",
+    "subtitle": "Khám phá các sản phẩm đang có mức giá tốt — không tạo áp lực đếm ngược giả.",
+    "cta": "Xem ưu đãi"
   },
-  "featured": {
-    "title": "Sản phẩm nổi bật",
+  "bestSellers": {
+    "title": "Được chọn nhiều nhất",
     "viewAll": "Xem tất cả"
+  },
+  "newArrivals": {
+    "title": "Vừa cập bến",
+    "subtitle": "Những thiết kế mới cho tủ đồ mùa này.",
+    "viewAll": "Khám phá thêm"
+  },
+  "benefits": {
+    "shipping": {
+      "title": "Miễn phí vận chuyển",
+      "description": "Đơn hàng từ 300.000đ được miễn phí giao hàng toàn quốc."
+    },
+    "returns": {
+      "title": "Đổi trả 30 ngày",
+      "description": "Đổi trả đơn giản trong vòng 30 ngày nếu sản phẩm chưa phù hợp."
+    },
+    "authentic": {
+      "title": "Hàng chính hãng 100%",
+      "description": "Mọi sản phẩm đều có nguồn gốc và thông tin minh bạch."
+    },
+    "support": {
+      "title": "Hỗ trợ tận tâm",
+      "description": "Đội ngũ chăm sóc khách hàng luôn sẵn sàng đồng hành."
+    }
+  },
+  "testimonials": {
+    "title": "Khách hàng nói gì?"
+  },
+  "newsletter": {
+    "eyebrow": "Antigravity Journal",
+    "title": "Đi trước một nhịp.",
+    "subtitle": "Nhận tin về bộ sưu tập mới, câu chuyện thiết kế và những ưu đãi thực sự đáng chú ý.",
+    "submit": "Đăng ký nhận tin",
+    "emailLabel": "Địa chỉ email",
+    "placeholder": "email@cuaban.com",
+    "invalidEmail": "Vui lòng nhập một địa chỉ email hợp lệ.",
+    "successTitle": "Đăng ký thành công!",
+    "successDescription": "Cảm ơn bạn đã đăng ký nhận tin."
   }
 }

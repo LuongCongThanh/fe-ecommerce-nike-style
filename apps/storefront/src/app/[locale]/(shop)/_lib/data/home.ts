@@ -52,7 +52,15 @@ export const homeBenefitsData: HomeBenefit[] = [
 export const homeCategoriesData: HomeCategory[] = NAV_CATEGORIES.map((cat) => ({
   slug: cat.slug,
   name: cat.name,
-  image: placeholderImage(cat.slug, '600x600', cat.name),
+  image:
+    {
+      tops: '/images/categories/ao.jpg',
+      bottoms: '/images/categories/quan.jpg',
+      shoes: '/images/categories/giay.jpg',
+      bags: '/images/categories/tui.jpg',
+      accessories: '/images/categories/phu-kien.jpg',
+      sale: '/images/categories/sale.jpg',
+    }[cat.slug] ?? placeholderImage(cat.slug, '600x600', cat.name),
   productCount: cat.productCount,
 }));
 
@@ -62,7 +70,7 @@ export const homeHeroData: HomeHero = {
   subtitle: 'Hàng ngàn sản phẩm chính hãng, giao hàng nhanh toàn quốc.',
   cta: 'Mua ngay',
   ctaSale: 'Xem Flash Sale',
-  image: placeholderImage('hero', '1920x1080', 'ANTIGRAVITY.STORE'),
+  image: '/images/hero-placeholder.jpg',
   trustItems: ['Giao hàng miễn phí', 'Đổi trả 30 ngày', 'Hàng chính hãng 100%'],
 };
 

@@ -8,13 +8,28 @@ interface NewsletterFormProps {
   readonly title?: string;
   readonly description?: string;
   readonly submitLabel?: string;
+  readonly emailLabel?: string;
+  readonly placeholder?: string;
+  readonly invalidEmailMessage?: string;
+  readonly successTitle?: string;
+  readonly successDescription?: string;
   readonly onSubmit?: (email: string) => void;
 }
 
 const EMAIL_PATTERN = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 const INVALID_EMAIL_MESSAGE = 'Vui lòng nhập một địa chỉ email hợp lệ.';
 
-export function NewsletterForm({ title, description, submitLabel = 'Đăng ký', onSubmit }: NewsletterFormProps): React.JSX.Element {
+export function NewsletterForm({
+  title,
+  description,
+  submitLabel = 'Đăng ký',
+  emailLabel = 'Địa chỉ email',
+  placeholder = 'Nhập email của bạn',
+  invalidEmailMessage = INVALID_EMAIL_MESSAGE,
+  successTitle = 'Đăng ký thành công!',
+  successDescription = 'Cảm ơn bạn đã đăng ký nhận tin.',
+  onSubmit,
+}: NewsletterFormProps): React.JSX.Element {
   const [email, setEmail] = useState('');
   const [submitted, setSubmitted] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -28,7 +43,7 @@ export function NewsletterForm({ title, description, submitLabel = 'Đăng ký',
     const trimmedEmail = email.trim();
 
     if (!EMAIL_PATTERN.test(trimmedEmail)) {
-      setError(INVALID_EMAIL_MESSAGE);
+      setError(invalidEmailMessage);
       return;
     }
 
@@ -40,8 +55,8 @@ export function NewsletterForm({ title, description, submitLabel = 'Đăng ký',
   if (submitted) {
     return (
       <div className="bg-primary/10 text-primary rounded-xl px-6 py-8 text-center">
-        <p className="text-base font-semibold">Đăng ký thành công!</p>
-        <p className="text-muted-foreground mt-1 text-sm">Cảm ơn bạn đã đăng ký nhận tin.</p>
+        <p className="text-base font-semibold">{successTitle}</p>
+        <p className="text-muted-foreground mt-1 text-sm">{successDescription}</p>
       </div>
     );
   }
@@ -53,7 +68,7 @@ export function NewsletterForm({ title, description, submitLabel = 'Đăng ký',
       <form onSubmit={handleSubmit} noValidate className="flex flex-col gap-2 sm:flex-row sm:items-start">
         <div className="min-w-0 flex-1">
           <input
-            aria-label="Địa chỉ email"
+            aria-label={emailLabel}
             aria-invalid={error != null}
             aria-describedby={error != null ? 'newsletter-email-error' : undefined}
             type="email"
@@ -64,7 +79,7 @@ export function NewsletterForm({ title, description, submitLabel = 'Đăng ký',
               setEmail(e.target.value);
               if (error != null) setError(null);
             }}
-            placeholder="Nhập email của bạn"
+            placeholder={placeholder}
             className="border-input bg-background text-foreground placeholder:text-muted-foreground focus-visible:ring-ring aria-invalid:border-destructive w-full min-w-0 rounded-md border px-3 py-2 text-sm focus-visible:ring-2 focus-visible:outline-none"
           />
           {error != null ? (

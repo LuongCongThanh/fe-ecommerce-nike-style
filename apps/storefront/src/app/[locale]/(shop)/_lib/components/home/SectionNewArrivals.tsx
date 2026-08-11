@@ -1,6 +1,6 @@
 'use client';
 
-import { useLocale } from 'next-intl';
+import { useLocale, useTranslations } from 'next-intl';
 
 import { ProductCard } from '@/app/[locale]/(shop)/_lib/components/common/ProductCard';
 import { SectionHeading } from '@/app/[locale]/(shop)/_lib/components/common/SectionHeading';
@@ -8,13 +8,14 @@ import { newArrivalsData } from '@/app/[locale]/(shop)/_lib/data/home';
 
 export function SectionNewArrivals(): React.JSX.Element {
   const locale = useLocale();
+  const t = useTranslations('home.newArrivals');
   const [spotlight, ...rest] = newArrivalsData;
   const strip = rest.slice(0, 4);
 
   return (
     <section>
       <div className="container mx-auto px-4 py-(--space-section-new-arrivals) md:py-(--space-section-new-arrivals-lg)">
-        <SectionHeading title="Hàng mới về" ctaLabel="Xem thêm" ctaHref={`/${locale}/products`} />
+        <SectionHeading title={t('title')} subtitle={t('subtitle')} ctaLabel={t('viewAll')} ctaHref={`/${locale}/products`} />
         <div className="mt-8 grid grid-cols-1 gap-6 lg:grid-cols-5 lg:gap-8">
           {spotlight != null ? (
             <div className="lg:col-span-3">

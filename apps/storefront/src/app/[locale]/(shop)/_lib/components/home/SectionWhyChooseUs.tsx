@@ -1,8 +1,11 @@
 import * as Icons from 'lucide-react';
+import { useTranslations } from 'next-intl';
 
 import { homeBenefitsData } from '@/app/[locale]/(shop)/_lib/data/home';
 
 export function SectionWhyChooseUs(): React.JSX.Element {
+  const t = useTranslations('home.benefits');
+
   return (
     <section className="border-border border-y py-(--space-section-why-choose-us)">
       <div className="container mx-auto px-4">
@@ -20,9 +23,9 @@ export function SectionWhyChooseUs(): React.JSX.Element {
                       <Icon className="text-foreground size-4" />
                     </span>
                   )}
-                  <h3 className="text-foreground text-sm font-semibold">{benefit.title}</h3>
+                  <h3 className="text-foreground text-sm font-semibold">{t(`${benefit.id}.title`)}</h3>
                 </div>
-                <p className="text-muted-foreground text-sm leading-relaxed">{benefit.description}</p>
+                <p className="text-muted-foreground text-sm leading-relaxed">{t(`${benefit.id}.description`)}</p>
               </div>
             );
           })}

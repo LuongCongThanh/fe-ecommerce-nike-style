@@ -6,7 +6,7 @@ test.describe('Homepage smoke', () => {
 
     await expect(page.getByRole('heading', { level: 1 })).toBeVisible();
 
-    const primaryCta = page.getByRole('link', { name: 'Mua ngay' });
+    const primaryCta = page.getByRole('link', { name: 'Khám phá ngay' });
     await expect(primaryCta).toBeVisible();
 
     await expect(page.getByText('ANTIGRAVITY').first()).toBeVisible();
@@ -16,8 +16,15 @@ test.describe('Homepage smoke', () => {
   test('primary CTA navigates to the product listing', async ({ page }) => {
     await page.goto('/vi/home');
 
-    await page.getByRole('link', { name: 'Mua ngay' }).click();
+    await page.getByRole('link', { name: 'Khám phá ngay' }).click();
     await expect(page).toHaveURL(/\/products/);
+  });
+
+  test('hero carousel moves to the next collection', async ({ page }) => {
+    await page.goto('/vi/home');
+
+    await page.getByRole('button', { name: 'Slide tiếp theo' }).click();
+    await expect(page.getByText('Giày cho mọi nhịp sống')).toBeVisible();
   });
 
   test('header navigation reaches the product listing', async ({ page }) => {
