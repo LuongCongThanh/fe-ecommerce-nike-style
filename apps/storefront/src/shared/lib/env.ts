@@ -3,7 +3,6 @@ import { z } from 'zod';
 const envSchema = z.object({
   NEXT_PUBLIC_APP_URL: z.url(),
   NEXT_PUBLIC_API_URL: z.url(),
-  DJANGO_API_URL: z.url().optional(),
   NODE_ENV: z.enum(['development', 'production', 'test']).default('development'),
 
   VNPAY_TMN_CODE: z.string().optional(),
