@@ -3,6 +3,7 @@
 import { useLocale, useTranslations } from 'next-intl';
 
 import { CategoryCard } from '@/app/[locale]/(shop)/_lib/components/common/CategoryCard';
+import { Reveal } from '@/app/[locale]/(shop)/_lib/components/common/Reveal';
 import { SectionHeading } from '@/app/[locale]/(shop)/_lib/components/common/SectionHeading';
 import { homeCategoriesData } from '@/app/[locale]/(shop)/_lib/data/home';
 
@@ -13,7 +14,7 @@ export function SectionFeaturedCategories(): React.JSX.Element {
 
   return (
     <section className="bg-muted/40">
-      <div className="container mx-auto px-4 py-(--space-section-categories) md:py-(--space-section-categories-lg)">
+      <Reveal className="container mx-auto px-4 py-(--space-section-categories) md:py-(--space-section-categories-lg)">
         <SectionHeading title={t('title')} subtitle={t('subtitle')} ctaLabel={t('viewAll')} ctaHref={`/${locale}/products`} />
         <div className="mt-7 grid grid-cols-2 gap-4 sm:grid-cols-4 md:grid-cols-6">
           {featured != null ? (
@@ -38,7 +39,7 @@ export function SectionFeaturedCategories(): React.JSX.Element {
             />
           ))}
         </div>
-      </div>
+      </Reveal>
     </section>
   );
 }

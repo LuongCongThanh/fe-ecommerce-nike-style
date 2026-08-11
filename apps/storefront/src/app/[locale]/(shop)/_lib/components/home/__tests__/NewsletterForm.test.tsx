@@ -1,4 +1,4 @@
-import { render, screen } from '@testing-library/react';
+import { render, screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { describe, expect, it, vi } from 'vitest';
 
@@ -40,7 +40,9 @@ describe('NewsletterForm', () => {
     render(<NewsletterForm />);
     await userEvent.type(screen.getByLabelText('Địa chỉ email'), 'user@example.com');
     await userEvent.click(screen.getByRole('button', { name: 'Đăng ký' }));
-    expect(screen.getByText('Đăng ký thành công!')).toBeInTheDocument();
+    // The form <-> success swap now crossfades (AnimatePresence mode="wait"), so the success
+    // copy only mounts once the outgoing form's exit transition finishes.
+    expect(await screen.findByText('Đăng ký thành công!')).toBeInTheDocument();
   });
 
   it('calls onSubmit with the entered email', async () => {
@@ -55,8 +57,12 @@ describe('NewsletterForm', () => {
     render(<NewsletterForm />);
     await userEvent.type(screen.getByLabelText('Địa chỉ email'), 'user@example.com');
     await userEvent.click(screen.getByRole('button', { name: 'Đăng ký' }));
-    expect(screen.queryByRole('textbox')).not.toBeInTheDocument();
-    expect(screen.queryByRole('button', { name: 'Đăng ký' })).not.toBeInTheDocument();
+    // The form's exit transition (AnimatePresence mode="wait") keeps it mounted briefly, so
+    // wait for it to finish unmounting instead of asserting synchronously.
+    await waitFor(() => {
+      expect(screen.queryByRole('textbox')).not.toBeInTheDocument();
+      expect(screen.queryByRole('button', { name: 'Đăng ký' })).not.toBeInTheDocument();
+    });
   });
 
   describe('email validation (homepage-improvement-plan.md P1-5)', () => {

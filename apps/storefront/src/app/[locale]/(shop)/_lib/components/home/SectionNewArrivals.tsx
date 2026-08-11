@@ -3,6 +3,7 @@
 import { useLocale, useTranslations } from 'next-intl';
 
 import { ProductCard } from '@/app/[locale]/(shop)/_lib/components/common/ProductCard';
+import { Reveal } from '@/app/[locale]/(shop)/_lib/components/common/Reveal';
 import { SectionHeading } from '@/app/[locale]/(shop)/_lib/components/common/SectionHeading';
 import { newArrivalsData } from '@/app/[locale]/(shop)/_lib/data/home';
 
@@ -14,7 +15,7 @@ export function SectionNewArrivals(): React.JSX.Element {
 
   return (
     <section>
-      <div className="container mx-auto px-4 py-(--space-section-new-arrivals) md:py-(--space-section-new-arrivals-lg)">
+      <Reveal className="container mx-auto px-4 py-(--space-section-new-arrivals) md:py-(--space-section-new-arrivals-lg)">
         <SectionHeading title={t('title')} subtitle={t('subtitle')} ctaLabel={t('viewAll')} ctaHref={`/${locale}/products`} />
         <div className="mt-8 grid grid-cols-1 gap-6 lg:grid-cols-5 lg:gap-8">
           {spotlight != null ? (
@@ -51,7 +52,7 @@ export function SectionNewArrivals(): React.JSX.Element {
             ))}
           </div>
         </div>
-      </div>
+      </Reveal>
     </section>
   );
 }

@@ -8,6 +8,8 @@ import { AnimatePresence, motion, useReducedMotion } from 'framer-motion';
 import { ArrowUpRight, ChevronLeft, ChevronRight } from 'lucide-react';
 import { useLocale, useTranslations } from 'next-intl';
 
+import { DURATION_SLOW, EASE_OUT } from '@/app/[locale]/(shop)/_lib/components/home/motion';
+
 const AUTOPLAY_DELAY_MS = 6500;
 const SWIPE_THRESHOLD_PX = 50;
 
@@ -80,7 +82,7 @@ export function HeroCarousel(): React.JSX.Element {
               initial={prefersReducedMotion ? false : { opacity: 0, x: direction * 36 }}
               animate={{ opacity: 1, x: 0 }}
               exit={prefersReducedMotion ? { opacity: 0 } : { opacity: 0, x: direction * -36 }}
-              transition={prefersReducedMotion ? { duration: 0 } : { duration: 0.38, ease: [0, 0, 0.2, 1] }}
+              transition={prefersReducedMotion ? { duration: 0 } : { duration: DURATION_SLOW, ease: EASE_OUT }}
               drag={prefersReducedMotion ? false : 'x'}
               dragConstraints={{ left: 0, right: 0 }}
               dragElastic={0.12}
