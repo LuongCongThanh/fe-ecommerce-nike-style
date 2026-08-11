@@ -30,7 +30,7 @@ export function PasswordInput({ className, id, 'aria-label': ariaLabel, 'aria-la
         type="button"
         variant="ghost"
         size="icon"
-        className="absolute top-1/2 right-1 size-8 -translate-y-1/2"
+        className="absolute top-1/2 right-1 size-10 -translate-y-1/2"
         onClick={() => {
           setVisible((current) => !current);
         }}

@@ -1,7 +1,7 @@
 'use client';
 
+import { notify } from '@repo/shared/notification';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
-import { toast } from 'sonner';
 
 import { profileActions } from '@/app/[locale]/(shop)/_lib/api/profile';
 import { ApiError } from '@/shared/lib/errors/api-error';
@@ -15,10 +15,10 @@ export const useUpdateProfile = () => {
     mutationFn: async (data: Partial<User>) => profileActions.update(data),
     onSuccess: async () => {
       await qc.invalidateQueries({ queryKey: profileKey });
-      toast.success('Cập nhật thông tin thành công');
+      notify.success('Cập nhật thông tin thành công');
     },
     onError: (error) => {
-      toast.error(error instanceof ApiError ? error.message : 'Cập nhật thông tin thất bại. Vui lòng thử lại.');
+      notify.error(error instanceof ApiError ? error.message : 'Cập nhật thông tin thất bại. Vui lòng thử lại.');
     },
   });
 };

@@ -4,6 +4,7 @@ import Link from 'next/link';
 import { useRouter, useSearchParams } from 'next/navigation';
 
 import { zodResolver } from '@hookform/resolvers/zod';
+import { useToast } from '@repo/shared/hooks/useToast';
 import { Button } from '@repo/ui/button';
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '@repo/ui/form';
 import { Input } from '@repo/ui/input';
@@ -17,11 +18,13 @@ import { PasswordInput } from '@/app/[locale]/(auth)/_lib/components/PasswordInp
 import { useApiErrorMessage } from '@/app/[locale]/(auth)/_lib/hooks/useApiErrorMessage';
 import type { LoginFormInput } from '@/app/[locale]/(auth)/_lib/schemas/auth';
 import { LoginFormSchema } from '@/app/[locale]/(auth)/_lib/schemas/auth';
+import { ApiError } from '@/shared/lib/errors/api-error';
 
 export function LoginForm() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const locale = useLocale();
+  const notify = useToast();
   const { apiError, setApiError, handleApiError } = useApiErrorMessage();
 
   const form = useForm<LoginFormInput>({
@@ -38,7 +41,9 @@ export function LoginForm() {
       const returnUrl = searchParams.get('returnUrl');
       router.push(returnUrl !== null && returnUrl.length > 0 ? returnUrl : `/${locale}/home`);
     } catch (err) {
-      handleApiError(err, 'Đăng nhập thất bại. Vui lòng thử lại.');
+      const fallbackMessage = 'Đăng nhập thất bại. Vui lòng thử lại.';
+      handleApiError(err, fallbackMessage);
+      notify.error(err instanceof ApiError ? err.message : fallbackMessage);
     }
   };
 

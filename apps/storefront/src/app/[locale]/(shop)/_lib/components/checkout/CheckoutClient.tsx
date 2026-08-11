@@ -195,11 +195,7 @@ export function CheckoutClient() {
         </motion.div>
       </div>
 
-      {reservation.error !== null && (
-        <p role="alert" className="text-error-500 text-center text-sm">
-          {reservation.error}
-        </p>
-      )}
+      <CheckoutErrors reservationError={reservation.error} createOrderError={createOrder.error} />
 
       <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.3 }} className="flex flex-col items-center gap-4 pt-4">
         <Button
@@ -219,5 +215,30 @@ export function CheckoutClient() {
         <p className="text-muted-foreground text-center text-xs">{t('placeOrderDesc')}</p>
       </motion.div>
     </form>
+  );
+}
+
+interface CheckoutErrorsProps {
+  readonly reservationError: string | null;
+  readonly createOrderError: unknown;
+}
+
+/** Split out of `CheckoutClient` to keep its cognitive complexity in check. */
+function CheckoutErrors({ reservationError, createOrderError }: CheckoutErrorsProps): React.JSX.Element {
+  return (
+    <>
+      {reservationError !== null && (
+        <p role="alert" className="text-error-500 text-center text-sm">
+          {reservationError}
+        </p>
+      )}
+      {createOrderError !== null && (
+        <p role="alert" className="text-error-500 text-center text-sm">
+          {createOrderError instanceof Error && createOrderError.message.length > 0
+            ? createOrderError.message
+            : 'Đặt hàng thất bại. Vui lòng thử lại.'}
+        </p>
+      )}
+    </>
   );
 }

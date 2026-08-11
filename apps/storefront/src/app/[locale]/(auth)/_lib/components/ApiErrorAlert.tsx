@@ -7,5 +7,13 @@ export function ApiErrorAlert({ message }: ApiErrorAlertProps): React.JSX.Elemen
     return null;
   }
 
-  return <div className="rounded-lg border border-red-500/30 bg-red-500/10 px-4 py-3 text-sm text-red-400">{message}</div>;
+  return (
+    <div
+      role="alert"
+      aria-live="assertive"
+      className="rounded-lg border border-red-500/30 bg-red-500/10 px-4 py-3 text-sm text-red-600 dark:text-red-400"
+    >
+      {message}
+    </div>
+  );
 }

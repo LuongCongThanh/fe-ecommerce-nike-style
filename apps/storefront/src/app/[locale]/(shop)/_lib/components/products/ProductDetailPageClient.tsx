@@ -2,6 +2,7 @@
 
 import Link from 'next/link';
 
+import { QueryState } from '@repo/shared/query-state';
 import { ChevronRight } from 'lucide-react';
 
 import { PageShell } from '@/app/[locale]/(shop)/_lib/components/layout/PageShell';
@@ -19,30 +20,36 @@ interface ProductDetailPageClientProps {
 
 /** Client-driven for the same reason as `CategoryPageClient` — MSW only intercepts reliably in the browser (Decision #87). */
 export function ProductDetailPageClient({ slug, locale }: ProductDetailPageClientProps): React.JSX.Element {
-  const { data: product, isLoading, isError } = useProduct(slug);
+  const { data: product, isLoading, isError, error, refetch } = useProduct(slug);
   const { related } = useRelatedProducts(product?.categoryId, slug);
-
-  if (isLoading) {
-    return (
-      <PageShell.Browse className="min-h-screen pb-24">
-        <p className="text-muted-foreground py-24 text-center">Đang tải…</p>
-      </PageShell.Browse>
-    );
-  }
-
-  if (isError || product === undefined) {
-    return (
-      <PageShell.Browse className="min-h-screen pb-24">
-        <div className="flex min-h-100 flex-col items-center justify-center text-center">
-          <h1 className="text-2xl font-bold">Không tìm thấy sản phẩm</h1>
-          <p className="text-muted-foreground mt-2">Sản phẩm bạn tìm không tồn tại.</p>
-        </div>
-      </PageShell.Browse>
-    );
-  }
 
   return (
     <PageShell.Browse className="min-h-screen pb-24">
+      <QueryState isLoading={isLoading} error={isError ? error : null} onRetry={refetch}>
+        {product !== undefined ? (
+          <ProductDetailContent product={product} locale={locale} related={related} />
+        ) : (
+          <div className="flex min-h-100 flex-col items-center justify-center text-center">
+            <h1 className="text-2xl font-bold">Không tìm thấy sản phẩm</h1>
+            <p className="text-muted-foreground mt-2">Sản phẩm bạn tìm không tồn tại.</p>
+          </div>
+        )}
+      </QueryState>
+    </PageShell.Browse>
+  );
+}
+
+function ProductDetailContent({
+  product,
+  locale,
+  related,
+}: {
+  readonly product: NonNullable<ReturnType<typeof useProduct>['data']>;
+  readonly locale: string;
+  readonly related: ReturnType<typeof useRelatedProducts>['related'];
+}): React.JSX.Element {
+  return (
+    <>
       {/* Breadcrumb */}
       <nav className="text-muted-foreground mb-8 flex items-center gap-1.5 text-sm">
         <Link href={`/${locale}/home`} className="hover:text-foreground transition-colors">
@@ -76,6 +83,6 @@ export function ProductDetailPageClient({ slug, locale }: ProductDetailPageClien
           <CatalogProductGrid products={related} />
         </div>
       )}
-    </PageShell.Browse>
+    </>
   );
 }

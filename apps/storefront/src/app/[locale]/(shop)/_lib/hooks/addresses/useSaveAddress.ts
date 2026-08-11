@@ -1,8 +1,8 @@
 'use client';
 
 import type { StorefrontAddressInput } from '@repo/api-sdk/endpoints/address';
+import { notify } from '@repo/shared/notification';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
-import { toast } from 'sonner';
 
 import { addressActions } from '@/app/[locale]/(shop)/_lib/api/address';
 import { addressKeys } from '@/app/[locale]/(shop)/_lib/hooks/addresses/addressKeys';
@@ -16,10 +16,10 @@ export const useSaveAddress = () => {
       id === undefined ? addressActions.create(data) : addressActions.update(id, data),
     onSuccess: async (_result, variables) => {
       await qc.invalidateQueries({ queryKey: addressKeys.list() });
-      toast.success(variables.id === undefined ? 'Đã thêm địa chỉ' : 'Đã cập nhật địa chỉ');
+      notify.success(variables.id === undefined ? 'Đã thêm địa chỉ' : 'Đã cập nhật địa chỉ');
     },
     onError: (error) => {
-      toast.error(error instanceof ApiError ? error.message : 'Lưu địa chỉ thất bại. Vui lòng thử lại.');
+      notify.error(error instanceof ApiError ? error.message : 'Lưu địa chỉ thất bại. Vui lòng thử lại.');
     },
   });
 };

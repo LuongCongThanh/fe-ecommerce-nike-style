@@ -4,6 +4,7 @@ import { useState } from 'react';
 
 import { zodResolver } from '@hookform/resolvers/zod';
 import type { StorefrontAddress } from '@repo/api-sdk/endpoints/address';
+import { QueryState } from '@repo/shared/query-state';
 import { Badge } from '@repo/ui/badge';
 import { Button } from '@repo/ui/button';
 import { Checkbox } from '@repo/ui/checkbox';
@@ -236,40 +237,47 @@ function AddressCard({ address }: { readonly address: StorefrontAddress }) {
 }
 
 export function AddressesClient(): React.JSX.Element {
-  const { data: addresses, isLoading } = useAddresses();
+  const { data: addresses, isLoading, isError, refetch } = useAddresses();
   const [isAdding, setIsAdding] = useState(false);
 
-  if (isLoading) {
-    return <p className="text-muted-foreground text-center">Đang tải...</p>;
-  }
-
   return (
-    <div className="space-y-4">
-      {addresses?.map((address) => (
-        <AddressCard key={address.id} address={address} />
-      ))}
+    <QueryState
+      isLoading={isLoading}
+      error={isError ? new Error('Không thể tải danh sách địa chỉ') : null}
+      onRetry={() => {
+        refetch().catch(() => {
+          /* error state already surfaced via isError */
+        });
+      }}
+      errorTitle="Không thể tải danh sách địa chỉ"
+    >
+      <div className="space-y-4">
+        {addresses?.map((address) => (
+          <AddressCard key={address.id} address={address} />
+        ))}
 
-      {addresses?.length === 0 && !isAdding ? <p className="text-muted-foreground text-center">Bạn chưa có địa chỉ nào.</p> : null}
+        {addresses?.length === 0 && !isAdding ? <p className="text-muted-foreground text-center">Bạn chưa có địa chỉ nào.</p> : null}
 
-      {isAdding ? (
-        <AddressForm
-          initial={EMPTY_FORM}
-          onDone={() => {
-            setIsAdding(false);
-          }}
-        />
-      ) : (
-        <Button
-          variant="outline"
-          className="w-full"
-          onClick={() => {
-            setIsAdding(true);
-          }}
-        >
-          <Plus className="size-4" data-icon="inline-start" />
-          Thêm địa chỉ mới
-        </Button>
-      )}
-    </div>
+        {isAdding ? (
+          <AddressForm
+            initial={EMPTY_FORM}
+            onDone={() => {
+              setIsAdding(false);
+            }}
+          />
+        ) : (
+          <Button
+            variant="outline"
+            className="w-full"
+            onClick={() => {
+              setIsAdding(true);
+            }}
+          >
+            <Plus className="size-4" data-icon="inline-start" />
+            Thêm địa chỉ mới
+          </Button>
+        )}
+      </div>
+    </QueryState>
   );
 }

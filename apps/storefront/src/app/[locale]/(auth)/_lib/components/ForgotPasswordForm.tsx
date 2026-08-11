@@ -4,10 +4,11 @@ import { useState } from 'react';
 import Link from 'next/link';
 
 import { zodResolver } from '@hookform/resolvers/zod';
+import { useToast } from '@repo/shared/hooks/useToast';
 import { Button } from '@repo/ui/button';
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '@repo/ui/form';
 import { Input } from '@repo/ui/input';
-import { Loader2 } from 'lucide-react';
+import { Loader2, Mail } from 'lucide-react';
 import { useLocale } from 'next-intl';
 import { useForm } from 'react-hook-form';
 
@@ -16,9 +17,11 @@ import { ApiErrorAlert } from '@/app/[locale]/(auth)/_lib/components/ApiErrorAle
 import { useApiErrorMessage } from '@/app/[locale]/(auth)/_lib/hooks/useApiErrorMessage';
 import type { ForgotPasswordFormInput } from '@/app/[locale]/(auth)/_lib/schemas/auth';
 import { ForgotPasswordFormSchema } from '@/app/[locale]/(auth)/_lib/schemas/auth';
+import { ApiError } from '@/shared/lib/errors/api-error';
 
 export function ForgotPasswordForm() {
   const locale = useLocale();
+  const notify = useToast();
   const { apiError, setApiError, handleApiError } = useApiErrorMessage();
   const [submitted, setSubmitted] = useState(false);
 
@@ -35,7 +38,9 @@ export function ForgotPasswordForm() {
       await forgotPasswordAction(values.email);
       setSubmitted(true);
     } catch (err) {
-      handleApiError(err, 'Đã có lỗi xảy ra. Vui lòng thử lại.');
+      const fallbackMessage = 'Đã có lỗi xảy ra. Vui lòng thử lại.';
+      handleApiError(err, fallbackMessage);
+      notify.error(err instanceof ApiError ? err.message : fallbackMessage);
     }
   };
 
@@ -43,7 +48,7 @@ export function ForgotPasswordForm() {
     return (
       <div className="space-y-4 text-center">
         <div className="mx-auto flex size-16 items-center justify-center rounded-full bg-green-500/10">
-          <span className="text-3xl">📧</span>
+          <Mail className="size-8 text-green-600" />
         </div>
         <div>
           <p className="font-semibold">Kiểm tra email của bạn</p>
