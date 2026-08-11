@@ -1,0 +1,25 @@
+{
+  "$schema": "https://turborepo.dev/microfrontends/schema.json",
+  "options": {
+    "localProxyPort": 3024
+  },
+  "applications": {
+    "storefront": {
+      "development": {
+        "local": { "port": 3000 }
+      }
+    },
+    "admin": {
+      "development": {
+        "local": { "port": 3001 }
+      },
+      "routing": [{ "paths": ["/admin", "/admin/:path*"] }]
+    },
+    "cms": {
+      "development": {
+        "local": { "port": 3002 }
+      },
+      "routing": [{ "paths": ["/cms", "/cms/:path*"] }]
+    }
+  }
+}

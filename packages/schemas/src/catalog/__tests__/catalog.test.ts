@@ -137,4 +137,3 @@ describe('CategoryListResponseSchema', () => {
     expect(result.success).toBe(true);
   });
 });
-

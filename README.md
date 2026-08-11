@@ -219,16 +219,16 @@ Hero/Homepage/Collection/Promotion/SEO/Blog/Campaign workflows đầy đủ chư
 
 Chỉ các package thực sự có trong workspace hiện tại được liệt kê dưới đây.
 
-| Package                 | Trách nhiệm                                                                                       | Ví dụ subpath                     |
-| ----------------------- | ------------------------------------------------------------------------------------------------- | --------------------------------- |
-| `@repo/api-sdk`         | Fetch client, auth runtime adapter, endpoints, MSW handlers và test adapters                      | `@repo/api-sdk/endpoints/auth`    |
+| Package                 | Trách nhiệm                                                                                                                             | Ví dụ subpath                     |
+| ----------------------- | --------------------------------------------------------------------------------------------------------------------------------------- | --------------------------------- |
+| `@repo/api-sdk`         | Fetch client, auth runtime adapter, endpoints, MSW handlers và test adapters                                                            | `@repo/api-sdk/endpoints/auth`    |
 | `@repo/schemas`         | Zod schemas và transport types cho Catalog, Cart, Wishlist, error envelope — baseline chuyển tiếp trước API v1 handshake (Decision #64) | `@repo/schemas/catalog`           |
-| `@repo/ui`              | Radix-based primitives và layout helpers                                                          | `@repo/ui/button`                 |
-| `@repo/shared`          | Utilities, notifications, generic states và reusable hooks                                        | `@repo/shared/utils`              |
-| `@repo/design-tokens`   | Color, semantic, spacing, typography, radius, shadow, motion, breakpoint và z-index tokens        | `@repo/design-tokens/colors`      |
-| `@repo/tailwind-config` | Tailwind preset, theme CSS, content paths và plugins                                              | `@repo/tailwind-config/theme.css` |
-| `@repo/eslint-config`   | Base, React và Next.js ESLint flat configs                                                        | `@repo/eslint-config/next`        |
-| `@repo/ts-config`       | Strict TypeScript configs cho base, Next.js và React library                                      | `@repo/ts-config/nextjs.json`     |
+| `@repo/ui`              | Radix-based primitives và layout helpers                                                                                                | `@repo/ui/button`                 |
+| `@repo/shared`          | Utilities, notifications, generic states và reusable hooks                                                                              | `@repo/shared/utils`              |
+| `@repo/design-tokens`   | Color, semantic, spacing, typography, radius, shadow, motion, breakpoint và z-index tokens                                              | `@repo/design-tokens/colors`      |
+| `@repo/tailwind-config` | Tailwind preset, theme CSS, content paths và plugins                                                                                    | `@repo/tailwind-config/theme.css` |
+| `@repo/eslint-config`   | Base, React và Next.js ESLint flat configs                                                                                              | `@repo/eslint-config/next`        |
+| `@repo/ts-config`       | Strict TypeScript configs cho base, Next.js và React library                                                                            | `@repo/ts-config/nextjs.json`     |
 
 Một số tài liệu kiến trúc còn mô tả package tương lai như `commerce`, `hooks` hoặc `utils`. Không import hoặc document chúng như package đã tồn tại cho tới khi workspace thật được tạo.
 

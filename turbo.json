@@ -3,7 +3,8 @@
   "tasks": {
     "build": {
       "dependsOn": ["^build"],
-      "outputs": [".next/**", "dist/**"]
+      "outputs": [".next/**", "dist/**"],
+      "env": ["NODE_ENV", "NEXT_PUBLIC_*", "DJANGO_API_URL", "VNPAY_*", "MOMO_*", "ZALOPAY_*", "CLOUDINARY_API_SECRET", "ANALYZE"]
     },
     "dev": {
       "cache": false,
