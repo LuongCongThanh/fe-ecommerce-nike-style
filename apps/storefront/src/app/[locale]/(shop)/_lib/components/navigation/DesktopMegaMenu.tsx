@@ -10,6 +10,8 @@ import { ChevronDown, ChevronRight } from 'lucide-react';
 import type { NavCategory } from '@/app/[locale]/(shop)/_lib/data/nav-categories';
 import { NAV_CATEGORIES } from '@/app/[locale]/(shop)/_lib/data/nav-categories';
 
+// Apple Design pass · springs + instant feedback + materials (safe-mode: no new gesture code)
+
 interface DesktopMegaMenuProps {
   readonly locale: string;
 }
@@ -43,7 +45,7 @@ export function DesktopMegaMenu({ locale }: DesktopMegaMenuProps) {
         <PopoverTrigger asChild>
           <button
             type="button"
-            className="text-muted-foreground hover:text-foreground flex items-center gap-1.5 rounded-lg px-3 py-2 text-sm font-medium transition-colors"
+            className="text-muted-foreground hover:text-foreground active:scale-0.97 flex items-center gap-1.5 rounded-lg px-3 py-2 text-sm font-medium transition-[color,transform] active:duration-100"
           >
             Categories
             <ChevronDown className={`size-3.5 transition-transform duration-300 ease-out ${isOpen ? 'text-foreground rotate-180' : ''}`} />
@@ -74,7 +76,7 @@ export function DesktopMegaMenu({ locale }: DesktopMegaMenuProps) {
                         onFocus={() => {
                           setActiveCategory(cat);
                         }}
-                        className={`relative z-10 flex w-full items-center justify-between rounded-lg px-3 py-2.5 text-sm font-medium transition-colors ${
+                        className={`active:scale-0.97 relative z-10 flex w-full items-center justify-between rounded-lg px-3 py-2.5 text-sm font-medium transition-[color,transform] active:duration-100 ${
                           isActive ? 'text-foreground' : 'text-muted-foreground hover:text-foreground'
                         }`}
                       >
@@ -106,7 +108,7 @@ export function DesktopMegaMenu({ locale }: DesktopMegaMenuProps) {
                   initial={{ opacity: 0, x: 10 }}
                   animate={{ opacity: 1, x: 0 }}
                   exit={{ opacity: 0, x: -10 }}
-                  transition={{ duration: 0.2 }}
+                  transition={{ type: 'spring', damping: 30, stiffness: 300 }}
                   className="flex h-full flex-col"
                 >
                   <div className="mb-6 flex items-center justify-between">
@@ -139,7 +141,7 @@ export function DesktopMegaMenu({ locale }: DesktopMegaMenuProps) {
                           onClick={() => {
                             setIsOpen(false);
                           }}
-                          className="hover:bg-muted group flex items-center rounded-lg p-2 transition-colors"
+                          className="hover:bg-muted group active:scale-0.97 flex items-center rounded-lg p-2 transition-[color,background-color,transform] active:duration-100"
                         >
                           <div className="flex flex-col">
                             <span className="text-muted-foreground group-hover:text-foreground text-sm font-medium transition-colors">
@@ -167,7 +169,7 @@ export function DesktopMegaMenu({ locale }: DesktopMegaMenuProps) {
                           onClick={() => {
                             setIsOpen(false);
                           }}
-                          className="bg-brand-600 hover:bg-brand-500 mt-3 inline-flex items-center gap-1 rounded-md px-3 py-1.5 text-xs font-semibold text-white transition-colors"
+                          className="bg-brand-600 hover:bg-brand-500 active:scale-0.97 mt-3 inline-flex items-center gap-1 rounded-md px-3 py-1.5 text-xs font-semibold text-white transition-[color,background-color,transform] active:duration-100"
                         >
                           Shop now <ChevronRight className="size-3" />
                         </Link>

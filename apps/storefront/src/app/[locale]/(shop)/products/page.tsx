@@ -1,3 +1,4 @@
+// Hallmark redesign · design-system: design.md · scope: app page (functional, no enrichment)
 import { setRequestLocale } from 'next-intl/server';
 
 import { FilterSidebar } from '@/app/[locale]/(shop)/_lib/components/categories/FilterSidebar';
@@ -14,11 +15,11 @@ export default async function ProductsPage({ params }: ProductsPageProps) {
 
   return (
     <PageShell.Browse>
-      <div className="flex flex-col gap-8 lg:flex-row">
+      <div className="flex flex-col gap-8 lg:flex-row lg:gap-10">
         <div className="w-full lg:w-64 lg:shrink-0">
           <FilterSidebar />
         </div>
-        <div className="flex-1">
+        <div className="min-w-0 flex-1">
           <ProductsClient />
         </div>
       </div>

@@ -1,3 +1,4 @@
+// Hallmark redesign · design-system: design.md · scope: app page (functional, no enrichment)
 'use client';
 
 import Link from 'next/link';
@@ -5,6 +6,7 @@ import Link from 'next/link';
 import { QueryState } from '@repo/shared/query-state';
 import { ChevronRight } from 'lucide-react';
 
+import { SectionHeading } from '@/app/[locale]/(shop)/_lib/components/common/SectionHeading';
 import { PageShell } from '@/app/[locale]/(shop)/_lib/components/layout/PageShell';
 import { CatalogProductGrid } from '@/app/[locale]/(shop)/_lib/components/products/CatalogProductGrid';
 import { ProductDetailTabs } from '@/app/[locale]/(shop)/_lib/components/products/ProductDetailTabs';
@@ -77,8 +79,8 @@ function ProductDetailContent({
       {/* Related Products */}
       {related.length > 0 && (
         <div className="mt-20">
-          <div className="mb-8 flex items-center justify-between">
-            <h2 className="text-2xl font-bold">Sản phẩm liên quan</h2>
+          <div className="mb-8">
+            <SectionHeading title="Sản phẩm liên quan" />
           </div>
           <CatalogProductGrid products={related} />
         </div>

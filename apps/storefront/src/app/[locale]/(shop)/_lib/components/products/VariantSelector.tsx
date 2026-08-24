@@ -1,3 +1,4 @@
+// Hallmark redesign · design-system: design.md · scope: app page (functional, no enrichment)
 'use client';
 
 import { cn } from '@repo/shared/utils';
@@ -40,8 +41,8 @@ export function VariantSelector({
                 }}
                 aria-pressed={selectedColor === color}
                 className={cn(
-                  'min-w-13 rounded-full border px-4 py-2.5 text-sm font-medium capitalize transition-colors duration-150',
-                  selectedColor === color ? 'border-foreground ring-foreground ring-1' : 'hover:border-foreground',
+                  'focus-visible:ring-ring min-w-13 rounded-full border px-4 py-2.5 text-sm font-medium capitalize transition-colors duration-150 focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:outline-none',
+                  selectedColor === color ? 'border-foreground ring-foreground ring-1' : 'hover:border-foreground active:bg-muted',
                 )}
               >
                 {color}

@@ -24,7 +24,9 @@ import { useAuth } from '@/core/session/useAuth';
 // transition-property list (color/background/border/box-shadow, from Button's own base classes)
 // rather than replacing it, so the built-in hover-color transition keeps working — tailwind-merge
 // dedupes same-group utilities and would otherwise drop the base one.
-const ICON_BUTTON_3D = 'transition-[color,background-color,border-color,box-shadow,transform] hover:-translate-y-0.5 hover:shadow-md';
+// Apple Design pass · springs + instant feedback + materials (safe-mode: no new gesture code)
+const ICON_BUTTON_3D =
+  'transition-[color,background-color,border-color,box-shadow,transform] hover:-translate-y-0.5 hover:shadow-md active:scale-[0.97] active:duration-100';
 
 /** Small pointer-tilt badge next to the wordmark — the header's one deliberate 3D moment. Tilts
  * toward the cursor via framer-motion springs on rotateX/rotateY; stays flat when the user prefers

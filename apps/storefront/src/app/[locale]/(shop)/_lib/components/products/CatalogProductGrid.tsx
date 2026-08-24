@@ -1,3 +1,4 @@
+// Hallmark redesign · design-system: design.md · scope: app page (functional, no enrichment)
 'use client';
 
 import type { Product } from '@repo/schemas/catalog';
@@ -16,14 +17,14 @@ export function CatalogProductGrid({ products }: CatalogProductGridProps): React
 
   if (products.length === 0) {
     return (
-      <div className="flex min-h-100 flex-col items-center justify-center rounded-lg border border-dashed py-12">
-        <p className="text-muted-foreground text-lg">Không tìm thấy sản phẩm nào</p>
+      <div className="flex min-h-100 flex-col items-center justify-center rounded-xl border border-dashed py-16 text-center">
+        <p className="text-muted-foreground text-base">Không tìm thấy sản phẩm nào</p>
       </div>
     );
   }
 
   return (
-    <div className="grid grid-cols-2 gap-4 sm:grid-cols-3 lg:grid-cols-4">
+    <div className="grid grid-cols-2 gap-x-4 gap-y-8 sm:grid-cols-3 lg:grid-cols-4 lg:gap-x-6">
       {products.map((product) => {
         const { min, isRange } = getProductPriceRange(product);
         return (

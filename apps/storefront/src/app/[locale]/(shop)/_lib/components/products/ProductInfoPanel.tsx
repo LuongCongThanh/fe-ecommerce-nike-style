@@ -1,3 +1,4 @@
+// Hallmark redesign · design-system: design.md · scope: app page (functional, no enrichment)
 import dynamic from 'next/dynamic';
 import Link from 'next/link';
 
@@ -37,7 +38,7 @@ export function ProductInfoPanel({ product, locale }: ProductInfoPanelProps) {
     <div className="flex flex-col gap-6">
       {/* Name + rating */}
       <div>
-        <h1 className="text-3xl leading-tight font-bold tracking-tight sm:text-4xl">{product.name}</h1>
+        <h1 className="text-3xl leading-tight font-bold tracking-tight wrap-anywhere sm:text-4xl">{product.name}</h1>
 
         <div className="mt-3 flex items-center gap-3">
           <div className="flex items-center gap-1">
@@ -58,7 +59,7 @@ export function ProductInfoPanel({ product, locale }: ProductInfoPanelProps) {
 
       {/* Price */}
       <div>
-        <span className="text-brand-600 text-3xl font-bold">
+        <span className="text-brand-600 text-3xl font-bold tabular-nums">
           {selectedSku === null && isRange ? <span className="text-muted-foreground mr-1.5 text-base font-normal">Từ</span> : null}
           {formatCurrency(displayPrice)}
         </span>
@@ -88,7 +89,7 @@ export function ProductInfoPanel({ product, locale }: ProductInfoPanelProps) {
       {/* Back link */}
       <Link
         href={`/${locale}/products`}
-        className="text-muted-foreground hover:text-foreground mt-2 flex items-center gap-1.5 text-sm font-medium transition-colors"
+        className="text-muted-foreground hover:text-foreground focus-visible:ring-ring mt-2 flex w-fit items-center gap-1.5 rounded-sm text-sm font-medium transition-colors focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:outline-none"
       >
         <ArrowLeft className="size-4" />
         Quay lại danh sách sản phẩm

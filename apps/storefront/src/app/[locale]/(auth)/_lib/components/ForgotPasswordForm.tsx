@@ -1,5 +1,6 @@
 'use client';
 
+// Hallmark redesign · design-system: design.md · scope: app page (functional, no enrichment)
 import { useState } from 'react';
 import Link from 'next/link';
 
@@ -47,16 +48,16 @@ export function ForgotPasswordForm() {
   if (submitted) {
     return (
       <div className="space-y-4 text-center">
-        <div className="mx-auto flex size-16 items-center justify-center rounded-full bg-green-500/10">
-          <Mail className="size-8 text-green-600" />
+        <div className="bg-success-50 mx-auto flex size-16 items-center justify-center rounded-full">
+          <Mail className="text-success-700 size-8" />
         </div>
         <div>
           <p className="font-semibold">Kiểm tra email của bạn</p>
-          <p className="mt-1 text-sm text-neutral-500">
-            Chúng tôi đã gửi link đặt lại mật khẩu đến <strong>{form.getValues('email')}</strong>
+          <p className="text-muted-foreground mt-1 text-sm text-pretty">
+            Chúng tôi đã gửi link đặt lại mật khẩu đến <strong className="text-foreground">{form.getValues('email')}</strong>
           </p>
         </div>
-        <Link href={`/${locale}/login`} className="text-foreground block text-sm underline hover:underline">
+        <Link href={`/${locale}/login`} className="text-secondary-600 hover:text-secondary-700 block text-sm font-medium transition-colors">
           Quay lại đăng nhập
         </Link>
       </div>
@@ -68,7 +69,7 @@ export function ForgotPasswordForm() {
       <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
         <ApiErrorAlert message={apiError} />
 
-        <p className="text-sm text-neutral-500">Nhập email của bạn và chúng tôi sẽ gửi link đặt lại mật khẩu.</p>
+        <p className="text-muted-foreground text-sm text-pretty">Nhập email của bạn và chúng tôi sẽ gửi link đặt lại mật khẩu.</p>
 
         <FormField
           control={form.control}
@@ -89,9 +90,9 @@ export function ForgotPasswordForm() {
           {isSubmitting ? 'Đang gửi...' : 'Gửi link đặt lại mật khẩu'}
         </Button>
 
-        <p className="text-center text-sm text-neutral-500">
+        <p className="text-muted-foreground text-center text-sm">
           Nhớ mật khẩu rồi?{' '}
-          <Link href={`/${locale}/login`} className="text-foreground font-medium underline hover:underline">
+          <Link href={`/${locale}/login`} className="text-secondary-600 hover:text-secondary-700 font-medium transition-colors">
             Đăng nhập
           </Link>
         </p>

@@ -1,5 +1,6 @@
 'use client';
 
+// Hallmark redesign · design-system: design.md · scope: app page (functional, no enrichment)
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 
@@ -131,9 +132,9 @@ export function RegisterForm() {
           {isSubmitting ? 'Đang tạo tài khoản...' : 'Tạo tài khoản'}
         </Button>
 
-        <p className="text-center text-sm text-neutral-500">
+        <p className="text-muted-foreground text-center text-sm">
           Đã có tài khoản?{' '}
-          <Link href={`/${locale}/login`} className="text-foreground font-medium underline hover:underline">
+          <Link href={`/${locale}/login`} className="text-secondary-600 hover:text-secondary-700 font-medium transition-colors">
             Đăng nhập
           </Link>
         </p>
