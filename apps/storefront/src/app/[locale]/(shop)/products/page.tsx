@@ -15,8 +15,9 @@ export default async function ProductsPage({ params }: ProductsPageProps) {
 
   return (
     <PageShell.Browse>
-      <div className="flex flex-col gap-8 lg:flex-row lg:gap-10">
-        <div className="w-full lg:w-64 lg:shrink-0">
+      {/* Apple Design pass · the filters stay with the reader instead of scrolling away (§12). */}
+      <div className="flex flex-col gap-8 lg:flex-row lg:items-start lg:gap-10">
+        <div className="w-full lg:sticky lg:top-24 lg:max-h-[calc(100vh-7rem)] lg:w-64 lg:shrink-0 lg:overflow-y-auto lg:overscroll-contain">
           <FilterSidebar />
         </div>
         <div className="min-w-0 flex-1">

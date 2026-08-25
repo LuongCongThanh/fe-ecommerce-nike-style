@@ -56,7 +56,9 @@ export function FilterSidebar({ activeCategorySlug }: FilterSidebarProps = {}): 
   };
 
   return (
-    <aside className="bg-card space-y-8 rounded-xl border p-5">
+    // Translucent material rather than an opaque slab: content reads *through* the floating filter
+    // panel as it scrolls under, and reduced-transparency users get the solid card back (§12/§14).
+    <aside className="bg-card supports-[backdrop-filter]:bg-card/80 space-y-8 rounded-xl border p-5 backdrop-blur-xl backdrop-saturate-150 motion-reduce:backdrop-blur-none">
       {categories !== undefined && categories.length > 0 ? (
         <CategoryNav categories={categories} locale={locale} activeSlug={activeCategorySlug} />
       ) : null}
