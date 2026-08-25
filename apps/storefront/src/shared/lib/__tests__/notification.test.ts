@@ -32,7 +32,9 @@ describe('notify', () => {
 
   it('delegates info notifications to sonner', () => {
     notify.info('Note');
-    expect(toastMock).toHaveBeenCalledWith('Note', { description: undefined });
+    // No options passed in → toSonnerOptions returns `undefined` itself (not a
+    // wrapped `{ description: undefined }`), so that's exactly what's forwarded.
+    expect(toastMock).toHaveBeenCalledWith('Note', undefined);
   });
 
   it('delegates warning notifications to sonner', () => {
