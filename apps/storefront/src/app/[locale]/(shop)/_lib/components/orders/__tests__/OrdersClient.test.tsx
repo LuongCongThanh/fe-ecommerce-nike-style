@@ -40,6 +40,10 @@ describe('OrdersClient — fetches client-side (issue #16, closing the #15 SSR-a
 
   it('shows an error state instead of a silent empty list when signed out', async () => {
     renderOrdersClient();
-    expect(await screen.findByText('Đã có lỗi xảy ra khi tải đơn hàng. Vui lòng thử lại.')).toBeInTheDocument();
+    // OrdersClient overrides QueryState's default error copy with its own
+    // errorTitle/errorDescription — ErrorState renders those as separate
+    // heading/paragraph elements, not one combined string.
+    expect(await screen.findByText('Không thể tải đơn hàng')).toBeInTheDocument();
+    expect(screen.getByText('Vui lòng thử lại.')).toBeInTheDocument();
   });
 });
