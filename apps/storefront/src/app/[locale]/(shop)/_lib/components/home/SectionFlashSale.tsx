@@ -7,6 +7,7 @@ import { ArrowRight, Zap } from 'lucide-react';
 import { useLocale, useTranslations } from 'next-intl';
 
 import { ProductCard } from '@/app/[locale]/(shop)/_lib/components/common/ProductCard';
+import { Reveal } from '@/app/[locale]/(shop)/_lib/components/common/Reveal';
 import { bestSellersData } from '@/app/[locale]/(shop)/_lib/data/home';
 
 export function SectionFlashSale(): React.JSX.Element {
@@ -16,7 +17,7 @@ export function SectionFlashSale(): React.JSX.Element {
 
   return (
     <section className="container mx-auto py-(--space-section-flash-sale)">
-      <div className="bg-surface-inverse relative overflow-hidden rounded-4xl px-4 py-7 text-white sm:px-7 lg:p-9">
+      <Reveal className="bg-surface-inverse relative overflow-hidden rounded-4xl px-4 py-7 text-white sm:px-7 lg:p-9">
         <div aria-hidden="true" className="bg-brand-600/30 absolute -top-28 -right-20 size-72 rounded-full blur-3xl" />
         <div className="relative mb-7 flex flex-col items-start justify-between gap-5 sm:flex-row sm:items-end">
           <div>
@@ -56,7 +57,7 @@ export function SectionFlashSale(): React.JSX.Element {
             />
           ))}
         </div>
-      </div>
+      </Reveal>
     </section>
   );
 }
