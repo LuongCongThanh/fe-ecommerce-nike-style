@@ -1,6 +1,7 @@
 import { http, HttpResponse } from 'msw';
 
 import type { CategoryInput, ProductInput } from '@repo/schemas/catalog';
+import type { InventoryUpdateInput } from '@repo/schemas/inventory';
 
 import { createAddress, deleteAddress, getAddresses, setDefaultAddress, updateAddress } from './address-fixtures';
 import {
@@ -41,6 +42,7 @@ import {
   recordRequestKey,
   requestReturnForCustomer,
 } from './order-fixtures';
+import { getInventoryAuditLog, listInventory, updateInventoryOnHand } from './inventory-fixtures';
 import { consumeReservation, createReservation } from './reservation-fixtures';
 import {
   createStaffSession,
@@ -227,6 +229,41 @@ export const handlers = [
       return errorResponse(status, result.code, result.message);
     }
     return HttpResponse.json({});
+  }),
+
+  // Admin Inventory view/update (issue #21) — on_hand/reserved/available per SKU, gated on a valid
+  // Staff session. Writes go through updateInventoryOnHand, which also appends an audit-log entry.
+  http.get('*/api/admin/inventory/', ({ request }) => {
+    const staff = findStaffByAccessToken(request.headers.get('authorization'));
+    if (staff === undefined) {
+      return errorResponse(401, 'UNAUTHORIZED', 'Chưa đăng nhập hoặc phiên đã hết hạn.');
+    }
+
+    return HttpResponse.json({ data: listInventory() });
+  }),
+
+  http.get('*/api/admin/inventory/audit-log/', ({ request }) => {
+    const staff = findStaffByAccessToken(request.headers.get('authorization'));
+    if (staff === undefined) {
+      return errorResponse(401, 'UNAUTHORIZED', 'Chưa đăng nhập hoặc phiên đã hết hạn.');
+    }
+
+    const skuId = new URL(request.url).searchParams.get('skuId') ?? undefined;
+    return HttpResponse.json({ data: getInventoryAuditLog(skuId) });
+  }),
+
+  http.patch('*/api/admin/inventory/:skuId/', async ({ request, params }) => {
+    const staff = findStaffByAccessToken(request.headers.get('authorization'));
+    if (staff === undefined) {
+      return errorResponse(401, 'UNAUTHORIZED', 'Chưa đăng nhập hoặc phiên đã hết hạn.');
+    }
+
+    const body = (await request.json()) as InventoryUpdateInput;
+    const result = updateInventoryOnHand(String(params.skuId), body.onHand, { id: staff.id, name: staff.name });
+    if (!result.ok) {
+      return errorResponse(404, result.code, result.message);
+    }
+    return HttpResponse.json(result.item);
   }),
 
   http.post('*/api/auth/register/', async ({ request }) => {
