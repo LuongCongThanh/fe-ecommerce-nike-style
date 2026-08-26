@@ -1,3 +1,4 @@
+// Hallmark redesign · design-system: design.md · scope: app page (functional, no enrichment)
 import Link from 'next/link';
 
 import type { Category } from '@repo/schemas/catalog';
@@ -25,8 +26,8 @@ export function CategoryNav({ categories, locale, activeSlug }: CategoryNavProps
     .map((top) => top.id);
 
   return (
-    <nav aria-label="Product categories">
-      <h3 className="text-muted-foreground mb-3 text-sm font-bold tracking-wider uppercase">Categories</h3>
+    <nav aria-label="Product categories" className="space-y-3">
+      <h3 className="text-muted-foreground text-sm font-bold tracking-wider uppercase">Categories</h3>
       <Accordion type="multiple" defaultValue={defaultOpen}>
         {topLevel.map((top) => {
           const children = categories.filter((c) => c.parentId === top.id);
@@ -43,7 +44,10 @@ export function CategoryNav({ categories, locale, activeSlug }: CategoryNavProps
                   onClick={(e) => {
                     e.stopPropagation(); // navigate on click without also toggling the accordion section
                   }}
-                  className={topLinkClass}
+                  className={cn(
+                    topLinkClass,
+                    'focus-visible:ring-ring rounded-sm focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:outline-none',
+                  )}
                 >
                   {top.name}
                 </Link>
@@ -56,7 +60,7 @@ export function CategoryNav({ categories, locale, activeSlug }: CategoryNavProps
                         <Link
                           href={`/${locale}/categories/${child.slug}`}
                           className={cn(
-                            'text-sm transition-colors',
+                            'focus-visible:ring-ring block rounded-sm py-0.5 text-sm transition-colors focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:outline-none',
                             activeSlug === child.slug ? 'text-foreground font-medium' : 'text-muted-foreground hover:text-foreground',
                           )}
                         >

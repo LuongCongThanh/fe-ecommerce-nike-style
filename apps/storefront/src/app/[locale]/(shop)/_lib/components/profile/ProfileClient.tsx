@@ -1,5 +1,6 @@
 'use client';
 
+// Hallmark redesign · design-system: design.md · scope: app page (functional, no enrichment)
 import { useEffect } from 'react';
 
 import { zodResolver } from '@hookform/resolvers/zod';
@@ -48,21 +49,21 @@ export function ProfileClient(): React.JSX.Element {
         onSubmit={handleSubmit((d) => {
           updateProfile.mutate(d);
         })}
-        className="space-y-4"
+        className="bg-card space-y-5 rounded-xl border p-6"
       >
-        <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
-          <div>
+        <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
+          <div className="space-y-1.5">
             <Label htmlFor="lastName">Họ</Label>
             <Input id="lastName" autoComplete="family-name" {...register('lastName')} />
-            {errors.lastName != null ? <p className="text-destructive mt-1 text-sm">{errors.lastName.message}</p> : null}
+            {errors.lastName != null ? <p className="text-destructive text-sm">{errors.lastName.message}</p> : null}
           </div>
-          <div>
+          <div className="space-y-1.5">
             <Label htmlFor="firstName">Tên</Label>
             <Input id="firstName" autoComplete="given-name" {...register('firstName')} />
-            {errors.firstName != null ? <p className="text-destructive mt-1 text-sm">{errors.firstName.message}</p> : null}
+            {errors.firstName != null ? <p className="text-destructive text-sm">{errors.firstName.message}</p> : null}
           </div>
         </div>
-        <div>
+        <div className="space-y-1.5">
           <Label htmlFor="phone">Số điện thoại</Label>
           <Input id="phone" placeholder="0901234567" autoComplete="tel" {...register('phone')} />
         </div>

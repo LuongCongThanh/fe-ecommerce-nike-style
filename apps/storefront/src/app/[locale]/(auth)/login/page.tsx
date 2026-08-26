@@ -1,3 +1,4 @@
+// Hallmark redesign · design-system: design.md · scope: app page (functional, no enrichment)
 import { Suspense } from 'react';
 
 import { LoadingSpinner } from '@repo/shared/loading-spinner';
@@ -16,7 +17,7 @@ export default async function LoginPage({ params }: LoginPageProps) {
   return (
     <div className="bg-card rounded-xl border p-8 shadow-sm">
       <div className="mb-8 text-center">
-        <h1 className="text-2xl font-bold tracking-tight">Đăng nhập</h1>
+        <h1 className="text-2xl font-bold tracking-tight text-balance">Đăng nhập</h1>
         <p className="text-muted-foreground mt-2 text-sm">Chào mừng trở lại!</p>
       </div>
       <Suspense fallback={<LoadingSpinner size="lg" label="Đang tải biểu mẫu đăng nhập" className="w-full justify-center py-10" />}>

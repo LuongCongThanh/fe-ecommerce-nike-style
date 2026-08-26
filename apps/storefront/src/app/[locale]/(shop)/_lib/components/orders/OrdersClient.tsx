@@ -1,5 +1,6 @@
 'use client';
 
+// Hallmark redesign · design-system: design.md · scope: app page (functional, no enrichment)
 import Link from 'next/link';
 
 import { QueryState } from '@repo/shared/query-state';
@@ -31,21 +32,21 @@ export function OrdersClient(): React.JSX.Element {
       errorDescription="Vui lòng thử lại."
     >
       {orders === undefined ? null : orders.length === 0 ? (
-        <p className="text-muted-foreground text-center">Bạn chưa có đơn hàng nào.</p>
+        <p className="text-muted-foreground py-10 text-center">Bạn chưa có đơn hàng nào.</p>
       ) : (
-        <div className="space-y-4">
+        <div className="space-y-3">
           {orders.map((order) => (
             <Link
               key={order.id}
               href={`/${locale}/account/orders/${String(order.id)}`}
-              className="block rounded-xl border p-4 transition hover:shadow-sm"
+              className="bg-card hover:border-secondary-300 focus-visible:ring-ring block rounded-xl border p-4 transition-[border-color,box-shadow] duration-(--duration-fast) ease-out hover:shadow-sm focus-visible:ring-2 focus-visible:outline-none"
             >
               <div className="flex items-center justify-between gap-3">
-                <div>
+                <div className="min-w-0">
                   <p className="font-medium">Đơn #{order.code}</p>
                   <p className="text-muted-foreground text-sm">{new Date(order.created_at).toLocaleDateString('vi-VN')}</p>
                 </div>
-                <div className="flex flex-col items-end gap-1">
+                <div className="flex shrink-0 flex-col items-end gap-1">
                   <p className="text-primary font-semibold">{formatCurrency(order.total)}</p>
                   <OrderStatusBadge status={order.status} />
                 </div>

@@ -1,3 +1,5 @@
+// Hallmark redesign · design-system: design.md · scope: app page (functional, no enrichment)
+// Apple Design pass · springs + instant feedback + materials (safe-mode: no new gesture code)
 'use client';
 
 import Image from 'next/image';
@@ -26,7 +28,10 @@ export function CartDrawer({ children }: CartDrawerProps) {
   return (
     <Sheet>
       <SheetTrigger asChild>{children}</SheetTrigger>
-      <SheetContent aria-describedby={undefined} className="bg-background flex w-full flex-col p-0 sm:max-w-md">
+      <SheetContent
+        aria-describedby={undefined}
+        className="bg-background/90 flex w-full flex-col p-0 supports-[backdrop-filter]:backdrop-blur-xl supports-[backdrop-filter]:backdrop-saturate-150 sm:max-w-md"
+      >
         <SheetHeader className="border-b p-6">
           <SheetTitle className="flex items-center gap-2 text-xl font-bold">
             <ShoppingBag className="size-5" />
@@ -59,8 +64,8 @@ export function CartDrawer({ children }: CartDrawerProps) {
                       layout
                       initial={{ opacity: 0, x: 20 }}
                       animate={{ opacity: 1, x: 0 }}
-                      exit={{ opacity: 0, scale: 0.95 }}
-                      transition={{ delay: index * 0.05 }}
+                      exit={{ opacity: 0, x: 20, scale: 0.95 }}
+                      transition={{ type: 'spring', damping: 30, stiffness: 300, delay: index * 0.05 }}
                       className="group relative flex gap-4"
                     >
                       <div className="bg-muted relative size-20 overflow-hidden rounded-lg">
@@ -102,7 +107,7 @@ export function CartDrawer({ children }: CartDrawerProps) {
                                 },
                               });
                             }}
-                            className="hover:text-destructive text-muted-foreground"
+                            className="hover:text-destructive hover:bg-destructive/10 focus-visible:ring-destructive/40 text-muted-foreground focus-visible:ring-2"
                           >
                             <Trash2 className="size-4" />
                           </Button>
@@ -117,20 +122,24 @@ export function CartDrawer({ children }: CartDrawerProps) {
         </ScrollArea>
 
         {items.length > 0 && (
-          <div className="border-t p-6">
+          <div className="bg-muted/30 border-t p-6">
             <div className="mb-4 space-y-1.5">
-              <div className="flex justify-between text-sm">
+              <div className="flex justify-between gap-3 text-sm">
                 <span className="text-muted-foreground">Tạm tính</span>
                 <span className="font-medium">{formatCurrency(total)}</span>
               </div>
-              <div className="flex justify-between text-base font-bold">
+              <div className="flex justify-between gap-3 text-base font-bold">
                 <span>Tổng cộng</span>
                 <span className="text-brand-600">{formatCurrency(total)}</span>
               </div>
             </div>
             <div className="grid grid-cols-2 gap-3">
               <SheetTrigger asChild>
-                <Button variant="outline" className="w-full" asChild>
+                <Button
+                  variant="outline"
+                  className="border-secondary-300 text-secondary-700 hover:bg-secondary-50 hover:text-secondary-800 w-full"
+                  asChild
+                >
                   <Link href={`/${locale}/cart`}>Xem giỏ hàng</Link>
                 </Button>
               </SheetTrigger>

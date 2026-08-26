@@ -1,3 +1,4 @@
+// Hallmark redesign · design-system: design.md · scope: app page (functional, no enrichment)
 import { redirect } from 'next/navigation';
 
 import { setRequestLocale } from 'next-intl/server';
@@ -22,7 +23,7 @@ export default async function ResetPasswordPage({ params, searchParams }: ResetP
   return (
     <div className="bg-card rounded-xl border p-8 shadow-sm">
       <div className="mb-8 text-center">
-        <h1 className="text-2xl font-bold tracking-tight">Đặt lại mật khẩu</h1>
+        <h1 className="text-2xl font-bold tracking-tight text-balance">Đặt lại mật khẩu</h1>
         <p className="text-muted-foreground mt-2 text-sm">Tạo mật khẩu mới cho tài khoản của bạn</p>
       </div>
       <ResetPasswordForm token={token} uid={uid} />

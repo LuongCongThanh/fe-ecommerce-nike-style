@@ -1,3 +1,4 @@
+// Hallmark redesign · design-system: design.md · scope: app page (functional, no enrichment)
 'use client';
 
 import { useTransition } from 'react';
@@ -55,13 +56,15 @@ export function FilterSidebar({ activeCategorySlug }: FilterSidebarProps = {}): 
   };
 
   return (
-    <aside className="space-y-8">
+    // Translucent material rather than an opaque slab: content reads *through* the floating filter
+    // panel as it scrolls under, and reduced-transparency users get the solid card back (§12/§14).
+    <aside className="bg-card supports-[backdrop-filter]:bg-card/80 space-y-8 rounded-xl border p-5 backdrop-blur-xl backdrop-saturate-150 motion-reduce:backdrop-blur-none">
       {categories !== undefined && categories.length > 0 ? (
         <CategoryNav categories={categories} locale={locale} activeSlug={activeCategorySlug} />
       ) : null}
 
       {/* Gender */}
-      <div className="space-y-3">
+      <div className="space-y-3 border-t pt-6 first:border-t-0 first:pt-0">
         <h3 className="text-muted-foreground text-sm font-bold tracking-wider uppercase">Giới tính</h3>
         <Select
           value={filters.gender ?? 'all'}
@@ -86,7 +89,7 @@ export function FilterSidebar({ activeCategorySlug }: FilterSidebarProps = {}): 
       </div>
 
       {/* Sorting */}
-      <div className="space-y-3">
+      <div className="space-y-3 border-t pt-6">
         <h3 className="text-muted-foreground text-sm font-bold tracking-wider uppercase">Sắp xếp theo</h3>
         <Select
           value={filters.sortBy}
@@ -108,7 +111,7 @@ export function FilterSidebar({ activeCategorySlug }: FilterSidebarProps = {}): 
       </div>
 
       {/* Price Filter */}
-      <div className="space-y-3">
+      <div className="space-y-3 border-t pt-6">
         <h3 className="text-muted-foreground text-sm font-bold tracking-wider uppercase">Khoảng giá (VNĐ)</h3>
         <form onSubmit={handlePriceSubmit} className="space-y-3">
           <div className="flex items-center gap-2">
@@ -129,7 +132,7 @@ export function FilterSidebar({ activeCategorySlug }: FilterSidebarProps = {}): 
       <Button
         variant="ghost"
         size="sm"
-        className="text-muted-foreground hover:text-foreground w-full"
+        className="text-muted-foreground hover:text-foreground w-full border-t pt-6"
         disabled={isPending}
         onClick={() => {
           startTransition(() => {

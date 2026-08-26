@@ -1,5 +1,6 @@
 'use client';
 
+// Hallmark redesign · design-system: design.md · scope: app page (functional, no enrichment)
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 
@@ -87,8 +88,8 @@ export function ResetPasswordForm({ token, uid }: ResetPasswordFormProps) {
           {isSubmitting ? 'Đang đặt lại...' : 'Đặt lại mật khẩu'}
         </Button>
 
-        <p className="text-center text-sm text-neutral-500">
-          <Link href={`/${locale}/login`} className="text-foreground font-medium underline hover:underline">
+        <p className="text-center text-sm">
+          <Link href={`/${locale}/login`} className="text-secondary-600 hover:text-secondary-700 font-medium transition-colors">
             Quay lại đăng nhập
           </Link>
         </p>

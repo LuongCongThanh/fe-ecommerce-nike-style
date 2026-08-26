@@ -1,3 +1,5 @@
+// Hallmark redesign · design-system: design.md · scope: app page (functional, no enrichment)
+// Apple Design pass · §1 feedback on press · §4 behaviour over animation (shared spring presets)
 'use client';
 
 import type { Sku } from '@repo/schemas/catalog';
@@ -7,6 +9,7 @@ import { Check, Minus, Plus, ShoppingCart, Zap } from 'lucide-react';
 
 import { VariantSelector } from '@/app/[locale]/(shop)/_lib/components/products/VariantSelector';
 import type { useAddToCart } from '@/app/[locale]/(shop)/_lib/hooks/products/useAddToCart';
+import { SPRING_MOMENTUM, SPRING_UI } from '@/shared/lib/motion';
 
 type AddToCartSectionProps = ReturnType<typeof useAddToCart>;
 
@@ -56,69 +59,80 @@ export function AddToCartSection({
         <h3 className="text-muted-foreground mb-4 text-sm font-bold tracking-wider uppercase">Số lượng</h3>
         <div className="flex items-center gap-4">
           <div className="border-muted-foreground/20 bg-muted/50 flex items-center rounded-xl border p-1">
-            <button
+            <motion.button
               type="button"
               onClick={() => {
                 setQuantity((prev) => Math.max(1, prev - 1));
               }}
-              className="hover:bg-muted flex size-11 items-center justify-center rounded-lg transition-colors"
+              whileTap={{ scale: 0.9 }}
+              transition={SPRING_UI}
+              className="hover:bg-muted focus-visible:ring-ring flex size-11 items-center justify-center rounded-lg transition-colors focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:outline-none disabled:pointer-events-none disabled:opacity-40"
               disabled={quantity <= 1}
               aria-label="Giảm số lượng"
             >
               <Minus className="size-4" />
-            </button>
-            <span className="w-12 text-center font-bold">{quantity}</span>
-            <button
+            </motion.button>
+            <span className="w-12 text-center font-bold tabular-nums">{quantity}</span>
+            <motion.button
               type="button"
               onClick={() => {
                 setQuantity((prev) => Math.min(maxStock, prev + 1));
               }}
-              className="hover:bg-muted flex size-11 items-center justify-center rounded-lg transition-colors"
+              whileTap={{ scale: 0.9 }}
+              transition={SPRING_UI}
+              className="hover:bg-muted focus-visible:ring-ring flex size-11 items-center justify-center rounded-lg transition-colors focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:outline-none disabled:pointer-events-none disabled:opacity-40"
               disabled={quantity >= maxStock}
               aria-label="Tăng số lượng"
             >
               <Plus className="size-4" />
-            </button>
+            </motion.button>
           </div>
           {maxStock > 0 && <span className="text-muted-foreground text-sm">{maxStock.toString()} sản phẩm có sẵn</span>}
         </div>
       </div>
 
       <div className="flex flex-col gap-3">
-        <Button variant="default" size="lg" className="h-12 w-full text-base" onClick={buyNow} disabled={!canAdd}>
-          <div className="flex items-center gap-2 font-semibold">
-            <Zap className="size-5 fill-current" />
-            Mua ngay
-          </div>
-        </Button>
+        {/* Press feedback lands on pointer-down and springs back — never waits for the click. */}
+        <motion.div whileTap={canAdd ? { scale: 0.97 } : undefined} transition={SPRING_UI}>
+          <Button variant="default" size="lg" className="h-12 w-full text-base" onClick={buyNow} disabled={!canAdd}>
+            <div className="flex items-center gap-2 font-semibold">
+              <Zap className="size-5 fill-current" />
+              Mua ngay
+            </div>
+          </Button>
+        </motion.div>
 
-        <Button variant="outline" size="lg" className="relative h-12 w-full overflow-hidden text-base" onClick={add} disabled={isAdded || !canAdd}>
-          <AnimatePresence mode="wait">
-            {isAdded ? (
-              <motion.div
-                key="success"
-                initial={{ y: 20, opacity: 0 }}
-                animate={{ y: 0, opacity: 1 }}
-                exit={{ y: -20, opacity: 0 }}
-                className="flex items-center gap-2"
-              >
-                <Check className="size-5" />
-                Đã thêm
-              </motion.div>
-            ) : (
-              <motion.div
-                key="default"
-                initial={{ y: 20, opacity: 0 }}
-                animate={{ y: 0, opacity: 1 }}
-                exit={{ y: -20, opacity: 0 }}
-                className="flex items-center gap-2"
-              >
-                <ShoppingCart className="size-5" />
-                Thêm vào giỏ
-              </motion.div>
-            )}
-          </AnimatePresence>
-        </Button>
+        <motion.div whileTap={canAdd && !isAdded ? { scale: 0.97 } : undefined} transition={SPRING_UI}>
+          <Button variant="outline" size="lg" className="relative h-12 w-full overflow-hidden text-base" onClick={add} disabled={isAdded || !canAdd}>
+            <AnimatePresence mode="popLayout" initial={false}>
+              {isAdded ? (
+                <motion.div
+                  key="success"
+                  initial={{ y: 20, opacity: 0 }}
+                  animate={{ y: 0, opacity: 1 }}
+                  exit={{ y: -20, opacity: 0 }}
+                  transition={SPRING_MOMENTUM}
+                  className="flex items-center gap-2"
+                >
+                  <Check className="size-5" />
+                  Đã thêm
+                </motion.div>
+              ) : (
+                <motion.div
+                  key="default"
+                  initial={{ y: 20, opacity: 0 }}
+                  animate={{ y: 0, opacity: 1 }}
+                  exit={{ y: -20, opacity: 0 }}
+                  transition={SPRING_UI}
+                  className="flex items-center gap-2"
+                >
+                  <ShoppingCart className="size-5" />
+                  Thêm vào giỏ
+                </motion.div>
+              )}
+            </AnimatePresence>
+          </Button>
+        </motion.div>
       </div>
     </div>
   );
