@@ -14,6 +14,15 @@ const nextConfig: NextConfig = {
       { source: '/', destination: '/admin', basePath: false, permanent: false },
     ];
   },
+  async headers() {
+    return [
+      // A Service Worker's scope can't exceed the directory its script is served from — served at
+      // `/admin/mockServiceWorker.js`, its max scope defaults to `/admin/` (trailing slash), which
+      // excludes this app's own bare root route `/admin`. This header is the browser-sanctioned way
+      // to broaden that (see `packages/api-sdk/src/adapters/browser.ts`, which requests `/admin`).
+      { source: '/mockServiceWorker.js', headers: [{ key: 'Service-Worker-Allowed', value: '/admin' }] },
+    ];
+  },
 };
 
 export default nextConfig;
