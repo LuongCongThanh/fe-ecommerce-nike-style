@@ -7,6 +7,7 @@ import type { StaffCreateInput, StaffRole } from '@repo/schemas/staff';
 import { Button } from '@repo/ui/button';
 import { Input } from '@repo/ui/input';
 import { Label } from '@repo/ui/label';
+import { useTranslations } from 'next-intl';
 
 import { RoleCheckboxes } from './RoleCheckboxes';
 
@@ -17,6 +18,8 @@ interface CreateStaffFormProps {
 }
 
 export function CreateStaffForm({ isSubmitting, errorMessage, onSubmit }: CreateStaffFormProps): React.JSX.Element {
+  const t = useTranslations('staff');
+  const tCommon = useTranslations('common');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [name, setName] = useState('');
@@ -37,7 +40,7 @@ export function CreateStaffForm({ isSubmitting, errorMessage, onSubmit }: Create
       ) : null}
 
       <div className="space-y-1.5">
-        <Label htmlFor="staff-name">Họ tên</Label>
+        <Label htmlFor="staff-name">{t('fields.name')}</Label>
         <Input
           id="staff-name"
           required
@@ -48,7 +51,7 @@ export function CreateStaffForm({ isSubmitting, errorMessage, onSubmit }: Create
         />
       </div>
       <div className="space-y-1.5">
-        <Label htmlFor="staff-email">Email</Label>
+        <Label htmlFor="staff-email">{t('fields.email')}</Label>
         <Input
           id="staff-email"
           type="email"
@@ -60,7 +63,7 @@ export function CreateStaffForm({ isSubmitting, errorMessage, onSubmit }: Create
         />
       </div>
       <div className="space-y-1.5">
-        <Label htmlFor="staff-password">Mật khẩu</Label>
+        <Label htmlFor="staff-password">{t('fields.password')}</Label>
         <Input
           id="staff-password"
           type="password"
@@ -73,13 +76,13 @@ export function CreateStaffForm({ isSubmitting, errorMessage, onSubmit }: Create
         />
       </div>
       <div className="space-y-1.5">
-        <Label>Role</Label>
+        <Label>{t('fields.role')}</Label>
         <RoleCheckboxes value={roles} onChange={setRoles} />
-        {roles.length === 0 ? <p className="text-muted-foreground text-xs">Chọn ít nhất một Role.</p> : null}
+        {roles.length === 0 ? <p className="text-muted-foreground text-xs">{t('atLeastOneRole')}</p> : null}
       </div>
 
       <Button type="submit" disabled={isSubmitting || roles.length === 0}>
-        {isSubmitting ? 'Đang tạo...' : 'Tạo nhân viên'}
+        {isSubmitting ? tCommon('actions.creating') : t('createStaff')}
       </Button>
     </form>
   );

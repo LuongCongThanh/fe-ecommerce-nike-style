@@ -1,17 +1,18 @@
 'use client';
 
 import { useState } from 'react';
-import Link from 'next/link';
-import { usePathname } from 'next/navigation';
 
 import { Button } from '@repo/ui/button';
 import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger } from '@repo/ui/sheet';
 import { Menu } from 'lucide-react';
+import { useTranslations } from 'next-intl';
+import { Link, usePathname } from '@/i18n/navigation';
 
 import { useStaffAuth } from '@/core/session/useStaffAuth';
 import { NAV_ITEMS } from '@/features/shell/nav-items';
 
 function NavList({ pathname, onNavigate }: { readonly pathname: string; readonly onNavigate?: () => void }) {
+  const t = useTranslations('common');
   const { hasPermission } = useStaffAuth();
   const visibleItems = NAV_ITEMS.filter((item) => item.permission === undefined || hasPermission(item.permission));
 
@@ -31,7 +32,7 @@ function NavList({ pathname, onNavigate }: { readonly pathname: string; readonly
             }`}
           >
             <item.icon className="size-4 shrink-0" />
-            {item.label}
+            {t(`nav.${item.labelKey}`)}
           </Link>
         );
       })}
@@ -40,6 +41,7 @@ function NavList({ pathname, onNavigate }: { readonly pathname: string; readonly
 }
 
 export function AppShell({ children }: { readonly children: React.ReactNode }) {
+  const t = useTranslations('common');
   const pathname = usePathname();
   const [mobileOpen, setMobileOpen] = useState(false);
 
@@ -60,7 +62,7 @@ export function AppShell({ children }: { readonly children: React.ReactNode }) {
         <header className="bg-background/95 sticky top-0 z-10 flex h-14 items-center gap-3 border-b px-4 backdrop-blur-sm">
           <Sheet open={mobileOpen} onOpenChange={setMobileOpen}>
             <SheetTrigger asChild>
-              <Button variant="ghost" size="icon" className="md:hidden" aria-label="Mở menu điều hướng">
+              <Button variant="ghost" size="icon" className="md:hidden" aria-label={t('openNavMenu')}>
                 <Menu className="size-5" />
               </Button>
             </SheetTrigger>
@@ -81,7 +83,7 @@ export function AppShell({ children }: { readonly children: React.ReactNode }) {
             </SheetContent>
           </Sheet>
 
-          <span className="text-sm font-semibold">Quản trị</span>
+          <span className="text-sm font-semibold">{t('adminLabel')}</span>
         </header>
 
         <main className="min-w-0 flex-1 p-4 md:p-6">{children}</main>

@@ -2,7 +2,6 @@
 
 import { useState } from 'react';
 import type { SyntheticEvent } from 'react';
-import { useRouter } from 'next/navigation';
 
 import { getCategories } from '@repo/api-sdk/endpoints/catalog';
 import type { Gender, Product, ProductInput, SkuInput } from '@repo/schemas/catalog';
@@ -12,13 +11,10 @@ import { Label } from '@repo/ui/label';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@repo/ui/select';
 import { Trash2 } from 'lucide-react';
 import { useQuery } from '@tanstack/react-query';
+import { useTranslations } from 'next-intl';
+import { useRouter } from '@/i18n/navigation';
 
-const GENDER_OPTIONS: { value: Gender; label: string }[] = [
-  { value: 'men', label: 'Nam' },
-  { value: 'women', label: 'Nữ' },
-  { value: 'kids', label: 'Trẻ em' },
-  { value: 'unisex', label: 'Unisex' },
-];
+const GENDERS: Gender[] = ['men', 'women', 'kids', 'unisex'];
 
 interface SkuRow extends SkuInput {
   readonly key: string;
@@ -41,6 +37,8 @@ interface ProductFormProps {
 }
 
 export function ProductForm({ initial, submitLabel, isSubmitting, errorMessage, onSubmit }: ProductFormProps): React.JSX.Element {
+  const t = useTranslations('product');
+  const tCommon = useTranslations('common');
   const router = useRouter();
   const { data: categoriesData } = useQuery({ queryKey: ['admin', 'categories'], queryFn: getCategories });
   const categories = categoriesData?.data ?? [];
@@ -93,7 +91,7 @@ export function ProductForm({ initial, submitLabel, isSubmitting, errorMessage, 
 
       <div className="grid gap-4 sm:grid-cols-2">
         <div className="space-y-1.5">
-          <Label htmlFor="name">Tên sản phẩm</Label>
+          <Label htmlFor="name">{t('fields.name')}</Label>
           <Input
             id="name"
             required
@@ -104,7 +102,7 @@ export function ProductForm({ initial, submitLabel, isSubmitting, errorMessage, 
           />
         </div>
         <div className="space-y-1.5">
-          <Label htmlFor="slug">Slug</Label>
+          <Label htmlFor="slug">{t('fields.slug')}</Label>
           <Input
             id="slug"
             required
@@ -117,7 +115,7 @@ export function ProductForm({ initial, submitLabel, isSubmitting, errorMessage, 
       </div>
 
       <div className="space-y-1.5">
-        <Label htmlFor="description">Mô tả</Label>
+        <Label htmlFor="description">{t('fields.description')}</Label>
         <textarea
           id="description"
           required
@@ -132,10 +130,10 @@ export function ProductForm({ initial, submitLabel, isSubmitting, errorMessage, 
 
       <div className="grid gap-4 sm:grid-cols-2">
         <div className="space-y-1.5">
-          <Label htmlFor="category">Danh mục</Label>
+          <Label htmlFor="category">{t('fields.category')}</Label>
           <Select value={categoryId} onValueChange={setCategoryId}>
             <SelectTrigger id="category" className="w-full">
-              <SelectValue placeholder="Chọn danh mục" />
+              <SelectValue placeholder={t('fields.selectCategory')} />
             </SelectTrigger>
             <SelectContent>
               {categories.map((c) => (
@@ -147,7 +145,7 @@ export function ProductForm({ initial, submitLabel, isSubmitting, errorMessage, 
           </Select>
         </div>
         <div className="space-y-1.5">
-          <Label htmlFor="gender">Giới tính</Label>
+          <Label htmlFor="gender">{t('fields.gender')}</Label>
           <Select
             value={gender}
             onValueChange={(v) => {
@@ -158,9 +156,9 @@ export function ProductForm({ initial, submitLabel, isSubmitting, errorMessage, 
               <SelectValue />
             </SelectTrigger>
             <SelectContent>
-              {GENDER_OPTIONS.map((g) => (
-                <SelectItem key={g.value} value={g.value}>
-                  {g.label}
+              {GENDERS.map((g) => (
+                <SelectItem key={g} value={g}>
+                  {t(`genders.${g}`)}
                 </SelectItem>
               ))}
             </SelectContent>
@@ -170,9 +168,9 @@ export function ProductForm({ initial, submitLabel, isSubmitting, errorMessage, 
 
       <div className="space-y-3">
         <div className="flex items-center justify-between">
-          <Label>Biến thể (Màu / Size) &amp; SKU</Label>
+          <Label>{t('fields.variantsSection')}</Label>
           <Button type="button" variant="outline" size="sm" onClick={addRow}>
-            Thêm biến thể
+            {t('fields.addVariant')}
           </Button>
         </div>
         <div className="space-y-2">
@@ -180,7 +178,7 @@ export function ProductForm({ initial, submitLabel, isSubmitting, errorMessage, 
             <div key={row.key} className="grid grid-cols-[1fr_1fr_1fr_1fr_auto] items-end gap-2 rounded-lg border p-3">
               <div className="space-y-1">
                 <Label htmlFor={`color-${row.key}`} className="text-xs">
-                  Màu
+                  {t('fields.color')}
                 </Label>
                 <Input
                   id={`color-${row.key}`}
@@ -192,7 +190,7 @@ export function ProductForm({ initial, submitLabel, isSubmitting, errorMessage, 
               </div>
               <div className="space-y-1">
                 <Label htmlFor={`size-${row.key}`} className="text-xs">
-                  Size
+                  {t('fields.size')}
                 </Label>
                 <Input
                   id={`size-${row.key}`}
@@ -204,7 +202,7 @@ export function ProductForm({ initial, submitLabel, isSubmitting, errorMessage, 
               </div>
               <div className="space-y-1">
                 <Label htmlFor={`price-${row.key}`} className="text-xs">
-                  Giá
+                  {t('fields.price')}
                 </Label>
                 <Input
                   id={`price-${row.key}`}
@@ -219,7 +217,7 @@ export function ProductForm({ initial, submitLabel, isSubmitting, errorMessage, 
               </div>
               <div className="space-y-1">
                 <Label htmlFor={`stock-${row.key}`} className="text-xs">
-                  Tồn kho
+                  {t('fields.stock')}
                 </Label>
                 <Input
                   id={`stock-${row.key}`}
@@ -236,7 +234,7 @@ export function ProductForm({ initial, submitLabel, isSubmitting, errorMessage, 
                 type="button"
                 variant="ghost"
                 size="icon"
-                aria-label="Xoá biến thể"
+                aria-label={t('fields.removeVariant')}
                 disabled={rows.length <= 1}
                 onClick={() => {
                   removeRow(row.key);
@@ -251,7 +249,7 @@ export function ProductForm({ initial, submitLabel, isSubmitting, errorMessage, 
 
       <div className="flex gap-2">
         <Button type="submit" disabled={isSubmitting}>
-          {isSubmitting ? 'Đang lưu...' : submitLabel}
+          {isSubmitting ? tCommon('actions.saving') : submitLabel}
         </Button>
         <Button
           type="button"
@@ -260,7 +258,7 @@ export function ProductForm({ initial, submitLabel, isSubmitting, errorMessage, 
             router.push('/products');
           }}
         >
-          Huỷ
+          {tCommon('actions.cancel')}
         </Button>
       </div>
     </form>

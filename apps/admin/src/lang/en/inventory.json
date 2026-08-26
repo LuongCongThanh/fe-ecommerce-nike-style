@@ -1,0 +1,26 @@
+{
+  "title": "Inventory",
+  "loadError": "Could not load the inventory list.",
+  "empty": "No variants.",
+  "columns": {
+    "product": "Product",
+    "variant": "Variant",
+    "onHand": "On hand",
+    "reserved": "Reserved",
+    "available": "Available"
+  },
+  "onHandInputLabel": "On-hand stock for {productName}",
+  "updateError": "Could not update the stock.",
+  "auditLog": {
+    "title": "Inventory change history",
+    "loadError": "Could not load the change history.",
+    "empty": "No changes yet.",
+    "columns": {
+      "sku": "SKU",
+      "before": "Before",
+      "after": "After",
+      "actor": "Actor",
+      "at": "Time"
+    }
+  }
+}

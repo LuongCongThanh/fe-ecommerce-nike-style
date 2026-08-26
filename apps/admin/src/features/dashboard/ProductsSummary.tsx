@@ -6,8 +6,10 @@ import { Button } from '@repo/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@repo/ui/card';
 import { Skeleton } from '@repo/ui/skeleton';
 import { useQuery } from '@tanstack/react-query';
+import { useTranslations } from 'next-intl';
 
 export function ProductsSummary() {
+  const t = useTranslations('common');
   const { data, isLoading, isError, refetch } = useQuery({
     queryKey: ['dashboard', 'products-summary'],
     queryFn: () => getProducts(),
@@ -17,7 +19,7 @@ export function ProductsSummary() {
   return (
     <Card>
       <CardHeader className="flex-row items-center justify-between">
-        <CardTitle>Sản phẩm</CardTitle>
+        <CardTitle>{t('dashboard.productsCardTitle')}</CardTitle>
         <Button
           size="sm"
           variant="outline"
@@ -25,7 +27,7 @@ export function ProductsSummary() {
             void refetch();
           }}
         >
-          Tải lại
+          {t('actions.reload')}
         </Button>
       </CardHeader>
       <CardContent>
@@ -39,11 +41,11 @@ export function ProductsSummary() {
 
         {isError ? (
           <p className="text-destructive text-sm" role="alert">
-            Không tải được danh sách sản phẩm. Vui lòng thử lại.
+            {t('dashboard.loadError')}
           </p>
         ) : null}
 
-        {!isLoading && products.length === 0 ? <p className="text-muted-foreground text-sm">Chưa có sản phẩm nào.</p> : null}
+        {!isLoading && products.length === 0 ? <p className="text-muted-foreground text-sm">{t('dashboard.empty')}</p> : null}
 
         {products.length > 0 ? (
           <ul className="divide-border divide-y">

@@ -1,0 +1,38 @@
+{
+  "actions": {
+    "edit": "Sửa",
+    "delete": "Xoá",
+    "cancel": "Huỷ",
+    "save": "Lưu",
+    "saving": "Đang lưu...",
+    "create": "Tạo",
+    "creating": "Đang tạo...",
+    "add": "Thêm",
+    "reload": "Tải lại"
+  },
+  "loading": "Đang tải...",
+  "confirmIrreversible": "Hành động này không thể hoàn tác.",
+  "pagination": {
+    "pageOf": "Trang {page} / {totalPages}",
+    "previous": "Trước",
+    "next": "Sau"
+  },
+  "nav": {
+    "dashboard": "Tổng quan",
+    "products": "Sản phẩm",
+    "orders": "Đơn hàng",
+    "categories": "Danh mục",
+    "inventory": "Tồn kho",
+    "staff": "Nhân viên",
+    "customers": "Khách hàng"
+  },
+  "adminLabel": "Quản trị",
+  "openNavMenu": "Mở menu điều hướng",
+  "dashboard": {
+    "title": "Tổng quan",
+    "subtitle": "Trạng thái sản phẩm và hoạt động cửa hàng.",
+    "productsCardTitle": "Sản phẩm",
+    "loadError": "Không tải được danh sách sản phẩm. Vui lòng thử lại.",
+    "empty": "Chưa có sản phẩm nào."
+  }
+}

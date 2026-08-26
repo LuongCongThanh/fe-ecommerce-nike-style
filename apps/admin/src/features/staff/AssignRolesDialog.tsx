@@ -5,6 +5,7 @@ import { useState } from 'react';
 import type { Staff, StaffRole } from '@repo/schemas/staff';
 import { Button } from '@repo/ui/button';
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from '@repo/ui/dialog';
+import { useTranslations } from 'next-intl';
 
 import { RoleCheckboxes } from './RoleCheckboxes';
 import { useAssignStaffRoles } from './useStaffMutations';
@@ -18,6 +19,8 @@ interface AssignRolesDialogProps {
  * dialog is the only place Roles change (issue #23). The mock revokes the target Staff's current
  * session as a side effect (Decision #79); this UI doesn't need to do anything extra for that to hold. */
 export function AssignRolesDialog({ staff, trigger }: AssignRolesDialogProps): React.JSX.Element {
+  const t = useTranslations('staff');
+  const tCommon = useTranslations('common');
   const [open, setOpen] = useState(false);
   const [roles, setRoles] = useState<StaffRole[]>(staff.roles);
   const assignRoles = useAssignStaffRoles(staff.id);
@@ -33,15 +36,15 @@ export function AssignRolesDialog({ staff, trigger }: AssignRolesDialogProps): R
       <DialogTrigger asChild>{trigger}</DialogTrigger>
       <DialogContent>
         <DialogHeader>
-          <DialogTitle>Gán Role cho {staff.name}</DialogTitle>
-          <DialogDescription>Đổi Role sẽ thu hồi phiên đăng nhập hiện tại của nhân viên này.</DialogDescription>
+          <DialogTitle>{t('assignRolesTitle', { name: staff.name })}</DialogTitle>
+          <DialogDescription>{t('assignRolesDescription')}</DialogDescription>
         </DialogHeader>
 
         <RoleCheckboxes value={roles} onChange={setRoles} />
-        {roles.length === 0 ? <p className="text-muted-foreground text-xs">Phải chọn ít nhất một Role.</p> : null}
+        {roles.length === 0 ? <p className="text-muted-foreground text-xs">{t('atLeastOneRole')}</p> : null}
         {assignRoles.isError ? (
           <p role="alert" className="text-destructive text-sm">
-            {assignRoles.error instanceof Error ? assignRoles.error.message : 'Không thể cập nhật Role.'}
+            {assignRoles.error instanceof Error ? assignRoles.error.message : t('assignRolesError')}
           </p>
         ) : null}
 
@@ -59,7 +62,7 @@ export function AssignRolesDialog({ staff, trigger }: AssignRolesDialogProps): R
               );
             }}
           >
-            {assignRoles.isPending ? 'Đang lưu...' : 'Lưu Role'}
+            {assignRoles.isPending ? tCommon('actions.saving') : t('saveRoles')}
           </Button>
         </DialogFooter>
       </DialogContent>

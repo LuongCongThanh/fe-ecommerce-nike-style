@@ -2,13 +2,14 @@
 
 import { useState } from 'react';
 import type { SyntheticEvent } from 'react';
-import { useRouter } from 'next/navigation';
 
 import type { Category, CategoryInput } from '@repo/schemas/catalog';
 import { Button } from '@repo/ui/button';
 import { Input } from '@repo/ui/input';
 import { Label } from '@repo/ui/label';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@repo/ui/select';
+import { useTranslations } from 'next-intl';
+import { useRouter } from '@/i18n/navigation';
 
 const NO_PARENT_VALUE = '__none__';
 
@@ -22,6 +23,8 @@ interface CategoryFormProps {
 }
 
 export function CategoryForm({ initial, categories, submitLabel, isSubmitting, errorMessage, onSubmit }: CategoryFormProps): React.JSX.Element {
+  const t = useTranslations('category');
+  const tCommon = useTranslations('common');
   const router = useRouter();
   const [slug, setSlug] = useState(initial?.slug ?? '');
   const [name, setName] = useState(initial?.name ?? '');
@@ -50,7 +53,7 @@ export function CategoryForm({ initial, categories, submitLabel, isSubmitting, e
 
       <div className="grid gap-4 sm:grid-cols-2">
         <div className="space-y-1.5">
-          <Label htmlFor="name">Tên danh mục</Label>
+          <Label htmlFor="name">{t('fields.name')}</Label>
           <Input
             id="name"
             required
@@ -61,7 +64,7 @@ export function CategoryForm({ initial, categories, submitLabel, isSubmitting, e
           />
         </div>
         <div className="space-y-1.5">
-          <Label htmlFor="slug">Slug</Label>
+          <Label htmlFor="slug">{t('fields.slug')}</Label>
           <Input
             id="slug"
             required
@@ -74,13 +77,13 @@ export function CategoryForm({ initial, categories, submitLabel, isSubmitting, e
       </div>
 
       <div className="space-y-1.5">
-        <Label htmlFor="parent">Danh mục cha</Label>
+        <Label htmlFor="parent">{t('fields.parent')}</Label>
         <Select value={parentId} onValueChange={setParentId}>
           <SelectTrigger id="parent" className="w-full">
-            <SelectValue placeholder="Không có (danh mục gốc)" />
+            <SelectValue placeholder={t('fields.noParent')} />
           </SelectTrigger>
           <SelectContent>
-            <SelectItem value={NO_PARENT_VALUE}>Không có (danh mục gốc)</SelectItem>
+            <SelectItem value={NO_PARENT_VALUE}>{t('fields.noParent')}</SelectItem>
             {parentOptions.map((c) => (
               <SelectItem key={c.id} value={c.id}>
                 {c.name}
@@ -92,7 +95,7 @@ export function CategoryForm({ initial, categories, submitLabel, isSubmitting, e
 
       <div className="flex gap-2">
         <Button type="submit" disabled={isSubmitting}>
-          {isSubmitting ? 'Đang lưu...' : submitLabel}
+          {isSubmitting ? tCommon('actions.saving') : submitLabel}
         </Button>
         <Button
           type="button"
@@ -101,7 +104,7 @@ export function CategoryForm({ initial, categories, submitLabel, isSubmitting, e
             router.push('/categories');
           }}
         >
-          Huỷ
+          {tCommon('actions.cancel')}
         </Button>
       </div>
     </form>

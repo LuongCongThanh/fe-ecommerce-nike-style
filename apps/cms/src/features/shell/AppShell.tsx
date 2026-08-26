@@ -2,11 +2,11 @@
 
 import { useState } from 'react';
 import Link from 'next/link';
-import { usePathname } from 'next/navigation';
 
 import { Button } from '@repo/ui/button';
 import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger } from '@repo/ui/sheet';
 import { Menu } from 'lucide-react';
+import { usePathname } from '@/i18n/navigation';
 
 import { NAV_ITEMS } from '@/features/shell/nav-items';
 
