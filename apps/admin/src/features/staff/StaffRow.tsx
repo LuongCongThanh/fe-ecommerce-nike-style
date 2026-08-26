@@ -37,7 +37,9 @@ export function StaffRow({ staff }: StaffRowProps): React.JSX.Element {
             </Badge>
           ))}
         </div>
-        <p className="text-muted-foreground mt-1 text-xs">{effectivePermissions.join(', ')}</p>
+        {/* Permission list is security-relevant info, not decorative secondary text — kept legible
+         * (text-foreground) instead of the low-contrast text-muted-foreground treatment (UI/UX audit finding #1). */}
+        <p className="text-foreground/80 mt-1 text-xs">{effectivePermissions.join(', ')}</p>
       </TableCell>
       <TableCell>
         <Switch

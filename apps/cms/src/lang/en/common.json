@@ -1,4 +1,6 @@
 {
   "dashboardTitle": "Overview",
-  "dashboardSubtitle": "Content status and related product categories."
+  "dashboardSubtitle": "Content status and related product categories.",
+  "statTotalProducts": "Total products",
+  "statTotalCategories": "Total categories"
 }

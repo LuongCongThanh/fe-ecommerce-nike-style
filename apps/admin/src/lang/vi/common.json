@@ -23,8 +23,7 @@
     "orders": "Đơn hàng",
     "categories": "Danh mục",
     "inventory": "Tồn kho",
-    "staff": "Nhân viên",
-    "customers": "Khách hàng"
+    "staff": "Nhân viên"
   },
   "adminLabel": "Quản trị",
   "openNavMenu": "Mở menu điều hướng",
@@ -33,6 +32,10 @@
     "subtitle": "Trạng thái sản phẩm và hoạt động cửa hàng.",
     "productsCardTitle": "Sản phẩm",
     "loadError": "Không tải được danh sách sản phẩm. Vui lòng thử lại.",
-    "empty": "Chưa có sản phẩm nào."
+    "empty": "Chưa có sản phẩm nào.",
+    "statTotalProducts": "Tổng sản phẩm",
+    "statTotalOrders": "Tổng đơn hàng",
+    "statLowStock": "Sắp hết hàng",
+    "statTotalStaff": "Nhân viên"
   }
 }

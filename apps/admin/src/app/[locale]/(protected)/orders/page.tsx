@@ -1,63 +1,71 @@
 'use client';
 
+import { useState } from 'react';
+
 import { Badge } from '@repo/ui/badge';
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@repo/ui/table';
+import { TableCell, TableRow } from '@repo/ui/table';
 import { useLocale, useTranslations } from 'next-intl';
 import { Link } from '@/i18n/navigation';
 
 import { useAdminOrders } from '@/features/orders/useAdminOrders';
+import { DataTable } from '@/features/shell/DataTable';
+import { PageHeader } from '@/features/shell/PageHeader';
+
+const PAGE_SIZE = 20;
 
 export default function OrdersPage(): React.JSX.Element {
   const t = useTranslations('order');
   const tCommon = useTranslations('common');
   const locale = useLocale();
   const dateLocale = locale === 'en' ? 'en-US' : 'vi-VN';
+  const [page, setPage] = useState(1);
   const { data, isLoading, isError } = useAdminOrders();
+
+  const allOrders = data ?? [];
+  const totalPages = Math.max(1, Math.ceil(allOrders.length / PAGE_SIZE));
+  const pageOrders = allOrders.slice((page - 1) * PAGE_SIZE, page * PAGE_SIZE);
 
   return (
     <div className="space-y-4">
-      <h1 className="text-xl font-bold">{t('title')}</h1>
+      <PageHeader title={t('title')} />
 
-      {isError ? (
-        <p role="alert" className="text-destructive text-sm">
-          {t('loadError')}
-        </p>
-      ) : null}
-      {isLoading ? <p className="text-muted-foreground text-sm">{tCommon('loading')}</p> : null}
-
-      {data !== undefined ? (
-        <div className="rounded-xl border">
-          <Table>
-            <TableHeader>
-              <TableRow>
-                <TableHead>{t('columns.code')}</TableHead>
-                <TableHead>{t('columns.status')}</TableHead>
-                <TableHead>{t('columns.total')}</TableHead>
-                <TableHead>{t('columns.createdAt')}</TableHead>
-                <TableHead className="text-right">{t('columns.actions')}</TableHead>
-              </TableRow>
-            </TableHeader>
-            <TableBody>
-              {data.map((order) => (
-                <TableRow key={order.id}>
-                  <TableCell className="font-medium">{order.code}</TableCell>
-                  <TableCell>
-                    <Badge variant="outline">{order.status}</Badge>
-                  </TableCell>
-                  <TableCell>{order.total.toLocaleString(dateLocale)}₫</TableCell>
-                  <TableCell className="text-muted-foreground text-xs">{new Date(order.created_at).toLocaleDateString(dateLocale)}</TableCell>
-                  <TableCell className="text-right">
-                    <Link href={`/orders/${String(order.id)}`} className="text-primary text-sm underline-offset-2 hover:underline">
-                      {t('viewDetail')}
-                    </Link>
-                  </TableCell>
-                </TableRow>
-              ))}
-            </TableBody>
-          </Table>
-          {data.length === 0 ? <p className="text-muted-foreground p-6 text-center text-sm">{t('empty')}</p> : null}
-        </div>
-      ) : null}
+      <DataTable
+        headers={[t('columns.code'), t('columns.status'), t('columns.total'), t('columns.createdAt'), t('columns.actions')]}
+        isLoading={isLoading}
+        isError={isError}
+        errorMessage={t('loadError')}
+        isEmpty={pageOrders.length === 0}
+        emptyMessage={t('empty')}
+        pagination={{
+          page,
+          totalPages,
+          onPrevious: () => {
+            setPage((p) => p - 1);
+          },
+          onNext: () => {
+            setPage((p) => p + 1);
+          },
+          label: tCommon('pagination.pageOf', { page, totalPages }),
+          previousLabel: tCommon('pagination.previous'),
+          nextLabel: tCommon('pagination.next'),
+        }}
+      >
+        {pageOrders.map((order) => (
+          <TableRow key={order.id}>
+            <TableCell className="font-medium">{order.code}</TableCell>
+            <TableCell>
+              <Badge variant="outline">{order.status}</Badge>
+            </TableCell>
+            <TableCell>{order.total.toLocaleString(dateLocale)}₫</TableCell>
+            <TableCell className="text-muted-foreground text-xs">{new Date(order.created_at).toLocaleDateString(dateLocale)}</TableCell>
+            <TableCell className="text-right">
+              <Link href={`/orders/${String(order.id)}`} className="text-primary text-sm underline-offset-2 hover:underline">
+                {t('viewDetail')}
+              </Link>
+            </TableCell>
+          </TableRow>
+        ))}
+      </DataTable>
     </div>
   );
 }

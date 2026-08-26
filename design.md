@@ -87,6 +87,17 @@ reduce` (see `preset.css` `@layer base`)
   it conflicted with this project's already-decided Be Vietnam Pro + brand-
   red-scoped-to-sale system. Kept for reference only, not merged.
 
+## Variants
+
+- **`apps/admin` login page** — explicit, user-approved exception to the brand-red
+  scope rule above. The page uses `--color-brand` as its dominant decorative-pane
+  accent (gradient blobs + a CSS 3D rotating prism, studied from a fashion-
+  e-commerce login reference) instead of `--color-secondary`. This is a
+  single-page override, not a system change — every other admin/cms/storefront
+  surface keeps brand red scoped to price/sale/promo only. Typography is
+  unchanged — still the single Be Vietnam Pro family from `## System` above; the
+  user explicitly declined adding a second display face for this page.
+
 ## Exports
 
 `theme.css` / `preset.css` (in `packages/tailwind-config`) are the source of

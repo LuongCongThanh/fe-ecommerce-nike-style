@@ -5,7 +5,7 @@ import { useState } from 'react';
 import { Badge } from '@repo/ui/badge';
 import { Button } from '@repo/ui/button';
 import { Input } from '@repo/ui/input';
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@repo/ui/table';
+import { TableCell, TableRow } from '@repo/ui/table';
 import { Plus } from 'lucide-react';
 import { useTranslations } from 'next-intl';
 import { Link } from '@/i18n/navigation';
@@ -13,6 +13,8 @@ import { Link } from '@/i18n/navigation';
 import { useAdminProducts } from '@/features/products/useAdminProducts';
 import { useDeleteProduct } from '@/features/products/useProductMutations';
 import { ConfirmDialog } from '@/features/shell/ConfirmDialog';
+import { DataTable } from '@/features/shell/DataTable';
+import { PageHeader } from '@/features/shell/PageHeader';
 
 const PAGE_SIZE = 20;
 
@@ -36,15 +38,17 @@ export default function ProductsPage(): React.JSX.Element {
 
   return (
     <div className="space-y-4">
-      <div className="flex items-center justify-between">
-        <h1 className="text-xl font-bold">{t('title')}</h1>
-        <Button asChild>
-          <Link href="/products/new">
-            <Plus className="size-4" data-icon="inline-start" />
-            {t('add')}
-          </Link>
-        </Button>
-      </div>
+      <PageHeader
+        title={t('title')}
+        action={
+          <Button asChild>
+            <Link href="/products/new">
+              <Plus className="size-4" data-icon="inline-start" />
+              {t('add')}
+            </Link>
+          </Button>
+        }
+      />
 
       <Input
         placeholder={t('searchPlaceholder')}
@@ -62,89 +66,61 @@ export default function ProductsPage(): React.JSX.Element {
         </p>
       ) : null}
 
-      {isError ? (
-        <p role="alert" className="text-destructive text-sm">
-          {t('loadError')}
-        </p>
-      ) : null}
-
-      {isLoading ? <p className="text-muted-foreground text-sm">{tCommon('loading')}</p> : null}
-
-      {data !== undefined ? (
-        <div className="rounded-xl border">
-          <Table>
-            <TableHeader>
-              <TableRow>
-                <TableHead>{t('columns.name')}</TableHead>
-                <TableHead>{t('columns.category')}</TableHead>
-                <TableHead>{t('columns.variantCount')}</TableHead>
-                <TableHead>{t('columns.stock')}</TableHead>
-                <TableHead className="text-right">{t('columns.actions')}</TableHead>
-              </TableRow>
-            </TableHeader>
-            <TableBody>
-              {data.data.map((product) => (
-                <TableRow key={product.id}>
-                  <TableCell className="font-medium">{product.name}</TableCell>
-                  <TableCell>
-                    <Badge variant="outline">{product.categoryId}</Badge>
-                  </TableCell>
-                  <TableCell>{product.skus.length}</TableCell>
-                  <TableCell>{product.skus.reduce((sum, s) => sum + s.stock, 0)}</TableCell>
-                  <TableCell className="flex justify-end gap-2 text-right">
-                    <Button variant="outline" size="sm" asChild>
-                      <Link href={`/products/${product.id}/edit`}>{tCommon('actions.edit')}</Link>
-                    </Button>
-                    <ConfirmDialog
-                      trigger={
-                        <Button variant="outline" size="sm" className="text-destructive hover:bg-destructive/10" disabled={deleteProduct.isPending}>
-                          {tCommon('actions.delete')}
-                        </Button>
-                      }
-                      title={t('deleteTitle', { name: product.name })}
-                      description={tCommon('confirmIrreversible')}
-                      confirmLabel={tCommon('actions.delete')}
-                      loading={deleteProduct.isPending}
-                      onConfirm={() => {
-                        handleDelete(product.id);
-                      }}
-                    />
-                  </TableCell>
-                </TableRow>
-              ))}
-            </TableBody>
-          </Table>
-          {data.data.length === 0 ? <p className="text-muted-foreground p-6 text-center text-sm">{t('empty')}</p> : null}
-        </div>
-      ) : null}
-
-      {data !== undefined && data.meta.totalPages > 1 ? (
-        <div className="flex items-center justify-between text-sm">
-          <span className="text-muted-foreground">{tCommon('pagination.pageOf', { page: data.meta.page, totalPages: data.meta.totalPages })}</span>
-          <div className="flex gap-2">
-            <Button
-              variant="outline"
-              size="sm"
-              disabled={page <= 1}
-              onClick={() => {
-                setPage((p) => p - 1);
-              }}
-            >
-              {tCommon('pagination.previous')}
-            </Button>
-            <Button
-              variant="outline"
-              size="sm"
-              disabled={page >= data.meta.totalPages}
-              onClick={() => {
-                setPage((p) => p + 1);
-              }}
-            >
-              {tCommon('pagination.next')}
-            </Button>
-          </div>
-        </div>
-      ) : null}
+      <DataTable
+        headers={[t('columns.name'), t('columns.category'), t('columns.variantCount'), t('columns.stock'), t('columns.actions')]}
+        isLoading={isLoading}
+        isError={isError}
+        errorMessage={t('loadError')}
+        isEmpty={(data?.data.length ?? 0) === 0}
+        emptyMessage={t('empty')}
+        pagination={
+          data !== undefined
+            ? {
+                page,
+                totalPages: data.meta.totalPages,
+                onPrevious: () => {
+                  setPage((p) => p - 1);
+                },
+                onNext: () => {
+                  setPage((p) => p + 1);
+                },
+                label: tCommon('pagination.pageOf', { page: data.meta.page, totalPages: data.meta.totalPages }),
+                previousLabel: tCommon('pagination.previous'),
+                nextLabel: tCommon('pagination.next'),
+              }
+            : undefined
+        }
+      >
+        {(data?.data ?? []).map((product) => (
+          <TableRow key={product.id}>
+            <TableCell className="font-medium">{product.name}</TableCell>
+            <TableCell>
+              <Badge variant="outline">{product.categoryId}</Badge>
+            </TableCell>
+            <TableCell>{product.skus.length}</TableCell>
+            <TableCell>{product.skus.reduce((sum, s) => sum + s.stock, 0)}</TableCell>
+            <TableCell className="flex justify-end gap-2 text-right">
+              <Button variant="outline" size="sm" asChild>
+                <Link href={`/products/${product.id}/edit`}>{tCommon('actions.edit')}</Link>
+              </Button>
+              <ConfirmDialog
+                trigger={
+                  <Button variant="outline" size="sm" className="text-destructive hover:bg-destructive/10" disabled={deleteProduct.isPending}>
+                    {tCommon('actions.delete')}
+                  </Button>
+                }
+                title={t('deleteTitle', { name: product.name })}
+                description={tCommon('confirmIrreversible')}
+                confirmLabel={tCommon('actions.delete')}
+                loading={deleteProduct.isPending}
+                onConfirm={() => {
+                  handleDelete(product.id);
+                }}
+              />
+            </TableCell>
+          </TableRow>
+        ))}
+      </DataTable>
     </div>
   );
 }

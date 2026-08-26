@@ -18,5 +18,4 @@ export const NAV_ITEMS: NavItem[] = [
   { href: '/categories', labelKey: 'categories', icon: Tags, permission: 'category:read' },
   { href: '/inventory', labelKey: 'inventory', icon: Boxes, permission: 'inventory:read' },
   { href: '/staff', labelKey: 'staff', icon: Users, permission: 'staff:read' },
-  { href: '/customers', labelKey: 'customers', icon: Users },
 ];

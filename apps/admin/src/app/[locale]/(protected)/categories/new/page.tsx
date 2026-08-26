@@ -6,6 +6,7 @@ import { useRouter } from '@/i18n/navigation';
 import { CategoryForm } from '@/features/categories/CategoryForm';
 import { useAdminCategories } from '@/features/categories/useAdminCategories';
 import { useCreateCategory } from '@/features/categories/useCategoryMutations';
+import { PageHeader } from '@/features/shell/PageHeader';
 
 export default function NewCategoryPage(): React.JSX.Element {
   const t = useTranslations('category');
@@ -15,7 +16,7 @@ export default function NewCategoryPage(): React.JSX.Element {
 
   return (
     <div className="max-w-2xl space-y-6">
-      <h1 className="text-xl font-bold">{t('add')}</h1>
+      <PageHeader title={t('add')} />
       <CategoryForm
         categories={data?.data ?? []}
         submitLabel={t('create')}
