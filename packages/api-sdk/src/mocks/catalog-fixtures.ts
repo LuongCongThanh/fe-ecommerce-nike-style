@@ -434,6 +434,15 @@ export function commitSkuStock(skuId: string, quantity: number): void {
   match.sku.stock = Math.max(0, match.sku.stock - quantity);
 }
 
+/** Inverse of `commitSkuStock` — a returned Order's stock going back to `available` (issue #22's
+ * Return approval). A no-op if the SKU no longer exists (deleted Product) rather than throwing, same
+ * "known gap, not a crash" stance as `isSkuReferencedInAnyOrder`'s pre-`skuId` orders. */
+export function releaseSkuStock(skuId: string, quantity: number): void {
+  const match = findProductBySkuId(skuId);
+  if (match === undefined) return;
+  match.sku.stock += quantity;
+}
+
 // Snapshot taken once at module load, before any `commitSkuStock` mutation — `mockProducts[i].skus` is
 // the *same* array/objects as `productSeeds[i].skus` (no clone in the `.map()` above), so "reset from
 // productSeeds" would be a no-op once seeds themselves have been mutated. This is the actual baseline.

@@ -2,6 +2,7 @@ import { http, HttpResponse } from 'msw';
 
 import type { CategoryInput, ProductInput } from '@repo/schemas/catalog';
 import type { InventoryUpdateInput } from '@repo/schemas/inventory';
+import type { OrderStatus } from '@repo/schemas/order';
 
 import { createAddress, deleteAddress, getAddresses, setDefaultAddress, updateAddress } from './address-fixtures';
 import {
@@ -35,12 +36,17 @@ import {
 import {
   addAccountOrder,
   allocateOrderId,
+  approveOrderReturn,
   cancelOrderForCustomer,
   getAccountOrder,
   getAccountOrders,
+  getAllOrders,
+  getOrderById,
   getOrderByRequestKey,
   recordRequestKey,
+  rejectOrderReturn,
   requestReturnForCustomer,
+  updateAdminOrderStatus,
 } from './order-fixtures';
 import { getInventoryAuditLog, listInventory, updateInventoryOnHand } from './inventory-fixtures';
 import { consumeReservation, createReservation } from './reservation-fixtures';
@@ -264,6 +270,72 @@ export const handlers = [
       return errorResponse(404, result.code, result.message);
     }
     return HttpResponse.json(result.item);
+  }),
+
+  // Admin Order status update + return approval (issue #22) — gated on a valid Staff session.
+  http.get('*/api/admin/orders/', ({ request }) => {
+    const staff = findStaffByAccessToken(request.headers.get('authorization'));
+    if (staff === undefined) {
+      return errorResponse(401, 'UNAUTHORIZED', 'Chưa đăng nhập hoặc phiên đã hết hạn.');
+    }
+
+    return HttpResponse.json(getAllOrders());
+  }),
+
+  http.get('*/api/admin/orders/:id/', ({ request, params }) => {
+    const staff = findStaffByAccessToken(request.headers.get('authorization'));
+    if (staff === undefined) {
+      return errorResponse(401, 'UNAUTHORIZED', 'Chưa đăng nhập hoặc phiên đã hết hạn.');
+    }
+
+    const order = getOrderById(Number(params.id));
+    if (order === undefined) {
+      return errorResponse(404, 'NOT_FOUND', 'Không tìm thấy đơn hàng.');
+    }
+    return HttpResponse.json(order);
+  }),
+
+  http.patch('*/api/admin/orders/:id/status/', async ({ request, params }) => {
+    const staff = findStaffByAccessToken(request.headers.get('authorization'));
+    if (staff === undefined) {
+      return errorResponse(401, 'UNAUTHORIZED', 'Chưa đăng nhập hoặc phiên đã hết hạn.');
+    }
+
+    const body = (await request.json()) as { status: OrderStatus };
+    const result = updateAdminOrderStatus(Number(params.id), body.status);
+    if (!result.ok) {
+      const status = result.code === 'NOT_FOUND' ? 404 : 400;
+      return errorResponse(status, result.code, result.message);
+    }
+    return HttpResponse.json(result.order);
+  }),
+
+  http.post('*/api/admin/orders/:id/approve-return/', ({ request, params }) => {
+    const staff = findStaffByAccessToken(request.headers.get('authorization'));
+    if (staff === undefined) {
+      return errorResponse(401, 'UNAUTHORIZED', 'Chưa đăng nhập hoặc phiên đã hết hạn.');
+    }
+
+    const result = approveOrderReturn(Number(params.id));
+    if (!result.ok) {
+      const status = result.code === 'NOT_FOUND' ? 404 : 400;
+      return errorResponse(status, result.code, result.message);
+    }
+    return HttpResponse.json(result.order);
+  }),
+
+  http.post('*/api/admin/orders/:id/reject-return/', ({ request, params }) => {
+    const staff = findStaffByAccessToken(request.headers.get('authorization'));
+    if (staff === undefined) {
+      return errorResponse(401, 'UNAUTHORIZED', 'Chưa đăng nhập hoặc phiên đã hết hạn.');
+    }
+
+    const result = rejectOrderReturn(Number(params.id));
+    if (!result.ok) {
+      const status = result.code === 'NOT_FOUND' ? 404 : 400;
+      return errorResponse(status, result.code, result.message);
+    }
+    return HttpResponse.json(result.order);
   }),
 
   http.post('*/api/auth/register/', async ({ request }) => {

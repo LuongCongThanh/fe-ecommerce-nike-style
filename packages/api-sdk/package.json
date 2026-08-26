@@ -21,6 +21,7 @@
     "./endpoints/catalog": "./src/endpoints/catalog.ts",
     "./endpoints/admin-catalog": "./src/endpoints/admin-catalog.ts",
     "./endpoints/admin-inventory": "./src/endpoints/admin-inventory.ts",
+    "./endpoints/admin-orders": "./src/endpoints/admin-orders.ts",
     "./endpoints/checkout": "./src/endpoints/checkout.ts",
     "./endpoints/orders": "./src/endpoints/orders.ts",
     "./endpoints/order-transitions": "./src/endpoints/order-transitions.ts",

@@ -36,3 +36,29 @@ export function canRequestReturn(order: OrderTransitionInput, now: number = Date
   if (order.status !== 'DELIVERED' || order.delivered_at === null) return false;
   return isWithinReturnWindow(order.delivered_at, now);
 }
+
+/**
+ * Admin's status-update button (issue #22) — one forward step at a time along the happy path, plus the
+ * CANCELLED branch from PENDING/PROCESSING. RETURN_REQUESTED → RETURNED/DELIVERED is deliberately not
+ * here: that's the separate approve/reject-return action (`order:approve-return`), not a status-update
+ * pick-any-status control. Shared by the mock server and by the Admin UI's button gating, same
+ * single-source-of-truth intent as `canCancelOrder`/`canRequestReturn` above.
+ */
+const ADMIN_STATUS_TRANSITIONS: Record<StorefrontOrderStatus, readonly StorefrontOrderStatus[]> = {
+  PENDING: ['PROCESSING', 'CANCELLED'],
+  PROCESSING: ['PACKED', 'CANCELLED'],
+  PACKED: ['SHIPPED'],
+  SHIPPED: ['DELIVERED'],
+  DELIVERED: [],
+  CANCELLED: [],
+  RETURN_REQUESTED: [],
+  RETURNED: [],
+};
+
+export function canAdminTransition(from: StorefrontOrderStatus, to: StorefrontOrderStatus): boolean {
+  return ADMIN_STATUS_TRANSITIONS[from].includes(to);
+}
+
+export function adminTransitionsFrom(status: StorefrontOrderStatus): readonly StorefrontOrderStatus[] {
+  return ADMIN_STATUS_TRANSITIONS[status];
+}
