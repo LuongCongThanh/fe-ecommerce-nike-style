@@ -3,6 +3,7 @@
 import { enableApiMockingBrowser } from '@repo/api-sdk/adapters/browser';
 import { useEffect, useState } from 'react';
 
+import { StaffAuthRuntimeProvider } from '@/core/session/StaffAuthRuntimeProvider';
 import { AppQueryProvider } from '@/providers/query-provider';
 
 /**
@@ -24,5 +25,9 @@ export function AppProviders({ children }: { children: React.ReactNode }) {
 
   if (!isMockingReady) return null;
 
-  return <AppQueryProvider>{children}</AppQueryProvider>;
+  return (
+    <AppQueryProvider>
+      <StaffAuthRuntimeProvider>{children}</StaffAuthRuntimeProvider>
+    </AppQueryProvider>
+  );
 }
