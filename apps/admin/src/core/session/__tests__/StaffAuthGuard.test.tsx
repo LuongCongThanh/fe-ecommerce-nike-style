@@ -6,7 +6,7 @@ import { StaffAuthGuard } from '@/core/session/StaffAuthGuard';
 import { clearStaffAuth, setStaffSession } from '@/core/session/staff-store';
 
 const push = vi.fn();
-vi.mock('next/navigation', () => ({
+vi.mock('@/i18n/navigation', () => ({
   useRouter: () => ({ push }),
 }));
 

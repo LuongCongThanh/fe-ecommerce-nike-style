@@ -1,4 +1,7 @@
 import type { NextConfig } from 'next';
+import createNextIntlPlugin from 'next-intl/plugin';
+
+const withNextIntl = createNextIntlPlugin('./src/i18n/request.ts');
 
 const nextConfig: NextConfig = {
   turbopack: {},
@@ -10,10 +13,10 @@ const nextConfig: NextConfig = {
       // Hitting this app's own dev port directly at its bare root (bypassing the proxy) 404s once
       // basePath is set — every real route lives under /admin/*. `basePath: false` makes this one rule
       // match the pre-basePath "/" instead, so opening the admin dev server on its own port still lands
-      // somewhere real (StaffAuthGuard then sends an unauthenticated visitor on to /admin/login).
-      { source: '/', destination: '/admin', basePath: false, permanent: false },
+      // somewhere real (middleware then sends an unauthenticated visitor on to /admin/vi/login).
+      { source: '/', destination: '/admin/vi', basePath: false, permanent: false },
     ];
   },
 };
 
-export default nextConfig;
+export default withNextIntl(nextConfig);

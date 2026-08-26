@@ -2,12 +2,12 @@ packages:
   - apps/*
   - packages/*
 
-ignoredBuiltDependencies:
-  - '@parcel/watcher'
-  - '@sentry/cli'
-  - '@swc/core'
-  - msw
-  - unrs-resolver
+allowBuilds:
+  '@parcel/watcher': false
+  '@sentry/cli': false
+  '@swc/core': false
+  msw: false
+  unrs-resolver: false
 
 overrides:
   nanoid: '>=3.3.17'

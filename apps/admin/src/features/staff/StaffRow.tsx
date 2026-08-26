@@ -6,6 +6,7 @@ import { Badge } from '@repo/ui/badge';
 import { Button } from '@repo/ui/button';
 import { Switch } from '@repo/ui/switch';
 import { TableCell, TableRow } from '@repo/ui/table';
+import { useTranslations } from 'next-intl';
 
 import { AssignRolesDialog } from './AssignRolesDialog';
 import { useDeleteStaff, useUpdateStaff } from './useStaffMutations';
@@ -18,6 +19,8 @@ interface StaffRowProps {
 /** One Staff row — Roles + their *effective* permissions (the union of every assigned Role, not just
  * the Role list) rendered directly, per issue #23's "UI hiển thị đúng permission hiệu lực". */
 export function StaffRow({ staff }: StaffRowProps): React.JSX.Element {
+  const t = useTranslations('staff');
+  const tCommon = useTranslations('common');
   const updateStaff = useUpdateStaff(staff.id);
   const deleteStaff = useDeleteStaff();
   const effectivePermissions = resolvePermissions(staff.roles);
@@ -50,19 +53,19 @@ export function StaffRow({ staff }: StaffRowProps): React.JSX.Element {
           staff={staff}
           trigger={
             <Button variant="outline" size="sm">
-              Gán Role
+              {t('assignRoles')}
             </Button>
           }
         />
         <ConfirmDialog
           trigger={
             <Button variant="outline" size="sm" className="text-destructive hover:bg-destructive/10" disabled={deleteStaff.isPending}>
-              Xoá
+              {tCommon('actions.delete')}
             </Button>
           }
-          title={`Xoá nhân viên "${staff.name}"?`}
-          description="Hành động này không thể hoàn tác."
-          confirmLabel="Xoá"
+          title={t('deleteTitle', { name: staff.name })}
+          description={tCommon('confirmIrreversible')}
+          confirmLabel={tCommon('actions.delete')}
           loading={deleteStaff.isPending}
           onConfirm={() => {
             deleteStaff.mutate(staff.id);

@@ -1,0 +1,26 @@
+{
+  "title": "Tồn kho",
+  "loadError": "Không thể tải danh sách tồn kho.",
+  "empty": "Không có biến thể nào.",
+  "columns": {
+    "product": "Sản phẩm",
+    "variant": "Biến thể",
+    "onHand": "Tồn kho thực tế (on_hand)",
+    "reserved": "Đang giữ (reserved)",
+    "available": "Khả dụng (available)"
+  },
+  "onHandInputLabel": "Tồn kho thực tế cho {productName}",
+  "updateError": "Không thể cập nhật tồn kho.",
+  "auditLog": {
+    "title": "Lịch sử thay đổi tồn kho",
+    "loadError": "Không thể tải lịch sử thay đổi.",
+    "empty": "Chưa có thay đổi nào.",
+    "columns": {
+      "sku": "SKU",
+      "before": "Trước",
+      "after": "Sau",
+      "actor": "Người thực hiện",
+      "at": "Thời gian"
+    }
+  }
+}

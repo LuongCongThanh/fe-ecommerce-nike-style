@@ -1,0 +1,32 @@
+{
+  "title": "Nhân viên",
+  "addStaff": "Thêm nhân viên",
+  "createStaff": "Tạo nhân viên",
+  "loadError": "Không thể tải danh sách nhân viên.",
+  "empty": "Chưa có nhân viên nào.",
+  "columns": {
+    "name": "Họ tên",
+    "email": "Email",
+    "rolesPermissions": "Role & Permission hiệu lực",
+    "actions": "Thao tác"
+  },
+  "active": "Hoạt động",
+  "assignRoles": "Gán Role",
+  "assignRolesTitle": "Gán Role cho {name}",
+  "assignRolesDescription": "Đổi Role sẽ thu hồi phiên đăng nhập hiện tại của nhân viên này.",
+  "atLeastOneRole": "Phải chọn ít nhất một Role.",
+  "assignRolesError": "Không thể cập nhật Role.",
+  "saveRoles": "Lưu Role",
+  "deleteTitle": "Xoá nhân viên \"{name}\"?",
+  "fields": {
+    "name": "Họ tên",
+    "email": "Email",
+    "password": "Mật khẩu",
+    "role": "Role"
+  },
+  "roleLabels": {
+    "SUPER_ADMIN": "Super Admin",
+    "ADMIN_STAFF": "Admin Staff",
+    "CMS_EDITOR": "CMS Editor"
+  }
+}

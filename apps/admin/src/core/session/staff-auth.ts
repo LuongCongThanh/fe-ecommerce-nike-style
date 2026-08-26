@@ -1,6 +1,8 @@
 import { getStaffMe, loginStaff, logoutStaff, refreshStaffSession } from '@repo/api-sdk/endpoints/staff';
+import Cookies from 'js-cookie';
 
 import { clearStaffAuth, setStaffAccessToken, setStaffRefreshToken, setStaffSession, useStaffAuthStore } from '@/core/session/staff-store';
+import { ADMIN_ACCESS_TOKEN_COOKIE } from '@/shared/constants/auth-cookies';
 
 export function getStaffAccessToken(): string | null {
   return useStaffAuthStore.getState().token;
@@ -15,6 +17,9 @@ export async function loginStaffAction(payload: { email: string; password: strin
   setStaffAccessToken(data.access);
   setStaffRefreshToken(data.refresh);
   setStaffSession({ staff: data.staff, permissions: data.permissions });
+  // Access token also lives in a cookie so middleware.ts (edge, no access to the in-memory
+  // store) can gate protected routes — same mock-phase, cookie-mirrors-memory pattern as storefront.
+  Cookies.set(ADMIN_ACCESS_TOKEN_COOKIE, data.access);
 }
 
 /** Rotates the refresh token and updates both in-memory tokens (same mock-phase, no-cookie transport as Customer auth — see `auth-fixtures.ts`). */
@@ -51,6 +56,7 @@ export async function bootstrapStaffAuth(): Promise<void> {
 export async function performStaffLogout(): Promise<void> {
   const currentRefreshToken = getStaffRefreshToken();
   clearStaffAuth();
+  Cookies.remove(ADMIN_ACCESS_TOKEN_COOKIE);
   if (currentRefreshToken !== null) {
     await logoutStaff(currentRefreshToken).catch(() => undefined);
   }

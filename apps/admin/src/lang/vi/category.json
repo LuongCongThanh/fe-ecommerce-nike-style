@@ -1,0 +1,23 @@
+{
+  "title": "Danh mục",
+  "add": "Thêm danh mục",
+  "create": "Tạo danh mục",
+  "edit": "Sửa danh mục",
+  "saveChanges": "Lưu thay đổi",
+  "deleteFallbackError": "Không thể xoá danh mục này. Vui lòng thử lại.",
+  "loadError": "Không thể tải danh sách danh mục.",
+  "loadOneError": "Không thể tải danh mục.",
+  "empty": "Không có danh mục nào.",
+  "deleteTitle": "Xoá danh mục \"{name}\"?",
+  "columns": {
+    "name": "Tên danh mục",
+    "slug": "Slug",
+    "actions": "Thao tác"
+  },
+  "fields": {
+    "name": "Tên danh mục",
+    "slug": "Slug",
+    "parent": "Danh mục cha",
+    "noParent": "Không có (danh mục gốc)"
+  }
+}

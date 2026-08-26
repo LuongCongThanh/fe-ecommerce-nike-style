@@ -3,20 +3,10 @@
 import { adminTransitionsFrom } from '@repo/api-sdk/endpoints/order-transitions';
 import type { Order } from '@repo/schemas/order';
 import { Button } from '@repo/ui/button';
+import { useTranslations } from 'next-intl';
 
 import { useApproveOrderReturn, useRejectOrderReturn, useUpdateOrderStatus } from './useOrderMutations';
 import { ConfirmDialog } from '@/features/shell/ConfirmDialog';
-
-const STATUS_LABEL: Record<string, string> = {
-  PENDING: 'Chờ xử lý',
-  PROCESSING: 'Đang xử lý',
-  PACKED: 'Đã đóng gói',
-  SHIPPED: 'Đang giao',
-  DELIVERED: 'Đã giao',
-  CANCELLED: 'Đã huỷ',
-  RETURN_REQUESTED: 'Yêu cầu trả hàng',
-  RETURNED: 'Đã trả hàng',
-};
 
 interface OrderStatusActionsProps {
   readonly order: Order;
@@ -27,6 +17,8 @@ interface OrderStatusActionsProps {
  * "UI chặn transition không hợp lệ, không chỉ dựa vào BE"). Return approve/reject is a separate action,
  * shown only while the order is RETURN_REQUESTED. */
 export function OrderStatusActions({ order }: OrderStatusActionsProps): React.JSX.Element {
+  const t = useTranslations('order');
+  const tCommon = useTranslations('common');
   const updateStatus = useUpdateOrderStatus(order.id);
   const approveReturn = useApproveOrderReturn(order.id);
   const rejectReturn = useRejectOrderReturn(order.id);
@@ -38,7 +30,7 @@ export function OrderStatusActions({ order }: OrderStatusActionsProps): React.JS
     <div className="space-y-2">
       {mutationError !== null ? (
         <p role="alert" className="border-destructive/30 bg-destructive/10 text-destructive rounded-lg border px-4 py-3 text-sm">
-          {mutationError instanceof Error ? mutationError.message : 'Không thể cập nhật đơn hàng.'}
+          {mutationError instanceof Error ? mutationError.message : t('updateError')}
         </p>
       ) : null}
 
@@ -50,17 +42,17 @@ export function OrderStatusActions({ order }: OrderStatusActionsProps): React.JS
               approveReturn.mutate();
             }}
           >
-            Duyệt trả hàng
+            {t('approveReturn')}
           </Button>
           <ConfirmDialog
             trigger={
               <Button variant="outline" disabled={rejectReturn.isPending}>
-                Từ chối trả hàng
+                {t('rejectReturn')}
               </Button>
             }
-            title="Từ chối yêu cầu trả hàng?"
-            description="Đơn hàng sẽ quay lại trạng thái Đã giao, tồn kho không thay đổi."
-            confirmLabel="Từ chối"
+            title={t('rejectReturnTitle')}
+            description={t('rejectReturnDescription')}
+            confirmLabel={t('reject')}
             loading={rejectReturn.isPending}
             onConfirm={() => {
               rejectReturn.mutate();
@@ -77,12 +69,12 @@ export function OrderStatusActions({ order }: OrderStatusActionsProps): React.JS
                 key={status}
                 trigger={
                   <Button variant="outline" className="text-destructive hover:bg-destructive/10" disabled={updateStatus.isPending}>
-                    Huỷ đơn
+                    {t('cancelOrder')}
                   </Button>
                 }
-                title="Huỷ đơn hàng này?"
-                description="Hành động này không thể hoàn tác."
-                confirmLabel="Huỷ đơn"
+                title={t('cancelOrderTitle')}
+                description={tCommon('confirmIrreversible')}
+                confirmLabel={t('cancelOrder')}
                 loading={updateStatus.isPending}
                 onConfirm={() => {
                   updateStatus.mutate(status);
@@ -96,7 +88,7 @@ export function OrderStatusActions({ order }: OrderStatusActionsProps): React.JS
                   updateStatus.mutate(status);
                 }}
               >
-                Chuyển sang {STATUS_LABEL[status] ?? status}
+                {t('transitionTo', { status: t(`statusLabels.${status}`) })}
               </Button>
             ),
           )}

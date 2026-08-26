@@ -1,0 +1,41 @@
+{
+  "title": "Products",
+  "add": "Add product",
+  "create": "Create product",
+  "edit": "Edit product",
+  "saveChanges": "Save changes",
+  "searchPlaceholder": "Search products...",
+  "deleteFallbackError": "Could not delete this product. Please try again.",
+  "loadError": "Could not load the product list.",
+  "loadOneError": "Could not load the product.",
+  "empty": "No products.",
+  "deleteTitle": "Delete product \"{name}\"?",
+  "columns": {
+    "name": "Product name",
+    "category": "Category",
+    "variantCount": "Variants",
+    "stock": "Stock",
+    "actions": "Actions"
+  },
+  "genders": {
+    "men": "Men",
+    "women": "Women",
+    "kids": "Kids",
+    "unisex": "Unisex"
+  },
+  "fields": {
+    "name": "Product name",
+    "slug": "Slug",
+    "description": "Description",
+    "category": "Category",
+    "selectCategory": "Select category",
+    "gender": "Gender",
+    "variantsSection": "Variants (Color / Size) & SKU",
+    "addVariant": "Add variant",
+    "color": "Color",
+    "size": "Size",
+    "price": "Price",
+    "stock": "Stock",
+    "removeVariant": "Remove variant"
+  }
+}
