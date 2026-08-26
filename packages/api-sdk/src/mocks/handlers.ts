@@ -31,6 +31,15 @@ import {
 } from './order-fixtures';
 import { consumeReservation, createReservation } from './reservation-fixtures';
 import { matchesSearchQuery } from './search-match';
+import {
+  createStaffSession,
+  findStaffByAccessToken,
+  findStaffByEmail,
+  permissionsFor,
+  revokeByStaffRefreshToken,
+  rotateStaffRefreshToken,
+  toPublicStaff,
+} from './staff-fixtures';
 import { mergeAccountWishlist, resolveProducts } from './wishlist-fixtures';
 
 const SHIPPING_FEE_BY_METHOD = { standard: 30_000, express: 60_000 } as const;
@@ -196,6 +205,49 @@ export const handlers = [
 
     const body = (await request.json()) as { firstName?: string; lastName?: string; phone?: string };
     return HttpResponse.json(toPublicUser(updateUserProfile(user, body)));
+  }),
+
+  // Staff auth (issue #18/#24) — a separate identity/session from Customer auth above.
+  http.post('*/api/staff/login/', async ({ request }) => {
+    const body = (await request.json()) as { email: string; password: string };
+    const staff = findStaffByEmail(body.email);
+
+    if (staff?.password !== body.password) {
+      return errorResponse(401, 'INVALID_CREDENTIALS', 'Email hoặc mật khẩu không đúng.');
+    }
+    if (!staff.isActive) {
+      return errorResponse(403, 'STAFF_INACTIVE', 'Tài khoản đã bị vô hiệu hoá.');
+    }
+
+    const { access, refresh } = createStaffSession(staff.id);
+    return HttpResponse.json({ staff: toPublicStaff(staff), permissions: permissionsFor(staff), access, refresh });
+  }),
+
+  http.post('*/api/staff/refresh/', async ({ request }) => {
+    const body = (await request.json()) as { refreshToken: string };
+    const result = rotateStaffRefreshToken(body.refreshToken);
+
+    if (result.status !== 'ok') {
+      return errorResponse(401, 'REFRESH_INVALID', 'Phiên đăng nhập đã hết hạn, vui lòng đăng nhập lại.');
+    }
+
+    return HttpResponse.json({ access: result.access, refresh: result.refresh });
+  }),
+
+  http.post('*/api/staff/logout/', async ({ request }) => {
+    const body = (await request.json().catch(() => null)) as { refreshToken?: string } | null;
+    if (body?.refreshToken !== undefined) revokeByStaffRefreshToken(body.refreshToken);
+    return HttpResponse.json({});
+  }),
+
+  http.get('*/api/staff/me/', ({ request }) => {
+    const staff = findStaffByAccessToken(request.headers.get('authorization'));
+
+    if (staff === undefined) {
+      return errorResponse(401, 'UNAUTHORIZED', 'Chưa đăng nhập hoặc phiên đã hết hạn.');
+    }
+
+    return HttpResponse.json({ staff: toPublicStaff(staff), permissions: permissionsFor(staff) });
   }),
 
   // CartItem is {skuId, quantity} only (glossary.md) — price/stock are never cached client-side, so the

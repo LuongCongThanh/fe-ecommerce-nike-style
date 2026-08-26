@@ -3,6 +3,7 @@
 import { enableApiMockingBrowser } from '@repo/api-sdk/adapters/browser';
 import { useEffect, useState } from 'react';
 
+import { StaffAuthRuntimeProvider } from '@/core/session/StaffAuthRuntimeProvider';
 import { AppQueryProvider } from '@/providers/query-provider';
 
 /**
@@ -13,7 +14,9 @@ export function AppProviders({ children }: { children: React.ReactNode }) {
   const [isMockingReady, setIsMockingReady] = useState(false);
 
   useEffect(() => {
-    enableApiMockingBrowser()
+    // '/admin' — must match next.config.ts's basePath (packages/api-sdk's mock service worker lives
+    // under the app's own basePath in `public/`, not the site root).
+    enableApiMockingBrowser('/admin')
       .then(() => {
         setIsMockingReady(true);
       })
@@ -24,5 +27,9 @@ export function AppProviders({ children }: { children: React.ReactNode }) {
 
   if (!isMockingReady) return null;
 
-  return <AppQueryProvider>{children}</AppQueryProvider>;
+  return (
+    <AppQueryProvider>
+      <StaffAuthRuntimeProvider>{children}</StaffAuthRuntimeProvider>
+    </AppQueryProvider>
+  );
 }

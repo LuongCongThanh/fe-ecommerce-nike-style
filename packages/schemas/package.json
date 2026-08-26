@@ -18,7 +18,8 @@
     "./order": "./src/order/order.ts",
     "./address": "./src/address/address.ts",
     "./profile": "./src/profile/profile.ts",
-    "./auth": "./src/auth/auth.ts"
+    "./auth": "./src/auth/auth.ts",
+    "./staff": "./src/staff/staff.ts"
   },
   "dependencies": {
     "zod": "^4.4.3"
