@@ -13,6 +13,13 @@ export const CategorySchema = z.object({
   parentId: z.string().nullable(),
 });
 
+/** Create/update payload (issue #20) — `id` isn't part of the input; `parentId: null` means top-level. */
+export const CategoryInputSchema = z.object({
+  slug: z.string().min(1),
+  name: z.string().min(1),
+  parentId: z.string().nullable(),
+});
+
 /**
  * Sellable/stock unit. `Price` lives here, not on `Product` — SKUs of the same Product are allowed
  * to diverge in price (glossary.md — SKU). `color`/`size` are the two Variant axes; both `null` marks
@@ -86,6 +93,7 @@ export const ProductInputSchema = z.object({
 
 export type Gender = z.infer<typeof GenderSchema>;
 export type Category = z.infer<typeof CategorySchema>;
+export type CategoryInput = z.infer<typeof CategoryInputSchema>;
 export type Sku = z.infer<typeof SkuSchema>;
 export type Product = z.infer<typeof ProductSchema>;
 export type ProductListRequest = z.infer<typeof ProductListRequestSchema>;

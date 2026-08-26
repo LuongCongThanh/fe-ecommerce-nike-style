@@ -1,5 +1,13 @@
-import { ProductListResponseSchema, ProductSchema } from '@repo/schemas/catalog';
-import type { Product, ProductInput, ProductListRequest, ProductListResponse } from '@repo/schemas/catalog';
+import { CategoryListResponseSchema, CategorySchema, ProductListResponseSchema, ProductSchema } from '@repo/schemas/catalog';
+import type {
+  Category,
+  CategoryInput,
+  CategoryListResponse,
+  Product,
+  ProductInput,
+  ProductListRequest,
+  ProductListResponse,
+} from '@repo/schemas/catalog';
 
 import { apiClient } from '../client/fetcher';
 import { API_BASE_URL } from '../env/config';
@@ -7,6 +15,8 @@ import { API_BASE_URL } from '../env/config';
 const ADMIN_CATALOG_API = {
   PRODUCTS: `${API_BASE_URL}/api/admin/products/`,
   PRODUCT: (id: string) => `${API_BASE_URL}/api/admin/products/${id}/`,
+  CATEGORIES: `${API_BASE_URL}/api/admin/categories/`,
+  CATEGORY: (id: string) => `${API_BASE_URL}/api/admin/categories/${id}/`,
 } as const;
 
 /** Admin's product table (issue #19) — same `Product`/`ProductListResponse` shapes the public PLP
@@ -44,4 +54,22 @@ export async function updateAdminProduct(id: string, input: ProductInput): Promi
 
 export async function deleteAdminProduct(id: string): Promise<void> {
   await apiClient.delete<unknown>(ADMIN_CATALOG_API.PRODUCT(id));
+}
+
+/** Admin's Category tree management (issue #20) — Staff-only CRUD on top of the same `Category`
+ * shape the public PLP's filter panel reads. */
+export async function getAdminCategories(): Promise<CategoryListResponse> {
+  return apiClient.get<CategoryListResponse>(ADMIN_CATALOG_API.CATEGORIES, undefined, { schema: CategoryListResponseSchema });
+}
+
+export async function createAdminCategory(input: CategoryInput): Promise<Category> {
+  return apiClient.post<Category>(ADMIN_CATALOG_API.CATEGORIES, input, { schema: CategorySchema });
+}
+
+export async function updateAdminCategory(id: string, input: CategoryInput): Promise<Category> {
+  return apiClient.patch<Category>(ADMIN_CATALOG_API.CATEGORY(id), input, { schema: CategorySchema });
+}
+
+export async function deleteAdminCategory(id: string): Promise<void> {
+  await apiClient.delete<unknown>(ADMIN_CATALOG_API.CATEGORY(id));
 }

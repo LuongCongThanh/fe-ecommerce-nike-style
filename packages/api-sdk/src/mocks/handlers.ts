@@ -1,6 +1,6 @@
 import { http, HttpResponse } from 'msw';
 
-import type { ProductInput } from '@repo/schemas/catalog';
+import type { CategoryInput, ProductInput } from '@repo/schemas/catalog';
 
 import { createAddress, deleteAddress, getAddresses, setDefaultAddress, updateAddress } from './address-fixtures';
 import {
@@ -19,13 +19,16 @@ import {
 } from './auth-fixtures';
 import { mergeAccountCart, resolveSkus } from './cart-fixtures';
 import {
+  createCategory,
   createProduct,
+  deleteCategory,
   deleteProduct,
   findProductById,
   findProductBySkuId,
   findProductBySlug,
   listProducts,
   mockCategories,
+  updateCategory,
   updateProduct,
 } from './catalog-fixtures';
 import {
@@ -165,6 +168,60 @@ export const handlers = [
     }
 
     const result = deleteProduct(String(params.id));
+    if (!result.ok) {
+      const status = result.code === 'NOT_FOUND' ? 404 : 409;
+      return errorResponse(status, result.code, result.message);
+    }
+    return HttpResponse.json({});
+  }),
+
+  // Admin Category tree management (issue #20) — same `Category` shape the public PLP's filter panel
+  // reads, gated on a valid Staff session.
+  http.get('*/api/admin/categories/', ({ request }) => {
+    const staff = findStaffByAccessToken(request.headers.get('authorization'));
+    if (staff === undefined) {
+      return errorResponse(401, 'UNAUTHORIZED', 'Chưa đăng nhập hoặc phiên đã hết hạn.');
+    }
+
+    return HttpResponse.json({ data: mockCategories });
+  }),
+
+  http.post('*/api/admin/categories/', async ({ request }) => {
+    const staff = findStaffByAccessToken(request.headers.get('authorization'));
+    if (staff === undefined) {
+      return errorResponse(401, 'UNAUTHORIZED', 'Chưa đăng nhập hoặc phiên đã hết hạn.');
+    }
+
+    const body = (await request.json()) as CategoryInput;
+    const result = createCategory(body);
+    if (!result.ok) {
+      return errorResponse(400, result.code, result.message);
+    }
+    return HttpResponse.json(result.category, { status: 201 });
+  }),
+
+  http.patch('*/api/admin/categories/:id/', async ({ request, params }) => {
+    const staff = findStaffByAccessToken(request.headers.get('authorization'));
+    if (staff === undefined) {
+      return errorResponse(401, 'UNAUTHORIZED', 'Chưa đăng nhập hoặc phiên đã hết hạn.');
+    }
+
+    const body = (await request.json()) as CategoryInput;
+    const result = updateCategory(String(params.id), body);
+    if (!result.ok) {
+      const status = result.code === 'NOT_FOUND' ? 404 : 400;
+      return errorResponse(status, result.code, result.message);
+    }
+    return HttpResponse.json(result.category);
+  }),
+
+  http.delete('*/api/admin/categories/:id/', ({ request, params }) => {
+    const staff = findStaffByAccessToken(request.headers.get('authorization'));
+    if (staff === undefined) {
+      return errorResponse(401, 'UNAUTHORIZED', 'Chưa đăng nhập hoặc phiên đã hết hạn.');
+    }
+
+    const result = deleteCategory(String(params.id));
     if (!result.ok) {
       const status = result.code === 'NOT_FOUND' ? 404 : 409;
       return errorResponse(status, result.code, result.message);
