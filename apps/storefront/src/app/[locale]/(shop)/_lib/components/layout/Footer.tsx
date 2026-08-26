@@ -13,8 +13,8 @@ const UTILITY_GROUPS = [
   {
     heading: 'Tài khoản',
     links: [
-      { href: '/auth/login', label: 'Đăng nhập' },
-      { href: '/auth/register', label: 'Đăng ký' },
+      { href: '/login', label: 'Đăng nhập' },
+      { href: '/register', label: 'Đăng ký' },
       { href: '/account/orders', label: 'Đơn hàng của tôi' },
     ],
   },

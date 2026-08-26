@@ -50,6 +50,17 @@ const FEATURES = [
   { label: 'Thương hiệu', value: 'Antigravity' },
 ];
 
+/**
+ * `MOCK_REVIEWS`, `FEATURES`, and the rating-distribution bars are placeholder content with no
+ * verified source — the reviews carry invented names and dates, and the specs claim a material and
+ * country of origin that are identical for every product, shoes and bags included. Shown to a real
+ * shopper they read as fabricated social proof and as claims about the goods, so they are gated the
+ * same way the home testimonials already are (see `home/page.tsx`, design.md).
+ *
+ * `rating` and `reviewCount` come from the product API and stay visible — those are real.
+ */
+const SHOW_PLACEHOLDER_CONTENT = process.env.NODE_ENV !== 'production';
+
 export function ProductDetailTabs({ description, rating, reviewCount }: ProductDetailTabsProps) {
   return (
     <Accordion type="multiple" defaultValue={['description']} className="w-full">
@@ -78,19 +89,21 @@ export function ProductDetailTabs({ description, rating, reviewCount }: ProductD
         </AccordionContent>
       </AccordionItem>
 
-      <AccordionItem value="specs" className="border-b">
-        <AccordionTrigger className="hover:text-foreground/80 py-5 text-base font-semibold hover:no-underline">Thông số</AccordionTrigger>
-        <AccordionContent className="pb-6">
-          <div className="divide-y rounded-xl border">
-            {FEATURES.map((f) => (
-              <div key={f.label} className="flex px-5 py-3.5 text-sm">
-                <span className="text-muted-foreground w-36 shrink-0 font-semibold">{f.label}</span>
-                <span className="text-foreground">{f.value}</span>
-              </div>
-            ))}
-          </div>
-        </AccordionContent>
-      </AccordionItem>
+      {SHOW_PLACEHOLDER_CONTENT ? (
+        <AccordionItem value="specs" className="border-b">
+          <AccordionTrigger className="hover:text-foreground/80 py-5 text-base font-semibold hover:no-underline">Thông số</AccordionTrigger>
+          <AccordionContent className="pb-6">
+            <div className="divide-y rounded-xl border">
+              {FEATURES.map((f) => (
+                <div key={f.label} className="flex px-5 py-3.5 text-sm">
+                  <span className="text-muted-foreground w-36 shrink-0 font-semibold">{f.label}</span>
+                  <span className="text-foreground">{f.value}</span>
+                </div>
+              ))}
+            </div>
+          </AccordionContent>
+        </AccordionItem>
+      ) : null}
 
       <AccordionItem value="reviews" className="border-b">
         <AccordionTrigger className="hover:text-foreground/80 py-5 text-base font-semibold hover:no-underline">
@@ -110,39 +123,47 @@ export function ProductDetailTabs({ description, rating, reviewCount }: ProductD
               </div>
               <p className="text-muted-foreground mt-1 text-xs">{reviewCount} đánh giá</p>
             </div>
-            <div className="flex-1 space-y-1">
-              {[5, 4, 3, 2, 1].map((star) => (
-                <div key={star} className="flex items-center gap-2 text-xs">
-                  <span className="text-muted-foreground w-3">{star}</span>
-                  <Star className="size-3 fill-amber-400 text-amber-400" />
-                  <div className="bg-muted h-1.5 flex-1 overflow-hidden rounded-full">
-                    <div className="h-full rounded-full bg-amber-400" style={{ width: star >= 4 ? `${(star === 5 ? 60 : 30).toString()}%` : '5%' }} />
+            {/* Bar widths are invented numbers that read exactly like a real distribution. */}
+            {SHOW_PLACEHOLDER_CONTENT ? (
+              <div className="flex-1 space-y-1">
+                {[5, 4, 3, 2, 1].map((star) => (
+                  <div key={star} className="flex items-center gap-2 text-xs">
+                    <span className="text-muted-foreground w-3">{star}</span>
+                    <Star className="size-3 fill-amber-400 text-amber-400" />
+                    <div className="bg-muted h-1.5 flex-1 overflow-hidden rounded-full">
+                      <div
+                        className="h-full rounded-full bg-amber-400"
+                        style={{ width: star >= 4 ? `${(star === 5 ? 60 : 30).toString()}%` : '5%' }}
+                      />
+                    </div>
                   </div>
-                </div>
-              ))}
-            </div>
+                ))}
+              </div>
+            ) : null}
           </div>
 
           <div className="space-y-4">
-            {MOCK_REVIEWS.map((review) => (
-              <div key={review.id} className="bg-card rounded-xl border p-4 shadow-sm">
-                <div className="flex items-start justify-between gap-2">
-                  <div>
-                    <p className="font-semibold">{review.author}</p>
-                    <div className="mt-1 flex gap-0.5">
-                      {Array.from({ length: 5 }).map((_, i) => (
-                        <Star
-                          key={`review-${review.id.toString()}-star-${i.toString()}`}
-                          className={cn('size-3.5', i < review.rating ? 'fill-amber-400 text-amber-400' : 'text-neutral-300')}
-                        />
-                      ))}
+            {SHOW_PLACEHOLDER_CONTENT
+              ? MOCK_REVIEWS.map((review) => (
+                  <div key={review.id} className="bg-card rounded-xl border p-4 shadow-sm">
+                    <div className="flex items-start justify-between gap-2">
+                      <div>
+                        <p className="font-semibold">{review.author}</p>
+                        <div className="mt-1 flex gap-0.5">
+                          {Array.from({ length: 5 }).map((_, i) => (
+                            <Star
+                              key={`review-${review.id.toString()}-star-${i.toString()}`}
+                              className={cn('size-3.5', i < review.rating ? 'fill-amber-400 text-amber-400' : 'text-neutral-300')}
+                            />
+                          ))}
+                        </div>
+                      </div>
+                      <span className="text-muted-foreground text-xs">{review.date}</span>
                     </div>
+                    <p className="text-muted-foreground mt-2 text-sm">{review.comment}</p>
                   </div>
-                  <span className="text-muted-foreground text-xs">{review.date}</span>
-                </div>
-                <p className="text-muted-foreground mt-2 text-sm">{review.comment}</p>
-              </div>
-            ))}
+                ))
+              : null}
           </div>
         </AccordionContent>
       </AccordionItem>
