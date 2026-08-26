@@ -4,6 +4,7 @@ import { redirect } from 'next/navigation';
 import { setRequestLocale } from 'next-intl/server';
 
 import { ResetPasswordForm } from '@/app/[locale]/(auth)/_lib/components/ResetPasswordForm';
+import { isValidResetPasswordRequest } from '@/app/[locale]/(auth)/_lib/schemas/auth';
 
 interface ResetPasswordPageProps {
   readonly params: Promise<{ locale: string; token: string }>;
@@ -16,7 +17,7 @@ export default async function ResetPasswordPage({ params, searchParams }: ResetP
 
   const { uid } = await searchParams;
 
-  if (uid === undefined || uid.length === 0) {
+  if (!isValidResetPasswordRequest(uid)) {
     redirect(`/${locale}/forgot-password`);
   }
 

@@ -1,19 +1,15 @@
 // Hallmark redesign · design-system: design.md · scope: app page (functional, no enrichment)
 'use client';
 
-import { useTransition } from 'react';
-import { useRouter, useSearchParams } from 'next/navigation';
-
 import type { Gender } from '@repo/schemas/catalog';
 import { Button } from '@repo/ui/button';
 import { Input } from '@repo/ui/input';
 import { Select, SelectContent, SelectGroup, SelectItem, SelectTrigger, SelectValue } from '@repo/ui/select';
 import { useLocale } from 'next-intl';
-import type { SyntheticEvent } from 'react';
 
 import { CategoryNav } from '@/app/[locale]/(shop)/_lib/components/categories/CategoryNav';
+import { useCatalogFilterControls } from '@/app/[locale]/(shop)/_lib/hooks/categories/useCatalogFilterControls';
 import { useCategoryTree } from '@/app/[locale]/(shop)/_lib/hooks/categories/useCategoryTree';
-import { clearCatalogFilters, parseCatalogFilters, withCatalogFilter } from '@/app/[locale]/(shop)/_lib/utils/catalogUrlState';
 
 const GENDER_LABELS: Record<Gender, string> = {
   men: 'Nam',
@@ -28,32 +24,9 @@ interface FilterSidebarProps {
 }
 
 export function FilterSidebar({ activeCategorySlug }: FilterSidebarProps = {}): React.JSX.Element {
-  const router = useRouter();
-  const searchParams = useSearchParams();
   const locale = useLocale();
   const { data: categories } = useCategoryTree();
-  const [isPending, startTransition] = useTransition();
-
-  const filters = parseCatalogFilters(searchParams);
-
-  const applyFilter = (key: 'gender' | 'sortBy' | 'minPrice' | 'maxPrice', value: string | undefined) => {
-    startTransition(() => {
-      router.push(`?${withCatalogFilter(searchParams, key, value).toString()}`);
-    });
-  };
-
-  const handlePriceSubmit = (e: SyntheticEvent<HTMLFormElement>) => {
-    e.preventDefault();
-    const formData = new FormData(e.currentTarget);
-    const next = withCatalogFilter(
-      withCatalogFilter(searchParams, 'minPrice', formData.get('minPrice') as string),
-      'maxPrice',
-      formData.get('maxPrice') as string,
-    );
-    startTransition(() => {
-      router.push(`?${next.toString()}`);
-    });
-  };
+  const { filters, applyFilter, submitPriceRange, clearFilters, isPending } = useCatalogFilterControls();
 
   return (
     // Translucent material rather than an opaque slab: content reads *through* the floating filter
@@ -113,7 +86,7 @@ export function FilterSidebar({ activeCategorySlug }: FilterSidebarProps = {}): 
       {/* Price Filter */}
       <div className="space-y-3 border-t pt-6">
         <h3 className="text-muted-foreground text-sm font-bold tracking-wider uppercase">Khoảng giá (VNĐ)</h3>
-        <form onSubmit={handlePriceSubmit} className="space-y-3">
+        <form onSubmit={submitPriceRange} className="space-y-3">
           <div className="flex items-center gap-2">
             <Input name="minPrice" type="number" placeholder="Từ" defaultValue={filters.minPrice ?? ''} className="h-10" aria-label="Giá từ" />
             <span className="text-muted-foreground">-</span>
@@ -134,11 +107,7 @@ export function FilterSidebar({ activeCategorySlug }: FilterSidebarProps = {}): 
         size="sm"
         className="text-muted-foreground hover:text-foreground w-full border-t pt-6"
         disabled={isPending}
-        onClick={() => {
-          startTransition(() => {
-            router.push(`?${clearCatalogFilters(searchParams).toString()}`);
-          });
-        }}
+        onClick={clearFilters}
       >
         Xóa tất cả bộ lọc
       </Button>

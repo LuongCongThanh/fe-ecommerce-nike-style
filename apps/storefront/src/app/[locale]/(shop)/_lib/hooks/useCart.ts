@@ -1,6 +1,7 @@
 'use client';
 
 import { getSkusByIds, mergeCartAfterLogin } from '@repo/api-sdk/endpoints/cart';
+import { notify } from '@repo/shared/notification';
 import { useQuery } from '@tanstack/react-query';
 import { create } from 'zustand';
 
@@ -169,6 +170,25 @@ export function useCart() {
     setQuantity(skuId, Math.min(quantity, stock));
   };
 
+  /** Removes `skuId` and toasts an "Hoàn tác" (undo) action that re-adds it — the one place both the
+   * drawer and the full cart table's remove button get this behavior, instead of each hand-rolling the
+   * same `notify.success(..., { action: { onClick: () => useCartStore.getState().addItem(...) } })`. */
+  const removeCartItemWithUndo = (skuId: string): void => {
+    const removed = items.find((i) => i.skuId === skuId);
+    removeItem(skuId);
+    if (removed === undefined) return;
+
+    notify.success('Đã xóa sản phẩm khỏi giỏ hàng', {
+      description: removed.name,
+      action: {
+        label: 'Hoàn tác',
+        onClick: () => {
+          addItem(removed.skuId, removed.quantity);
+        },
+      },
+    });
+  };
+
   return {
     items,
     isLoading,
@@ -177,6 +197,7 @@ export function useCart() {
     addToCart,
     updateQuantity,
     removeCartItem: removeItem,
+    removeCartItemWithUndo,
     clearCart: clearCartAction,
     total,
     itemCount,

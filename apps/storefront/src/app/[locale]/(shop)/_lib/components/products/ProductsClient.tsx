@@ -2,8 +2,6 @@
 // Apple Design pass · §1 no spinner cliff between pages — the grid stays, and says it is working
 'use client';
 
-import { useRouter, useSearchParams } from 'next/navigation';
-
 import { QueryState } from '@repo/shared/query-state';
 import { cn } from '@repo/shared/utils';
 
@@ -11,20 +9,10 @@ import { Pagination } from '@/app/[locale]/(shop)/_lib/components/common/Paginat
 import { SectionHeading } from '@/app/[locale]/(shop)/_lib/components/common/SectionHeading';
 import { CatalogProductGrid } from '@/app/[locale]/(shop)/_lib/components/products/CatalogProductGrid';
 import { CatalogGridSkeleton } from '@/app/[locale]/(shop)/_lib/components/products/ProductSkeletons';
-import { useProducts } from '@/app/[locale]/(shop)/_lib/hooks/products/useProducts';
-import { parseCatalogFilters, withCatalogPage } from '@/app/[locale]/(shop)/_lib/utils/catalogUrlState';
+import { useCatalogListing } from '@/app/[locale]/(shop)/_lib/hooks/products/useCatalogListing';
 
 export default function ProductsClient(): React.JSX.Element {
-  const router = useRouter();
-  const searchParams = useSearchParams();
-  const category = searchParams.get('category') ?? undefined;
-  const filters = parseCatalogFilters(searchParams);
-
-  const { data, isLoading, isPlaceholderData, error, refetch } = useProducts(category, filters);
-
-  const handlePageChange = (page: number) => {
-    router.push(`?${withCatalogPage(searchParams, page).toString()}`);
-  };
+  const { data, isLoading, isPlaceholderData, error, refetch, categorySlug: category, onPageChange } = useCatalogListing();
 
   return (
     <div className="flex flex-col gap-8">
@@ -53,9 +41,7 @@ export default function ProductsClient(): React.JSX.Element {
             <span role="status" aria-live="polite" className="sr-only">
               {isPlaceholderData ? 'Đang tải sản phẩm...' : ''}
             </span>
-            {data.meta.totalPages > 1 && (
-              <Pagination currentPage={data.meta.page} totalPages={data.meta.totalPages} onPageChange={handlePageChange} />
-            )}
+            {data.meta.totalPages > 1 && <Pagination currentPage={data.meta.page} totalPages={data.meta.totalPages} onPageChange={onPageChange} />}
           </>
         ) : null}
       </QueryState>

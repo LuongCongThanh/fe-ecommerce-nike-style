@@ -1,27 +1,16 @@
 // Hallmark redesign · design-system: design.md · scope: app page (functional, no enrichment)
 'use client';
 
-import { useRouter, useSearchParams } from 'next/navigation';
-
 import { Pagination } from '@/app/[locale]/(shop)/_lib/components/common/Pagination';
 import { CatalogProductGrid } from '@/app/[locale]/(shop)/_lib/components/products/CatalogProductGrid';
-import { useProducts } from '@/app/[locale]/(shop)/_lib/hooks/products/useProducts';
-import { parseCatalogFilters, withCatalogPage } from '@/app/[locale]/(shop)/_lib/utils/catalogUrlState';
+import { useCatalogListing } from '@/app/[locale]/(shop)/_lib/hooks/products/useCatalogListing';
 
 interface CategoryClientProps {
   readonly categorySlug: string;
 }
 
 export function CategoryClient({ categorySlug }: CategoryClientProps): React.JSX.Element {
-  const router = useRouter();
-  const searchParams = useSearchParams();
-  const filters = parseCatalogFilters(searchParams);
-
-  const { data, isLoading, isError } = useProducts(categorySlug, filters);
-
-  const handlePageChange = (page: number) => {
-    router.push(`?${withCatalogPage(searchParams, page).toString()}`);
-  };
+  const { data, isLoading, isError, onPageChange } = useCatalogListing(categorySlug);
 
   if (isLoading) {
     return <p className="text-muted-foreground py-16 text-center text-sm">Đang tải sản phẩm…</p>;
@@ -48,7 +37,7 @@ export function CategoryClient({ categorySlug }: CategoryClientProps): React.JSX
   return (
     <div className="space-y-8">
       <CatalogProductGrid products={data.data} />
-      {data.meta.totalPages > 1 && <Pagination currentPage={data.meta.page} totalPages={data.meta.totalPages} onPageChange={handlePageChange} />}
+      {data.meta.totalPages > 1 && <Pagination currentPage={data.meta.page} totalPages={data.meta.totalPages} onPageChange={onPageChange} />}
     </div>
   );
 }

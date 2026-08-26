@@ -2,9 +2,6 @@
 // Apple Design pass · springs + instant feedback + materials (safe-mode: no new gesture code)
 'use client';
 
-import { useEffect } from 'react';
-import { useRouter } from 'next/navigation';
-
 import { formatCurrency } from '@repo/shared/utils';
 import { Button } from '@repo/ui/button';
 import { Input } from '@repo/ui/input';
@@ -14,6 +11,7 @@ import { useLocale, useTranslations } from 'next-intl';
 import { useFormContext } from 'react-hook-form';
 
 import { useCreateOrder } from '@/app/[locale]/(shop)/_lib/hooks/checkout/useCreateOrder';
+import { useRedirectIfCartEmpty } from '@/app/[locale]/(shop)/_lib/hooks/checkout/useRedirectIfCartEmpty';
 import { useReservation } from '@/app/[locale]/(shop)/_lib/hooks/checkout/useReservation';
 import { useCart } from '@/app/[locale]/(shop)/_lib/hooks/useCart';
 import type { CheckoutInput } from '@/app/[locale]/(shop)/_lib/schemas/checkout';
@@ -24,19 +22,10 @@ type CheckoutValues = CheckoutInput;
 export function CheckoutClient() {
   const t = useTranslations('checkout');
   const locale = useLocale();
-  const router = useRouter();
-  const { items, itemCount, isHydrated } = useCart();
+  const { items } = useCart();
   const reservation = useReservation(items);
   const createOrder = useCreateOrder(locale, reservation.reservationId);
-
-  // Gated on `isHydrated` — both `items` (live-resolved via an async query) and the persisted
-  // `itemCount` start out empty on every fresh mount, which made this redirect fire immediately even
-  // for a cart that genuinely has items, before localStorage had a chance to load (issue #16).
-  useEffect(() => {
-    if (isHydrated && itemCount === 0) {
-      router.replace(`/${locale}/cart`);
-    }
-  }, [isHydrated, itemCount, router, locale]);
+  useRedirectIfCartEmpty(locale);
 
   const {
     register,

@@ -3,7 +3,6 @@
 // Hallmark redesign · design-system: design.md · scope: app page (functional, no enrichment)
 import { useState } from 'react';
 
-import { zodResolver } from '@hookform/resolvers/zod';
 import type { StorefrontAddress } from '@repo/api-sdk/endpoints/address';
 import { QueryState } from '@repo/shared/query-state';
 import { Badge } from '@repo/ui/badge';
@@ -13,35 +12,23 @@ import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '
 import { Input } from '@repo/ui/input';
 import { Label } from '@repo/ui/label';
 import { Plus } from 'lucide-react';
-import { Controller, useForm } from 'react-hook-form';
+import { Controller } from 'react-hook-form';
 
 import { ConfirmDialog } from '@/app/[locale]/(shop)/_lib/components/common/ConfirmDialog';
 import { useAddresses } from '@/app/[locale]/(shop)/_lib/hooks/addresses/useAddresses';
+import { useAddressForm } from '@/app/[locale]/(shop)/_lib/hooks/addresses/useAddressForm';
 import { useDeleteAddress } from '@/app/[locale]/(shop)/_lib/hooks/addresses/useDeleteAddress';
-import { useSaveAddress } from '@/app/[locale]/(shop)/_lib/hooks/addresses/useSaveAddress';
 import { useSetDefaultAddress } from '@/app/[locale]/(shop)/_lib/hooks/addresses/useSetDefaultAddress';
 import type { AddressFormInput } from '@/app/[locale]/(shop)/_lib/schemas/address';
-import { addressFormSchema } from '@/app/[locale]/(shop)/_lib/schemas/address';
 
 const EMPTY_FORM: AddressFormInput = { fullName: '', phone: '', province: '', district: '', ward: '', detail: '', isDefault: false };
 
 function AddressForm({ initial, id, onDone }: { readonly initial: AddressFormInput; readonly id?: string; readonly onDone: () => void }) {
-  const saveAddress = useSaveAddress();
-  const form = useForm<AddressFormInput>({ resolver: zodResolver(addressFormSchema), defaultValues: initial });
+  const { form, onSubmit, isSaving } = useAddressForm({ initial, id, onSaved: onDone });
 
   return (
     <Form {...form}>
-      <form
-        onSubmit={form.handleSubmit((data) => {
-          saveAddress.mutate(
-            { id, data },
-            {
-              onSuccess: onDone,
-            },
-          );
-        })}
-        className="bg-card space-y-4 rounded-xl border p-4"
-      >
+      <form onSubmit={form.handleSubmit(onSubmit)} className="bg-card space-y-4 rounded-xl border p-4">
         <FormField
           control={form.control}
           name="fullName"
@@ -139,8 +126,8 @@ function AddressForm({ initial, id, onDone }: { readonly initial: AddressFormInp
           )}
         />
         <div className="flex gap-2">
-          <Button type="submit" disabled={saveAddress.isPending}>
-            {saveAddress.isPending ? 'Đang lưu...' : 'Lưu địa chỉ'}
+          <Button type="submit" disabled={isSaving}>
+            {isSaving ? 'Đang lưu...' : 'Lưu địa chỉ'}
           </Button>
           <Button type="button" variant="outline" onClick={onDone}>
             Huỷ

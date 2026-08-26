@@ -1,9 +1,9 @@
 'use client';
 
-import { useState } from 'react';
-
 import { Button } from '@repo/ui/button';
 import { AnimatePresence, motion, useReducedMotion } from 'framer-motion';
+
+import { useNewsletterForm } from '@/app/[locale]/(shop)/_lib/hooks/home/useNewsletterForm';
 
 interface NewsletterFormProps {
   readonly title?: string;
@@ -17,7 +17,6 @@ interface NewsletterFormProps {
   readonly onSubmit?: (email: string) => void;
 }
 
-const EMAIL_PATTERN = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 const INVALID_EMAIL_MESSAGE = 'Vui lòng nhập một địa chỉ email hợp lệ.';
 
 export function NewsletterForm({
@@ -31,28 +30,8 @@ export function NewsletterForm({
   successDescription = 'Cảm ơn bạn đã đăng ký nhận tin.',
   onSubmit,
 }: NewsletterFormProps): React.JSX.Element {
-  const [email, setEmail] = useState('');
-  const [submitted, setSubmitted] = useState(false);
-  const [error, setError] = useState<string | null>(null);
+  const { email, setEmail, submitted, error, handleSubmit } = useNewsletterForm({ invalidEmailMessage, onSubmit });
   const prefersReducedMotion = useReducedMotion() === true;
-
-  // noValidate: we own validation below so the error renders as a styled, consistent inline
-  // message instead of the browser's native (and cross-browser-inconsistent) validation bubble
-  // (homepage-improvement-plan.md P1-5). `type="email"`/`required` stay on the input as a
-  // semantic/no-JS baseline.
-  const handleSubmit = (e: React.SyntheticEvent<HTMLFormElement>): void => {
-    e.preventDefault();
-    const trimmedEmail = email.trim();
-
-    if (!EMAIL_PATTERN.test(trimmedEmail)) {
-      setError(invalidEmailMessage);
-      return;
-    }
-
-    setError(null);
-    onSubmit?.(trimmedEmail);
-    setSubmitted(true);
-  };
 
   const transition = prefersReducedMotion ? { duration: 0 } : { duration: 0.2, ease: [0, 0, 0.2, 1] as const };
   const successInitial = prefersReducedMotion ? false : { opacity: 0, transform: 'translateY(8px)' };
@@ -88,7 +67,6 @@ export function NewsletterForm({
                   value={email}
                   onChange={(e) => {
                     setEmail(e.target.value);
-                    if (error != null) setError(null);
                   }}
                   placeholder={placeholder}
                   className="border-input bg-background text-foreground placeholder:text-muted-foreground focus-visible:ring-ring aria-invalid:border-destructive w-full min-w-0 rounded-md border px-3 py-2 text-sm focus-visible:ring-2 focus-visible:outline-none"

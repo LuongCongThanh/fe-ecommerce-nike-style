@@ -1,28 +1,14 @@
 'use client';
 
-import { useRouter, useSearchParams } from 'next/navigation';
-
 import { QueryState } from '@repo/shared/query-state';
 import { SearchX } from 'lucide-react';
 
 import { Pagination } from '@/app/[locale]/(shop)/_lib/components/common/Pagination';
 import { CatalogProductGrid } from '@/app/[locale]/(shop)/_lib/components/products/CatalogProductGrid';
-import { useProductSearch } from '@/app/[locale]/(shop)/_lib/hooks/products/useProductSearch';
+import { useProductSearchListing } from '@/app/[locale]/(shop)/_lib/hooks/products/useProductSearchListing';
 
 export function SearchClient(): React.JSX.Element {
-  const router = useRouter();
-  const searchParams = useSearchParams();
-  const query = searchParams.get('q') ?? '';
-  const pageParam = searchParams.get('page');
-  const page = pageParam !== null ? Math.max(1, Number(pageParam)) : 1;
-
-  const { data, isLoading, isError, refetch } = useProductSearch(query, page);
-
-  const handlePageChange = (p: number) => {
-    const params = new URLSearchParams(searchParams.toString());
-    params.set('page', p.toString());
-    router.push(`?${params.toString()}`);
-  };
+  const { data, isLoading, isError, refetch, query, onPageChange } = useProductSearchListing();
 
   return (
     <QueryState
@@ -52,7 +38,7 @@ export function SearchClient(): React.JSX.Element {
 
           <CatalogProductGrid products={data.data} />
 
-          {data.meta.totalPages > 1 && <Pagination currentPage={data.meta.page} totalPages={data.meta.totalPages} onPageChange={handlePageChange} />}
+          {data.meta.totalPages > 1 && <Pagination currentPage={data.meta.page} totalPages={data.meta.totalPages} onPageChange={onPageChange} />}
         </div>
       )}
     </QueryState>

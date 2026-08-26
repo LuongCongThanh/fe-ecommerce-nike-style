@@ -1,4 +1,4 @@
-import { type AuthSessionResponse, forgotPassword, login, register, resetPassword } from '@repo/api-sdk/endpoints/auth';
+import { forgotPassword, login, register, resetPassword } from '@repo/api-sdk/endpoints/auth';
 
 import { setAccessToken, setRefreshToken, setUser } from '@/core/session/auth-store';
 import { ensureApiMockingReady } from '@/shared/lib/api-mocking';
@@ -16,38 +16,24 @@ interface RegisterPayload {
   lastName: string;
 }
 
-function toStorefrontUser(user: AuthSessionResponse['user']): User {
-  return {
-    id: user.id,
-    email: user.email,
-    firstName: user.firstName,
-    lastName: user.lastName,
-    phone: user.phone,
-    avatar: user.avatar,
-    role: user.role,
-    isActive: user.isActive,
-    createdAt: user.createdAt,
-  };
-}
-
+// No `toStorefrontUser` mapper here — `AuthSessionResponse['user']` (api-sdk's `AuthUser`) and the
+// storefront's `User` are the same `@repo/schemas/profile` type, not two shapes that happen to match.
 export async function loginAction(payload: LoginPayload): Promise<User> {
   await ensureApiMockingReady();
   const data = await login(payload);
-  const user = toStorefrontUser(data.user);
   setAccessToken(data.access);
   setRefreshToken(data.refresh);
-  setUser(user);
-  return user;
+  setUser(data.user);
+  return data.user;
 }
 
 export async function registerAction(payload: RegisterPayload): Promise<User> {
   await ensureApiMockingReady();
   const data = await register(payload);
-  const user = toStorefrontUser(data.user);
   setAccessToken(data.access);
   setRefreshToken(data.refresh);
-  setUser(user);
-  return user;
+  setUser(data.user);
+  return data.user;
 }
 
 export async function forgotPasswordAction(email: string): Promise<void> {

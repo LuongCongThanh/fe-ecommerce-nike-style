@@ -35,3 +35,9 @@ export type LoginFormInput = z.infer<typeof LoginFormSchema>;
 export type RegisterFormInput = z.infer<typeof RegisterFormSchema>;
 export type ForgotPasswordFormInput = z.infer<typeof ForgotPasswordFormSchema>;
 export type ResetPasswordFormInput = z.infer<typeof ResetPasswordFormSchema>;
+
+/** A reset-password link is only valid with both a token (route param) and a `uid` (query param) — the
+ * page redirects to `/forgot-password` instead of rendering a form that can never succeed. */
+export function isValidResetPasswordRequest(uid: string | undefined): uid is string {
+  return uid !== undefined && uid.length > 0;
+}

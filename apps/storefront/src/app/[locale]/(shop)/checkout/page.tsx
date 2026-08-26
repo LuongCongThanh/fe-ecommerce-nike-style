@@ -4,28 +4,19 @@
 import { use } from 'react';
 import Link from 'next/link';
 
-import { zodResolver } from '@hookform/resolvers/zod';
 import { ChevronLeft } from 'lucide-react';
 import { useTranslations } from 'next-intl';
-import { FormProvider, useForm } from 'react-hook-form';
+import { FormProvider } from 'react-hook-form';
 
 import { CheckoutClient } from '@/app/[locale]/(shop)/_lib/components/checkout/CheckoutClient';
 import { OrderSummary } from '@/app/[locale]/(shop)/_lib/components/checkout/OrderSummary';
 import { PageShell } from '@/app/[locale]/(shop)/_lib/components/layout/PageShell';
-import type { CheckoutInput } from '@/app/[locale]/(shop)/_lib/schemas/checkout';
-import { checkoutSchema } from '@/app/[locale]/(shop)/_lib/schemas/checkout';
+import { useCheckoutForm } from '@/app/[locale]/(shop)/_lib/hooks/checkout/useCheckoutForm';
 
 export default function CheckoutPage({ params }: { readonly params: Promise<{ locale: string }> }) {
   const { locale } = use(params);
   const t = useTranslations('checkout');
-
-  const form = useForm<CheckoutInput>({
-    resolver: zodResolver(checkoutSchema),
-    defaultValues: {
-      shippingMethod: 'standard',
-      paymentMethod: 'cod',
-    },
-  });
+  const form = useCheckoutForm();
 
   return (
     <FormProvider {...form}>

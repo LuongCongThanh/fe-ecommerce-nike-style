@@ -1,16 +1,12 @@
+import type { AuthUser } from '@repo/api-sdk/endpoints/auth';
 import { z } from 'zod';
 
-export const UserSchema = z.object({
-  id: z.number(),
-  email: z.email(),
-  firstName: z.string(),
-  lastName: z.string(),
-  phone: z.string().optional(),
-  avatar: z.string().nullable(),
-  role: z.enum(['customer', 'admin', 'staff']),
-  isActive: z.boolean(),
-  createdAt: z.iso.datetime(),
-});
+/**
+ * The account domain type lives once, in `@repo/schemas/profile` — `AuthUser`/`StorefrontProfile` in
+ * api-sdk both alias it already. `User` re-exports that same type under the name the rest of the
+ * storefront (session, forms, hooks) already imports, so nothing importing `User` had to change.
+ */
+export type User = AuthUser;
 
 export const LoginSchema = z.object({
   email: z.email('Email không hợp lệ'),
@@ -31,7 +27,6 @@ export const AuthTokenSchema = z.object({
   refresh: z.string(),
 });
 
-export type User = z.infer<typeof UserSchema>;
 export type LoginInput = z.infer<typeof LoginSchema>;
 export type RegisterInput = z.infer<typeof RegisterSchema>;
 export type AuthToken = z.infer<typeof AuthTokenSchema>;
