@@ -88,8 +88,35 @@ export const StaffSessionResponseSchema = StaffMeResponseSchema.extend({
   refresh: z.string(),
 });
 
+export const StaffListResponseSchema = z.object({
+  data: z.array(StaffSchema),
+});
+
+/** Create payload (issue #23) — a new Staff must be assigned at least one Role up front, gated on `staff:create` (initial Role assignment on create, not the same action as later re-assigning Roles). */
+export const StaffCreateInputSchema = z.object({
+  email: z.email(),
+  password: z.string().min(8),
+  name: z.string().min(1),
+  roles: z.array(StaffRoleSchema).min(1),
+});
+
+/** Update payload (issue #23) — profile fields only, gated on `staff:update`; Roles are reassigned through the separate `staff:assign-role` action below (Decision #78-79). */
+export const StaffUpdateInputSchema = z.object({
+  name: z.string().min(1),
+  isActive: z.boolean(),
+});
+
+/** Role (re)assignment payload (issue #23) — deliberately its own permission (`staff:assign-role`), separate from `staff:update`: reassigning Roles is a more sensitive action than editing a name (Decision #78-79). */
+export const StaffAssignRolesInputSchema = z.object({
+  roles: z.array(StaffRoleSchema).min(1),
+});
+
 export type StaffRole = z.infer<typeof StaffRoleSchema>;
 export type Permission = z.infer<typeof PermissionSchema>;
 export type Staff = z.infer<typeof StaffSchema>;
 export type StaffMeResponse = z.infer<typeof StaffMeResponseSchema>;
 export type StaffSessionResponse = z.infer<typeof StaffSessionResponseSchema>;
+export type StaffListResponse = z.infer<typeof StaffListResponseSchema>;
+export type StaffCreateInput = z.infer<typeof StaffCreateInputSchema>;
+export type StaffUpdateInput = z.infer<typeof StaffUpdateInputSchema>;
+export type StaffAssignRolesInput = z.infer<typeof StaffAssignRolesInputSchema>;

@@ -66,7 +66,7 @@ function loadPersistedDb(): PersistedDb | null {
 const persisted = loadPersistedDb();
 
 let mockStaff: MockStaff[] = persisted?.staff ?? SEED_STAFF.map((s) => ({ ...s }));
-const nextStaffId = persisted?.nextStaffId ?? mockStaff.length + 1;
+let nextStaffId = persisted?.nextStaffId ?? mockStaff.length + 1;
 let refreshTokens = new Map<string, RefreshTokenRecord>(persisted?.refreshTokens ?? []);
 
 function persist(): void {
@@ -165,9 +165,68 @@ export function setStaffRoles(staffId: number, roles: StaffRole[]): MockStaff | 
   return staff;
 }
 
+// --- Admin Staff CRUD (issue #23) — SUPER_ADMIN-only in practice (gated by `staff:*` permissions
+// client-side, same convention as every other Admin CRUD slice); role (re)assignment reuses
+// `setStaffRoles` above so it keeps the Decision #79 session-revocation behavior for free. ---
+
+export function listStaff(): Staff[] {
+  return mockStaff.map(toPublicStaff);
+}
+
+export type StaffWriteResult = { ok: true; staff: Staff } | { ok: false; code: string; message: string };
+
+export function createStaff(input: { email: string; password: string; name: string; roles: StaffRole[] }): StaffWriteResult {
+  if (findStaffByEmail(input.email) !== undefined) {
+    return { ok: false, code: 'EMAIL_TAKEN', message: 'Email đã được sử dụng.' };
+  }
+
+  const staff: MockStaff = { id: nextStaffId, email: input.email, password: input.password, name: input.name, roles: input.roles, isActive: true };
+  nextStaffId += 1;
+  mockStaff.push(staff);
+  persist();
+  return { ok: true, staff: toPublicStaff(staff) };
+}
+
+/** Profile fields only — Role reassignment is the separate `assignStaffRoles` action below (Decision #78-79). */
+export function updateStaffInfo(staffId: number, input: { name: string; isActive: boolean }): StaffWriteResult {
+  const staff = findStaffById(staffId);
+  if (staff === undefined) {
+    return { ok: false, code: 'NOT_FOUND', message: 'Không tìm thấy nhân viên.' };
+  }
+
+  staff.name = input.name;
+  staff.isActive = input.isActive;
+  persist();
+  return { ok: true, staff: toPublicStaff(staff) };
+}
+
+export type StaffDeleteResult = { ok: true } | { ok: false; code: string; message: string };
+
+export function deleteStaff(staffId: number): StaffDeleteResult {
+  const index = mockStaff.findIndex((s) => s.id === staffId);
+  if (index === -1) {
+    return { ok: false, code: 'NOT_FOUND', message: 'Không tìm thấy nhân viên.' };
+  }
+
+  mockStaff.splice(index, 1);
+  revokeAllStaffSessions(staffId);
+  persist();
+  return { ok: true };
+}
+
+/** Wraps `setStaffRoles` with the NOT_FOUND result shape the other Admin Staff actions use. */
+export function assignStaffRoles(staffId: number, roles: StaffRole[]): StaffWriteResult {
+  const staff = setStaffRoles(staffId, roles);
+  if (staff === undefined) {
+    return { ok: false, code: 'NOT_FOUND', message: 'Không tìm thấy nhân viên.' };
+  }
+  return { ok: true, staff: toPublicStaff(staff) };
+}
+
 /** Test-only — resets the mock "DB" back to its seed state between FE-INT tests. */
 export function resetMockStaffDbForTesting(): void {
   mockStaff = SEED_STAFF.map((s) => ({ ...s }));
+  nextStaffId = mockStaff.length + 1;
   refreshTokens = new Map();
   if (hasSessionStorage()) sessionStorage.removeItem(STORAGE_KEY);
 }
