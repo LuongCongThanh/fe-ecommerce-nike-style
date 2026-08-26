@@ -9,6 +9,7 @@ import { QueryState } from '@repo/shared/query-state';
 import { Badge } from '@repo/ui/badge';
 import { Button } from '@repo/ui/button';
 import { Checkbox } from '@repo/ui/checkbox';
+import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '@repo/ui/form';
 import { Input } from '@repo/ui/input';
 import { Label } from '@repo/ui/label';
 import { Plus } from 'lucide-react';
@@ -26,140 +27,127 @@ const EMPTY_FORM: AddressFormInput = { fullName: '', phone: '', province: '', di
 
 function AddressForm({ initial, id, onDone }: { readonly initial: AddressFormInput; readonly id?: string; readonly onDone: () => void }) {
   const saveAddress = useSaveAddress();
-  const {
-    register,
-    handleSubmit,
-    control,
-    formState: { errors },
-  } = useForm<AddressFormInput>({ resolver: zodResolver(addressFormSchema), defaultValues: initial });
+  const form = useForm<AddressFormInput>({ resolver: zodResolver(addressFormSchema), defaultValues: initial });
 
   return (
-    <form
-      onSubmit={handleSubmit((data) => {
-        saveAddress.mutate(
-          { id, data },
-          {
-            onSuccess: onDone,
-          },
-        );
-      })}
-      className="bg-card space-y-4 rounded-xl border p-4"
-    >
-      <div className="space-y-1.5">
-        <Label htmlFor="fullName">Họ tên người nhận</Label>
-        <Input
-          id="fullName"
-          autoComplete="name"
-          aria-invalid={errors.fullName != null}
-          aria-describedby={errors.fullName != null ? 'fullName-error' : undefined}
-          {...register('fullName')}
+    <Form {...form}>
+      <form
+        onSubmit={form.handleSubmit((data) => {
+          saveAddress.mutate(
+            { id, data },
+            {
+              onSuccess: onDone,
+            },
+          );
+        })}
+        className="bg-card space-y-4 rounded-xl border p-4"
+      >
+        <FormField
+          control={form.control}
+          name="fullName"
+          render={({ field }) => (
+            <FormItem>
+              <FormLabel>Họ tên người nhận</FormLabel>
+              <FormControl>
+                <Input autoComplete="name" {...field} />
+              </FormControl>
+              <FormMessage />
+            </FormItem>
+          )}
         />
-        {errors.fullName != null ? (
-          <p id="fullName-error" role="alert" className="text-destructive mt-1 text-sm">
-            {errors.fullName.message}
-          </p>
-        ) : null}
-      </div>
-      <div className="space-y-1.5">
-        <Label htmlFor="phone">Số điện thoại</Label>
-        <Input
-          id="phone"
-          placeholder="0912345678"
-          autoComplete="tel"
-          aria-invalid={errors.phone != null}
-          aria-describedby={errors.phone != null ? 'phone-error' : undefined}
-          {...register('phone')}
+        <FormField
+          control={form.control}
+          name="phone"
+          render={({ field }) => (
+            <FormItem>
+              <FormLabel>Số điện thoại</FormLabel>
+              <FormControl>
+                <Input placeholder="0912345678" autoComplete="tel" {...field} />
+              </FormControl>
+              <FormMessage />
+            </FormItem>
+          )}
         />
-        {errors.phone != null ? (
-          <p id="phone-error" role="alert" className="text-destructive mt-1 text-sm">
-            {errors.phone.message}
-          </p>
-        ) : null}
-      </div>
-      <div className="grid grid-cols-1 gap-3 sm:grid-cols-3">
-        <div className="space-y-1.5">
-          <Label htmlFor="province">Tỉnh/Thành phố</Label>
-          <Input
-            id="province"
-            aria-invalid={errors.province != null}
-            aria-describedby={errors.province != null ? 'province-error' : undefined}
-            {...register('province')}
+        <div className="grid grid-cols-1 gap-3 sm:grid-cols-3">
+          <FormField
+            control={form.control}
+            name="province"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>Tỉnh/Thành phố</FormLabel>
+                <FormControl>
+                  <Input {...field} />
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
           />
-          {errors.province != null ? (
-            <p id="province-error" role="alert" className="text-destructive mt-1 text-sm">
-              {errors.province.message}
-            </p>
-          ) : null}
-        </div>
-        <div className="space-y-1.5">
-          <Label htmlFor="district">Quận/Huyện</Label>
-          <Input
-            id="district"
-            aria-invalid={errors.district != null}
-            aria-describedby={errors.district != null ? 'district-error' : undefined}
-            {...register('district')}
+          <FormField
+            control={form.control}
+            name="district"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>Quận/Huyện</FormLabel>
+                <FormControl>
+                  <Input {...field} />
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
           />
-          {errors.district != null ? (
-            <p id="district-error" role="alert" className="text-destructive mt-1 text-sm">
-              {errors.district.message}
-            </p>
-          ) : null}
-        </div>
-        <div className="space-y-1.5">
-          <Label htmlFor="ward">Phường/Xã</Label>
-          <Input
-            id="ward"
-            aria-invalid={errors.ward != null}
-            aria-describedby={errors.ward != null ? 'ward-error' : undefined}
-            {...register('ward')}
+          <FormField
+            control={form.control}
+            name="ward"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>Phường/Xã</FormLabel>
+                <FormControl>
+                  <Input {...field} />
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
           />
-          {errors.ward != null ? (
-            <p id="ward-error" role="alert" className="text-destructive mt-1 text-sm">
-              {errors.ward.message}
-            </p>
-          ) : null}
         </div>
-      </div>
-      <div className="space-y-1.5">
-        <Label htmlFor="detail">Địa chỉ chi tiết</Label>
-        <Input
-          id="detail"
-          placeholder="Số nhà, tên đường..."
-          aria-invalid={errors.detail != null}
-          aria-describedby={errors.detail != null ? 'detail-error' : undefined}
-          {...register('detail')}
+        <FormField
+          control={form.control}
+          name="detail"
+          render={({ field }) => (
+            <FormItem>
+              <FormLabel>Địa chỉ chi tiết</FormLabel>
+              <FormControl>
+                <Input placeholder="Số nhà, tên đường..." {...field} />
+              </FormControl>
+              <FormMessage />
+            </FormItem>
+          )}
         />
-        {errors.detail != null ? (
-          <p id="detail-error" role="alert" className="text-destructive mt-1 text-sm">
-            {errors.detail.message}
-          </p>
-        ) : null}
-      </div>
-      <Controller
-        control={control}
-        name="isDefault"
-        render={({ field }) => (
-          <div className="flex items-center gap-2 text-sm">
-            <Checkbox
-              id="isDefault"
-              checked={field.value}
-              onCheckedChange={(checked) => {
-                field.onChange(checked === true);
-              }}
-            />
-            <Label htmlFor="isDefault">Đặt làm địa chỉ mặc định</Label>
-          </div>
-        )}
-      />
-      <div className="flex gap-2">
-        <Button type="submit" disabled={saveAddress.isPending}>
-          {saveAddress.isPending ? 'Đang lưu...' : 'Lưu địa chỉ'}
-        </Button>
-        <Button type="button" variant="outline" onClick={onDone}>
-          Huỷ
-        </Button>
-      </div>
-    </form>
+        <Controller
+          control={form.control}
+          name="isDefault"
+          render={({ field }) => (
+            <div className="flex items-center gap-2 text-sm">
+              <Checkbox
+                id="isDefault"
+                checked={field.value}
+                onCheckedChange={(checked) => {
+                  field.onChange(checked === true);
+                }}
+              />
+              <Label htmlFor="isDefault">Đặt làm địa chỉ mặc định</Label>
+            </div>
+          )}
+        />
+        <div className="flex gap-2">
+          <Button type="submit" disabled={saveAddress.isPending}>
+            {saveAddress.isPending ? 'Đang lưu...' : 'Lưu địa chỉ'}
+          </Button>
+          <Button type="button" variant="outline" onClick={onDone}>
+            Huỷ
+          </Button>
+        </div>
+      </form>
+    </Form>
   );
 }
 

@@ -1,8 +1,14 @@
-import { notify } from '@repo/shared/notification';
 import { QueryClient } from '@tanstack/react-query';
 
 import { ApiError } from '@/shared/lib/errors/api-error';
 
+/**
+ * No `mutations.onError` default here — that used to toast a generic message on every failed
+ * mutation, *in addition to* the specific message each mutation hook's own `onError` already showed
+ * (react-query v5 runs both), producing a double toast on every failure. The one place a mutation
+ * toasts is now `useApiMutation` (`shared/lib/hooks/useApiMutation.ts`), which every mutation hook
+ * goes through.
+ */
 export function makeQueryClient() {
   return new QueryClient({
     defaultOptions: {
@@ -18,10 +24,6 @@ export function makeQueryClient() {
       },
       mutations: {
         retry: false,
-        onError: (error) => {
-          const message = error instanceof ApiError ? error.message : 'Đã có lỗi xảy ra, vui lòng thử lại';
-          notify.error(message);
-        },
       },
     },
   });

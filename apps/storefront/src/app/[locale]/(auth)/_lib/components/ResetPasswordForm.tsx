@@ -5,7 +5,6 @@ import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 
 import { zodResolver } from '@hookform/resolvers/zod';
-import { useToast } from '@repo/shared/hooks/useToast';
 import { Button } from '@repo/ui/button';
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '@repo/ui/form';
 import { Loader2 } from 'lucide-react';
@@ -18,7 +17,6 @@ import { PasswordInput } from '@/app/[locale]/(auth)/_lib/components/PasswordInp
 import { useApiErrorMessage } from '@/app/[locale]/(auth)/_lib/hooks/useApiErrorMessage';
 import type { ResetPasswordFormInput } from '@/app/[locale]/(auth)/_lib/schemas/auth';
 import { ResetPasswordFormSchema } from '@/app/[locale]/(auth)/_lib/schemas/auth';
-import { ApiError } from '@/shared/lib/errors/api-error';
 
 interface ResetPasswordFormProps {
   readonly token: string;
@@ -28,8 +26,7 @@ interface ResetPasswordFormProps {
 export function ResetPasswordForm({ token, uid }: ResetPasswordFormProps) {
   const router = useRouter();
   const locale = useLocale();
-  const notify = useToast();
-  const { apiError, setApiError, handleApiError } = useApiErrorMessage();
+  const { apiError, setApiError, reportApiError } = useApiErrorMessage();
 
   const form = useForm<ResetPasswordFormInput>({
     resolver: zodResolver(ResetPasswordFormSchema),
@@ -44,9 +41,7 @@ export function ResetPasswordForm({ token, uid }: ResetPasswordFormProps) {
       await resetPasswordAction({ token, uid, password: values.password });
       router.push(`/${locale}/login`);
     } catch (err) {
-      const fallbackMessage = 'Đặt lại mật khẩu thất bại. Link có thể đã hết hạn.';
-      handleApiError(err, fallbackMessage);
-      notify.error(err instanceof ApiError ? err.message : fallbackMessage);
+      reportApiError(err, 'Đặt lại mật khẩu thất bại. Link có thể đã hết hạn.');
     }
   };
 

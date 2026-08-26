@@ -1,42 +1,19 @@
 'use client';
 
-import { useEffect } from 'react';
-
 import { getProductsByIds, mergeWishlistAfterLogin } from '@repo/api-sdk/endpoints/wishlist';
 import type { Product } from '@repo/schemas/catalog';
 import { useQuery } from '@tanstack/react-query';
 import { create } from 'zustand';
 
 import { ensureApiMockingReady } from '@/shared/lib/api-mocking';
+import { createPersistedListStore } from '@/shared/lib/hooks/createPersistedListStore';
 
 /** A Wishlist line references a Product only — no SKU/Variant, no quantity (glossary.md — WishlistItem). */
 export interface WishlistItem {
   productId: string;
 }
 
-const WISHLIST_STORAGE_KEY = 'wishlist-storage-v1';
-const WISHLIST_STORAGE_VERSION = 1;
-
-interface PersistedWishlistV1 {
-  version: 1;
-  items: WishlistItem[];
-}
-
-function readPersistedWishlist(): WishlistItem[] {
-  try {
-    const raw = localStorage.getItem(WISHLIST_STORAGE_KEY);
-    if (raw === null) return [];
-    const parsed = JSON.parse(raw) as PersistedWishlistV1;
-    return parsed.items;
-  } catch {
-    return [];
-  }
-}
-
-function persistWishlist(items: WishlistItem[]): void {
-  const persisted: PersistedWishlistV1 = { version: WISHLIST_STORAGE_VERSION, items };
-  localStorage.setItem(WISHLIST_STORAGE_KEY, JSON.stringify(persisted));
-}
+const wishlistStore = createPersistedListStore<WishlistItem>('wishlist-storage-v1', 1);
 
 interface WishlistState {
   items: WishlistItem[];
@@ -45,23 +22,25 @@ interface WishlistState {
   replaceItems: (items: WishlistItem[]) => void;
 }
 
-// Khởi tạo rỗng (không đọc localStorage ở module scope) để khớp SSR — giống useCart.ts (ADR-0006).
+// Khởi tạo rỗng (không đọc localStorage ở module scope) để khớp SSR — dữ liệu thật được nạp qua
+// initWishlistFromStorage() trong useHydrateWishlist() (client-only, sau lần render đầu tiên).
+// Xem ADR-0006; hydrate + versioned envelope giờ dùng chung `createPersistedListStore` với useCart.ts.
 export const useWishlistStore = create<WishlistState>((set, get) => ({
   items: [],
   addItem: (productId) => {
     if (get().items.some((i) => i.productId === productId)) return;
     const items = [...get().items, { productId }];
     set({ items });
-    persistWishlist(items);
+    wishlistStore.write(items);
   },
   removeItem: (productId) => {
     const items = get().items.filter((i) => i.productId !== productId);
     set({ items });
-    persistWishlist(items);
+    wishlistStore.write(items);
   },
   replaceItems: (items) => {
     set({ items });
-    persistWishlist(items);
+    wishlistStore.write(items);
   },
 }));
 
@@ -70,7 +49,7 @@ export function resetWishlistState(): void {
 }
 
 export function initWishlistFromStorage(): void {
-  useWishlistStore.setState({ items: readPersistedWishlist() });
+  useWishlistStore.setState({ items: wishlistStore.read() });
 }
 
 export function clearWishlist(): void {
@@ -93,15 +72,8 @@ export async function mergeWishlistOnLogin(): Promise<void> {
   replaceWishlistItems(mergedProducts.map((p) => ({ productId: p.id })));
 }
 
-let hasHydrated = false;
-
 function useHydrateWishlist(): void {
-  useEffect(() => {
-    if (!hasHydrated) {
-      hasHydrated = true;
-      initWishlistFromStorage();
-    }
-  }, []);
+  wishlistStore.useHydrateOnce(initWishlistFromStorage);
 }
 
 /**

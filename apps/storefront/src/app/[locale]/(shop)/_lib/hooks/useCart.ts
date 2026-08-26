@@ -1,12 +1,11 @@
 'use client';
 
-import { useEffect } from 'react';
-
 import { getSkusByIds, mergeCartAfterLogin } from '@repo/api-sdk/endpoints/cart';
 import { useQuery } from '@tanstack/react-query';
 import { create } from 'zustand';
 
 import { ensureApiMockingReady } from '@/shared/lib/api-mocking';
+import { createPersistedListStore } from '@/shared/lib/hooks/createPersistedListStore';
 
 /** A Cart line references a SKU directly — no productId/Color/Size stored separately (glossary.md). */
 export interface CartItem {
@@ -24,29 +23,8 @@ export interface CartLine extends CartItem {
   size: string | null;
 }
 
-const CART_STORAGE_KEY = 'cart-storage-v2'; // v2: {skuId, quantity} — v1's {variantId, price, ...} shape is dropped, not migrated
-const CART_STORAGE_VERSION = 2;
-
-interface PersistedCartV2 {
-  version: 2;
-  items: CartItem[];
-}
-
-function readPersistedCart(): CartItem[] {
-  try {
-    const raw = localStorage.getItem(CART_STORAGE_KEY);
-    if (raw === null) return [];
-    const parsed = JSON.parse(raw) as PersistedCartV2;
-    return parsed.items;
-  } catch {
-    return [];
-  }
-}
-
-function persistCart(items: CartItem[]): void {
-  const persisted: PersistedCartV2 = { version: CART_STORAGE_VERSION, items };
-  localStorage.setItem(CART_STORAGE_KEY, JSON.stringify(persisted));
-}
+// v2: {skuId, quantity} — v1's {variantId, price, ...} shape is dropped, not migrated.
+const cartStore = createPersistedListStore<CartItem>('cart-storage-v2', 2);
 
 interface CartState {
   items: CartItem[];
@@ -72,25 +50,25 @@ export const useCartStore = create<CartState>((set, get) => ({
         ? [...get().items, { skuId, quantity }]
         : get().items.map((i) => (i.skuId === skuId ? { ...i, quantity: i.quantity + quantity } : i));
     set({ items });
-    persistCart(items);
+    cartStore.write(items);
   },
   setQuantity: (skuId, quantity) => {
     const items = quantity <= 0 ? get().items.filter((i) => i.skuId !== skuId) : get().items.map((i) => (i.skuId === skuId ? { ...i, quantity } : i));
     set({ items });
-    persistCart(items);
+    cartStore.write(items);
   },
   removeItem: (skuId) => {
     const items = get().items.filter((i) => i.skuId !== skuId);
     set({ items });
-    persistCart(items);
+    cartStore.write(items);
   },
   clearCart: () => {
     set({ items: [] });
-    persistCart([]);
+    cartStore.write([]);
   },
   replaceItems: (items) => {
     set({ items });
-    persistCart(items);
+    cartStore.write(items);
   },
 }));
 
@@ -99,7 +77,7 @@ export function resetCartState(): void {
 }
 
 export function initCartFromStorage(): void {
-  useCartStore.setState({ items: readPersistedCart(), isHydrated: true });
+  useCartStore.setState({ items: cartStore.read(), isHydrated: true });
 }
 
 export function clearCart(): void {
@@ -126,19 +104,12 @@ const cartKeys = {
   lines: (skuIds: string[]) => ['cart', 'lines', skuIds] as const,
 };
 
-let hasHydrated = false;
-
 /**
  * Public cart hook — `items` are always live-resolved `CartLine`s (price/stock/name/image read fresh
  * from the SKU, never cached), so "always read từ SKU tại thời điểm truy vấn" holds by construction.
  */
 export function useCart() {
-  useEffect(() => {
-    if (!hasHydrated) {
-      hasHydrated = true;
-      initCartFromStorage();
-    }
-  }, []);
+  cartStore.useHydrateOnce(initCartFromStorage);
 
   const rawItems = useCartStore((s) => s.items);
   const isHydrated = useCartStore((s) => s.isHydrated);

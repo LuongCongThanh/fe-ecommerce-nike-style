@@ -20,8 +20,7 @@
     "./hooks/useDebounce": "./src/hooks/useDebounce.ts",
     "./hooks/useLocalStorage": "./src/hooks/useLocalStorage.ts",
     "./hooks/useMediaQuery": "./src/hooks/useMediaQuery.ts",
-    "./hooks/usePagination": "./src/hooks/usePagination.ts",
-    "./hooks/useToast": "./src/hooks/useToast.ts"
+    "./hooks/usePagination": "./src/hooks/usePagination.ts"
   },
   "dependencies": {
     "@repo/ui": "workspace:*",

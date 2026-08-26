@@ -1,22 +1,19 @@
 'use client';
 
-import { notify } from '@repo/shared/notification';
-import { useMutation, useQueryClient } from '@tanstack/react-query';
+import { useQueryClient } from '@tanstack/react-query';
 
 import { addressActions } from '@/app/[locale]/(shop)/_lib/api/address';
 import { addressKeys } from '@/app/[locale]/(shop)/_lib/hooks/addresses/addressKeys';
-import { ApiError } from '@/shared/lib/errors/api-error';
+import { useApiMutation } from '@/shared/lib/hooks/useApiMutation';
 
 export const useSetDefaultAddress = () => {
   const qc = useQueryClient();
-  return useMutation({
+  return useApiMutation({
     mutationFn: async (id: string) => addressActions.setDefault(id),
+    successMessage: 'Đã đặt làm địa chỉ mặc định',
+    errorFallback: 'Cập nhật thất bại. Vui lòng thử lại.',
     onSuccess: async () => {
       await qc.invalidateQueries({ queryKey: addressKeys.list() });
-      notify.success('Đã đặt làm địa chỉ mặc định');
-    },
-    onError: (error) => {
-      notify.error(error instanceof ApiError ? error.message : 'Cập nhật thất bại. Vui lòng thử lại.');
     },
   });
 };

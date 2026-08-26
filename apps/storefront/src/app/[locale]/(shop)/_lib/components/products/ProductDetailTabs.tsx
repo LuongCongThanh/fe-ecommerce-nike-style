@@ -5,6 +5,8 @@ import { cn } from '@repo/shared/utils';
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from '@repo/ui/accordion';
 import { Check, Star } from 'lucide-react';
 
+import { isMockContentEnabled } from '@/shared/lib/mock-content';
+
 interface Review {
   id: number;
   author: string;
@@ -59,7 +61,7 @@ const FEATURES = [
  *
  * `rating` and `reviewCount` come from the product API and stay visible — those are real.
  */
-const SHOW_PLACEHOLDER_CONTENT = process.env.NODE_ENV !== 'production';
+const SHOW_PLACEHOLDER_CONTENT = isMockContentEnabled();
 
 export function ProductDetailTabs({ description, rating, reviewCount }: ProductDetailTabsProps) {
   return (
