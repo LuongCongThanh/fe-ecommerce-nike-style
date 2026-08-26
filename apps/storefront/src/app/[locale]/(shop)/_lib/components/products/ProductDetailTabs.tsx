@@ -1,3 +1,4 @@
+// Hallmark redesign · design-system: design.md · scope: app page (functional, no enrichment)
 'use client';
 
 import { cn } from '@repo/shared/utils';
@@ -64,7 +65,7 @@ export function ProductDetailTabs({ description, rating, reviewCount }: ProductD
   return (
     <Accordion type="multiple" defaultValue={['description']} className="w-full">
       <AccordionItem value="description" className="border-b">
-        <AccordionTrigger className="py-5 text-base font-semibold hover:no-underline">Mô tả sản phẩm</AccordionTrigger>
+        <AccordionTrigger className="hover:text-foreground/80 py-5 text-base font-semibold hover:no-underline">Mô tả sản phẩm</AccordionTrigger>
         <AccordionContent className="pb-6">
           <p className="text-muted-foreground text-base leading-relaxed">{description}</p>
           <ul className="text-muted-foreground mt-4 space-y-2 text-sm">
@@ -90,7 +91,7 @@ export function ProductDetailTabs({ description, rating, reviewCount }: ProductD
 
       {SHOW_PLACEHOLDER_CONTENT ? (
         <AccordionItem value="specs" className="border-b">
-          <AccordionTrigger className="py-5 text-base font-semibold hover:no-underline">Thông số</AccordionTrigger>
+          <AccordionTrigger className="hover:text-foreground/80 py-5 text-base font-semibold hover:no-underline">Thông số</AccordionTrigger>
           <AccordionContent className="pb-6">
             <div className="divide-y rounded-xl border">
               {FEATURES.map((f) => (
@@ -105,7 +106,9 @@ export function ProductDetailTabs({ description, rating, reviewCount }: ProductD
       ) : null}
 
       <AccordionItem value="reviews" className="border-b">
-        <AccordionTrigger className="py-5 text-base font-semibold hover:no-underline">Đánh giá ({reviewCount})</AccordionTrigger>
+        <AccordionTrigger className="hover:text-foreground/80 py-5 text-base font-semibold hover:no-underline">
+          Đánh giá ({reviewCount})
+        </AccordionTrigger>
         <AccordionContent className="pb-6">
           <div className="mb-6 flex items-center gap-6">
             <div className="text-center">

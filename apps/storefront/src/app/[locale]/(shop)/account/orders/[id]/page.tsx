@@ -1,3 +1,4 @@
+// Hallmark redesign · design-system: design.md · scope: app page (functional, no enrichment)
 import { PageShell } from '@/app/[locale]/(shop)/_lib/components/layout/PageShell';
 import { OrderDetailClient } from '@/app/[locale]/(shop)/_lib/components/orders/OrderDetailClient';
 

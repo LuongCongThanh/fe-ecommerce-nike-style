@@ -1,3 +1,4 @@
+// Hallmark redesign · design-system: design.md · scope: app page (functional, no enrichment)
 'use client';
 
 import Link from 'next/link';
@@ -20,15 +21,15 @@ export function CartSummary({ locale }: CartSummaryProps) {
 
   return (
     <div className="bg-card rounded-xl border p-6 shadow-sm">
-      <h2 className="mb-5 text-lg font-bold">Tóm tắt đơn hàng</h2>
+      <h2 className="mb-5 text-lg font-bold tracking-tight">Tóm tắt đơn hàng</h2>
 
       <div className="space-y-3 text-sm">
-        <div className="flex justify-between">
+        <div className="flex justify-between gap-3">
           <span className="text-muted-foreground">Tạm tính ({totalQty} sản phẩm)</span>
           <span className="font-medium">{formatCurrency(total)}</span>
         </div>
 
-        <div className="flex items-center justify-between">
+        <div className="flex items-center justify-between gap-3">
           <span className="text-muted-foreground">Phí vận chuyển</span>
           <span className="text-success-700 flex items-center gap-1.5 font-medium">
             <Truck className="size-3.5" />
@@ -36,9 +37,9 @@ export function CartSummary({ locale }: CartSummaryProps) {
           </span>
         </div>
 
-        <Separator className="my-2 opacity-20" />
+        <Separator className="my-2" />
 
-        <div className="flex justify-between text-base font-bold">
+        <div className="flex justify-between gap-3 text-base font-bold">
           <span>Tổng cộng</span>
           <span className="text-brand-600">{formatCurrency(total)}</span>
         </div>
@@ -58,7 +59,10 @@ export function CartSummary({ locale }: CartSummaryProps) {
         </Button>
       )}
 
-      <Link href={`/${locale}/home`} className="text-muted-foreground hover:text-foreground mt-3 block text-center text-sm transition-colors">
+      <Link
+        href={`/${locale}/home`}
+        className="text-secondary-600 hover:text-secondary-700 mt-3 block text-center text-sm font-medium transition-colors"
+      >
         Tiếp tục mua sắm
       </Link>
     </div>

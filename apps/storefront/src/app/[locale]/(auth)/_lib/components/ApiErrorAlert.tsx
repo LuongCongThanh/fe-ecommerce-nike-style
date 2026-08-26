@@ -1,3 +1,4 @@
+// Hallmark redesign · design-system: design.md · scope: app page (functional, no enrichment)
 interface ApiErrorAlertProps {
   readonly message: string | null;
 }
@@ -8,11 +9,7 @@ export function ApiErrorAlert({ message }: ApiErrorAlertProps): React.JSX.Elemen
   }
 
   return (
-    <div
-      role="alert"
-      aria-live="assertive"
-      className="rounded-lg border border-red-500/30 bg-red-500/10 px-4 py-3 text-sm text-red-600 dark:text-red-400"
-    >
+    <div role="alert" aria-live="assertive" className="border-destructive/30 bg-destructive/10 text-destructive rounded-lg border px-4 py-3 text-sm">
       {message}
     </div>
   );

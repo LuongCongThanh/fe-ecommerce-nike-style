@@ -1,7 +1,7 @@
 'use client';
 
 import { getProducts } from '@repo/api-sdk/endpoints/catalog';
-import { useQuery } from '@tanstack/react-query';
+import { keepPreviousData, useQuery } from '@tanstack/react-query';
 
 import { catalogKeys } from '@/app/[locale]/(shop)/_lib/hooks/products/catalogKeys';
 import type { CatalogFilters } from '@/app/[locale]/(shop)/_lib/utils/catalogUrlState';
@@ -14,6 +14,9 @@ export function useProducts(categorySlug: string | undefined, filters: CatalogFi
   return useQuery({
     queryKey: catalogKeys.products(categorySlug, filters),
     enabled: options?.enabled ?? true,
+    // Paging or changing a filter keeps the current grid on screen while the next one loads, instead
+    // of collapsing to a spinner and back. Callers surface the in-between state via `isPlaceholderData`.
+    placeholderData: keepPreviousData,
     queryFn: async () => {
       await ensureApiMockingReady();
       return getProducts({

@@ -1,3 +1,4 @@
+// Hallmark redesign · design-system: design.md · scope: app page (functional, no enrichment)
 'use client';
 
 import { useRouter, useSearchParams } from 'next/navigation';
@@ -23,23 +24,23 @@ export function CategoryClient({ categorySlug }: CategoryClientProps): React.JSX
   };
 
   if (isLoading) {
-    return <p className="text-muted-foreground py-12 text-center">Đang tải sản phẩm…</p>;
+    return <p className="text-muted-foreground py-16 text-center text-sm">Đang tải sản phẩm…</p>;
   }
 
   if (isError || data === undefined) {
     return (
-      <div className="flex min-h-100 flex-col items-center justify-center rounded-2xl border border-dashed text-center">
-        <h3 className="text-lg font-medium">Không thể tải sản phẩm</h3>
-        <p className="text-muted-foreground mt-1">Vui lòng thử lại sau.</p>
+      <div className="flex min-h-100 flex-col items-center justify-center gap-1 rounded-xl border border-dashed py-16 text-center">
+        <h3 className="text-lg font-semibold">Không thể tải sản phẩm</h3>
+        <p className="text-muted-foreground text-sm">Vui lòng thử lại sau.</p>
       </div>
     );
   }
 
   if (data.data.length === 0) {
     return (
-      <div className="flex min-h-100 flex-col items-center justify-center rounded-2xl border border-dashed text-center">
-        <h3 className="text-lg font-medium">Không tìm thấy sản phẩm nào</h3>
-        <p className="text-muted-foreground mt-1">Thử thay đổi bộ lọc để tìm thấy nhiều kết quả hơn.</p>
+      <div className="flex min-h-100 flex-col items-center justify-center gap-1 rounded-xl border border-dashed py-16 text-center">
+        <h3 className="text-lg font-semibold">Không tìm thấy sản phẩm nào</h3>
+        <p className="text-muted-foreground text-sm">Thử thay đổi bộ lọc để tìm thấy nhiều kết quả hơn.</p>
       </div>
     );
   }

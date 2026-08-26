@@ -1,3 +1,4 @@
+// Apple Design pass · §1 the card responds on pointer-down, not on release
 'use client';
 
 import Image from 'next/image';
@@ -5,10 +6,12 @@ import Link from 'next/link';
 
 import { formatCurrency } from '@repo/shared/utils';
 import { Badge } from '@repo/ui/badge';
+import { motion } from 'framer-motion';
 import { Heart, Star } from 'lucide-react';
 
 import { useIsWishlisted } from '@/app/[locale]/(shop)/_lib/hooks/useWishlist';
 import { resolveDiscount } from '@/app/[locale]/(shop)/_lib/utils/discount';
+import { SPRING_MOMENTUM, SPRING_UI } from '@/shared/lib/motion';
 import type { BadgeValue } from '@/shared/types/product';
 
 interface BadgeLabels {
@@ -74,7 +77,11 @@ export function ProductCard({
         className="focus-visible:ring-ring block rounded-xl outline-none focus-visible:ring-2 focus-visible:ring-offset-2"
         data-product-id={String(id)}
       >
-        <div className="bg-card group-hover:border-foreground/30 overflow-hidden rounded-xl border shadow-sm transition-[box-shadow,border-color] duration-(--duration-normal) ease-out group-hover:shadow-md">
+        <motion.div
+          whileTap={{ scale: 0.975 }}
+          transition={SPRING_UI}
+          className="bg-card group-hover:border-foreground/30 overflow-hidden rounded-xl border shadow-sm transition-[box-shadow,border-color] duration-(--duration-normal) ease-out group-hover:shadow-md"
+        >
           {/* Image */}
           <div className="bg-muted relative aspect-[4/5] overflow-hidden">
             <Image
@@ -118,20 +125,25 @@ export function ProductCard({
               </div>
             ) : null}
           </div>
-        </div>
+        </motion.div>
       </Link>
 
-      <button
+      {/* Favouriting is a playful confirm — the one place a little overshoot is earned. */}
+      <motion.button
         type="button"
         aria-label={isWishlisted ? 'Bỏ khỏi yêu thích' : 'Thêm vào yêu thích'}
         aria-pressed={isWishlisted}
         onClick={() => {
           toggleWishlist();
         }}
-        className="bg-background/80 hover:bg-background absolute top-3 right-3 flex size-10 items-center justify-center rounded-full backdrop-blur-sm transition-colors"
+        whileTap={{ scale: 0.88 }}
+        transition={SPRING_UI}
+        className="bg-background/80 hover:bg-background focus-visible:ring-ring absolute top-3 right-3 flex size-10 items-center justify-center rounded-full backdrop-blur-sm transition-colors focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:outline-none"
       >
-        <Heart className={isWishlisted ? 'text-accent-600 fill-accent-600 size-4' : 'text-foreground size-4'} />
-      </button>
+        <motion.span key={String(isWishlisted)} initial={{ scale: 0.7 }} animate={{ scale: 1 }} transition={SPRING_MOMENTUM} className="flex">
+          <Heart className={isWishlisted ? 'text-accent-600 fill-accent-600 size-4' : 'text-foreground size-4'} />
+        </motion.span>
+      </motion.button>
     </div>
   );
 }

@@ -1,5 +1,6 @@
 'use client';
 
+// Hallmark redesign · design-system: design.md · scope: app page (functional, no enrichment)
 import Link from 'next/link';
 import { useRouter, useSearchParams } from 'next/navigation';
 
@@ -73,7 +74,10 @@ export function LoginForm() {
             <FormItem>
               <div className="flex items-center justify-between">
                 <FormLabel>Mật khẩu</FormLabel>
-                <Link href={`/${locale}/forgot-password`} className="text-foreground text-xs underline hover:underline">
+                <Link
+                  href={`/${locale}/forgot-password`}
+                  className="text-secondary-600 hover:text-secondary-700 text-xs font-medium transition-colors"
+                >
                   Quên mật khẩu?
                 </Link>
               </div>
@@ -90,9 +94,9 @@ export function LoginForm() {
           {isSubmitting ? 'Đang đăng nhập...' : 'Đăng nhập'}
         </Button>
 
-        <p className="text-center text-sm text-neutral-500">
+        <p className="text-muted-foreground text-center text-sm">
           Chưa có tài khoản?{' '}
-          <Link href={`/${locale}/register`} className="text-foreground font-medium underline hover:underline">
+          <Link href={`/${locale}/register`} className="text-secondary-600 hover:text-secondary-700 font-medium transition-colors">
             Đăng ký ngay
           </Link>
         </p>

@@ -9,16 +9,17 @@ import { ArrowUpRight } from 'lucide-react';
 import { useLocale, useTranslations } from 'next-intl';
 
 import { HeroCarousel } from '@/app/[locale]/(shop)/_lib/components/home/HeroCarousel';
+import { EASE_OUT } from '@/app/[locale]/(shop)/_lib/components/home/motion';
 import { TrustBadgeList } from '@/app/[locale]/(shop)/_lib/components/home/TrustBadgeList';
 
 const revealUp = {
-  hidden: { opacity: 0, y: 12 },
-  show: { opacity: 1, y: 0 },
+  hidden: { opacity: 0, transform: 'translateY(12px)' },
+  show: { opacity: 1, transform: 'translateY(0px)' },
 };
 
 const reducedVariant = {
-  hidden: { opacity: 1, y: 0 },
-  show: { opacity: 1, y: 0 },
+  hidden: { opacity: 1, transform: 'translateY(0px)' },
+  show: { opacity: 1, transform: 'translateY(0px)' },
 };
 
 export function SectionHero(): React.JSX.Element {
@@ -26,7 +27,7 @@ export function SectionHero(): React.JSX.Element {
   const t = useTranslations('home.hero');
   const prefersReducedMotion = useReducedMotion() === true;
   const variants = prefersReducedMotion ? reducedVariant : revealUp;
-  const childTransition = prefersReducedMotion ? { duration: 0 } : { duration: 0.3, ease: [0, 0, 0.2, 1] as const };
+  const childTransition = prefersReducedMotion ? { duration: 0 } : { duration: 0.3, ease: EASE_OUT };
 
   return (
     <section className="bg-background relative isolate overflow-hidden border-b">
@@ -83,7 +84,13 @@ export function SectionHero(): React.JSX.Element {
           </motion.div>
         </motion.div>
 
-        <HeroCarousel />
+        <motion.div
+          initial={prefersReducedMotion ? false : { opacity: 0, transform: 'translateY(16px)' }}
+          animate={{ opacity: 1, transform: 'translateY(0px)' }}
+          transition={prefersReducedMotion ? { duration: 0 } : { duration: 0.3, ease: EASE_OUT, delay: 0.15 }}
+        >
+          <HeroCarousel />
+        </motion.div>
       </div>
     </section>
   );

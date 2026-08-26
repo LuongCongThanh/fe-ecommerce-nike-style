@@ -1,6 +1,8 @@
+// Hallmark redesign · design-system: design.md · scope: app page (functional, no enrichment)
 'use client';
 
 import { QueryState } from '@repo/shared/query-state';
+import { ChevronRight } from 'lucide-react';
 
 import { CategoryClient } from '@/app/[locale]/(shop)/_lib/components/categories/CategoryClient';
 import { FilterSidebar } from '@/app/[locale]/(shop)/_lib/components/categories/FilterSidebar';
@@ -50,27 +52,25 @@ function CategoryPageContent({
 
   return (
     <>
-      <nav className="text-muted-foreground mb-8 text-sm">
-        <ol className="flex items-center space-x-2">
-          <li>Trang chủ</li>
-          <li>/</li>
-          <li>Danh mục</li>
-          {parent !== null ? (
-            <>
-              <li>/</li>
-              <li>{parent.name}</li>
-            </>
-          ) : null}
-          <li>/</li>
-          <li className="text-foreground font-medium">{category.name}</li>
-        </ol>
+      <nav className="text-muted-foreground mb-8 flex items-center gap-1.5 text-sm">
+        <span>Trang chủ</span>
+        <ChevronRight className="size-3.5" />
+        <span>Danh mục</span>
+        {parent !== null ? (
+          <>
+            <ChevronRight className="size-3.5" />
+            <span>{parent.name}</span>
+          </>
+        ) : null}
+        <ChevronRight className="size-3.5" />
+        <span className="text-foreground line-clamp-1 font-medium">{category.name}</span>
       </nav>
 
-      <header className="mb-12">
-        <h1 className="text-3xl font-bold tracking-tight sm:text-4xl">{category.name}</h1>
+      <header className="mb-10">
+        <h1 className="text-3xl font-bold tracking-tight text-balance sm:text-4xl">{category.name}</h1>
       </header>
 
-      <div className="flex flex-col gap-8 lg:flex-row">
+      <div className="flex flex-col gap-8 lg:flex-row lg:gap-10">
         {/* Sidebar */}
         <div className="w-full lg:w-64 lg:shrink-0">
           <FilterSidebar activeCategorySlug={slug} />

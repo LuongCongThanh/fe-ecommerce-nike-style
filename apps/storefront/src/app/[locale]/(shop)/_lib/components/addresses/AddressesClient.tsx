@@ -1,5 +1,6 @@
 'use client';
 
+// Hallmark redesign · design-system: design.md · scope: app page (functional, no enrichment)
 import { useState } from 'react';
 
 import { zodResolver } from '@hookform/resolvers/zod';
@@ -42,9 +43,9 @@ function AddressForm({ initial, id, onDone }: { readonly initial: AddressFormInp
           },
         );
       })}
-      className="space-y-3 rounded-xl border p-4"
+      className="bg-card space-y-4 rounded-xl border p-4"
     >
-      <div>
+      <div className="space-y-1.5">
         <Label htmlFor="fullName">Họ tên người nhận</Label>
         <Input
           id="fullName"
@@ -59,7 +60,7 @@ function AddressForm({ initial, id, onDone }: { readonly initial: AddressFormInp
           </p>
         ) : null}
       </div>
-      <div>
+      <div className="space-y-1.5">
         <Label htmlFor="phone">Số điện thoại</Label>
         <Input
           id="phone"
@@ -76,7 +77,7 @@ function AddressForm({ initial, id, onDone }: { readonly initial: AddressFormInp
         ) : null}
       </div>
       <div className="grid grid-cols-1 gap-3 sm:grid-cols-3">
-        <div>
+        <div className="space-y-1.5">
           <Label htmlFor="province">Tỉnh/Thành phố</Label>
           <Input
             id="province"
@@ -90,7 +91,7 @@ function AddressForm({ initial, id, onDone }: { readonly initial: AddressFormInp
             </p>
           ) : null}
         </div>
-        <div>
+        <div className="space-y-1.5">
           <Label htmlFor="district">Quận/Huyện</Label>
           <Input
             id="district"
@@ -104,7 +105,7 @@ function AddressForm({ initial, id, onDone }: { readonly initial: AddressFormInp
             </p>
           ) : null}
         </div>
-        <div>
+        <div className="space-y-1.5">
           <Label htmlFor="ward">Phường/Xã</Label>
           <Input
             id="ward"
@@ -119,7 +120,7 @@ function AddressForm({ initial, id, onDone }: { readonly initial: AddressFormInp
           ) : null}
         </div>
       </div>
-      <div>
+      <div className="space-y-1.5">
         <Label htmlFor="detail">Địa chỉ chi tiết</Label>
         <Input
           id="detail"
@@ -188,18 +189,23 @@ function AddressCard({ address }: { readonly address: StorefrontAddress }) {
   }
 
   return (
-    <div className="space-y-2 rounded-xl border p-4">
-      <div className="flex items-center gap-2">
+    <div className="bg-card space-y-2 rounded-xl border p-4">
+      <div className="flex flex-wrap items-center gap-2">
         <p className="font-medium">{address.fullName}</p>
-        {address.isDefault ? <Badge variant="outline">Mặc định</Badge> : null}
+        {address.isDefault ? (
+          <Badge variant="outline" className="border-secondary-300 text-secondary-700">
+            Mặc định
+          </Badge>
+        ) : null}
       </div>
       <p className="text-muted-foreground text-sm">{address.phone}</p>
-      <p className="text-muted-foreground text-sm">
+      <p className="text-muted-foreground text-sm text-pretty">
         {address.detail}, {address.ward}, {address.district}, {address.province}
       </p>
-      <div className="flex flex-wrap gap-2 pt-1">
+      <div className="flex flex-wrap gap-2 pt-2">
         <Button
           variant="outline"
+          className="border-secondary-300 text-secondary-700 hover:bg-secondary-50 hover:text-secondary-800"
           onClick={() => {
             setEditing(true);
           }}
@@ -209,6 +215,7 @@ function AddressCard({ address }: { readonly address: StorefrontAddress }) {
         {!address.isDefault && (
           <Button
             variant="outline"
+            className="border-secondary-300 text-secondary-700 hover:bg-secondary-50 hover:text-secondary-800"
             disabled={setDefaultAddress.isPending}
             onClick={() => {
               setDefaultAddress.mutate(address.id);
@@ -219,7 +226,7 @@ function AddressCard({ address }: { readonly address: StorefrontAddress }) {
         )}
         <ConfirmDialog
           trigger={
-            <Button variant="outline" disabled={deleteAddress.isPending}>
+            <Button variant="outline" className="text-destructive hover:bg-destructive/10 hover:text-destructive" disabled={deleteAddress.isPending}>
               Xoá
             </Button>
           }
@@ -256,7 +263,7 @@ export function AddressesClient(): React.JSX.Element {
           <AddressCard key={address.id} address={address} />
         ))}
 
-        {addresses?.length === 0 && !isAdding ? <p className="text-muted-foreground text-center">Bạn chưa có địa chỉ nào.</p> : null}
+        {addresses?.length === 0 && !isAdding ? <p className="text-muted-foreground py-10 text-center">Bạn chưa có địa chỉ nào.</p> : null}
 
         {isAdding ? (
           <AddressForm
