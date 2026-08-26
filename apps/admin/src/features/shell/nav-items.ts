@@ -16,5 +16,6 @@ export const NAV_ITEMS: NavItem[] = [
   { href: '/orders', label: 'Đơn hàng', icon: ShoppingBag, permission: 'order:read' },
   { href: '/categories', label: 'Danh mục', icon: Tags, permission: 'category:read' },
   { href: '/inventory', label: 'Tồn kho', icon: Boxes, permission: 'inventory:read' },
+  { href: '/staff', label: 'Nhân viên', icon: Users, permission: 'staff:read' },
   { href: '/customers', label: 'Khách hàng', icon: Users },
 ];

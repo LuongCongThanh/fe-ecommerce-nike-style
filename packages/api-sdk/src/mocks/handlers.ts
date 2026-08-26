@@ -3,6 +3,7 @@ import { http, HttpResponse } from 'msw';
 import type { CategoryInput, ProductInput } from '@repo/schemas/catalog';
 import type { InventoryUpdateInput } from '@repo/schemas/inventory';
 import type { OrderStatus } from '@repo/schemas/order';
+import type { StaffAssignRolesInput, StaffCreateInput, StaffUpdateInput } from '@repo/schemas/staff';
 
 import { createAddress, deleteAddress, getAddresses, setDefaultAddress, updateAddress } from './address-fixtures';
 import {
@@ -51,13 +52,18 @@ import {
 import { getInventoryAuditLog, listInventory, updateInventoryOnHand } from './inventory-fixtures';
 import { consumeReservation, createReservation } from './reservation-fixtures';
 import {
+  assignStaffRoles,
+  createStaff,
   createStaffSession,
+  deleteStaff,
   findStaffByAccessToken,
   findStaffByEmail,
+  listStaff,
   permissionsFor,
   revokeByStaffRefreshToken,
   rotateStaffRefreshToken,
   toPublicStaff,
+  updateStaffInfo,
 } from './staff-fixtures';
 import { mergeAccountWishlist, resolveProducts } from './wishlist-fixtures';
 
@@ -336,6 +342,73 @@ export const handlers = [
       return errorResponse(status, result.code, result.message);
     }
     return HttpResponse.json(result.order);
+  }),
+
+  // Admin Staff & Role management (issue #23) — gated on a valid Staff session; the `staff:*`
+  // permissions themselves are enforced client-side (menu/button visibility), same convention as
+  // every other Admin CRUD slice in this mock server.
+  http.get('*/api/admin/staff/', ({ request }) => {
+    const staff = findStaffByAccessToken(request.headers.get('authorization'));
+    if (staff === undefined) {
+      return errorResponse(401, 'UNAUTHORIZED', 'Chưa đăng nhập hoặc phiên đã hết hạn.');
+    }
+
+    return HttpResponse.json({ data: listStaff() });
+  }),
+
+  http.post('*/api/admin/staff/', async ({ request }) => {
+    const staff = findStaffByAccessToken(request.headers.get('authorization'));
+    if (staff === undefined) {
+      return errorResponse(401, 'UNAUTHORIZED', 'Chưa đăng nhập hoặc phiên đã hết hạn.');
+    }
+
+    const body = (await request.json()) as StaffCreateInput;
+    const result = createStaff(body);
+    if (!result.ok) {
+      return errorResponse(409, result.code, result.message);
+    }
+    return HttpResponse.json(result.staff, { status: 201 });
+  }),
+
+  http.patch('*/api/admin/staff/:id/', async ({ request, params }) => {
+    const staff = findStaffByAccessToken(request.headers.get('authorization'));
+    if (staff === undefined) {
+      return errorResponse(401, 'UNAUTHORIZED', 'Chưa đăng nhập hoặc phiên đã hết hạn.');
+    }
+
+    const body = (await request.json()) as StaffUpdateInput;
+    const result = updateStaffInfo(Number(params.id), body);
+    if (!result.ok) {
+      return errorResponse(404, result.code, result.message);
+    }
+    return HttpResponse.json(result.staff);
+  }),
+
+  http.delete('*/api/admin/staff/:id/', ({ request, params }) => {
+    const staff = findStaffByAccessToken(request.headers.get('authorization'));
+    if (staff === undefined) {
+      return errorResponse(401, 'UNAUTHORIZED', 'Chưa đăng nhập hoặc phiên đã hết hạn.');
+    }
+
+    const result = deleteStaff(Number(params.id));
+    if (!result.ok) {
+      return errorResponse(404, result.code, result.message);
+    }
+    return HttpResponse.json({});
+  }),
+
+  http.patch('*/api/admin/staff/:id/roles/', async ({ request, params }) => {
+    const staff = findStaffByAccessToken(request.headers.get('authorization'));
+    if (staff === undefined) {
+      return errorResponse(401, 'UNAUTHORIZED', 'Chưa đăng nhập hoặc phiên đã hết hạn.');
+    }
+
+    const body = (await request.json()) as StaffAssignRolesInput;
+    const result = assignStaffRoles(Number(params.id), body.roles);
+    if (!result.ok) {
+      return errorResponse(404, result.code, result.message);
+    }
+    return HttpResponse.json(result.staff);
   }),
 
   http.post('*/api/auth/register/', async ({ request }) => {
