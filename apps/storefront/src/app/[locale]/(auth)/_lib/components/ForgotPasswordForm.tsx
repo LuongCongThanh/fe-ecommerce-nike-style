@@ -5,7 +5,6 @@ import { useState } from 'react';
 import Link from 'next/link';
 
 import { zodResolver } from '@hookform/resolvers/zod';
-import { useToast } from '@repo/shared/hooks/useToast';
 import { Button } from '@repo/ui/button';
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '@repo/ui/form';
 import { Input } from '@repo/ui/input';
@@ -18,12 +17,10 @@ import { ApiErrorAlert } from '@/app/[locale]/(auth)/_lib/components/ApiErrorAle
 import { useApiErrorMessage } from '@/app/[locale]/(auth)/_lib/hooks/useApiErrorMessage';
 import type { ForgotPasswordFormInput } from '@/app/[locale]/(auth)/_lib/schemas/auth';
 import { ForgotPasswordFormSchema } from '@/app/[locale]/(auth)/_lib/schemas/auth';
-import { ApiError } from '@/shared/lib/errors/api-error';
 
 export function ForgotPasswordForm() {
   const locale = useLocale();
-  const notify = useToast();
-  const { apiError, setApiError, handleApiError } = useApiErrorMessage();
+  const { apiError, setApiError, reportApiError } = useApiErrorMessage();
   const [submitted, setSubmitted] = useState(false);
 
   const form = useForm<ForgotPasswordFormInput>({
@@ -39,9 +36,7 @@ export function ForgotPasswordForm() {
       await forgotPasswordAction(values.email);
       setSubmitted(true);
     } catch (err) {
-      const fallbackMessage = 'Đã có lỗi xảy ra. Vui lòng thử lại.';
-      handleApiError(err, fallbackMessage);
-      notify.error(err instanceof ApiError ? err.message : fallbackMessage);
+      reportApiError(err, 'Đã có lỗi xảy ra. Vui lòng thử lại.');
     }
   };
 

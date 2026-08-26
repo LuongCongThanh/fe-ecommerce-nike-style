@@ -5,7 +5,6 @@ import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 
 import { zodResolver } from '@hookform/resolvers/zod';
-import { useToast } from '@repo/shared/hooks/useToast';
 import { Button } from '@repo/ui/button';
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '@repo/ui/form';
 import { Input } from '@repo/ui/input';
@@ -19,13 +18,11 @@ import { PasswordInput } from '@/app/[locale]/(auth)/_lib/components/PasswordInp
 import { useApiErrorMessage } from '@/app/[locale]/(auth)/_lib/hooks/useApiErrorMessage';
 import type { RegisterFormInput } from '@/app/[locale]/(auth)/_lib/schemas/auth';
 import { RegisterFormSchema } from '@/app/[locale]/(auth)/_lib/schemas/auth';
-import { ApiError } from '@/shared/lib/errors/api-error';
 
 export function RegisterForm() {
   const router = useRouter();
   const locale = useLocale();
-  const notify = useToast();
-  const { apiError, setApiError, handleApiError } = useApiErrorMessage();
+  const { apiError, setApiError, reportApiError } = useApiErrorMessage();
 
   const form = useForm<RegisterFormInput>({
     resolver: zodResolver(RegisterFormSchema),
@@ -45,9 +42,7 @@ export function RegisterForm() {
       });
       router.push(`/${locale}/home`);
     } catch (err) {
-      const fallbackMessage = 'Đăng ký thất bại. Vui lòng thử lại.';
-      handleApiError(err, fallbackMessage);
-      notify.error(err instanceof ApiError ? err.message : fallbackMessage);
+      reportApiError(err, 'Đăng ký thất bại. Vui lòng thử lại.');
     }
   };
 

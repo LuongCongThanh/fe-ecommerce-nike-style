@@ -21,6 +21,7 @@
     "./endpoints/catalog": "./src/endpoints/catalog.ts",
     "./endpoints/checkout": "./src/endpoints/checkout.ts",
     "./endpoints/orders": "./src/endpoints/orders.ts",
+    "./endpoints/order-transitions": "./src/endpoints/order-transitions.ts",
     "./endpoints/profile": "./src/endpoints/profile.ts",
     "./endpoints/wishlist": "./src/endpoints/wishlist.ts",
     "./mocks": "./src/mocks/handlers.ts",

@@ -1,3 +1,6 @@
+import { ProfileSchema, ProfileUpdateInputSchema } from '@repo/schemas/profile';
+import type { Profile, ProfileUpdateInput } from '@repo/schemas/profile';
+
 import { apiClient } from '../client/fetcher';
 import { API_BASE_URL } from '../env/config';
 
@@ -6,22 +9,15 @@ const PROFILE_API = {
   UPDATE: `${API_BASE_URL}/api/auth/me/update/`,
 } as const;
 
-export interface StorefrontProfile {
-  id: number;
-  email: string;
-  firstName: string;
-  lastName: string;
-  phone?: string;
-  avatar: string | null;
-  role: 'customer' | 'admin' | 'staff';
-  isActive: boolean;
-  createdAt: string;
-}
+// Domain type lives once in `@repo/schemas/profile`; re-exported under the storefront's existing
+// `StorefrontProfile` name. See `orders.ts` for why (same convention, same reasoning).
+export type StorefrontProfile = Profile;
 
 export async function getProfile(): Promise<StorefrontProfile> {
-  return apiClient.get<StorefrontProfile>(PROFILE_API.ME);
+  return apiClient.get<StorefrontProfile>(PROFILE_API.ME, undefined, { schema: ProfileSchema });
 }
 
-export async function updateProfile(data: Partial<StorefrontProfile>): Promise<StorefrontProfile> {
-  return apiClient.patch<StorefrontProfile>(PROFILE_API.UPDATE, data);
+export async function updateProfile(data: ProfileUpdateInput): Promise<StorefrontProfile> {
+  const parsed = ProfileUpdateInputSchema.parse(data);
+  return apiClient.patch<StorefrontProfile>(PROFILE_API.UPDATE, parsed, { schema: ProfileSchema });
 }

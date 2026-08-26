@@ -2,11 +2,9 @@
 // Apple Design pass · springs + instant feedback + materials (safe-mode: no new gesture code)
 'use client';
 
-import { useEffect } from 'react';
-import { useRouter } from 'next/navigation';
-
 import { formatCurrency } from '@repo/shared/utils';
 import { Button } from '@repo/ui/button';
+import { FormControl, FormField, FormItem, FormLabel, FormMessage } from '@repo/ui/form';
 import { Input } from '@repo/ui/input';
 import { motion } from 'framer-motion';
 import { Loader2 } from 'lucide-react';
@@ -14,6 +12,7 @@ import { useLocale, useTranslations } from 'next-intl';
 import { useFormContext } from 'react-hook-form';
 
 import { useCreateOrder } from '@/app/[locale]/(shop)/_lib/hooks/checkout/useCreateOrder';
+import { useRedirectIfCartEmpty } from '@/app/[locale]/(shop)/_lib/hooks/checkout/useRedirectIfCartEmpty';
 import { useReservation } from '@/app/[locale]/(shop)/_lib/hooks/checkout/useReservation';
 import { useCart } from '@/app/[locale]/(shop)/_lib/hooks/useCart';
 import type { CheckoutInput } from '@/app/[locale]/(shop)/_lib/schemas/checkout';
@@ -24,25 +23,13 @@ type CheckoutValues = CheckoutInput;
 export function CheckoutClient() {
   const t = useTranslations('checkout');
   const locale = useLocale();
-  const router = useRouter();
-  const { items, itemCount, isHydrated } = useCart();
+  const { items } = useCart();
   const reservation = useReservation(items);
   const createOrder = useCreateOrder(locale, reservation.reservationId);
+  useRedirectIfCartEmpty(locale);
 
-  // Gated on `isHydrated` — both `items` (live-resolved via an async query) and the persisted
-  // `itemCount` start out empty on every fresh mount, which made this redirect fire immediately even
-  // for a cart that genuinely has items, before localStorage had a chance to load (issue #16).
-  useEffect(() => {
-    if (isHydrated && itemCount === 0) {
-      router.replace(`/${locale}/cart`);
-    }
-  }, [isHydrated, itemCount, router, locale]);
-
-  const {
-    register,
-    handleSubmit,
-    formState: { errors },
-  } = useFormContext<CheckoutValues>();
+  const form = useFormContext<CheckoutValues>();
+  const { register, handleSubmit } = form;
 
   const onSubmit = (data: CheckoutValues) => {
     createOrder.mutate(data);
@@ -54,108 +41,84 @@ export function CheckoutClient() {
       <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} className="bg-card rounded-xl border p-6 shadow-sm">
         <h2 className="mb-4 text-lg font-semibold">{t('shippingAddress')}</h2>
         <div className="grid gap-6 md:grid-cols-2">
-          <div className="space-y-2">
-            <label htmlFor="fullName" className="text-sm font-medium">
-              {t('fullName')}
-            </label>
-            <Input
-              id="fullName"
-              autoComplete="name"
-              {...register('fullName')}
-              placeholder="Nguyễn Văn A"
-              state={errors.fullName !== undefined ? 'error' : 'default'}
-              aria-describedby={errors.fullName !== undefined ? 'fullName-error' : undefined}
-            />
-            {errors.fullName !== undefined && (
-              <p id="fullName-error" className="text-error-500 text-xs">
-                {t(`errors.${errors.fullName.message ?? 'required'}`)}
-              </p>
+          <FormField
+            control={form.control}
+            name="fullName"
+            render={({ field, fieldState }) => (
+              <FormItem>
+                <FormLabel>{t('fullName')}</FormLabel>
+                <FormControl>
+                  <Input autoComplete="name" placeholder="Nguyễn Văn A" state={fieldState.invalid ? 'error' : 'default'} {...field} />
+                </FormControl>
+                <FormMessage />
+              </FormItem>
             )}
-          </div>
-          <div className="space-y-2">
-            <label htmlFor="phoneNumber" className="text-sm font-medium">
-              {t('phoneNumber')}
-            </label>
-            <Input
-              id="phoneNumber"
-              autoComplete="tel"
-              {...register('phoneNumber')}
-              placeholder="0901234567"
-              state={errors.phoneNumber !== undefined ? 'error' : 'default'}
-              aria-describedby={errors.phoneNumber !== undefined ? 'phoneNumber-error' : undefined}
-            />
-            {errors.phoneNumber !== undefined && (
-              <p id="phoneNumber-error" className="text-error-500 text-xs">
-                {t(`errors.${errors.phoneNumber.message ?? 'required'}`)}
-              </p>
+          />
+          <FormField
+            control={form.control}
+            name="phoneNumber"
+            render={({ field, fieldState }) => (
+              <FormItem>
+                <FormLabel>{t('phoneNumber')}</FormLabel>
+                <FormControl>
+                  <Input autoComplete="tel" placeholder="0901234567" state={fieldState.invalid ? 'error' : 'default'} {...field} />
+                </FormControl>
+                <FormMessage />
+              </FormItem>
             )}
-          </div>
-          <div className="col-span-full space-y-2">
-            <label htmlFor="address" className="text-sm font-medium">
-              {t('address')}
-            </label>
-            <Input
-              id="address"
-              autoComplete="street-address"
-              {...register('address')}
-              placeholder="123 Đường ABC..."
-              state={errors.address !== undefined ? 'error' : 'default'}
-              aria-describedby={errors.address !== undefined ? 'address-error' : undefined}
-            />
-            {errors.address !== undefined && (
-              <p id="address-error" className="text-error-500 text-xs">
-                {t(`errors.${errors.address.message ?? 'required'}`)}
-              </p>
+          />
+          <FormField
+            control={form.control}
+            name="address"
+            render={({ field, fieldState }) => (
+              <FormItem className="col-span-full">
+                <FormLabel>{t('address')}</FormLabel>
+                <FormControl>
+                  <Input autoComplete="street-address" placeholder="123 Đường ABC..." state={fieldState.invalid ? 'error' : 'default'} {...field} />
+                </FormControl>
+                <FormMessage />
+              </FormItem>
             )}
-          </div>
-          <div className="space-y-2">
-            <label htmlFor="city" className="text-sm font-medium">
-              {t('city')}
-            </label>
-            <Input
-              id="city"
-              {...register('city')}
-              state={errors.city !== undefined ? 'error' : 'default'}
-              aria-describedby={errors.city !== undefined ? 'city-error' : undefined}
-            />
-            {errors.city !== undefined && (
-              <p id="city-error" className="text-error-500 text-xs">
-                {t(`errors.${errors.city.message ?? 'required'}`)}
-              </p>
+          />
+          <FormField
+            control={form.control}
+            name="city"
+            render={({ field, fieldState }) => (
+              <FormItem>
+                <FormLabel>{t('city')}</FormLabel>
+                <FormControl>
+                  <Input state={fieldState.invalid ? 'error' : 'default'} {...field} />
+                </FormControl>
+                <FormMessage />
+              </FormItem>
             )}
-          </div>
-          <div className="space-y-2">
-            <label htmlFor="district" className="text-sm font-medium">
-              {t('district')}
-            </label>
-            <Input
-              id="district"
-              {...register('district')}
-              state={errors.district !== undefined ? 'error' : 'default'}
-              aria-describedby={errors.district !== undefined ? 'district-error' : undefined}
-            />
-            {errors.district !== undefined && (
-              <p id="district-error" className="text-error-500 text-xs">
-                {t(`errors.${errors.district.message ?? 'required'}`)}
-              </p>
+          />
+          <FormField
+            control={form.control}
+            name="district"
+            render={({ field, fieldState }) => (
+              <FormItem>
+                <FormLabel>{t('district')}</FormLabel>
+                <FormControl>
+                  <Input state={fieldState.invalid ? 'error' : 'default'} {...field} />
+                </FormControl>
+                <FormMessage />
+              </FormItem>
             )}
-          </div>
-          <div className="space-y-2">
-            <label htmlFor="ward" className="text-sm font-medium">
-              {t('ward')}
-            </label>
-            <Input
-              id="ward"
-              {...register('ward')}
-              state={errors.ward !== undefined ? 'error' : 'default'}
-              aria-describedby={errors.ward !== undefined ? 'ward-error' : undefined}
-            />
-            {errors.ward !== undefined && (
-              <p id="ward-error" className="text-error-500 text-xs">
-                {t(`errors.${errors.ward.message ?? 'required'}`)}
-              </p>
+          />
+          <FormField
+            control={form.control}
+            name="ward"
+            render={({ field, fieldState }) => (
+              <FormItem>
+                <FormLabel>{t('ward')}</FormLabel>
+                <FormControl>
+                  <Input state={fieldState.invalid ? 'error' : 'default'} {...field} />
+                </FormControl>
+                <FormMessage />
+              </FormItem>
             )}
-          </div>
+          />
         </div>
       </motion.div>
 

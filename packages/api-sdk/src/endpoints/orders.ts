@@ -1,3 +1,6 @@
+import { CreateOrderPayloadSchema, OrderListSchema, OrderSchema } from '@repo/schemas/order';
+import type { CreateOrderPayload, Order, OrderPaymentMethod, OrderPaymentStatus, OrderStatus } from '@repo/schemas/order';
+
 import { apiClient } from '../client/fetcher';
 import { API_BASE_URL } from '../env/config';
 
@@ -8,74 +11,36 @@ const ORDERS_API = {
   RETURN_REQUEST: (id: string) => `${API_BASE_URL}/api/orders/${id}/return-request/`,
 } as const;
 
-/** Mirrors `shared/types/order.ts`'s `OrderStatusSchema` (glossary.md — Cart & Order state machine). */
-export type StorefrontOrderStatus = 'PENDING' | 'PROCESSING' | 'PACKED' | 'SHIPPED' | 'DELIVERED' | 'CANCELLED' | 'RETURN_REQUESTED' | 'RETURNED';
-/** MVP is COD-only, no payment gateway step (Decision #7 — decision-log.md). */
-export type StorefrontPaymentMethod = 'cod';
-export type StorefrontPaymentStatus = 'pending' | 'paid' | 'failed' | 'refunded';
-
-export interface StorefrontOrderItem {
-  id: number;
-  product_name: string;
-  variant_name: string;
-  image: string;
-  price: number;
-  quantity: number;
-  subtotal: number;
-}
-
-export interface StorefrontOrder {
-  id: number;
-  code: string;
-  status: StorefrontOrderStatus;
-  payment_method: StorefrontPaymentMethod;
-  payment_status: StorefrontPaymentStatus;
-  items: StorefrontOrderItem[];
-  subtotal: number;
-  shipping_fee: number;
-  total: number;
-  address: string;
-  note: string;
-  created_at: string;
-  updated_at: string;
-  delivered_at: string | null;
-}
-
-export interface CreateOrderPayload {
-  fullName: string;
-  phoneNumber: string;
-  address: string;
-  city: string;
-  district: string;
-  ward: string;
-  shippingMethod: 'standard' | 'express';
-  paymentMethod: StorefrontPaymentMethod;
-  note?: string;
-  voucherCode?: string;
-  items: { variantId: string; quantity: number }[];
-  /** The Reservation created when Checkout started (glossary.md — Reservation) — the backend commits *this* reservation's stock, it doesn't re-derive from `items`. */
-  reservationId: string;
-  /** Idempotency key: the same key retried (double-click, reload, network retry) replays the original order instead of creating a duplicate. */
-  requestKey: string;
-}
+// The domain type lives once in `@repo/schemas/order` — re-exported here under the storefront's
+// existing `StorefrontOrder*` names so nothing importing from `@repo/api-sdk/endpoints/orders` has to
+// change. `getOrders`/`getOrder`/... now validate the raw response through `OrderSchema` instead of
+// blindly trusting the shape via a type assertion — the same `apiClient.get(url, params, { schema })`
+// convention `catalog.ts` already uses.
+export type StorefrontOrder = Order;
+export type StorefrontOrderStatus = OrderStatus;
+export type StorefrontPaymentMethod = OrderPaymentMethod;
+export type StorefrontPaymentStatus = OrderPaymentStatus;
+export type StorefrontOrderItem = Order['items'][number];
+export type { CreateOrderPayload };
 
 export async function getOrders(): Promise<StorefrontOrder[]> {
-  return apiClient.get<StorefrontOrder[]>(ORDERS_API.LIST);
+  return apiClient.get<StorefrontOrder[]>(ORDERS_API.LIST, undefined, { schema: OrderListSchema });
 }
 
 export async function getOrder(id: string): Promise<StorefrontOrder> {
-  return apiClient.get<StorefrontOrder>(ORDERS_API.DETAIL(id));
+  return apiClient.get<StorefrontOrder>(ORDERS_API.DETAIL(id), undefined, { schema: OrderSchema });
 }
 
 export async function cancelOrder(id: string): Promise<StorefrontOrder> {
-  return apiClient.post<StorefrontOrder>(ORDERS_API.CANCEL(id));
+  return apiClient.post<StorefrontOrder>(ORDERS_API.CANCEL(id), undefined, { schema: OrderSchema });
 }
 
 /** Return request (issue #17, glossary.md) — only valid from DELIVERED within the 7-day return window; rejected server-side otherwise. */
 export async function requestReturn(id: string): Promise<StorefrontOrder> {
-  return apiClient.post<StorefrontOrder>(ORDERS_API.RETURN_REQUEST(id));
+  return apiClient.post<StorefrontOrder>(ORDERS_API.RETURN_REQUEST(id), undefined, { schema: OrderSchema });
 }
 
 export async function createOrder(data: CreateOrderPayload): Promise<StorefrontOrder> {
-  return apiClient.post<StorefrontOrder>(ORDERS_API.LIST, data);
+  const parsed = CreateOrderPayloadSchema.parse(data);
+  return apiClient.post<StorefrontOrder>(ORDERS_API.LIST, parsed, { schema: OrderSchema });
 }

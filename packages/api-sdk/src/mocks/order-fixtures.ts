@@ -12,6 +12,7 @@
  * snapshot, not a live reference); left as a known gap rather than widening that shape for this issue.
  */
 
+import { canCancelOrder, isWithinReturnWindow } from '../endpoints/order-transitions';
 import type { StorefrontOrder, StorefrontOrderStatus } from '../endpoints/orders';
 
 type MockOrder = StorefrontOrder & { userId: number };
@@ -133,9 +134,6 @@ export function recordRequestKey(requestKey: string, orderId: number): void {
   orderIdByRequestKey.set(requestKey, orderId);
 }
 
-/** Return window per glossary.md — Return & Refund: 7 days from the moment an Order became DELIVERED. */
-export const RETURN_WINDOW_MS = 7 * 24 * 60 * 60 * 1000;
-
 export type OrderTransitionResult = { ok: true; order: StorefrontOrder } | { ok: false; code: string; message: string };
 
 function updateOrderStatus(userId: number, orderId: number, status: StorefrontOrderStatus): StorefrontOrder {
@@ -153,7 +151,7 @@ export function cancelOrderForCustomer(userId: number, orderId: number): OrderTr
   if (order === undefined) {
     return { ok: false, code: 'NOT_FOUND', message: 'Không tìm thấy đơn hàng.' };
   }
-  if (order.status !== 'PENDING' && order.status !== 'PROCESSING') {
+  if (!canCancelOrder(order)) {
     return { ok: false, code: 'INVALID_TRANSITION', message: 'Đơn hàng này không còn ở trạng thái có thể huỷ.' };
   }
   return { ok: true, order: updateOrderStatus(userId, orderId, 'CANCELLED') };
@@ -168,8 +166,7 @@ export function requestReturnForCustomer(userId: number, orderId: number): Order
   if (order.status !== 'DELIVERED' || order.delivered_at === null) {
     return { ok: false, code: 'INVALID_TRANSITION', message: 'Chỉ có thể yêu cầu trả hàng cho đơn đã giao.' };
   }
-  const deliveredAt = new Date(order.delivered_at).getTime();
-  if (Date.now() - deliveredAt > RETURN_WINDOW_MS) {
+  if (!isWithinReturnWindow(order.delivered_at)) {
     return { ok: false, code: 'RETURN_WINDOW_EXPIRED', message: 'Đã quá hạn 7 ngày để yêu cầu trả hàng.' };
   }
   return { ok: true, order: updateOrderStatus(userId, orderId, 'RETURN_REQUESTED') };

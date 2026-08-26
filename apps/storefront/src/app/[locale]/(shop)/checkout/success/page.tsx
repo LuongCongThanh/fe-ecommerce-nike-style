@@ -6,21 +6,11 @@ import { Button } from '@repo/ui/button';
 import { Separator } from '@repo/ui/separator';
 import { CheckCircle } from 'lucide-react';
 
-import { orderActions } from '@/app/[locale]/(shop)/_lib/api/order';
-import type { Order } from '@/shared/types/order';
+import { getOrderOrNull } from '@/app/[locale]/(shop)/_lib/api/order';
 
 // Depends on the request's auth cookies to fetch a real order — see `account/orders/page.tsx` for why
 // this can't be statically generated.
 export const dynamic = 'force-dynamic';
-
-async function getOrder(orderId: string | undefined): Promise<Order | null> {
-  if (orderId === undefined || orderId === '') return null;
-  try {
-    return await orderActions.detail(orderId);
-  } catch {
-    return null;
-  }
-}
 
 export default async function CheckoutSuccessPage({
   params,
@@ -31,7 +21,7 @@ export default async function CheckoutSuccessPage({
 }): Promise<React.JSX.Element> {
   const { locale } = await params;
   const { orderId } = await searchParams;
-  const order = await getOrder(orderId);
+  const order = await getOrderOrNull(orderId);
 
   return (
     <div className="mx-auto flex min-h-[70vh] max-w-lg flex-col items-center justify-center gap-6 px-4 py-12 text-center">

@@ -2,57 +2,23 @@
 
 import Image from 'next/image';
 import Link from 'next/link';
-import { useRouter } from 'next/navigation';
 
-import { notify } from '@repo/shared/notification';
 import { QueryState } from '@repo/shared/query-state';
 import { formatCurrency } from '@repo/shared/utils';
 import { Button } from '@repo/ui/button';
 import { Heart, ShoppingCart, Trash2 } from 'lucide-react';
 
-import { useCart } from '@/app/[locale]/(shop)/_lib/hooks/useCart';
 import { useWishlist } from '@/app/[locale]/(shop)/_lib/hooks/useWishlist';
+import { useMoveToCart } from '@/app/[locale]/(shop)/_lib/hooks/wishlist/useMoveToCart';
 import { getProductPriceRange } from '@/app/[locale]/(shop)/_lib/utils/priceRange';
-import { getVariantAxes, resolveSku } from '@/app/[locale]/(shop)/_lib/utils/variantResolution';
 
 interface WishlistClientProps {
   readonly locale: string;
 }
 
 export function WishlistClient({ locale }: WishlistClientProps) {
-  const router = useRouter();
   const { products, isLoading, isError, removeFromWishlist } = useWishlist();
-  const { addToCart } = useCart();
-
-  /**
-   * Move to cart (glossary.md — Move to cart): a Product with ≥1 Variant navigates to the PDP so the
-   * customer picks Color/Size themselves; a Product with no Variant (hidden 1:1 SKU) is added straight
-   * to the cart and dropped from the wishlist.
-   */
-  const handleMoveToCart = (product: (typeof products)[number]) => {
-    const axes = getVariantAxes(product.skus);
-    const hasVariant = axes.colors.length > 0 || axes.sizes.length > 0;
-
-    if (hasVariant) {
-      router.push(`/${locale}/products/${product.slug}`);
-      return;
-    }
-
-    const sku = resolveSku(product.skus, {});
-    if (sku === null || sku.stock === 0) {
-      notify.error('Sản phẩm đã hết hàng');
-      return;
-    }
-
-    const result = addToCart(sku.id, 1, sku.stock);
-    if (!result.ok) {
-      notify.error('Sản phẩm này đã có đủ số lượng tồn kho trong giỏ hàng.');
-      return;
-    }
-
-    removeFromWishlist(product.id);
-    notify.success('Đã chuyển sản phẩm vào giỏ hàng', { description: product.name });
-  };
+  const { moveToCart } = useMoveToCart(locale);
 
   if (products.length === 0 && !isLoading && !isError) {
     return (
@@ -95,7 +61,7 @@ export function WishlistClient({ locale }: WishlistClientProps) {
                   variant="default"
                   className="h-10 flex-1"
                   onClick={() => {
-                    handleMoveToCart(product);
+                    moveToCart(product);
                   }}
                 >
                   <ShoppingCart className="size-4" data-icon="inline-start" />

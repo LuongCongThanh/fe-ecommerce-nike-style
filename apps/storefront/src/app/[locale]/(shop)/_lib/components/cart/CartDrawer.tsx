@@ -5,7 +5,6 @@
 import Image from 'next/image';
 import Link from 'next/link';
 
-import { notify } from '@repo/shared/notification';
 import { formatCurrency } from '@repo/shared/utils';
 import { Button } from '@repo/ui/button';
 import { ScrollArea } from '@repo/ui/scroll-area';
@@ -15,7 +14,7 @@ import { ShoppingBag, Trash2 } from 'lucide-react';
 import { useLocale } from 'next-intl';
 
 import { QuantitySelector } from '@/app/[locale]/(shop)/_lib/components/common/QuantitySelector';
-import { useCart, useCartStore } from '@/app/[locale]/(shop)/_lib/hooks/useCart';
+import { useCart } from '@/app/[locale]/(shop)/_lib/hooks/useCart';
 
 interface CartDrawerProps {
   readonly children: React.ReactNode;
@@ -23,7 +22,7 @@ interface CartDrawerProps {
 
 export function CartDrawer({ children }: CartDrawerProps) {
   const locale = useLocale();
-  const { items, updateQuantity, removeCartItem, total, itemCount } = useCart();
+  const { items, updateQuantity, removeCartItemWithUndo, total, itemCount } = useCart();
 
   return (
     <Sheet>
@@ -96,16 +95,7 @@ export function CartDrawer({ children }: CartDrawerProps) {
                             size="icon"
                             aria-label="Xóa sản phẩm"
                             onClick={() => {
-                              removeCartItem(item.skuId);
-                              notify.success('Đã xóa sản phẩm khỏi giỏ hàng', {
-                                description: item.name,
-                                action: {
-                                  label: 'Hoàn tác',
-                                  onClick: () => {
-                                    useCartStore.getState().addItem(item.skuId, item.quantity);
-                                  },
-                                },
-                              });
+                              removeCartItemWithUndo(item.skuId);
                             }}
                             className="hover:text-destructive hover:bg-destructive/10 focus-visible:ring-destructive/40 text-muted-foreground focus-visible:ring-2"
                           >

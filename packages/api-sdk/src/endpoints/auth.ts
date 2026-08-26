@@ -1,3 +1,7 @@
+import { AuthSessionResponseSchema, RefreshSessionResponseSchema } from '@repo/schemas/auth';
+import type { AuthSessionResponse, RefreshSessionResponse } from '@repo/schemas/auth';
+import type { Profile } from '@repo/schemas/profile';
+
 import { apiClient } from '../client/fetcher';
 import { API_BASE_URL } from '../env/config';
 
@@ -10,17 +14,11 @@ const AUTH_API = {
   RESET_PASSWORD: `${API_BASE_URL}/api/auth/password/reset/confirm/`,
 } as const;
 
-export interface AuthUser {
-  id: number;
-  email: string;
-  firstName: string;
-  lastName: string;
-  phone?: string;
-  avatar: string | null;
-  role: 'customer' | 'admin' | 'staff';
-  isActive: boolean;
-  createdAt: string;
-}
+// Domain type lives once in `@repo/schemas/profile`; re-exported under the storefront's existing
+// `AuthUser` name — a login/register response's `user` is the same account Profile `GET /api/auth/me/`
+// returns, so it's the same schema, not a fourth hand-typed shape. See `orders.ts` for the convention.
+export type AuthUser = Profile;
+export type { AuthSessionResponse, RefreshSessionResponse };
 
 export interface LoginPayload {
   email: string;
@@ -44,26 +42,17 @@ export interface ForgotPasswordPayload {
   email: string;
 }
 
-export interface AuthSessionResponse {
-  user: AuthUser;
-  access: string;
-  refresh: string;
-}
-
-export interface RefreshSessionResponse {
-  access: string;
-  refresh: string;
-}
-
 export async function login(payload: LoginPayload): Promise<AuthSessionResponse> {
   return apiClient.post<AuthSessionResponse>(AUTH_API.LOGIN, payload, {
     skipRefresh: true,
+    schema: AuthSessionResponseSchema,
   });
 }
 
 export async function register(payload: RegisterPayload): Promise<AuthSessionResponse> {
   return apiClient.post<AuthSessionResponse>(AUTH_API.REGISTER, payload, {
     skipRefresh: true,
+    schema: AuthSessionResponseSchema,
   });
 }
 
@@ -77,6 +66,7 @@ export async function refreshSession(refreshToken: string): Promise<RefreshSessi
     { refreshToken },
     {
       skipRefresh: true,
+      schema: RefreshSessionResponseSchema,
     },
   );
 }

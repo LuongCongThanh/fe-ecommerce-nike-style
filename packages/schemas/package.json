@@ -14,7 +14,11 @@
     "./errors": "./src/errors/envelope.ts",
     "./catalog": "./src/catalog/catalog.ts",
     "./cart": "./src/cart/cart.ts",
-    "./wishlist": "./src/wishlist/wishlist.ts"
+    "./wishlist": "./src/wishlist/wishlist.ts",
+    "./order": "./src/order/order.ts",
+    "./address": "./src/address/address.ts",
+    "./profile": "./src/profile/profile.ts",
+    "./auth": "./src/auth/auth.ts"
   },
   "dependencies": {
     "zod": "^4.4.3"

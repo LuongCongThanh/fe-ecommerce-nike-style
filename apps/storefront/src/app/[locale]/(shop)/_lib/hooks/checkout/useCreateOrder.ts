@@ -3,14 +3,13 @@
 import { useRef } from 'react';
 import { useRouter } from 'next/navigation';
 
-import { notify } from '@repo/shared/notification';
-import { useMutation, useQueryClient } from '@tanstack/react-query';
+import { useQueryClient } from '@tanstack/react-query';
 
 import { orderActions } from '@/app/[locale]/(shop)/_lib/api/order';
 import { orderKeys } from '@/app/[locale]/(shop)/_lib/hooks/orders/orderKeys';
 import { clearCart, useCart } from '@/app/[locale]/(shop)/_lib/hooks/useCart';
 import type { CheckoutInput } from '@/app/[locale]/(shop)/_lib/schemas/checkout';
-import { ApiError } from '@/shared/lib/errors/api-error';
+import { useApiMutation } from '@/shared/lib/hooks/useApiMutation';
 
 /**
  * `reservationId` ties Place Order to the Reservation created when Checkout started; `requestKey` is
@@ -26,7 +25,7 @@ export const useCreateOrder = (locale: string, reservationId: string | null) => 
   // re-renders and retries of this hook instance.
   const requestKeyRef = useRef(crypto.randomUUID());
 
-  return useMutation({
+  return useApiMutation({
     mutationFn: async (data: CheckoutInput) => {
       if (reservationId === null) {
         throw new Error('Chưa giữ chỗ sản phẩm — vui lòng thử lại.');
@@ -38,14 +37,12 @@ export const useCreateOrder = (locale: string, reservationId: string | null) => 
         requestKey: requestKeyRef.current,
       });
     },
+    successMessage: 'Đặt hàng thành công!',
+    errorFallback: 'Đặt hàng thất bại. Vui lòng thử lại.',
     onSuccess: async (order) => {
       clearCart();
       await qc.invalidateQueries({ queryKey: orderKeys.list() });
-      notify.success('Đặt hàng thành công!');
       router.push(`/${locale}/checkout/success?orderId=${String(order.id)}`);
-    },
-    onError: (error) => {
-      notify.error(error instanceof ApiError ? error.message : 'Đặt hàng thất bại. Vui lòng thử lại.');
     },
   });
 };

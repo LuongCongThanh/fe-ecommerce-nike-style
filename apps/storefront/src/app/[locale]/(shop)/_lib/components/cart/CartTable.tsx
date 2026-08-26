@@ -4,7 +4,6 @@
 
 import Image from 'next/image';
 
-import { notify } from '@repo/shared/notification';
 import { formatCurrency } from '@repo/shared/utils';
 import { Button } from '@repo/ui/button';
 import { AnimatePresence, motion } from 'framer-motion';
@@ -12,10 +11,10 @@ import { Trash2 } from 'lucide-react';
 
 import { QuantitySelector } from '@/app/[locale]/(shop)/_lib/components/common/QuantitySelector';
 import type { CartLine } from '@/app/[locale]/(shop)/_lib/hooks/useCart';
-import { useCart, useCartStore } from '@/app/[locale]/(shop)/_lib/hooks/useCart';
+import { useCart } from '@/app/[locale]/(shop)/_lib/hooks/useCart';
 
 export function CartTable() {
-  const { items, updateQuantity, removeCartItem } = useCart();
+  const { items, updateQuantity, removeCartItemWithUndo } = useCart();
 
   return (
     <div className="space-y-3">
@@ -35,16 +34,7 @@ export function CartTable() {
               updateQuantity(item.skuId, qty);
             }}
             onRemove={() => {
-              removeCartItem(item.skuId);
-              notify.success('Đã xóa sản phẩm khỏi giỏ hàng', {
-                description: item.name,
-                action: {
-                  label: 'Hoàn tác',
-                  onClick: () => {
-                    useCartStore.getState().addItem(item.skuId, item.quantity);
-                  },
-                },
-              });
+              removeCartItemWithUndo(item.skuId);
             }}
           />
         ))}

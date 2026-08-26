@@ -1,8 +1,7 @@
 'use client';
 
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useState } from 'react';
 import Link from 'next/link';
-import { useRouter } from 'next/navigation';
 
 import { cn } from '@repo/shared/utils';
 import { Button } from '@repo/ui/button';
@@ -15,8 +14,10 @@ import { useLocale, useTranslations } from 'next-intl';
 import { CartDrawer } from '@/app/[locale]/(shop)/_lib/components/cart/CartDrawer';
 import { DesktopMegaMenu } from '@/app/[locale]/(shop)/_lib/components/navigation/DesktopMegaMenu';
 import { MobileNav } from '@/app/[locale]/(shop)/_lib/components/navigation/MobileNav';
-import { mergeCartOnLogin, useCart } from '@/app/[locale]/(shop)/_lib/hooks/useCart';
-import { mergeWishlistOnLogin, useWishlist } from '@/app/[locale]/(shop)/_lib/hooks/useWishlist';
+import { useCart } from '@/app/[locale]/(shop)/_lib/hooks/useCart';
+import { useHeaderSearch } from '@/app/[locale]/(shop)/_lib/hooks/useHeaderSearch';
+import { useMergeGuestDataOnLogin } from '@/app/[locale]/(shop)/_lib/hooks/useMergeGuestDataOnLogin';
+import { useWishlist } from '@/app/[locale]/(shop)/_lib/hooks/useWishlist';
 import { useAuth } from '@/core/session/useAuth';
 
 // Shared hover treatment for every icon-action button (search/account/wishlist/cart) — a small
@@ -67,26 +68,14 @@ function LogoMark() {
 export function Header() {
   const t = useTranslations('common');
   const locale = useLocale();
-  const router = useRouter();
 
-  const [searchOpen, setSearchOpen] = useState(false);
-  const [searchQuery, setSearchQuery] = useState('');
   const [isScrolled, setIsScrolled] = useState(false);
   const { itemCount } = useCart();
   const { itemCount: wishlistCount } = useWishlist();
-  const { isLoggedIn, logout, authStatus } = useAuth();
+  const { isLoggedIn, logout } = useAuth();
+  const search = useHeaderSearch(locale);
 
-  // Merge cart + wishlist sau đăng nhập (Decision #36, glossary.md — Merge Wishlist) — chạy đúng 1 lần
-  // khi status chuyển sang authenticated (đăng nhập/đăng ký thành công), không chạy lại mỗi lần Header
-  // re-render trong lúc đã đăng nhập.
-  const wasAuthenticated = useRef(false);
-  useEffect(() => {
-    if (!wasAuthenticated.current && authStatus === 'authenticated') {
-      mergeCartOnLogin().catch(() => undefined);
-      mergeWishlistOnLogin().catch(() => undefined);
-    }
-    wasAuthenticated.current = authStatus === 'authenticated';
-  }, [authStatus]);
+  useMergeGuestDataOnLogin();
 
   // Tracks scroll position so the full-width sticky bar can dock flat + elevated (blur, shadow,
   // visible border) once the page scrolls past the top, instead of a static bar — reinforces
@@ -101,15 +90,6 @@ export function Header() {
       window.removeEventListener('scroll', onScroll);
     };
   }, []);
-
-  const handleSearch = (e: React.SyntheticEvent<HTMLFormElement>) => {
-    e.preventDefault();
-    if (searchQuery.trim().length > 0) {
-      router.push(`/${locale}/search?q=${encodeURIComponent(searchQuery.trim())}`);
-      setSearchQuery('');
-      setSearchOpen(false);
-    }
-  };
 
   return (
     // Full-width, edge-to-edge sticky bar (reversal of the earlier floating-inset-bar treatment —
@@ -155,30 +135,20 @@ export function Header() {
 
         {/* Actions */}
         <div className="flex items-center gap-1">
-          {searchOpen ? (
-            <form onSubmit={handleSearch} className="flex items-center gap-2">
+          {search.isOpen ? (
+            <form onSubmit={search.submit} className="flex items-center gap-2">
               <Input
                 autoFocus
                 type="text"
                 aria-label={t('search')}
-                value={searchQuery}
+                value={search.query}
                 onChange={(e) => {
-                  setSearchQuery(e.target.value);
+                  search.setQuery(e.target.value);
                 }}
                 placeholder="Search products..."
                 className="h-11 w-48 rounded-lg sm:w-64"
               />
-              <Button
-                type="button"
-                variant="ghost"
-                size="icon"
-                aria-label={t('closeSearch')}
-                onClick={() => {
-                  setSearchOpen(false);
-                  setSearchQuery('');
-                }}
-                className={ICON_BUTTON_3D}
-              >
+              <Button type="button" variant="ghost" size="icon" aria-label={t('closeSearch')} onClick={search.close} className={ICON_BUTTON_3D}>
                 <X className="size-4" />
               </Button>
             </form>
@@ -187,9 +157,7 @@ export function Header() {
               variant="ghost"
               size="icon"
               aria-label={t('search')}
-              onClick={() => {
-                setSearchOpen(true);
-              }}
+              onClick={search.open}
               className={cn('hidden sm:inline-flex', ICON_BUTTON_3D)}
             >
               <Search className="size-5" />

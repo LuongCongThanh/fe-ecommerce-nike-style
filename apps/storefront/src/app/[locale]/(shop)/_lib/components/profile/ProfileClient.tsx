@@ -1,38 +1,15 @@
 'use client';
 
 // Hallmark redesign · design-system: design.md · scope: app page (functional, no enrichment)
-import { useEffect } from 'react';
-
-import { zodResolver } from '@hookform/resolvers/zod';
 import { QueryState } from '@repo/shared/query-state';
 import { Button } from '@repo/ui/button';
+import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '@repo/ui/form';
 import { Input } from '@repo/ui/input';
-import { Label } from '@repo/ui/label';
-import { useForm } from 'react-hook-form';
 
-import { useProfile } from '@/app/[locale]/(shop)/_lib/hooks/profile/useProfile';
-import { useUpdateProfile } from '@/app/[locale]/(shop)/_lib/hooks/profile/useUpdateProfile';
-import type { ProfileInput } from '@/app/[locale]/(shop)/_lib/schemas/profile';
-import { profileSchema } from '@/app/[locale]/(shop)/_lib/schemas/profile';
+import { useProfileForm } from '@/app/[locale]/(shop)/_lib/hooks/profile/useProfileForm';
 
 export function ProfileClient(): React.JSX.Element {
-  const { data: profile, isLoading, isError, refetch } = useProfile();
-  const updateProfile = useUpdateProfile();
-
-  const {
-    register,
-    handleSubmit,
-    reset,
-    formState: { errors },
-  } = useForm<ProfileInput>({
-    resolver: zodResolver(profileSchema),
-  });
-
-  useEffect(() => {
-    if (profile != null) {
-      reset({ firstName: profile.firstName, lastName: profile.lastName, phone: profile.phone ?? '' });
-    }
-  }, [profile, reset]);
+  const { form, onSubmit, isLoading, isError, refetch, isSaving } = useProfileForm();
 
   return (
     <QueryState
@@ -45,32 +22,54 @@ export function ProfileClient(): React.JSX.Element {
       }}
       errorTitle="Không thể tải thông tin hồ sơ"
     >
-      <form
-        onSubmit={handleSubmit((d) => {
-          updateProfile.mutate(d);
-        })}
-        className="bg-card space-y-5 rounded-xl border p-6"
-      >
-        <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
-          <div className="space-y-1.5">
-            <Label htmlFor="lastName">Họ</Label>
-            <Input id="lastName" autoComplete="family-name" {...register('lastName')} />
-            {errors.lastName != null ? <p className="text-destructive text-sm">{errors.lastName.message}</p> : null}
+      <Form {...form}>
+        <form onSubmit={form.handleSubmit(onSubmit)} className="bg-card space-y-5 rounded-xl border p-6">
+          <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
+            <FormField
+              control={form.control}
+              name="lastName"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Họ</FormLabel>
+                  <FormControl>
+                    <Input autoComplete="family-name" {...field} />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+            <FormField
+              control={form.control}
+              name="firstName"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Tên</FormLabel>
+                  <FormControl>
+                    <Input autoComplete="given-name" {...field} />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
           </div>
-          <div className="space-y-1.5">
-            <Label htmlFor="firstName">Tên</Label>
-            <Input id="firstName" autoComplete="given-name" {...register('firstName')} />
-            {errors.firstName != null ? <p className="text-destructive text-sm">{errors.firstName.message}</p> : null}
-          </div>
-        </div>
-        <div className="space-y-1.5">
-          <Label htmlFor="phone">Số điện thoại</Label>
-          <Input id="phone" placeholder="0901234567" autoComplete="tel" {...register('phone')} />
-        </div>
-        <Button type="submit" disabled={updateProfile.isPending}>
-          {updateProfile.isPending ? 'Đang lưu...' : 'Lưu thay đổi'}
-        </Button>
-      </form>
+          <FormField
+            control={form.control}
+            name="phone"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>Số điện thoại</FormLabel>
+                <FormControl>
+                  <Input placeholder="0901234567" autoComplete="tel" {...field} />
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+          <Button type="submit" disabled={isSaving}>
+            {isSaving ? 'Đang lưu...' : 'Lưu thay đổi'}
+          </Button>
+        </form>
+      </Form>
     </QueryState>
   );
 }
