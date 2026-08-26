@@ -14,7 +14,9 @@ export function AppProviders({ children }: { children: React.ReactNode }) {
   const [isMockingReady, setIsMockingReady] = useState(false);
 
   useEffect(() => {
-    enableApiMockingBrowser()
+    // '/admin' — must match next.config.ts's basePath (packages/api-sdk's mock service worker lives
+    // under the app's own basePath in `public/`, not the site root).
+    enableApiMockingBrowser('/admin')
       .then(() => {
         setIsMockingReady(true);
       })
