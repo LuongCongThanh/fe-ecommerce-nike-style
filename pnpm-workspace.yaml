@@ -2,7 +2,14 @@ packages:
   - apps/*
   - packages/*
 
+ignoredBuiltDependencies:
+  - '@parcel/watcher'
+  - '@sentry/cli'
+  - '@swc/core'
+  - msw
+  - unrs-resolver
+
 overrides:
-  sharp: '>=0.35.0'
-  postcss: '>=8.5.23'
   nanoid: '>=3.3.17'
+  postcss: '>=8.5.23'
+  sharp: '>=0.35.0'

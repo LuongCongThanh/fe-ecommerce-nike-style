@@ -1,6 +1,6 @@
 import { http, HttpResponse } from 'msw';
 
-import type { Product } from '@repo/schemas/catalog';
+import type { ProductInput } from '@repo/schemas/catalog';
 
 import { createAddress, deleteAddress, getAddresses, setDefaultAddress, updateAddress } from './address-fixtures';
 import {
@@ -18,7 +18,16 @@ import {
   updateUserProfile,
 } from './auth-fixtures';
 import { mergeAccountCart, resolveSkus } from './cart-fixtures';
-import { findProductBySkuId, minSkuPrice, mockCategories, mockProducts, resolveCategoryIds } from './catalog-fixtures';
+import {
+  createProduct,
+  deleteProduct,
+  findProductById,
+  findProductBySkuId,
+  findProductBySlug,
+  listProducts,
+  mockCategories,
+  updateProduct,
+} from './catalog-fixtures';
 import {
   addAccountOrder,
   allocateOrderId,
@@ -30,7 +39,6 @@ import {
   requestReturnForCustomer,
 } from './order-fixtures';
 import { consumeReservation, createReservation } from './reservation-fixtures';
-import { matchesSearchQuery } from './search-match';
 import {
   createStaffSession,
   findStaffByAccessToken,
@@ -48,12 +56,31 @@ function errorResponse(status: number, code: string, message: string) {
   return HttpResponse.json({ error: { code, message } }, { status });
 }
 
-function sortProducts(products: Product[], sort: string): Product[] {
-  const sorted = [...products];
-  if (sort === 'price_asc') return sorted.sort((a, b) => minSkuPrice(a) - minSkuPrice(b));
-  if (sort === 'price_desc') return sorted.sort((a, b) => minSkuPrice(b) - minSkuPrice(a));
-  // 'newest' — mock has no createdAt, fall back to stable insertion order reversed.
-  return sorted.reverse();
+/** Shared query-string parsing behind both the public PLP listing and Admin's product table. */
+function parseProductListQuery(url: URL): { page: number; pageSize: number; query: Parameters<typeof listProducts>[0] } {
+  const category = url.searchParams.get('category');
+  const gender = url.searchParams.get('gender');
+  const search = url.searchParams.get('search');
+  const minPrice = url.searchParams.get('minPrice');
+  const maxPrice = url.searchParams.get('maxPrice');
+  const sort = url.searchParams.get('sort');
+  const page = Number(url.searchParams.get('page') ?? '1');
+  const pageSize = Number(url.searchParams.get('pageSize') ?? '20');
+
+  return {
+    page,
+    pageSize,
+    query: {
+      category: category ?? undefined,
+      gender: (gender ?? undefined) as Parameters<typeof listProducts>[0]['gender'],
+      search: search ?? undefined,
+      minPrice: minPrice !== null && minPrice !== '' ? Number(minPrice) : undefined,
+      maxPrice: maxPrice !== null && maxPrice !== '' ? Number(maxPrice) : undefined,
+      sort: (sort ?? undefined) as Parameters<typeof listProducts>[0]['sort'],
+      page,
+      pageSize,
+    },
+  };
 }
 
 /** MSW request handlers shared by both the browser worker and the node server — see ./`../testing`. */
@@ -63,54 +90,86 @@ export const handlers = [
   }),
 
   http.get('*/api/catalog/products', ({ request }) => {
-    const url = new URL(request.url);
-    const category = url.searchParams.get('category');
-    const gender = url.searchParams.get('gender');
-    const search = url.searchParams.get('search');
-    const minPrice = url.searchParams.get('minPrice');
-    const maxPrice = url.searchParams.get('maxPrice');
-    const sort = url.searchParams.get('sort') ?? 'newest';
-    const page = Number(url.searchParams.get('page') ?? '1');
-    const pageSize = Number(url.searchParams.get('pageSize') ?? '20');
-
-    let filtered = mockProducts.slice();
-
-    if (category !== null && category !== '') {
-      const categoryIds = new Set(resolveCategoryIds(mockCategories, category));
-      filtered = filtered.filter((p) => categoryIds.has(p.categoryId));
-    }
-    if (gender !== null && gender !== '') {
-      filtered = filtered.filter((p) => p.gender === gender);
-    }
-    if (search !== null && search !== '') {
-      // Accent-insensitive + slight-misspelling-tolerant (issue #11) — see search-match.ts.
-      filtered = filtered.filter((p) => matchesSearchQuery(p.name, search) || matchesSearchQuery(p.description, search));
-    }
-    if (minPrice !== null && minPrice !== '') {
-      filtered = filtered.filter((p) => minSkuPrice(p) >= Number(minPrice));
-    }
-    if (maxPrice !== null && maxPrice !== '') {
-      filtered = filtered.filter((p) => minSkuPrice(p) <= Number(maxPrice));
-    }
-
-    filtered = sortProducts(filtered, sort);
-
-    const total = filtered.length;
-    const totalPages = Math.max(1, Math.ceil(total / pageSize));
-    const start = (page - 1) * pageSize;
-    const data = filtered.slice(start, start + pageSize);
+    const { page, pageSize, query } = parseProductListQuery(new URL(request.url));
+    const { data, total, totalPages } = listProducts(query);
 
     return HttpResponse.json({ data, meta: { page, pageSize, total, totalPages } });
   }),
 
   http.get('*/api/catalog/products/:slug', ({ params }) => {
-    const product = mockProducts.find((p) => p.slug === params.slug);
+    const product = findProductBySlug(String(params.slug));
 
     if (product === undefined) {
       return HttpResponse.json({ error: { code: 'NOT_FOUND', message: 'Product not found' } }, { status: 404 });
     }
 
     return HttpResponse.json({ data: product });
+  }),
+
+  // Admin Product/Variant/SKU CRUD (issue #19) — same `Product` shape and `listProducts` filter/sort/
+  // paginate the public PLP uses, gated on a valid Staff session instead of being publicly readable.
+  http.get('*/api/admin/products', ({ request }) => {
+    const staff = findStaffByAccessToken(request.headers.get('authorization'));
+    if (staff === undefined) {
+      return errorResponse(401, 'UNAUTHORIZED', 'Chưa đăng nhập hoặc phiên đã hết hạn.');
+    }
+
+    const { page, pageSize, query } = parseProductListQuery(new URL(request.url));
+    const { data, total, totalPages } = listProducts(query);
+
+    return HttpResponse.json({ data, meta: { page, pageSize, total, totalPages } });
+  }),
+
+  http.get('*/api/admin/products/:id/', ({ request, params }) => {
+    const staff = findStaffByAccessToken(request.headers.get('authorization'));
+    if (staff === undefined) {
+      return errorResponse(401, 'UNAUTHORIZED', 'Chưa đăng nhập hoặc phiên đã hết hạn.');
+    }
+
+    const product = findProductById(String(params.id));
+    if (product === undefined) {
+      return errorResponse(404, 'NOT_FOUND', 'Không tìm thấy sản phẩm.');
+    }
+    return HttpResponse.json(product);
+  }),
+
+  http.post('*/api/admin/products/', async ({ request }) => {
+    const staff = findStaffByAccessToken(request.headers.get('authorization'));
+    if (staff === undefined) {
+      return errorResponse(401, 'UNAUTHORIZED', 'Chưa đăng nhập hoặc phiên đã hết hạn.');
+    }
+
+    const body = (await request.json()) as ProductInput;
+    return HttpResponse.json(createProduct(body), { status: 201 });
+  }),
+
+  http.patch('*/api/admin/products/:id/', async ({ request, params }) => {
+    const staff = findStaffByAccessToken(request.headers.get('authorization'));
+    if (staff === undefined) {
+      return errorResponse(401, 'UNAUTHORIZED', 'Chưa đăng nhập hoặc phiên đã hết hạn.');
+    }
+
+    const body = (await request.json()) as ProductInput;
+    const result = updateProduct(String(params.id), body);
+    if (!result.ok) {
+      const status = result.code === 'NOT_FOUND' ? 404 : 409;
+      return errorResponse(status, result.code, result.message);
+    }
+    return HttpResponse.json(result.product);
+  }),
+
+  http.delete('*/api/admin/products/:id/', ({ request, params }) => {
+    const staff = findStaffByAccessToken(request.headers.get('authorization'));
+    if (staff === undefined) {
+      return errorResponse(401, 'UNAUTHORIZED', 'Chưa đăng nhập hoặc phiên đã hết hạn.');
+    }
+
+    const result = deleteProduct(String(params.id));
+    if (!result.ok) {
+      const status = result.code === 'NOT_FOUND' ? 404 : 409;
+      return errorResponse(status, result.code, result.message);
+    }
+    return HttpResponse.json({});
   }),
 
   http.post('*/api/auth/register/', async ({ request }) => {
@@ -442,6 +501,7 @@ export const handlers = [
             price: match.sku.price,
             quantity: item.quantity,
             subtotal: match.sku.price * item.quantity,
+            skuId: item.skuId,
           },
         ];
       })

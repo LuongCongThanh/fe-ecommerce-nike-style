@@ -19,6 +19,7 @@
     "./endpoints/auth": "./src/endpoints/auth.ts",
     "./endpoints/cart": "./src/endpoints/cart.ts",
     "./endpoints/catalog": "./src/endpoints/catalog.ts",
+    "./endpoints/admin-catalog": "./src/endpoints/admin-catalog.ts",
     "./endpoints/checkout": "./src/endpoints/checkout.ts",
     "./endpoints/orders": "./src/endpoints/orders.ts",
     "./endpoints/order-transitions": "./src/endpoints/order-transitions.ts",

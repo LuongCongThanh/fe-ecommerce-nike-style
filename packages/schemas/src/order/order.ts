@@ -22,6 +22,11 @@ export const OrderItemSchema = z.object({
   price: z.number(),
   quantity: z.number(),
   subtotal: z.number(),
+  /** The SKU this line was snapshotted from at Place Order time — `undefined` for orders placed before
+   * this field existed (a real backend would have the same gap for its own pre-migration history).
+   * Lets Admin (issue #19) check "is this Product/SKU referenced by an Order?" before allowing a
+   * hard-delete, without turning the snapshot into a live reference (glossary.md — OrderItem). */
+  skuId: z.string().optional(),
 });
 
 export const OrderSchema = z.object({

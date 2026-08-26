@@ -49,7 +49,18 @@ const seedOrders: MockOrder[] = persisted?.orders ?? [
     status: 'DELIVERED',
     payment_method: 'cod',
     payment_status: 'paid',
-    items: [{ id: 1, product_name: 'Running Shoe Alpha', variant_name: 'black / 40', image: '', price: 1_200_000, quantity: 1, subtotal: 1_200_000 }],
+    items: [
+      {
+        id: 1,
+        product_name: 'Running Shoe Alpha',
+        variant_name: 'black / 40',
+        image: '',
+        price: 1_200_000,
+        quantity: 1,
+        subtotal: 1_200_000,
+        skuId: 'p-1-0-1', // real seeded SKU (catalog-fixtures.ts) — exercises the delete-guard (issue #19)
+      },
+    ],
     subtotal: 1_200_000,
     shipping_fee: 30_000,
     total: 1_230_000,
@@ -111,6 +122,14 @@ export function getAccountOrder(userId: number, orderId: number): StorefrontOrde
   const order = orders.get(orderId);
   if (order?.userId !== userId) return undefined;
   return toStorefrontOrder(order);
+}
+
+/** Whether any Order (any Customer, any status) has an OrderItem snapshotted from `skuId` — the check
+ * behind Admin's hard-delete guard (issue #19). Orders placed before OrderItem tracked `skuId` (see
+ * `order.ts`'s schema comment) can never match, which is correct: a real backend has the same
+ * pre-migration gap, not a false "safe to delete". */
+export function isSkuReferencedInAnyOrder(skuId: string): boolean {
+  return Array.from(orders.values()).some((order) => order.items.some((item) => item.skuId === skuId));
 }
 
 export function addAccountOrder(userId: number, order: StorefrontOrder): void {

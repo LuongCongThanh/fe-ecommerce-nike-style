@@ -1,4 +1,7 @@
-import type { Category, Gender, Product } from '@repo/schemas/catalog';
+import type { Category, Gender, Product, ProductInput } from '@repo/schemas/catalog';
+
+import { isSkuReferencedInAnyOrder } from './order-fixtures';
+import { matchesSearchQuery } from './search-match';
 
 /**
  * Mock catalog per Decision #95/#96 (decision-log.md; supersedes Decision #50's 3-top-level shape): 6
@@ -444,4 +447,157 @@ export function resetMockCatalogStockForTesting(): void {
       if (initial !== undefined) sku.stock = initial;
     }
   }
+}
+
+// --- Admin CRUD (issue #19) — read/write on the same `mockProducts` array the storefront reads from,
+// so a real backend swap only has to change the transport, not the shape callers already depend on. ---
+
+export type CatalogSort = 'newest' | 'price_asc' | 'price_desc';
+
+export interface ListProductsQuery {
+  category?: string;
+  gender?: Gender;
+  search?: string;
+  minPrice?: number;
+  maxPrice?: number;
+  sort?: CatalogSort;
+  page: number;
+  pageSize: number;
+}
+
+function sortProducts(products: Product[], sort: CatalogSort): Product[] {
+  const sorted = [...products];
+  if (sort === 'price_asc') return sorted.sort((a, b) => minSkuPrice(a) - minSkuPrice(b));
+  if (sort === 'price_desc') return sorted.sort((a, b) => minSkuPrice(b) - minSkuPrice(a));
+  // 'newest' — mock has no createdAt, fall back to stable insertion order reversed.
+  return sorted.reverse();
+}
+
+/** Shared filter+sort+paginate behind both the public PLP listing and Admin's product table — one
+ * place to get right, instead of two independently-hand-rolled slices of the same logic. */
+export function listProducts(query: ListProductsQuery): { data: Product[]; total: number; totalPages: number } {
+  let filtered = mockProducts.slice();
+
+  if (query.category !== undefined && query.category !== '') {
+    const categoryIds = new Set(resolveCategoryIds(mockCategories, query.category));
+    filtered = filtered.filter((p) => categoryIds.has(p.categoryId));
+  }
+  if (query.gender !== undefined) {
+    filtered = filtered.filter((p) => p.gender === query.gender);
+  }
+  if (query.search !== undefined && query.search !== '') {
+    // Accent-insensitive + slight-misspelling-tolerant (issue #11) — see search-match.ts.
+    const search = query.search;
+    filtered = filtered.filter((p) => matchesSearchQuery(p.name, search) || matchesSearchQuery(p.description, search));
+  }
+  if (query.minPrice !== undefined) {
+    filtered = filtered.filter((p) => minSkuPrice(p) >= (query.minPrice ?? 0));
+  }
+  if (query.maxPrice !== undefined) {
+    filtered = filtered.filter((p) => minSkuPrice(p) <= (query.maxPrice ?? Infinity));
+  }
+
+  filtered = sortProducts(filtered, query.sort ?? 'newest');
+
+  const total = filtered.length;
+  const totalPages = Math.max(1, Math.ceil(total / query.pageSize));
+  const start = (query.page - 1) * query.pageSize;
+  const data = filtered.slice(start, start + query.pageSize);
+
+  return { data, total, totalPages };
+}
+
+export function findProductById(id: string): Product | undefined {
+  return mockProducts.find((p) => p.id === id);
+}
+
+export function findProductBySlug(slug: string): Product | undefined {
+  return mockProducts.find((p) => p.slug === slug);
+}
+
+let nextProductId = mockProducts.length + 1;
+let nextSkuSuffix = 1;
+
+function toSku(input: ProductInput['skus'][number]): Product['skus'][number] {
+  return {
+    id: input.id ?? `sku-new-${String(nextSkuSuffix++)}`,
+    price: input.price,
+    stock: input.stock,
+    color: input.color,
+    size: input.size,
+  };
+}
+
+export function createProduct(input: ProductInput): Product {
+  const product: Product = {
+    id: `p-new-${String(nextProductId++)}`,
+    slug: input.slug,
+    name: input.name,
+    description: input.description,
+    images: input.images,
+    categoryId: input.categoryId,
+    gender: input.gender,
+    skus: input.skus.map(toSku),
+    rating: 0,
+    reviewCount: 0,
+  };
+  mockProducts.push(product);
+  return product;
+}
+
+export type ProductWriteResult = { ok: true; product: Product } | { ok: false; code: string; message: string; skuId: string };
+
+/** Rejects if the update would remove a SKU that's referenced by an Order (issue #19) — a SKU present
+ * on the live Product before the update but absent from `input.skus` is being removed. */
+export function updateProduct(id: string, input: ProductInput): ProductWriteResult {
+  const product = findProductById(id);
+  if (product === undefined) {
+    return { ok: false, code: 'NOT_FOUND', message: 'Không tìm thấy sản phẩm.', skuId: '' };
+  }
+
+  const keptSkuIds = new Set(input.skus.map((s) => s.id).filter((skuId): skuId is string => skuId !== undefined));
+  const removedSkuIds = product.skus.map((s) => s.id).filter((skuId) => !keptSkuIds.has(skuId));
+  const blockedSkuId = removedSkuIds.find((skuId) => isSkuReferencedInAnyOrder(skuId));
+  if (blockedSkuId !== undefined) {
+    return { ok: false, code: 'SKU_REFERENCED_IN_ORDER', message: 'Không thể xoá biến thể đã xuất hiện trong đơn hàng.', skuId: blockedSkuId };
+  }
+
+  product.slug = input.slug;
+  product.name = input.name;
+  product.description = input.description;
+  product.images = input.images;
+  product.categoryId = input.categoryId;
+  product.gender = input.gender;
+  product.skus = input.skus.map(toSku);
+
+  return { ok: true, product };
+}
+
+export type ProductDeleteResult = { ok: true } | { ok: false; code: string; message: string };
+
+/** Refuses to hard-delete a Product with any SKU referenced by an Order (issue #19's acceptance criteria). */
+export function deleteProduct(id: string): ProductDeleteResult {
+  const product = findProductById(id);
+  if (product === undefined) {
+    return { ok: false, code: 'NOT_FOUND', message: 'Không tìm thấy sản phẩm.' };
+  }
+
+  const referenced = product.skus.some((sku) => isSkuReferencedInAnyOrder(sku.id));
+  if (referenced) {
+    return { ok: false, code: 'PRODUCT_REFERENCED_IN_ORDER', message: 'Không thể xoá sản phẩm đã xuất hiện trong đơn hàng.' };
+  }
+
+  const index = mockProducts.findIndex((p) => p.id === id);
+  mockProducts.splice(index, 1);
+  return { ok: true };
+}
+
+const initialProductSnapshot: Product[] = mockProducts.map((p) => ({ ...p, images: [...p.images], skus: p.skus.map((s) => ({ ...s })) }));
+
+/** Test-only — undoes create/update/delete on top of the stock reset, back to the module's seed state. */
+export function resetMockCatalogProductsForTesting(): void {
+  mockProducts.length = 0;
+  mockProducts.push(...initialProductSnapshot.map((p) => ({ ...p, images: [...p.images], skus: p.skus.map((s) => ({ ...s })) })));
+  nextProductId = mockProducts.length + 1;
+  nextSkuSuffix = 1;
 }
