@@ -3,10 +3,20 @@ import { afterAll, afterEach, beforeAll, beforeEach, describe, expect, it } from
 import { ApiError } from '../../client/api-error';
 import { resetAuthRuntime } from '../../client/fetcher';
 import { registerAuthRuntimeAdapter } from '../../client/runtime';
-import { resetMockCatalogProductsForTesting } from '../../mocks/catalog-fixtures';
+import { resetMockCatalogProductsForTesting, resetMockCategoriesForTesting } from '../../mocks/catalog-fixtures';
 import { resetMockOrderDbForTesting } from '../../mocks/order-fixtures';
 import { server } from '../../testing/msw-server';
-import { createAdminProduct, deleteAdminProduct, getAdminProduct, getAdminProducts, updateAdminProduct } from '../admin-catalog';
+import {
+  createAdminCategory,
+  createAdminProduct,
+  deleteAdminCategory,
+  deleteAdminProduct,
+  getAdminCategories,
+  getAdminProduct,
+  getAdminProducts,
+  updateAdminCategory,
+  updateAdminProduct,
+} from '../admin-catalog';
 import { loginStaff } from '../staff';
 
 async function loginAsAdminStaff() {
@@ -20,6 +30,7 @@ async function loginAsAdminStaff() {
 beforeAll(() => server.listen({ onUnhandledRequest: 'error' }));
 beforeEach(() => {
   resetMockCatalogProductsForTesting();
+  resetMockCategoriesForTesting();
   resetMockOrderDbForTesting();
 });
 afterEach(() => {
@@ -154,5 +165,89 @@ describe('deleteAdminProduct', () => {
 
     const listed = await getAdminProducts({ page: 1, pageSize: 100 });
     expect(listed.data.some((p) => p.id === 'p-1')).toBe(true);
+  });
+});
+
+describe('createAdminCategory / getAdminCategories (issue #20)', () => {
+  it('creates a top-level Category (parentId: null)', async () => {
+    await loginAsAdminStaff();
+    const created = await createAdminCategory({ slug: 'test-outerwear', name: 'Outerwear', parentId: null });
+
+    expect(created.parentId).toBeNull();
+    const listed = await getAdminCategories();
+    expect(listed.data.some((c) => c.id === created.id)).toBe(true);
+  });
+
+  it('creates a child Category under an existing parent', async () => {
+    await loginAsAdminStaff();
+    const created = await createAdminCategory({ slug: 'test-raincoats', name: 'Raincoats', parentId: 'cat-jackets' });
+
+    expect(created.parentId).toBe('cat-jackets');
+  });
+
+  it('rejects a parentId that does not exist', async () => {
+    await loginAsAdminStaff();
+    await expect(createAdminCategory({ slug: 'test-orphan', name: 'Orphan', parentId: 'cat-nonexistent' })).rejects.toMatchObject({
+      status: 400,
+    });
+  });
+});
+
+describe('updateAdminCategory (issue #20)', () => {
+  it('renames a Category without touching its tree position', async () => {
+    await loginAsAdminStaff();
+    const updated = await updateAdminCategory('cat-running', { slug: 'running', name: 'Running (renamed)', parentId: 'cat-shoes' });
+
+    expect(updated.name).toBe('Running (renamed)');
+    expect(updated.parentId).toBe('cat-shoes');
+  });
+
+  it('moves a Category to a different parent', async () => {
+    await loginAsAdminStaff();
+    const updated = await updateAdminCategory('cat-running', { slug: 'running', name: 'Running', parentId: 'cat-basketball' });
+
+    expect(updated.parentId).toBe('cat-basketball');
+  });
+
+  it('refuses to move a Category to become its own descendant (cycle), with a 400', async () => {
+    await loginAsAdminStaff();
+    // cat-running is a child of cat-shoes — making cat-shoes a child of cat-running would cycle.
+    await expect(updateAdminCategory('cat-shoes', { slug: 'shoes', name: 'Shoes', parentId: 'cat-running' })).rejects.toMatchObject({
+      status: 400,
+    });
+  });
+
+  it('refuses to set a Category as its own parent, with a 400', async () => {
+    await loginAsAdminStaff();
+    await expect(updateAdminCategory('cat-shoes', { slug: 'shoes', name: 'Shoes', parentId: 'cat-shoes' })).rejects.toMatchObject({
+      status: 400,
+    });
+  });
+});
+
+describe('deleteAdminCategory (issue #20)', () => {
+  it('deletes a leaf Category with no children and no Products', async () => {
+    await loginAsAdminStaff();
+    const created = await createAdminCategory({ slug: 'test-empty', name: 'Test Empty', parentId: null });
+
+    await deleteAdminCategory(created.id);
+
+    const listed = await getAdminCategories();
+    expect(listed.data.some((c) => c.id === created.id)).toBe(false);
+  });
+
+  it('refuses to delete a Category that has child Categories, with a 409', async () => {
+    await loginAsAdminStaff();
+    // cat-shoes has children (cat-running, cat-basketball, ...).
+    await expect(deleteAdminCategory('cat-shoes')).rejects.toMatchObject({ status: 409 });
+
+    const listed = await getAdminCategories();
+    expect(listed.data.some((c) => c.id === 'cat-shoes')).toBe(true);
+  });
+
+  it('refuses to delete a Category that has Products assigned to it, with a 409', async () => {
+    await loginAsAdminStaff();
+    // cat-running has real seeded Products (p-1..p-4).
+    await expect(deleteAdminCategory('cat-running')).rejects.toMatchObject({ status: 409 });
   });
 });

@@ -1,4 +1,4 @@
-import type { Category, Gender, Product, ProductInput } from '@repo/schemas/catalog';
+import type { Category, CategoryInput, Gender, Product, ProductInput } from '@repo/schemas/catalog';
 
 import { isSkuReferencedInAnyOrder } from './order-fixtures';
 import { matchesSearchQuery } from './search-match';
@@ -600,4 +600,91 @@ export function resetMockCatalogProductsForTesting(): void {
   mockProducts.push(...initialProductSnapshot.map((p) => ({ ...p, images: [...p.images], skus: p.skus.map((s) => ({ ...s })) })));
   nextProductId = mockProducts.length + 1;
   nextSkuSuffix = 1;
+}
+
+// --- Admin Category CRUD (issue #20) — same in-place-mutation pattern as the Product CRUD above. ---
+
+export type CategoryWriteResult = { ok: true; category: Category } | { ok: false; code: string; message: string };
+export type CategoryDeleteResult = { ok: true } | { ok: false; code: string; message: string };
+
+export function findCategoryById(id: string): Category | undefined {
+  return mockCategories.find((c) => c.id === id);
+}
+
+/** True if `candidateId` is `ancestorId` itself or a descendant of it — used to refuse a move that would create a cycle. */
+function isSameOrDescendant(candidateId: string, ancestorId: string): boolean {
+  if (candidateId === ancestorId) return true;
+  const candidate = findCategoryById(candidateId);
+  if (candidate?.parentId == null) return false;
+  return isSameOrDescendant(candidate.parentId, ancestorId);
+}
+
+let nextCategorySuffix = 1;
+
+export function createCategory(input: CategoryInput): CategoryWriteResult {
+  if (input.parentId !== null && findCategoryById(input.parentId) === undefined) {
+    return { ok: false, code: 'PARENT_NOT_FOUND', message: 'Không tìm thấy danh mục cha.' };
+  }
+
+  const category: Category = {
+    id: `cat-new-${String(nextCategorySuffix++)}`,
+    slug: input.slug,
+    name: input.name,
+    parentId: input.parentId,
+  };
+  mockCategories.push(category);
+  return { ok: true, category };
+}
+
+/** Rejects an unknown/self/cycle-forming `parentId` (issue #20's acceptance criteria). */
+export function updateCategory(id: string, input: CategoryInput): CategoryWriteResult {
+  const category = findCategoryById(id);
+  if (category === undefined) {
+    return { ok: false, code: 'NOT_FOUND', message: 'Không tìm thấy danh mục.' };
+  }
+
+  if (input.parentId !== null) {
+    if (findCategoryById(input.parentId) === undefined) {
+      return { ok: false, code: 'PARENT_NOT_FOUND', message: 'Không tìm thấy danh mục cha.' };
+    }
+    if (isSameOrDescendant(input.parentId, id)) {
+      return { ok: false, code: 'PARENT_CYCLE', message: 'Không thể đặt danh mục cha là chính nó hoặc danh mục con của nó.' };
+    }
+  }
+
+  category.slug = input.slug;
+  category.name = input.name;
+  category.parentId = input.parentId;
+  return { ok: true, category };
+}
+
+/** Refuses to delete a Category with child Categories or Products assigned to it (issue #20's acceptance criteria). */
+export function deleteCategory(id: string): CategoryDeleteResult {
+  const category = findCategoryById(id);
+  if (category === undefined) {
+    return { ok: false, code: 'NOT_FOUND', message: 'Không tìm thấy danh mục.' };
+  }
+
+  const hasChildren = mockCategories.some((c) => c.parentId === id);
+  if (hasChildren) {
+    return { ok: false, code: 'HAS_CHILDREN', message: 'Không thể xoá danh mục còn danh mục con.' };
+  }
+
+  const hasProducts = mockProducts.some((p) => p.categoryId === id);
+  if (hasProducts) {
+    return { ok: false, code: 'HAS_PRODUCTS', message: 'Không thể xoá danh mục đang có sản phẩm.' };
+  }
+
+  const index = mockCategories.findIndex((c) => c.id === id);
+  mockCategories.splice(index, 1);
+  return { ok: true };
+}
+
+const initialCategorySnapshot: Category[] = mockCategories.map((c) => ({ ...c }));
+
+/** Test-only — undoes create/update/delete, back to the module's seed state. */
+export function resetMockCategoriesForTesting(): void {
+  mockCategories.length = 0;
+  mockCategories.push(...initialCategorySnapshot.map((c) => ({ ...c })));
+  nextCategorySuffix = 1;
 }
