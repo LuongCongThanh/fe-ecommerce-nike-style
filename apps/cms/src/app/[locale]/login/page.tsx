@@ -1,5 +1,7 @@
 'use client';
 
+// Hallmark · synced with apps/admin's Split Studio login (design.md § Variants) — same macrostructure
+// and shared login.css mechanics, own trust-blue accent + content-management centerpiece motif.
 import { useState } from 'react';
 import type { SyntheticEvent } from 'react';
 
@@ -8,14 +10,15 @@ import { Checkbox } from '@repo/ui/checkbox';
 import { Input } from '@repo/ui/input';
 import { Label } from '@repo/ui/label';
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@repo/ui/tooltip';
-import { Eye, EyeOff, Loader2, Lock, Mail, Shirt, Tag, X } from 'lucide-react';
+import { Eye, EyeOff, ImageIcon, Loader2, Lock, Mail, Newspaper, PenLine, X } from 'lucide-react';
 import { useTranslations } from 'next-intl';
 import { useRouter } from '@/i18n/navigation';
 
 import { useStaffAuth } from '@/core/session';
 
 /** Minimal single-colour brand marks — good enough for a disabled/decorative button, not claiming
- * pixel-exact Simple Icons fidelity. See the "Chưa hỗ trợ" tooltip: these 3 don't do anything yet. */
+ * pixel-exact Simple Icons fidelity. See the "Chưa hỗ trợ" tooltip: these 3 don't do anything yet.
+ * Kept identical to apps/admin's — same disabled-social-row motif, per the cross-app login sync. */
 function FacebookMark() {
   return (
     <svg viewBox="0 0 24 24" className="size-4 fill-current" aria-hidden="true">
@@ -36,26 +39,6 @@ function GoogleMark() {
   return (
     <svg viewBox="0 0 24 24" className="size-4 fill-current" aria-hidden="true">
       <path d="M12.5 10.2v3.8h5.5c-.7 2.3-2.6 4-5.5 4a6 6 0 1 1 3.9-10.6l2.8-2.8A10 10 0 1 0 22 12l-9.5-1.8Z" />
-    </svg>
-  );
-}
-
-/** No "pants" icon in lucide-react — hand-built silhouette in the same stroke style (24x24
- * viewBox, currentColor, 2px stroke) so it reads as part of the same icon set. */
-function PantsMark({ className, style }: { readonly className?: string; readonly style?: React.CSSProperties }) {
-  return (
-    <svg
-      viewBox="0 0 24 24"
-      fill="none"
-      stroke="currentColor"
-      strokeWidth="2"
-      strokeLinecap="round"
-      strokeLinejoin="round"
-      className={className}
-      style={style}
-      aria-hidden="true"
-    >
-      <path d="M6 2h12l1 6-2 14h-4l-1-11-1 11H7L5 8Z" />
     </svg>
   );
 }
@@ -230,18 +213,23 @@ export default function LoginPage(): React.JSX.Element {
           </div>
 
           {/* Decorative pane — hidden below md so the form is never pushed off-screen on mobile.
-           * design.md § Variants: brand red-orange stays the accent here (user-approved exception).
-           * No stock photo: this is an internal admin tool with no relevant photography to show. */}
-          <div className="from-brand-900 via-brand-700 to-brand-950 relative hidden overflow-hidden bg-linear-to-br md:block">
-            <div className="login-blob bg-brand-400/60 -top-24 -left-24 size-96" />
-            <div className="login-blob bg-brand-300/45 top-1/3 -right-20 size-80" style={{ animationDelay: '-6s' }} />
+           * design.md § Variants: unlike admin's login, this stays on the system's normal accent
+           * scope — --color-secondary (trust blue), not brand red. Centerpiece swapped from admin's
+           * apparel motif to a content-management one (Newspaper + floating pen/image icons). */}
+          <div className="from-secondary-900 via-secondary-700 to-secondary-950 relative hidden overflow-hidden bg-linear-to-br md:block">
+            <div className="login-blob bg-secondary-400/60 -top-24 -left-24 size-96" />
+            <div className="login-blob bg-secondary-300/45 top-1/3 -right-20 size-80" style={{ animationDelay: '-6s' }} />
             <div className="login-blob bg-accent-400/35 -bottom-16 left-1/4 size-48" style={{ animationDelay: '-11s' }} />
 
-            <Tag className="login-icon-float top-1/4 left-1/5 size-6 text-white/40" style={{ animationDelay: '-2s' }} aria-hidden="true" />
-            <PantsMark className="login-icon-float right-1/5 bottom-1/4 size-7 text-white/35" style={{ animationDelay: '-4.5s' }} />
+            <PenLine className="login-icon-float top-1/4 left-1/5 size-6 text-white/40" style={{ animationDelay: '-2s' }} aria-hidden="true" />
+            <ImageIcon
+              className="login-icon-float right-1/5 bottom-1/4 size-7 text-white/35"
+              style={{ animationDelay: '-4.5s' }}
+              aria-hidden="true"
+            />
 
             <div className="login-scene absolute inset-0 flex items-center justify-center">
-              <Shirt className="login-centerpiece size-28 text-white/85 lg:size-32" strokeWidth={1.25} aria-hidden="true" />
+              <Newspaper className="login-centerpiece size-28 text-white/85 lg:size-32" strokeWidth={1.25} aria-hidden="true" />
             </div>
           </div>
         </div>

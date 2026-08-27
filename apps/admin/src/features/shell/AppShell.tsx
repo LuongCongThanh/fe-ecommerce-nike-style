@@ -8,7 +8,7 @@ import { Menu } from 'lucide-react';
 import { useTranslations } from 'next-intl';
 import { Link, usePathname } from '@/i18n/navigation';
 
-import { useStaffAuth } from '@/core/session/useStaffAuth';
+import { useStaffAuth } from '@/core/session';
 import { NAV_ITEMS } from '@/features/shell/nav-items';
 
 function NavList({ pathname, onNavigate }: { readonly pathname: string; readonly onNavigate?: () => void }) {

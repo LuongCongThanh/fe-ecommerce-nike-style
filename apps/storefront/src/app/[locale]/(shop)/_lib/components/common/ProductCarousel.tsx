@@ -45,7 +45,7 @@ export function ProductCarousel({ title, ctaLabel, ctaHref, children }: ProductC
               onClick={() => {
                 scroll(-1);
               }}
-              className="border-border bg-background hover:bg-muted focus-visible:ring-ring flex size-9 items-center justify-center rounded-full border transition-colors duration-(--duration-fast) ease-out focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:outline-none"
+              className="border-border bg-background hover:bg-muted focus-visible:ring-ring flex size-11 items-center justify-center rounded-full border transition-colors duration-(--duration-fast) ease-out focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:outline-none"
             >
               <ChevronLeft className="size-4" />
             </button>
@@ -55,7 +55,7 @@ export function ProductCarousel({ title, ctaLabel, ctaHref, children }: ProductC
               onClick={() => {
                 scroll(1);
               }}
-              className="border-border bg-background hover:bg-muted focus-visible:ring-ring flex size-9 items-center justify-center rounded-full border transition-colors duration-(--duration-fast) ease-out focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:outline-none"
+              className="border-border bg-background hover:bg-muted focus-visible:ring-ring flex size-11 items-center justify-center rounded-full border transition-colors duration-(--duration-fast) ease-out focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:outline-none"
             >
               <ChevronRight className="size-4" />
             </button>

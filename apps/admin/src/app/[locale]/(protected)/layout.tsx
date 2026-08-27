@@ -1,4 +1,4 @@
-import { StaffAuthGuard } from '@/core/session/StaffAuthGuard';
+import { StaffAuthGuard } from '@/core/session';
 import { AppShell } from '@/features/shell/AppShell';
 
 export default function ProtectedLayout({ children }: { children: React.ReactNode }) {

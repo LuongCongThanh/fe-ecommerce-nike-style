@@ -12,6 +12,10 @@ import { SPRING_MOVE } from '@/shared/lib/motion';
 
 interface CatalogProductGridProps {
   readonly products: readonly Product[];
+  /** Rendered under the empty-state message — e.g. a "clear filters" button when the caller knows
+   * an active filter narrowed the result set to zero (UI/UX audit finding, PLP § 3). Omit for
+   * contexts with no filters to clear (search results, PDP related-products). */
+  readonly emptyStateAction?: React.ReactNode;
 }
 
 /** Cards keep arriving after the eighth — the *stagger* stops, so a full page never feels slow. */
@@ -19,14 +23,15 @@ const MAX_STAGGERED_CARDS = 8;
 const STAGGER_STEP_SECONDS = 0.035;
 
 /** PLP/Category grid for the canonical catalog Product (SKU-priced) — see `ProductGrid` for the legacy PDP-related-products grid. */
-export function CatalogProductGrid({ products }: CatalogProductGridProps): React.JSX.Element {
+export function CatalogProductGrid({ products, emptyStateAction }: CatalogProductGridProps): React.JSX.Element {
   const locale = useLocale();
   const prefersReducedMotion = useReducedMotion() ?? false;
 
   if (products.length === 0) {
     return (
-      <div className="flex min-h-100 flex-col items-center justify-center rounded-xl border border-dashed py-16 text-center">
+      <div className="flex min-h-100 flex-col items-center justify-center gap-3 rounded-xl border border-dashed py-16 text-center">
         <p className="text-muted-foreground text-base">Không tìm thấy sản phẩm nào</p>
+        {emptyStateAction}
       </div>
     );
   }
