@@ -8,6 +8,7 @@ import { useLocale, useTranslations } from 'next-intl';
 
 import { OrderStatusActions } from '@/features/orders/OrderStatusActions';
 import { useAdminOrder } from '@/features/orders/useAdminOrders';
+import { PageHeader } from '@/features/shell/PageHeader';
 
 export default function OrderDetailPage({ params }: { readonly params: Promise<{ id: string }> }): React.JSX.Element {
   const t = useTranslations('order');
@@ -19,7 +20,7 @@ export default function OrderDetailPage({ params }: { readonly params: Promise<{
 
   return (
     <div className="max-w-3xl space-y-6">
-      <h1 className="text-xl font-bold">{t('detailTitle')}</h1>
+      <PageHeader title={t('detailTitle')} />
 
       {isLoading ? <p className="text-muted-foreground text-sm">{tCommon('loading')}</p> : null}
       {isError ? (

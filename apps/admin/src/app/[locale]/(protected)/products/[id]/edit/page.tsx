@@ -9,6 +9,7 @@ import { useRouter } from '@/i18n/navigation';
 
 import { ProductForm } from '@/features/products/ProductForm';
 import { useUpdateProduct } from '@/features/products/useProductMutations';
+import { PageHeader } from '@/features/shell/PageHeader';
 
 export default function EditProductPage({ params }: { readonly params: Promise<{ id: string }> }): React.JSX.Element {
   const t = useTranslations('product');
@@ -20,7 +21,7 @@ export default function EditProductPage({ params }: { readonly params: Promise<{
 
   return (
     <div className="max-w-2xl space-y-6">
-      <h1 className="text-xl font-bold">{t('edit')}</h1>
+      <PageHeader title={t('edit')} />
 
       {isLoading ? <p className="text-muted-foreground text-sm">{tCommon('loading')}</p> : null}
       {isError ? (

@@ -1,50 +1,46 @@
 'use client';
 
-import { Table, TableBody, TableHead, TableHeader, TableRow } from '@repo/ui/table';
 import { useTranslations } from 'next-intl';
 
 import { InventoryAuditLog } from '@/features/inventory/InventoryAuditLog';
 import { InventoryRow } from '@/features/inventory/InventoryRow';
 import { useAdminInventory } from '@/features/inventory/useAdminInventory';
+import { DataTable } from '@/features/shell/DataTable';
+import { PageHeader } from '@/features/shell/PageHeader';
+import { useClientDataTablePagination } from '@/features/shell/useClientDataTablePagination';
+
+const PAGE_SIZE = 20;
 
 export default function InventoryPage(): React.JSX.Element {
   const t = useTranslations('inventory');
   const tCommon = useTranslations('common');
   const { data, isLoading, isError } = useAdminInventory();
 
+  const allItems = data?.data ?? [];
+  const { pageItems, pagination } = useClientDataTablePagination(allItems, PAGE_SIZE, {
+    pageOf: (page, totalPages) => tCommon('pagination.pageOf', { page, totalPages }),
+    previous: tCommon('pagination.previous'),
+    next: tCommon('pagination.next'),
+  });
+
   return (
     <div className="space-y-8">
-      <div>
-        <h1 className="text-xl font-bold">{t('title')}</h1>
+      <div className="space-y-4">
+        <PageHeader title={t('title')} />
 
-        {isError ? (
-          <p role="alert" className="text-destructive mt-2 text-sm">
-            {t('loadError')}
-          </p>
-        ) : null}
-        {isLoading ? <p className="text-muted-foreground mt-2 text-sm">{tCommon('loading')}</p> : null}
-
-        {data !== undefined ? (
-          <div className="mt-4 rounded-xl border">
-            <Table>
-              <TableHeader>
-                <TableRow>
-                  <TableHead>{t('columns.product')}</TableHead>
-                  <TableHead>{t('columns.variant')}</TableHead>
-                  <TableHead>{t('columns.onHand')}</TableHead>
-                  <TableHead>{t('columns.reserved')}</TableHead>
-                  <TableHead>{t('columns.available')}</TableHead>
-                </TableRow>
-              </TableHeader>
-              <TableBody>
-                {data.data.map((item) => (
-                  <InventoryRow key={item.skuId} item={item} />
-                ))}
-              </TableBody>
-            </Table>
-            {data.data.length === 0 ? <p className="text-muted-foreground p-6 text-center text-sm">{t('empty')}</p> : null}
-          </div>
-        ) : null}
+        <DataTable
+          headers={[t('columns.product'), t('columns.variant'), t('columns.onHand'), t('columns.reserved'), t('columns.available')]}
+          isLoading={isLoading}
+          isError={isError}
+          errorMessage={t('loadError')}
+          isEmpty={pageItems.length === 0}
+          emptyMessage={t('empty')}
+          pagination={pagination}
+        >
+          {pageItems.map((item) => (
+            <InventoryRow key={item.skuId} item={item} />
+          ))}
+        </DataTable>
       </div>
 
       <InventoryAuditLog />

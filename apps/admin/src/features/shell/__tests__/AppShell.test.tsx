@@ -5,11 +5,14 @@ import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
 import commonMessages from '@/lang/vi/common.json';
 
-import { clearStaffAuth, setStaffSession } from '@/core/session/staff-store';
+import { clearStaffAuth, setStaffSession } from '@/core/session';
 import { AppShell } from '@/features/shell/AppShell';
 
 vi.mock('@/i18n/navigation', () => ({
   usePathname: () => '/',
+  // `@/core/session` wires `useRouter` in at import time (issue #24's shared staff-auth module), so
+  // even tests that never trigger a redirect need this mocked or the module import itself throws.
+  useRouter: () => ({ push: vi.fn() }),
   Link: ({ href, children, ...props }: React.ComponentProps<'a'>) => (
     <a href={typeof href === 'string' ? href : '#'} {...props}>
       {children}

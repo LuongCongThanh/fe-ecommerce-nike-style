@@ -3,7 +3,7 @@
 import { enableApiMockingBrowser } from '@repo/api-sdk/adapters/browser';
 import { useEffect, useState } from 'react';
 
-import { StaffAuthRuntimeProvider } from '@/core/session/StaffAuthRuntimeProvider';
+import { StaffAuthRuntimeProvider } from '@/core/session';
 import { AppQueryProvider } from '@/providers/query-provider';
 
 /**

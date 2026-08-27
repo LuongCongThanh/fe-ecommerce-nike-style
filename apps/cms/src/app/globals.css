@@ -1,3 +1,15 @@
 @import '@repo/tailwind-config/preset.css';
+@import '@repo/tailwind-config/login.css';
 @source '../../../../packages/ui/src';
 @source '../../../../packages/shared/src';
+
+/* Hallmark · login page synced with apps/admin's Split Studio macrostructure (see design.md
+ * § Variants). Same card shape, back control, icon-prefixed fields, remember-me, "or" divider, and
+ * disabled+tooltipped social row — reusing the shared mechanics in `@repo/tailwind-config/login.css`
+ * (login-blob, login-rise, login-scene/login-centerpiece, login-icon-float).
+ *
+ * Colour anchor is --color-secondary (trust blue), NOT --color-brand — admin's login page has a
+ * documented, single-page exception to use brand red; every other surface (this one included) keeps
+ * design.md's rule that brand red is scoped to price/sale/promo only. Centerpiece is a Newspaper icon
+ * (content-management context) with two floating icons (pen, image) instead of admin's shirt/tag/pants
+ * — same motion vocabulary, app-appropriate motif. */

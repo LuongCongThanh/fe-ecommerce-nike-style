@@ -31,7 +31,9 @@ export function QuantitySelector({ value, onChange, min = 1, max = Number.POSITI
       >
         <Minus className="size-4" />
       </Button>
-      <span className="min-w-12 px-3 text-center text-sm font-medium">{value}</span>
+      <span aria-live="polite" aria-atomic="true" className="min-w-12 px-3 text-center text-sm font-medium">
+        {value}
+      </span>
       <Button
         type="button"
         variant="ghost"

@@ -8,12 +8,16 @@ import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger } from '@rep
 import { Menu } from 'lucide-react';
 import { usePathname } from '@/i18n/navigation';
 
+import { useStaffAuth } from '@/core/session';
 import { NAV_ITEMS } from '@/features/shell/nav-items';
 
 function NavList({ pathname, onNavigate }: { readonly pathname: string; readonly onNavigate?: () => void }) {
+  const { hasPermission } = useStaffAuth();
+  const visibleItems = NAV_ITEMS.filter((item) => item.permission === undefined || hasPermission(item.permission));
+
   return (
     <nav className="flex flex-col gap-1">
-      {NAV_ITEMS.map((item) => {
+      {visibleItems.map((item) => {
         const isActive = pathname === item.href;
 
         return (

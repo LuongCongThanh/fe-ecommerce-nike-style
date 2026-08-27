@@ -2,26 +2,31 @@ import type { Staff } from '@repo/schemas/staff';
 import { render, screen, waitFor } from '@testing-library/react';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
-import { StaffAuthGuard } from '@/core/session/StaffAuthGuard';
-import { clearStaffAuth, setStaffSession } from '@/core/session/staff-store';
-
-const push = vi.fn();
-vi.mock('@/i18n/navigation', () => ({
-  useRouter: () => ({ push }),
-}));
+import { createStaffAuthModule } from '../index';
 
 const STAFF: Staff = { id: 1, email: 'super@admin.local', name: 'Super Admin', roles: ['SUPER_ADMIN'], isActive: true };
 
-beforeEach(() => {
-  push.mockClear();
-  clearStaffAuth();
-});
-
-afterEach(() => {
-  clearStaffAuth();
-});
+vi.mock('@repo/api-sdk/endpoints/staff', () => ({
+  loginStaff: vi.fn(async () => ({ access: 'a', refresh: 'r', staff: STAFF, permissions: [] })),
+  logoutStaff: vi.fn(async () => undefined),
+}));
 
 describe('StaffAuthGuard', () => {
+  const push = vi.fn();
+  const { StaffAuthGuard, clearStaffAuth, setStaffSession } = createStaffAuthModule({
+    accessTokenCookie: 'test_access_token',
+    useRouter: () => ({ push }),
+  });
+
+  beforeEach(() => {
+    push.mockClear();
+    clearStaffAuth();
+  });
+
+  afterEach(() => {
+    clearStaffAuth();
+  });
+
   it('redirects to /login and does not render children when there is no session', async () => {
     render(
       <StaffAuthGuard>

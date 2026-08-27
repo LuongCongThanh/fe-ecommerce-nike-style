@@ -49,15 +49,15 @@ importers:
       '@repo/schemas':
         specifier: workspace:*
         version: link:../../packages/schemas
+      '@repo/shared':
+        specifier: workspace:*
+        version: link:../../packages/shared
       '@repo/ui':
         specifier: workspace:*
         version: link:../../packages/ui
       '@tanstack/react-query':
         specifier: ^5.101.2
         version: 5.101.4(react@19.2.7)
-      js-cookie:
-        specifier: ^3.0.5
-        version: 3.0.8
       lucide-react:
         specifier: ^1.25.0
         version: 1.28.0(react@19.2.7)
@@ -76,9 +76,6 @@ importers:
       use-intl:
         specifier: ^4.13.2
         version: 4.13.4(react@19.2.7)
-      zustand:
-        specifier: ^5.0.14
-        version: 5.0.14(@types/react@19.2.18)(react@19.2.7)(use-sync-external-store@1.6.0(react@19.2.7))
     devDependencies:
       '@eslint/js':
         specifier: ^9.39.5
@@ -101,9 +98,6 @@ importers:
       '@testing-library/react':
         specifier: ^16.3.2
         version: 16.3.2(@testing-library/dom@10.4.1)(@types/react-dom@19.2.4(@types/react@19.2.18))(@types/react@19.2.18)(react-dom@19.2.7(react@19.2.7))(react@19.2.7)
-      '@types/js-cookie':
-        specifier: ^3.0.6
-        version: 3.0.6
       '@types/node':
         specifier: ^24.13.3
         version: 24.13.3
@@ -152,6 +146,9 @@ importers:
       '@repo/schemas':
         specifier: workspace:*
         version: link:../../packages/schemas
+      '@repo/shared':
+        specifier: workspace:*
+        version: link:../../packages/shared
       '@repo/ui':
         specifier: workspace:*
         version: link:../../packages/ui
@@ -635,6 +632,12 @@ importers:
 
   packages/shared:
     dependencies:
+      '@repo/api-sdk':
+        specifier: workspace:*
+        version: link:../api-sdk
+      '@repo/schemas':
+        specifier: workspace:*
+        version: link:../schemas
       '@repo/ui':
         specifier: workspace:*
         version: link:../ui
@@ -644,6 +647,9 @@ importers:
       date-fns:
         specifier: ^4.4.0
         version: 4.4.0
+      js-cookie:
+        specifier: ^3.0.5
+        version: 3.0.8
       lucide-react:
         specifier: ^1.25.0
         version: 1.28.0(react@19.2.7)
@@ -653,6 +659,9 @@ importers:
       tailwind-merge:
         specifier: ^3.6.0
         version: 3.6.0
+      zustand:
+        specifier: ^5.0.14
+        version: 5.0.14(@types/react@19.2.18)(react@19.2.7)(use-sync-external-store@1.6.0(react@19.2.7))
     devDependencies:
       '@repo/eslint-config':
         specifier: workspace:*
@@ -660,15 +669,33 @@ importers:
       '@repo/ts-config':
         specifier: workspace:*
         version: link:../ts-config
+      '@testing-library/jest-dom':
+        specifier: ^6.9.1
+        version: 6.10.0(@testing-library/dom@10.4.1)
+      '@testing-library/react':
+        specifier: ^16.3.2
+        version: 16.3.2(@testing-library/dom@10.4.1)(@types/react-dom@19.2.4(@types/react@19.2.18))(@types/react@19.2.18)(react-dom@19.2.7(react@19.2.7))(react@19.2.7)
+      '@types/js-cookie':
+        specifier: ^3.0.6
+        version: 3.0.6
       '@types/react':
         specifier: ^19
         version: 19.2.18
       '@types/react-dom':
         specifier: ^19
         version: 19.2.4(@types/react@19.2.18)
+      '@vitejs/plugin-react':
+        specifier: ^6.0.3
+        version: 6.0.5(vite@8.2.0(@types/node@24.13.3)(jiti@2.7.0)(terser@5.49.0)(yaml@2.9.0))
       eslint:
         specifier: 9.39.5
         version: 9.39.5(jiti@2.7.0)(supports-color@8.1.1)
+      jsdom:
+        specifier: ^29.1.1
+        version: 29.1.1
+      next:
+        specifier: ^16.2.10
+        version: 16.2.12(@babel/core@7.29.7(supports-color@8.1.1))(@opentelemetry/api@1.9.1)(@playwright/test@1.62.1)(@types/node@24.13.3)(react-dom@19.2.7(react@19.2.7))(react@19.2.7)
       react:
         specifier: ^19.0.0
         version: 19.2.7
@@ -678,6 +705,9 @@ importers:
       typescript:
         specifier: ^5
         version: 5.9.3
+      vitest:
+        specifier: ^4.1.10
+        version: 4.1.10(@opentelemetry/api@1.9.1)(@types/node@24.13.3)(@vitest/coverage-v8@4.1.10)(jsdom@29.1.1)(msw@2.15.0(@types/node@24.13.3)(typescript@5.9.3))(vite@8.2.0(@types/node@24.13.3)(jiti@2.7.0)(terser@5.49.0)(yaml@2.9.0))
 
   packages/tailwind-config:
     devDependencies:

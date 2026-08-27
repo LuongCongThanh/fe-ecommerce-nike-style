@@ -8,6 +8,7 @@ import { useRouter } from '@/i18n/navigation';
 import { CategoryForm } from '@/features/categories/CategoryForm';
 import { useAdminCategories } from '@/features/categories/useAdminCategories';
 import { useUpdateCategory } from '@/features/categories/useCategoryMutations';
+import { PageHeader } from '@/features/shell/PageHeader';
 
 export default function EditCategoryPage({ params }: { readonly params: Promise<{ id: string }> }): React.JSX.Element {
   const t = useTranslations('category');
@@ -21,7 +22,7 @@ export default function EditCategoryPage({ params }: { readonly params: Promise<
 
   return (
     <div className="max-w-2xl space-y-6">
-      <h1 className="text-xl font-bold">{t('edit')}</h1>
+      <PageHeader title={t('edit')} />
 
       {isLoading ? <p className="text-muted-foreground text-sm">{tCommon('loading')}</p> : null}
       {isError ? (

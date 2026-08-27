@@ -4,14 +4,19 @@ import { useState } from 'react';
 
 import type { Category } from '@repo/schemas/catalog';
 import { Button } from '@repo/ui/button';
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@repo/ui/table';
+import { TableCell, TableRow } from '@repo/ui/table';
 import { Plus } from 'lucide-react';
 import { useTranslations } from 'next-intl';
 import { Link } from '@/i18n/navigation';
 
 import { useAdminCategories } from '@/features/categories/useAdminCategories';
 import { useDeleteCategory } from '@/features/categories/useCategoryMutations';
+import { useClientDataTablePagination } from '@/features/shell/useClientDataTablePagination';
 import { ConfirmDialog } from '@/features/shell/ConfirmDialog';
+import { DataTable } from '@/features/shell/DataTable';
+import { PageHeader } from '@/features/shell/PageHeader';
+
+const PAGE_SIZE = 20;
 
 /** Depth-first flatten so children render indented directly under their parent, root categories first. */
 function toTree(categories: Category[]): { category: Category; depth: number }[] {
@@ -49,19 +54,26 @@ export default function CategoriesPage(): React.JSX.Element {
     });
   };
 
-  const rows = data !== undefined ? toTree(data.data) : [];
+  const allRows = data !== undefined ? toTree(data.data) : [];
+  const { pageItems: pageRows, pagination } = useClientDataTablePagination(allRows, PAGE_SIZE, {
+    pageOf: (page, totalPages) => tCommon('pagination.pageOf', { page, totalPages }),
+    previous: tCommon('pagination.previous'),
+    next: tCommon('pagination.next'),
+  });
 
   return (
     <div className="space-y-4">
-      <div className="flex items-center justify-between">
-        <h1 className="text-xl font-bold">{t('title')}</h1>
-        <Button asChild>
-          <Link href="/categories/new">
-            <Plus className="size-4" data-icon="inline-start" />
-            {t('add')}
-          </Link>
-        </Button>
-      </div>
+      <PageHeader
+        title={t('title')}
+        action={
+          <Button asChild>
+            <Link href="/categories/new">
+              <Plus className="size-4" data-icon="inline-start" />
+              {t('add')}
+            </Link>
+          </Button>
+        }
+      />
 
       {deleteError !== null ? (
         <p role="alert" className="border-destructive/30 bg-destructive/10 text-destructive rounded-lg border px-4 py-3 text-sm">
@@ -69,57 +81,43 @@ export default function CategoriesPage(): React.JSX.Element {
         </p>
       ) : null}
 
-      {isError ? (
-        <p role="alert" className="text-destructive text-sm">
-          {t('loadError')}
-        </p>
-      ) : null}
-
-      {isLoading ? <p className="text-muted-foreground text-sm">{tCommon('loading')}</p> : null}
-
-      {data !== undefined ? (
-        <div className="rounded-xl border">
-          <Table>
-            <TableHeader>
-              <TableRow>
-                <TableHead>{t('columns.name')}</TableHead>
-                <TableHead>{t('columns.slug')}</TableHead>
-                <TableHead className="text-right">{t('columns.actions')}</TableHead>
-              </TableRow>
-            </TableHeader>
-            <TableBody>
-              {rows.map(({ category, depth }) => (
-                <TableRow key={category.id}>
-                  <TableCell className="font-medium" style={{ paddingLeft: `${String(depth * 1.5 + 1)}rem` }}>
-                    {category.name}
-                  </TableCell>
-                  <TableCell className="text-muted-foreground">{category.slug}</TableCell>
-                  <TableCell className="flex justify-end gap-2 text-right">
-                    <Button variant="outline" size="sm" asChild>
-                      <Link href={`/categories/${category.id}/edit`}>{tCommon('actions.edit')}</Link>
-                    </Button>
-                    <ConfirmDialog
-                      trigger={
-                        <Button variant="outline" size="sm" className="text-destructive hover:bg-destructive/10" disabled={deleteCategory.isPending}>
-                          {tCommon('actions.delete')}
-                        </Button>
-                      }
-                      title={t('deleteTitle', { name: category.name })}
-                      description={tCommon('confirmIrreversible')}
-                      confirmLabel={tCommon('actions.delete')}
-                      loading={deleteCategory.isPending}
-                      onConfirm={() => {
-                        handleDelete(category.id);
-                      }}
-                    />
-                  </TableCell>
-                </TableRow>
-              ))}
-            </TableBody>
-          </Table>
-          {rows.length === 0 ? <p className="text-muted-foreground p-6 text-center text-sm">{t('empty')}</p> : null}
-        </div>
-      ) : null}
+      <DataTable
+        headers={[t('columns.name'), t('columns.slug'), t('columns.actions')]}
+        isLoading={isLoading}
+        isError={isError}
+        errorMessage={t('loadError')}
+        isEmpty={pageRows.length === 0}
+        emptyMessage={t('empty')}
+        pagination={pagination}
+      >
+        {pageRows.map(({ category, depth }) => (
+          <TableRow key={category.id}>
+            <TableCell className="font-medium" style={{ paddingLeft: `${String(depth * 1.5 + 1)}rem` }}>
+              {category.name}
+            </TableCell>
+            <TableCell className="text-muted-foreground">{category.slug}</TableCell>
+            <TableCell className="flex justify-end gap-2 text-right">
+              <Button variant="outline" size="sm" asChild>
+                <Link href={`/categories/${category.id}/edit`}>{tCommon('actions.edit')}</Link>
+              </Button>
+              <ConfirmDialog
+                trigger={
+                  <Button variant="outline" size="sm" className="text-destructive hover:bg-destructive/10" disabled={deleteCategory.isPending}>
+                    {tCommon('actions.delete')}
+                  </Button>
+                }
+                title={t('deleteTitle', { name: category.name })}
+                description={tCommon('confirmIrreversible')}
+                confirmLabel={tCommon('actions.delete')}
+                loading={deleteCategory.isPending}
+                onConfirm={() => {
+                  handleDelete(category.id);
+                }}
+              />
+            </TableCell>
+          </TableRow>
+        ))}
+      </DataTable>
     </div>
   );
 }

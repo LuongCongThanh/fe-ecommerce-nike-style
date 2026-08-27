@@ -56,7 +56,7 @@ export function InventoryRow({ item }: InventoryRowProps): React.JSX.Element {
             className="w-24"
           />
           <Button type="submit" size="sm" variant="outline" disabled={!isDirty || updateOnHand.isPending}>
-            {updateOnHand.isPending ? '...' : tCommon('actions.save')}
+            {updateOnHand.isPending ? tCommon('actions.saving') : tCommon('actions.save')}
           </Button>
         </form>
         {updateOnHand.isError ? (

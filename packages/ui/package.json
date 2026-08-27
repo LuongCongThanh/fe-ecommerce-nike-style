@@ -33,6 +33,7 @@
     "./sheet": "./src/components/Sheet.tsx",
     "./slider": "./src/components/Slider.tsx",
     "./skeleton": "./src/components/Skeleton.tsx",
+    "./social-marks": "./src/components/SocialMarks.tsx",
     "./switch": "./src/components/Switch.tsx",
     "./table": "./src/components/Table.tsx",
     "./tabs": "./src/components/Tabs.tsx",

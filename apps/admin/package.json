@@ -15,21 +15,19 @@
     "@repo/api-sdk": "workspace:*",
     "@repo/i18n": "workspace:*",
     "@repo/schemas": "workspace:*",
+    "@repo/shared": "workspace:*",
     "@repo/ui": "workspace:*",
     "@tanstack/react-query": "^5.101.2",
-    "js-cookie": "^3.0.5",
     "lucide-react": "^1.25.0",
     "next": "^16.2.10",
     "next-intl": "^4.13.2",
     "react": "19.2.7",
     "react-dom": "19.2.7",
-    "use-intl": "^4.13.2",
-    "zustand": "^5.0.14"
+    "use-intl": "^4.13.2"
   },
   "devDependencies": {
     "@eslint/js": "^9.39.5",
     "@repo/eslint-config": "workspace:*",
-    "@types/js-cookie": "^3.0.6",
     "@typescript-eslint/eslint-plugin": "^8.64.0",
     "@repo/tailwind-config": "workspace:*",
     "@repo/ts-config": "workspace:*",

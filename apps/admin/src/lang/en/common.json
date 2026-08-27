@@ -23,8 +23,7 @@
     "orders": "Orders",
     "categories": "Categories",
     "inventory": "Inventory",
-    "staff": "Staff",
-    "customers": "Customers"
+    "staff": "Staff"
   },
   "adminLabel": "Admin",
   "openNavMenu": "Open navigation menu",
@@ -33,6 +32,10 @@
     "subtitle": "Product status and store activity.",
     "productsCardTitle": "Products",
     "loadError": "Could not load the product list. Please try again.",
-    "empty": "No products yet."
+    "empty": "No products yet.",
+    "statTotalProducts": "Total products",
+    "statTotalOrders": "Total orders",
+    "statLowStock": "Low stock",
+    "statTotalStaff": "Staff"
   }
 }

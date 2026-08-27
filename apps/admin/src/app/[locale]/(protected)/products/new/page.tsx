@@ -5,6 +5,7 @@ import { useRouter } from '@/i18n/navigation';
 
 import { ProductForm } from '@/features/products/ProductForm';
 import { useCreateProduct } from '@/features/products/useProductMutations';
+import { PageHeader } from '@/features/shell/PageHeader';
 
 export default function NewProductPage(): React.JSX.Element {
   const t = useTranslations('product');
@@ -13,7 +14,7 @@ export default function NewProductPage(): React.JSX.Element {
 
   return (
     <div className="max-w-2xl space-y-6">
-      <h1 className="text-xl font-bold">{t('add')}</h1>
+      <PageHeader title={t('add')} />
       <ProductForm
         submitLabel={t('create')}
         isSubmitting={createProduct.isPending}
