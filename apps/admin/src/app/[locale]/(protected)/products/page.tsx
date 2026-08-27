@@ -15,13 +15,14 @@ import { useDeleteProduct } from '@/features/products/useProductMutations';
 import { ConfirmDialog } from '@/features/shell/ConfirmDialog';
 import { DataTable } from '@/features/shell/DataTable';
 import { PageHeader } from '@/features/shell/PageHeader';
+import { useUrlPage } from '@/features/shell/useUrlPage';
 
 const PAGE_SIZE = 20;
 
 export default function ProductsPage(): React.JSX.Element {
   const t = useTranslations('product');
   const tCommon = useTranslations('common');
-  const [page, setPage] = useState(1);
+  const { page, setPage } = useUrlPage();
   const [search, setSearch] = useState('');
   const [deleteError, setDeleteError] = useState<string | null>(null);
   const { data, isLoading, isError } = useAdminProducts({ page, pageSize: PAGE_SIZE, search: search === '' ? undefined : search });
@@ -79,10 +80,10 @@ export default function ProductsPage(): React.JSX.Element {
                 page,
                 totalPages: data.meta.totalPages,
                 onPrevious: () => {
-                  setPage((p) => p - 1);
+                  setPage(page - 1);
                 },
                 onNext: () => {
-                  setPage((p) => p + 1);
+                  setPage(page + 1);
                 },
                 label: tCommon('pagination.pageOf', { page: data.meta.page, totalPages: data.meta.totalPages }),
                 previousLabel: tCommon('pagination.previous'),

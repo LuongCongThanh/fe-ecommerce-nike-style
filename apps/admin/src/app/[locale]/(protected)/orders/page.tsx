@@ -1,7 +1,5 @@
 'use client';
 
-import { useState } from 'react';
-
 import { Badge } from '@repo/ui/badge';
 import { TableCell, TableRow } from '@repo/ui/table';
 import { useLocale, useTranslations } from 'next-intl';
@@ -10,6 +8,7 @@ import { Link } from '@/i18n/navigation';
 import { useAdminOrders } from '@/features/orders/useAdminOrders';
 import { DataTable } from '@/features/shell/DataTable';
 import { PageHeader } from '@/features/shell/PageHeader';
+import { useClientDataTablePagination } from '@/features/shell/useClientDataTablePagination';
 
 const PAGE_SIZE = 20;
 
@@ -18,12 +17,14 @@ export default function OrdersPage(): React.JSX.Element {
   const tCommon = useTranslations('common');
   const locale = useLocale();
   const dateLocale = locale === 'en' ? 'en-US' : 'vi-VN';
-  const [page, setPage] = useState(1);
   const { data, isLoading, isError } = useAdminOrders();
 
   const allOrders = data ?? [];
-  const totalPages = Math.max(1, Math.ceil(allOrders.length / PAGE_SIZE));
-  const pageOrders = allOrders.slice((page - 1) * PAGE_SIZE, page * PAGE_SIZE);
+  const { pageItems: pageOrders, pagination } = useClientDataTablePagination(allOrders, PAGE_SIZE, {
+    pageOf: (page, totalPages) => tCommon('pagination.pageOf', { page, totalPages }),
+    previous: tCommon('pagination.previous'),
+    next: tCommon('pagination.next'),
+  });
 
   return (
     <div className="space-y-4">
@@ -36,19 +37,7 @@ export default function OrdersPage(): React.JSX.Element {
         errorMessage={t('loadError')}
         isEmpty={pageOrders.length === 0}
         emptyMessage={t('empty')}
-        pagination={{
-          page,
-          totalPages,
-          onPrevious: () => {
-            setPage((p) => p - 1);
-          },
-          onNext: () => {
-            setPage((p) => p + 1);
-          },
-          label: tCommon('pagination.pageOf', { page, totalPages }),
-          previousLabel: tCommon('pagination.previous'),
-          nextLabel: tCommon('pagination.next'),
-        }}
+        pagination={pagination}
       >
         {pageOrders.map((order) => (
           <TableRow key={order.id}>

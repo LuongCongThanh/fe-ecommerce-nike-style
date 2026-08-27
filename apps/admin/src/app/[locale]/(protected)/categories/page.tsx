@@ -11,6 +11,7 @@ import { Link } from '@/i18n/navigation';
 
 import { useAdminCategories } from '@/features/categories/useAdminCategories';
 import { useDeleteCategory } from '@/features/categories/useCategoryMutations';
+import { useClientDataTablePagination } from '@/features/shell/useClientDataTablePagination';
 import { ConfirmDialog } from '@/features/shell/ConfirmDialog';
 import { DataTable } from '@/features/shell/DataTable';
 import { PageHeader } from '@/features/shell/PageHeader';
@@ -41,7 +42,6 @@ export default function CategoriesPage(): React.JSX.Element {
   const t = useTranslations('category');
   const tCommon = useTranslations('common');
   const [deleteError, setDeleteError] = useState<string | null>(null);
-  const [page, setPage] = useState(1);
   const { data, isLoading, isError } = useAdminCategories();
   const deleteCategory = useDeleteCategory();
 
@@ -55,8 +55,11 @@ export default function CategoriesPage(): React.JSX.Element {
   };
 
   const allRows = data !== undefined ? toTree(data.data) : [];
-  const totalPages = Math.max(1, Math.ceil(allRows.length / PAGE_SIZE));
-  const pageRows = allRows.slice((page - 1) * PAGE_SIZE, page * PAGE_SIZE);
+  const { pageItems: pageRows, pagination } = useClientDataTablePagination(allRows, PAGE_SIZE, {
+    pageOf: (page, totalPages) => tCommon('pagination.pageOf', { page, totalPages }),
+    previous: tCommon('pagination.previous'),
+    next: tCommon('pagination.next'),
+  });
 
   return (
     <div className="space-y-4">
@@ -85,19 +88,7 @@ export default function CategoriesPage(): React.JSX.Element {
         errorMessage={t('loadError')}
         isEmpty={pageRows.length === 0}
         emptyMessage={t('empty')}
-        pagination={{
-          page,
-          totalPages,
-          onPrevious: () => {
-            setPage((p) => p - 1);
-          },
-          onNext: () => {
-            setPage((p) => p + 1);
-          },
-          label: tCommon('pagination.pageOf', { page, totalPages }),
-          previousLabel: tCommon('pagination.previous'),
-          nextLabel: tCommon('pagination.next'),
-        }}
+        pagination={pagination}
       >
         {pageRows.map(({ category, depth }) => (
           <TableRow key={category.id}>
