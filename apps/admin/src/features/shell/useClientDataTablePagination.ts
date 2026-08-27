@@ -39,6 +39,7 @@ export function useClientDataTablePagination<T>(
       onNext: () => {
         setPage(page + 1);
       },
+      onPageChange: setPage,
       label: labels.pageOf(page, totalPages),
       previousLabel: labels.previous,
       nextLabel: labels.next,

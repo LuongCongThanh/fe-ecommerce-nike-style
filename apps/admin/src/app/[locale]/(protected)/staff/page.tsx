@@ -1,14 +1,17 @@
 'use client';
 
-import { useState } from 'react';
+import { useMemo, useState } from 'react';
 
+import type { Staff } from '@repo/schemas/staff';
 import { Button } from '@repo/ui/button';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@repo/ui/dialog';
+import type { SortingState } from '@tanstack/react-table';
+import { createColumnHelper, getCoreRowModel, getSortedRowModel, useReactTable } from '@tanstack/react-table';
 import { Plus } from 'lucide-react';
 import { useTranslations } from 'next-intl';
 
 import { CreateStaffForm } from '@/features/staff/CreateStaffForm';
-import { StaffRow } from '@/features/staff/StaffRow';
+import { StaffActionsCell, StaffActiveCell, StaffRolesCell } from '@/features/staff/StaffCells';
 import { useAdminStaffList } from '@/features/staff/useAdminStaffList';
 import { useCreateStaff } from '@/features/staff/useStaffMutations';
 import { DataTable } from '@/features/shell/DataTable';
@@ -17,10 +20,13 @@ import { useClientDataTablePagination } from '@/features/shell/useClientDataTabl
 
 const PAGE_SIZE = 20;
 
+const columnHelper = createColumnHelper<Staff>();
+
 export default function StaffPage(): React.JSX.Element {
   const t = useTranslations('staff');
   const tCommon = useTranslations('common');
   const [createOpen, setCreateOpen] = useState(false);
+  const [sorting, setSorting] = useState<SortingState>([]);
   const { data, isLoading, isError } = useAdminStaffList();
   const createStaff = useCreateStaff();
 
@@ -29,6 +35,46 @@ export default function StaffPage(): React.JSX.Element {
     pageOf: (page, totalPages) => tCommon('pagination.pageOf', { page, totalPages }),
     previous: tCommon('pagination.previous'),
     next: tCommon('pagination.next'),
+  });
+
+  /* eslint-disable react/no-unstable-nested-components -- these are TanStack column-def `header`/`cell` renderers, not
+   * JSX-mounted nested components; the whole `columns` array is memoized below so their identity is stable across renders. */
+  const columns = useMemo(
+    () => [
+      columnHelper.accessor('name', { header: t('columns.name'), cell: (info) => <span className="font-medium">{info.getValue()}</span> }),
+      columnHelper.accessor('email', {
+        header: t('columns.email'),
+        cell: (info) => <span className="text-muted-foreground">{info.getValue()}</span>,
+      }),
+      columnHelper.display({
+        id: 'rolesPermissions',
+        header: t('columns.rolesPermissions'),
+        cell: ({ row }) => <StaffRolesCell staff={row.original} />,
+      }),
+      columnHelper.display({
+        id: 'active',
+        header: t('active'),
+        enableSorting: false,
+        cell: ({ row }) => <StaffActiveCell staff={row.original} />,
+      }),
+      columnHelper.display({
+        id: 'actions',
+        header: t('columns.actions'),
+        meta: { className: 'text-right' },
+        cell: ({ row }) => <StaffActionsCell staff={row.original} />,
+      }),
+    ],
+    [t],
+  );
+  /* eslint-enable react/no-unstable-nested-components */
+
+  const table = useReactTable({
+    data: pageStaff,
+    columns,
+    state: { sorting },
+    onSortingChange: setSorting,
+    getCoreRowModel: getCoreRowModel(),
+    getSortedRowModel: getSortedRowModel(),
   });
 
   return (
@@ -64,18 +110,14 @@ export default function StaffPage(): React.JSX.Element {
       />
 
       <DataTable
-        headers={[t('columns.name'), t('columns.email'), t('columns.rolesPermissions'), t('active'), t('columns.actions')]}
+        table={table}
         isLoading={isLoading}
         isError={isError}
         errorMessage={t('loadError')}
         isEmpty={pageStaff.length === 0}
         emptyMessage={t('empty')}
         pagination={pagination}
-      >
-        {pageStaff.map((staff) => (
-          <StaffRow key={staff.id} staff={staff} />
-        ))}
-      </DataTable>
+      />
     </div>
   );
 }

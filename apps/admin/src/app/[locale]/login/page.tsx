@@ -9,7 +9,7 @@ import { Input } from '@repo/ui/input';
 import { Label } from '@repo/ui/label';
 import { FacebookMark, GoogleMark, TwitterMark } from '@repo/ui/social-marks';
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@repo/ui/tooltip';
-import { Eye, EyeOff, Loader2, Lock, Mail, Shirt, Tag, X } from 'lucide-react';
+import { ArrowLeft, Eye, EyeOff, Loader2, Shirt, Tag } from 'lucide-react';
 import { useTranslations } from 'next-intl';
 import { useRouter } from '@/i18n/navigation';
 
@@ -32,6 +32,30 @@ function PantsMark({ className, style }: { readonly className?: string; readonly
     >
       <path d="M6 2h12l1 6-2 14h-4l-1-11-1 11H7L5 8Z" />
     </svg>
+  );
+}
+
+/** TailAdmin's neutral, icon-only social button (design reference — MIT, see docs/adr/0001), kept
+ * disabled + tooltipped like before: admin has no OAuth, a working-looking control would be honest-
+ * copy slop. */
+function SocialButton({ icon: Icon, label, tooltip }: { readonly icon: React.ComponentType; readonly label: string; readonly tooltip: string }) {
+  return (
+    <Tooltip>
+      <TooltipTrigger asChild>
+        <span className="block">
+          <button
+            type="button"
+            disabled
+            aria-disabled="true"
+            className="inline-flex w-full cursor-not-allowed items-center justify-center gap-3 rounded-lg bg-gray-100 px-7 py-3 text-sm font-normal text-gray-700 opacity-70 dark:bg-white/5 dark:text-white/90"
+          >
+            <Icon />
+            {label}
+          </button>
+        </span>
+      </TooltipTrigger>
+      <TooltipContent>{tooltip}</TooltipContent>
+    </Tooltip>
   );
 }
 
@@ -64,53 +88,72 @@ export default function LoginPage(): React.JSX.Element {
 
   return (
     <TooltipProvider>
-      <div className="bg-muted flex min-h-screen items-center justify-center p-4">
-        <div className="login-rise bg-card grid w-full max-w-4xl overflow-hidden rounded-2xl shadow-xl md:grid-cols-2">
-          {/* Form pane */}
-          <div className="relative flex flex-col justify-center p-6 sm:p-10">
+      <div className="flex min-h-screen flex-col bg-white lg:flex-row dark:bg-gray-900">
+        {/* Form pane */}
+        <div className="flex w-full flex-1 flex-col lg:w-1/2">
+          <div className="mx-auto w-full max-w-md pt-10">
             <button
               type="button"
               onClick={() => {
                 router.back();
               }}
-              aria-label={t('back')}
-              className="text-muted-foreground hover:text-foreground hover:bg-accent absolute top-4 left-4 cursor-pointer rounded-full p-1.5 transition-colors"
+              className="inline-flex cursor-pointer items-center gap-1.5 text-sm text-gray-500 transition-colors hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-300"
             >
-              <X className="size-4" />
+              <ArrowLeft className="size-4" />
+              {t('back')}
             </button>
+          </div>
 
-            <div className="mx-auto w-full max-w-sm space-y-5 pt-6">
-              <h1 className="text-3xl font-bold tracking-tight">{t('login')}</h1>
+          <div className="mx-auto flex w-full max-w-md flex-1 flex-col justify-center">
+            <div>
+              <div className="mb-5 sm:mb-8">
+                <h1 className="text-title-sm sm:text-title-md mb-2 font-semibold text-gray-800 dark:text-white/90">{t('login')}</h1>
+              </div>
 
               {error !== null ? (
-                <p role="alert" className="border-destructive/30 bg-destructive/10 text-destructive rounded-lg border px-3 py-2 text-sm">
+                <p role="alert" className="border-destructive/30 bg-destructive/10 text-destructive mb-4 rounded-lg border px-3 py-2 text-sm">
                   {error}
                 </p>
               ) : null}
 
-              <form onSubmit={onSubmit} className="space-y-4">
-                <div className="space-y-1.5">
-                  <Label htmlFor="email">{t('email')}</Label>
-                  <div className="relative">
-                    <Mail className="text-muted-foreground pointer-events-none absolute top-1/2 left-3 size-4 -translate-y-1/2" />
-                    <Input
-                      id="email"
-                      type="email"
-                      autoComplete="email"
-                      required
-                      value={email}
-                      onChange={(e) => {
-                        setEmail(e.target.value);
-                      }}
-                      className="pl-9"
-                    />
-                  </div>
+              <div className="grid grid-cols-1 gap-3 sm:grid-cols-3">
+                <SocialButton icon={FacebookMark} label="Facebook" tooltip={t('socialUnavailable')} />
+                <SocialButton icon={TwitterMark} label="Twitter" tooltip={t('socialUnavailable')} />
+                <SocialButton icon={GoogleMark} label="Google" tooltip={t('socialUnavailable')} />
+              </div>
+
+              <div className="relative py-3 sm:py-5">
+                <div className="absolute inset-0 flex items-center">
+                  <div className="w-full border-t border-gray-200 dark:border-gray-800" />
+                </div>
+                <div className="relative flex justify-center text-sm">
+                  <span className="bg-white p-2 text-gray-400 sm:px-5 sm:py-2 dark:bg-gray-900">{t('or')}</span>
+                </div>
+              </div>
+
+              <form onSubmit={onSubmit} className="space-y-5">
+                <div>
+                  <Label htmlFor="email" className="mb-1.5 block text-sm font-medium text-gray-700 dark:text-gray-400">
+                    {t('email')}
+                  </Label>
+                  <Input
+                    id="email"
+                    type="email"
+                    autoComplete="email"
+                    required
+                    value={email}
+                    onChange={(e) => {
+                      setEmail(e.target.value);
+                    }}
+                    className="h-11 rounded-lg border-gray-300 dark:border-gray-700 dark:bg-gray-900 dark:text-white/90"
+                  />
                 </div>
 
-                <div className="space-y-1.5">
-                  <Label htmlFor="password">{t('password')}</Label>
+                <div>
+                  <Label htmlFor="password" className="mb-1.5 block text-sm font-medium text-gray-700 dark:text-gray-400">
+                    {t('password')}
+                  </Label>
                   <div className="relative">
-                    <Lock className="text-muted-foreground pointer-events-none absolute top-1/2 left-3 size-4 -translate-y-1/2" />
                     <Input
                       id="password"
                       type={showPassword ? 'text' : 'password'}
@@ -120,7 +163,7 @@ export default function LoginPage(): React.JSX.Element {
                       onChange={(e) => {
                         setPassword(e.target.value);
                       }}
-                      className="px-9"
+                      className="h-11 rounded-lg border-gray-300 pr-11 dark:border-gray-700 dark:bg-gray-900 dark:text-white/90"
                     />
                     <button
                       type="button"
@@ -128,39 +171,33 @@ export default function LoginPage(): React.JSX.Element {
                         setShowPassword((v) => !v);
                       }}
                       aria-label={showPassword ? t('hidePassword') : t('showPassword')}
-                      className="text-muted-foreground hover:text-foreground absolute top-1/2 right-3 size-4 -translate-y-1/2 cursor-pointer"
+                      className="absolute top-1/2 right-4 -translate-y-1/2 cursor-pointer text-gray-500 dark:text-gray-400"
                     >
                       {showPassword ? <EyeOff className="size-4" /> : <Eye className="size-4" />}
                     </button>
                   </div>
                 </div>
 
-                <div className="flex items-center gap-2">
-                  <Checkbox
-                    id="remember-me"
-                    checked={rememberMe}
-                    onCheckedChange={(checked) => {
-                      setRememberMe(checked === true);
-                    }}
-                  />
-                  <Label htmlFor="remember-me" className="text-muted-foreground font-normal">
-                    {t('rememberMe')}
-                  </Label>
-                </div>
+                <div className="flex items-center justify-between">
+                  <div className="flex items-center gap-2">
+                    <Checkbox
+                      id="remember-me"
+                      checked={rememberMe}
+                      onCheckedChange={(checked) => {
+                        setRememberMe(checked === true);
+                      }}
+                    />
+                    <Label htmlFor="remember-me" className="text-sm font-normal text-gray-700 dark:text-gray-400">
+                      {t('rememberMe')}
+                    </Label>
+                  </div>
 
-                <Button type="submit" disabled={isSubmitting} className="w-full cursor-pointer">
-                  {isSubmitting ? <Loader2 className="size-4 animate-spin" aria-hidden="true" /> : null}
-                  {isSubmitting ? t('loggingIn') : t('login')}
-                </Button>
-
-                {/* No self-registration for staff accounts (SUPER_ADMIN creates them) and no
-                 * forgot-password flow yet — this link is disabled + tooltipped rather than a fake
-                 * working link, same treatment as the social buttons below. */}
-                <div className="flex justify-end text-sm">
+                  {/* No self-registration for staff accounts (SUPER_ADMIN creates them) and no
+                   * forgot-password flow yet — disabled + tooltipped rather than a fake working link. */}
                   <Tooltip>
                     <TooltipTrigger asChild>
                       <span>
-                        <button type="button" disabled className="text-muted-foreground/60 cursor-not-allowed underline-offset-4">
+                        <button type="button" disabled className="cursor-not-allowed text-sm text-gray-400 underline-offset-4 dark:text-gray-600">
                           {t('forgotPassword')}
                         </button>
                       </span>
@@ -168,56 +205,29 @@ export default function LoginPage(): React.JSX.Element {
                     <TooltipContent>{t('socialUnavailable')}</TooltipContent>
                   </Tooltip>
                 </div>
+
+                <Button type="submit" disabled={isSubmitting} className="h-11 w-full cursor-pointer rounded-lg">
+                  {isSubmitting ? <Loader2 className="size-4 animate-spin" aria-hidden="true" /> : null}
+                  {isSubmitting ? t('loggingIn') : t('login')}
+                </Button>
               </form>
-
-              <div className="relative py-1 text-center text-xs">
-                <span className="border-border absolute top-1/2 left-0 w-full border-t" />
-                <span className="bg-card text-muted-foreground relative px-2 uppercase">{t('or')}</span>
-              </div>
-
-              <div className="space-y-2">
-                {(
-                  [
-                    { key: 'facebook', label: 'Facebook', Icon: FacebookMark, className: 'login-social-facebook' },
-                    { key: 'twitter', label: 'Twitter', Icon: TwitterMark, className: 'login-social-twitter' },
-                    { key: 'google', label: 'Google', Icon: GoogleMark, className: 'login-social-google' },
-                  ] as const
-                ).map(({ key, label, Icon, className }) => (
-                  <Tooltip key={key}>
-                    <TooltipTrigger asChild>
-                      <span className="block">
-                        <button
-                          type="button"
-                          disabled
-                          aria-disabled="true"
-                          className={`inline-flex h-10 w-full cursor-not-allowed items-center justify-center gap-2 rounded-md text-sm font-medium text-white opacity-70 ${className}`}
-                        >
-                          <Icon />
-                          {t('loginWith', { provider: label })}
-                        </button>
-                      </span>
-                    </TooltipTrigger>
-                    <TooltipContent>{t('socialUnavailable')}</TooltipContent>
-                  </Tooltip>
-                ))}
-              </div>
             </div>
           </div>
+        </div>
 
-          {/* Decorative pane — hidden below md so the form is never pushed off-screen on mobile.
-           * design.md § Variants: brand red-orange stays the accent here (user-approved exception).
-           * No stock photo: this is an internal admin tool with no relevant photography to show. */}
-          <div className="from-brand-900 via-brand-700 to-brand-950 relative hidden overflow-hidden bg-linear-to-br md:block">
-            <div className="login-blob bg-brand-400/60 -top-24 -left-24 size-96" />
-            <div className="login-blob bg-brand-300/45 top-1/3 -right-20 size-80" style={{ animationDelay: '-6s' }} />
-            <div className="login-blob bg-accent-400/35 -bottom-16 left-1/4 size-48" style={{ animationDelay: '-11s' }} />
+        {/* Decorative pane — hidden below lg so the form is never pushed off-screen on mobile.
+         * Brand blue (TailAdmin's palette, admin-only) is the accent here — same "no stock photo,
+         * internal tool" reasoning as before, now on the new theme. */}
+        <div className="from-brand-900 via-brand-700 to-brand-950 relative hidden overflow-hidden bg-linear-to-br lg:block lg:w-1/2">
+          <div className="login-blob bg-brand-400/60 -top-24 -left-24 size-96" />
+          <div className="login-blob bg-brand-300/45 top-1/3 -right-20 size-80" style={{ animationDelay: '-6s' }} />
+          <div className="login-blob bg-accent-400/35 -bottom-16 left-1/4 size-48" style={{ animationDelay: '-11s' }} />
 
-            <Tag className="login-icon-float top-1/4 left-1/5 size-6 text-white/40" style={{ animationDelay: '-2s' }} aria-hidden="true" />
-            <PantsMark className="login-icon-float right-1/5 bottom-1/4 size-7 text-white/35" style={{ animationDelay: '-4.5s' }} />
+          <Tag className="login-icon-float top-1/4 left-1/5 size-6 text-white/40" style={{ animationDelay: '-2s' }} aria-hidden="true" />
+          <PantsMark className="login-icon-float right-1/5 bottom-1/4 size-7 text-white/35" style={{ animationDelay: '-4.5s' }} />
 
-            <div className="login-scene absolute inset-0 flex items-center justify-center">
-              <Shirt className="login-centerpiece size-28 text-white/85 lg:size-32" strokeWidth={1.25} aria-hidden="true" />
-            </div>
+          <div className="login-scene absolute inset-0 flex items-center justify-center">
+            <Shirt className="login-centerpiece size-28 text-white/85 lg:size-32" strokeWidth={1.25} aria-hidden="true" />
           </div>
         </div>
       </div>

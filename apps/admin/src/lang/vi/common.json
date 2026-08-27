@@ -18,6 +18,7 @@
     "next": "Sau"
   },
   "nav": {
+    "groupLabel": "Menu",
     "dashboard": "Tổng quan",
     "products": "Sản phẩm",
     "orders": "Đơn hàng",
@@ -27,6 +28,17 @@
   },
   "adminLabel": "Quản trị",
   "openNavMenu": "Mở menu điều hướng",
+  "collapseSidebar": "Thu gọn menu",
+  "expandSidebar": "Mở rộng menu",
+  "logout": "Đăng xuất",
+  "notAvailableYet": "Chưa hỗ trợ",
+  "languageSwitcher": "Ngôn ngữ",
+  "appsSwitcher": "Ứng dụng khác",
+  "notifications": "Thông báo",
+  "search": {
+    "placeholder": "Tìm trang...",
+    "empty": "Không tìm thấy trang nào."
+  },
   "dashboard": {
     "title": "Tổng quan",
     "subtitle": "Trạng thái sản phẩm và hoạt động cửa hàng.",
@@ -36,6 +48,10 @@
     "statTotalProducts": "Tổng sản phẩm",
     "statTotalOrders": "Tổng đơn hàng",
     "statLowStock": "Sắp hết hàng",
-    "statTotalStaff": "Nhân viên"
+    "statTotalStaff": "Nhân viên",
+    "recentOrdersTitle": "Đơn hàng gần đây",
+    "heroGreeting": "Xin chào, {name} 👋",
+    "heroSubtitle": "Đây là tổng quan hoạt động cửa hàng hôm nay.",
+    "heroRevenueLabel": "Tổng doanh thu"
   }
 }

@@ -1,6 +1,7 @@
 'use client';
 
 import { enableApiMockingBrowser } from '@repo/api-sdk/adapters/browser';
+import { ThemeProvider } from 'next-themes';
 import { useEffect, useState } from 'react';
 
 import { StaffAuthRuntimeProvider } from '@/core/session';
@@ -28,8 +29,10 @@ export function AppProviders({ children }: { children: React.ReactNode }) {
   if (!isMockingReady) return null;
 
   return (
-    <AppQueryProvider>
-      <StaffAuthRuntimeProvider>{children}</StaffAuthRuntimeProvider>
-    </AppQueryProvider>
+    <ThemeProvider attribute="class" defaultTheme="light" enableSystem={false}>
+      <AppQueryProvider>
+        <StaffAuthRuntimeProvider>{children}</StaffAuthRuntimeProvider>
+      </AppQueryProvider>
+    </ThemeProvider>
   );
 }

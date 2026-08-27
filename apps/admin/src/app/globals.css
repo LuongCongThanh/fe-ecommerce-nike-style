@@ -1,7 +1,36 @@
 @import '@repo/tailwind-config/preset.css';
 @import '@repo/tailwind-config/login.css';
+/* Admin-only theme profile (TailAdmin-inspired redesign) — imported last so its `@theme`/`:root`/
+ * `.dark` declarations win over the shared defaults from preset.css/theme.css above, scoped to this
+ * app's own compiled CSS only. See packages/tailwind-config/src/admin-theme.css's header comment. */
+@import '@repo/tailwind-config/admin-theme.css';
 @source '../../../../packages/ui/src';
 @source '../../../../packages/shared/src';
+
+/* Sidebar menu-item utility classes — same names/behaviour as TailAdmin's `src/css/style.css`
+ * (`@utility menu-item*`), ported here since this app compiles its own Tailwind build. */
+@utility menu-item {
+  @apply text-theme-sm relative flex items-center gap-3 rounded-lg px-3 py-2 font-medium;
+}
+@utility menu-item-active {
+  @apply bg-brand-50 text-brand-500 dark:bg-brand-500/[0.12] dark:text-brand-400;
+}
+@utility menu-item-inactive {
+  @apply text-gray-700 hover:bg-gray-100 hover:text-gray-700 dark:text-gray-300 dark:hover:bg-white/5 dark:hover:text-gray-300;
+}
+@utility menu-item-icon-active {
+  @apply text-brand-500 dark:text-brand-400;
+}
+@utility menu-item-icon-inactive {
+  @apply text-gray-500 group-hover:text-gray-700 dark:text-gray-400 dark:group-hover:text-gray-300;
+}
+
+@theme {
+  --text-theme-sm: 0.875rem;
+  --text-theme-sm--line-height: 1.25rem;
+  --text-theme-xs: 0.75rem;
+  --text-theme-xs--line-height: 1.125rem;
+}
 
 /* Hallmark · macrostructure: Split Studio, card variant (centered modal-style card instead of a
  * full-viewport split — studied from a second reference the user asked to copy structurally)

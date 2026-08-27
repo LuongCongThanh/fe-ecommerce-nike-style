@@ -12,6 +12,7 @@
     "./preset.css": "./src/preset.css",
     "./theme.css": "./src/theme.css",
     "./login.css": "./src/login.css",
+    "./admin-theme.css": "./src/admin-theme.css",
     "./content": "./src/content.ts",
     "./plugins": "./src/plugins.ts"
   },

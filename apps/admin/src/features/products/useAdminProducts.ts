@@ -8,9 +8,9 @@ export const adminProductKeys = {
   list: (query: Partial<ProductListRequest>) => ['admin', 'products', query] as const,
 };
 
-export function useAdminProducts(query: { page: number; pageSize: number; search?: string }) {
+export function useAdminProducts(query: { page: number; pageSize: number; search?: string; category?: string }) {
   return useQuery({
     queryKey: adminProductKeys.list(query),
-    queryFn: () => getAdminProducts({ page: query.page, pageSize: query.pageSize, search: query.search }),
+    queryFn: () => getAdminProducts({ page: query.page, pageSize: query.pageSize, search: query.search, category: query.category }),
   });
 }

@@ -10,8 +10,8 @@ interface PageHeaderProps {
  * (UI/UX audit finding #4/#6). */
 export function PageHeader({ title, action }: PageHeaderProps): React.JSX.Element {
   return (
-    <div className="flex items-center justify-between">
-      <h1 className="text-xl font-bold">{title}</h1>
+    <div className="mb-2 flex flex-wrap items-center justify-between gap-3">
+      <h1 className="text-xl font-semibold text-gray-800 dark:text-white/90">{title}</h1>
       {action}
     </div>
   );
