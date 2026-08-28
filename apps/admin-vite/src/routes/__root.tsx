@@ -1,22 +1,41 @@
-import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
+import { enableApiMockingBrowser } from '@repo/api-sdk/adapters/browser';
 import { Outlet, createRootRoute } from '@tanstack/react-router';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { I18nextProvider } from 'react-i18next';
 
+import { StaffAuthRuntimeProvider } from '@/core/session/StaffAuthRuntimeProvider';
 import i18n from '@/i18n';
+import { AppQueryProvider } from '@/providers/query-provider';
 
 export const Route = createRootRoute({
   component: RootComponent,
 });
 
-function RootComponent(): React.JSX.Element {
-  const [queryClient] = useState(() => new QueryClient());
+function RootComponent(): React.JSX.Element | null {
+  const [isMockingReady, setIsMockingReady] = useState(false);
+
+  // Gates rendering until the MSW browser worker has started (no-op, resolves immediately, when
+  // VITE_API_MOCKING is unset) — otherwise the first query could race the worker's start. Ported
+  // from the Next.js admin's AppProviders.
+  useEffect(() => {
+    enableApiMockingBrowser()
+      .then(() => {
+        setIsMockingReady(true);
+      })
+      .catch(() => {
+        setIsMockingReady(true);
+      });
+  }, []);
+
+  if (!isMockingReady) return null;
 
   return (
     <I18nextProvider i18n={i18n}>
-      <QueryClientProvider client={queryClient}>
-        <Outlet />
-      </QueryClientProvider>
+      <AppQueryProvider>
+        <StaffAuthRuntimeProvider>
+          <Outlet />
+        </StaffAuthRuntimeProvider>
+      </AppQueryProvider>
     </I18nextProvider>
   );
 }

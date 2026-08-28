@@ -1,49 +1,89 @@
 import { Button } from '@repo/ui/button';
-import { Link, Outlet, useNavigate } from '@tanstack/react-router';
-import { LayoutDashboard, LogOut } from 'lucide-react';
+import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger } from '@repo/ui/sheet';
+import { Link, useRouterState } from '@tanstack/react-router';
+import { Menu } from 'lucide-react';
+import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 
-import { useAuthStore } from '@/stores/auth-store';
+import { useStaffAuth } from '@/core/session/useStaffAuth';
+import { NAV_ITEMS } from '@/features/shell/nav-items';
 
-/**
- * Minimal Stage-1 shell (sidebar + top bar) — a placeholder for the sidebar/header ported from
- * shadcn-admin's `components/layout/` in Stage 2, once feature routes exist to navigate between.
- */
-export function AppShell(): React.JSX.Element {
+function NavList({ pathname, onNavigate }: { readonly pathname: string; readonly onNavigate?: () => void }): React.JSX.Element {
   const { t } = useTranslation('common');
-  const navigate = useNavigate();
-  const user = useAuthStore((state) => state.user);
-  const signOut = useAuthStore((state) => state.signOut);
+  const { hasPermission } = useStaffAuth();
+  const visibleItems = NAV_ITEMS.filter((item) => item.permission === undefined || hasPermission(item.permission));
 
   return (
-    <div className="flex min-h-screen">
-      <aside className="w-56 shrink-0 border-r border-gray-200 bg-white p-4 dark:border-gray-800 dark:bg-white/3">
-        <p className="mb-6 text-lg font-bold">Admin</p>
-        <nav className="space-y-1">
-          <Link to="/" className="flex items-center gap-2 rounded-lg px-3 py-2 text-sm font-medium hover:bg-gray-100 dark:hover:bg-white/5">
-            <LayoutDashboard className="size-4" aria-hidden="true" />
-            {t('nav.dashboard', { defaultValue: 'Dashboard' })}
-          </Link>
-        </nav>
-      </aside>
-      <div className="flex-1">
-        <header className="flex items-center justify-between border-b border-gray-200 px-6 py-3 dark:border-gray-800">
-          <span className="text-sm text-gray-500">{user?.name}</span>
-          <Button
-            variant="outline"
-            size="sm"
-            onClick={() => {
-              signOut();
-              void navigate({ to: '/login' });
-            }}
+    <nav className="flex flex-col gap-1">
+      {visibleItems.map((item) => {
+        const isActive = pathname === item.href;
+
+        return (
+          <Link
+            key={item.href}
+            to={item.href}
+            onClick={onNavigate}
+            aria-current={isActive ? 'page' : undefined}
+            className={`flex items-center gap-3 rounded-lg px-3 py-2 text-sm font-medium transition-colors ${
+              isActive ? 'bg-accent text-accent-foreground' : 'text-muted-foreground hover:bg-accent/50 hover:text-foreground'
+            }`}
           >
-            <LogOut className="size-4" data-icon="inline-start" aria-hidden="true" />
-            {t('actions.logout', { defaultValue: 'Log out' })}
-          </Button>
+            <item.icon className="size-4 shrink-0" />
+            {t(`nav.${item.labelKey}`)}
+          </Link>
+        );
+      })}
+    </nav>
+  );
+}
+
+export function AppShell({ children }: { readonly children: React.ReactNode }): React.JSX.Element {
+  const { t } = useTranslation('common');
+  const pathname = useRouterState({ select: (s) => s.location.pathname });
+  const [mobileOpen, setMobileOpen] = useState(false);
+
+  return (
+    <div className="bg-background text-foreground flex min-h-screen">
+      <aside className="bg-card hidden w-60 shrink-0 border-r md:flex md:flex-col">
+        <div className="flex h-14 items-center border-b px-4">
+          <span className="text-base font-black tracking-tight">
+            ANTIGRAVITY<span className="text-muted-foreground">.ADMIN</span>
+          </span>
+        </div>
+        <div className="flex-1 overflow-y-auto p-3">
+          <NavList pathname={pathname} />
+        </div>
+      </aside>
+
+      <div className="flex min-w-0 flex-1 flex-col">
+        <header className="bg-background/95 sticky top-0 z-10 flex h-14 items-center gap-3 border-b px-4 backdrop-blur-sm">
+          <Sheet open={mobileOpen} onOpenChange={setMobileOpen}>
+            <SheetTrigger asChild>
+              <Button variant="ghost" size="icon" className="md:hidden" aria-label={t('openNavMenu')}>
+                <Menu className="size-5" />
+              </Button>
+            </SheetTrigger>
+            <SheetContent side="left" className="w-64 p-0">
+              <SheetHeader className="border-b p-4 text-left">
+                <SheetTitle className="text-base font-black tracking-tight">
+                  ANTIGRAVITY<span className="text-muted-foreground">.ADMIN</span>
+                </SheetTitle>
+              </SheetHeader>
+              <div className="flex-1 overflow-y-auto p-3">
+                <NavList
+                  pathname={pathname}
+                  onNavigate={() => {
+                    setMobileOpen(false);
+                  }}
+                />
+              </div>
+            </SheetContent>
+          </Sheet>
+
+          <span className="text-sm font-semibold">{t('adminLabel')}</span>
         </header>
-        <main className="p-6">
-          <Outlet />
-        </main>
+
+        <main className="min-w-0 flex-1 p-4 md:p-6">{children}</main>
       </div>
     </div>
   );
