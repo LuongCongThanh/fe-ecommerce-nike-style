@@ -14,18 +14,20 @@
   },
   "dependencies": {
     "@repo/api-sdk": "workspace:*",
+    "@repo/i18n": "workspace:*",
     "@repo/schemas": "workspace:*",
+    "@repo/shared": "workspace:*",
     "@repo/ui": "workspace:*",
     "@tanstack/react-query": "^5.101.2",
     "@tanstack/react-router": "^1.168.22",
     "@tanstack/react-table": "^8.21.3",
     "i18next": "^25.7.0",
-    "js-cookie": "^3.0.5",
     "lucide-react": "^1.25.0",
+    "next-themes": "^0.4.6",
     "react": "19.2.7",
     "react-dom": "19.2.7",
     "react-i18next": "^15.7.2",
-    "zustand": "^5.0.14"
+    "recharts": "3.10.1"
   },
   "devDependencies": {
     "@eslint/js": "^9.39.5",
@@ -36,7 +38,6 @@
     "@tanstack/router-plugin": "^1.167.22",
     "@testing-library/jest-dom": "^6.9.1",
     "@testing-library/react": "^16.3.2",
-    "@types/js-cookie": "^3.0.6",
     "@types/node": "^24.13.3",
     "@types/react": "^19",
     "@types/react-dom": "^19",

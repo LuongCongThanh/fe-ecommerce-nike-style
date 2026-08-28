@@ -22,6 +22,7 @@
     "shippingFee": "Phí vận chuyển: {value}₫",
     "total": "Tổng cộng: {value}₫"
   },
+  "statusFilterAll": "Tất cả",
   "statusLabels": {
     "PENDING": "Chờ xử lý",
     "PROCESSING": "Đang xử lý",
@@ -31,6 +32,36 @@
     "CANCELLED": "Đã huỷ",
     "RETURN_REQUESTED": "Yêu cầu trả hàng",
     "RETURNED": "Đã trả hàng"
+  },
+  "orderInfo": {
+    "title": "Thông tin đơn hàng",
+    "address": "Địa chỉ giao hàng",
+    "note": "Ghi chú",
+    "noNote": "Không có ghi chú.",
+    "paymentMethod": "Phương thức thanh toán",
+    "paymentStatus": "Trạng thái thanh toán",
+    "createdAt": "Ngày đặt",
+    "deliveredAt": "Ngày giao thành công",
+    "notDeliveredYet": "Chưa giao"
+  },
+  "paymentMethodLabels": {
+    "cod": "Thanh toán khi nhận hàng (COD)"
+  },
+  "paymentStatusLabels": {
+    "pending": "Chờ thanh toán",
+    "paid": "Đã thanh toán",
+    "failed": "Thất bại",
+    "refunded": "Đã hoàn tiền"
+  },
+  "shippingActivity": {
+    "title": "Tiến trình giao hàng",
+    "description": {
+      "PENDING": "Đơn hàng đã được đặt, chờ xử lý.",
+      "PROCESSING": "Đang chuẩn bị hàng.",
+      "PACKED": "Đã đóng gói, chờ bàn giao vận chuyển.",
+      "SHIPPED": "Đang trên đường giao đến khách hàng.",
+      "DELIVERED": "Đã giao thành công."
+    }
   },
   "approveReturn": "Duyệt trả hàng",
   "rejectReturn": "Từ chối trả hàng",

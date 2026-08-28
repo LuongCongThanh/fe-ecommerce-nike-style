@@ -89,6 +89,11 @@
     background-color: var(--color-background);
     color: var(--color-foreground);
     min-height: 100vh;
+    /* Explicit baseline rhythm (UI/UX audit finding) — was relying on the browser default (16px/
+       normal) with no documented floor; now pinned to the same --text-body-md scale step already
+       used by components, so 16px/1.5 line-height is the floor everywhere, not an accident. */
+    font-size: var(--text-body-md);
+    line-height: var(--text-body-md--line-height);
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
   }

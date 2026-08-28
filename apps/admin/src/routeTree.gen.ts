@@ -8,132 +8,139 @@
 // You should NOT make any changes in this file as it will be overwritten.
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
-import { Route as rootRouteImport } from './routes/__root';
-import { Route as AuthenticatedRouteImport } from './routes/_authenticated';
-import { Route as LoginRouteImport } from './routes/login';
-import { Route as AuthenticatedIndexRouteImport } from './routes/_authenticated.index';
-import { Route as AuthenticatedInventoryRouteImport } from './routes/_authenticated.inventory';
-import { Route as AuthenticatedStaffRouteImport } from './routes/_authenticated.staff';
-import { Route as AuthenticatedCategoriesIndexRouteImport } from './routes/_authenticated.categories.index';
-import { Route as AuthenticatedCategoriesNewRouteImport } from './routes/_authenticated.categories.new';
-import { Route as AuthenticatedOrdersIndexRouteImport } from './routes/_authenticated.orders.index';
-import { Route as AuthenticatedOrdersIdRouteImport } from './routes/_authenticated.orders.$id';
-import { Route as AuthenticatedProductsIndexRouteImport } from './routes/_authenticated.products.index';
-import { Route as AuthenticatedProductsNewRouteImport } from './routes/_authenticated.products.new';
-import { Route as AuthenticatedCategoriesIdEditRouteImport } from './routes/_authenticated.categories.$id.edit';
-import { Route as AuthenticatedProductsIdEditRouteImport } from './routes/_authenticated.products.$id.edit';
+import { Route as rootRouteImport } from './routes/__root'
+import { Route as AuthenticatedRouteImport } from './routes/_authenticated'
+import { Route as LoginRouteImport } from './routes/login'
+import { Route as AuthenticatedIndexRouteImport } from './routes/_authenticated.index'
+import { Route as AuthenticatedInventoryRouteImport } from './routes/_authenticated.inventory'
+import { Route as AuthenticatedStaffRouteImport } from './routes/_authenticated.staff'
+import { Route as AuthenticatedCategoriesIndexRouteImport } from './routes/_authenticated.categories.index'
+import { Route as AuthenticatedCategoriesNewRouteImport } from './routes/_authenticated.categories.new'
+import { Route as AuthenticatedOrdersIndexRouteImport } from './routes/_authenticated.orders.index'
+import { Route as AuthenticatedOrdersIdRouteImport } from './routes/_authenticated.orders.$id'
+import { Route as AuthenticatedProductsIndexRouteImport } from './routes/_authenticated.products.index'
+import { Route as AuthenticatedProductsNewRouteImport } from './routes/_authenticated.products.new'
+import { Route as AuthenticatedCategoriesIdEditRouteImport } from './routes/_authenticated.categories.$id.edit'
+import { Route as AuthenticatedProductsIdEditRouteImport } from './routes/_authenticated.products.$id.edit'
 
 const AuthenticatedRoute = AuthenticatedRouteImport.update({
   id: '/_authenticated',
   getParentRoute: () => rootRouteImport,
-} as any);
+} as any)
 const LoginRoute = LoginRouteImport.update({
   id: '/login',
   path: '/login',
   getParentRoute: () => rootRouteImport,
-} as any);
+} as any)
 const AuthenticatedIndexRoute = AuthenticatedIndexRouteImport.update({
   id: '/',
   path: '/',
   getParentRoute: () => AuthenticatedRoute,
-} as any);
+} as any)
 const AuthenticatedInventoryRoute = AuthenticatedInventoryRouteImport.update({
   id: '/inventory',
   path: '/inventory',
   getParentRoute: () => AuthenticatedRoute,
-} as any);
+} as any)
 const AuthenticatedStaffRoute = AuthenticatedStaffRouteImport.update({
   id: '/staff',
   path: '/staff',
   getParentRoute: () => AuthenticatedRoute,
-} as any);
-const AuthenticatedCategoriesIndexRoute = AuthenticatedCategoriesIndexRouteImport.update({
-  id: '/categories/',
-  path: '/categories/',
-  getParentRoute: () => AuthenticatedRoute,
-} as any);
-const AuthenticatedCategoriesNewRoute = AuthenticatedCategoriesNewRouteImport.update({
-  id: '/categories/new',
-  path: '/categories/new',
-  getParentRoute: () => AuthenticatedRoute,
-} as any);
-const AuthenticatedOrdersIndexRoute = AuthenticatedOrdersIndexRouteImport.update({
-  id: '/orders/',
-  path: '/orders/',
-  getParentRoute: () => AuthenticatedRoute,
-} as any);
+} as any)
+const AuthenticatedCategoriesIndexRoute =
+  AuthenticatedCategoriesIndexRouteImport.update({
+    id: '/categories/',
+    path: '/categories/',
+    getParentRoute: () => AuthenticatedRoute,
+  } as any)
+const AuthenticatedCategoriesNewRoute =
+  AuthenticatedCategoriesNewRouteImport.update({
+    id: '/categories/new',
+    path: '/categories/new',
+    getParentRoute: () => AuthenticatedRoute,
+  } as any)
+const AuthenticatedOrdersIndexRoute =
+  AuthenticatedOrdersIndexRouteImport.update({
+    id: '/orders/',
+    path: '/orders/',
+    getParentRoute: () => AuthenticatedRoute,
+  } as any)
 const AuthenticatedOrdersIdRoute = AuthenticatedOrdersIdRouteImport.update({
   id: '/orders/$id',
   path: '/orders/$id',
   getParentRoute: () => AuthenticatedRoute,
-} as any);
-const AuthenticatedProductsIndexRoute = AuthenticatedProductsIndexRouteImport.update({
-  id: '/products/',
-  path: '/products/',
-  getParentRoute: () => AuthenticatedRoute,
-} as any);
-const AuthenticatedProductsNewRoute = AuthenticatedProductsNewRouteImport.update({
-  id: '/products/new',
-  path: '/products/new',
-  getParentRoute: () => AuthenticatedRoute,
-} as any);
-const AuthenticatedCategoriesIdEditRoute = AuthenticatedCategoriesIdEditRouteImport.update({
-  id: '/categories/$id/edit',
-  path: '/categories/$id/edit',
-  getParentRoute: () => AuthenticatedRoute,
-} as any);
-const AuthenticatedProductsIdEditRoute = AuthenticatedProductsIdEditRouteImport.update({
-  id: '/products/$id/edit',
-  path: '/products/$id/edit',
-  getParentRoute: () => AuthenticatedRoute,
-} as any);
+} as any)
+const AuthenticatedProductsIndexRoute =
+  AuthenticatedProductsIndexRouteImport.update({
+    id: '/products/',
+    path: '/products/',
+    getParentRoute: () => AuthenticatedRoute,
+  } as any)
+const AuthenticatedProductsNewRoute =
+  AuthenticatedProductsNewRouteImport.update({
+    id: '/products/new',
+    path: '/products/new',
+    getParentRoute: () => AuthenticatedRoute,
+  } as any)
+const AuthenticatedCategoriesIdEditRoute =
+  AuthenticatedCategoriesIdEditRouteImport.update({
+    id: '/categories/$id/edit',
+    path: '/categories/$id/edit',
+    getParentRoute: () => AuthenticatedRoute,
+  } as any)
+const AuthenticatedProductsIdEditRoute =
+  AuthenticatedProductsIdEditRouteImport.update({
+    id: '/products/$id/edit',
+    path: '/products/$id/edit',
+    getParentRoute: () => AuthenticatedRoute,
+  } as any)
 
 export interface FileRoutesByFullPath {
-  '/': typeof AuthenticatedIndexRoute;
-  '/login': typeof LoginRoute;
-  '/inventory': typeof AuthenticatedInventoryRoute;
-  '/staff': typeof AuthenticatedStaffRoute;
-  '/categories/new': typeof AuthenticatedCategoriesNewRoute;
-  '/orders/$id': typeof AuthenticatedOrdersIdRoute;
-  '/products/new': typeof AuthenticatedProductsNewRoute;
-  '/categories/': typeof AuthenticatedCategoriesIndexRoute;
-  '/orders/': typeof AuthenticatedOrdersIndexRoute;
-  '/products/': typeof AuthenticatedProductsIndexRoute;
-  '/categories/$id/edit': typeof AuthenticatedCategoriesIdEditRoute;
-  '/products/$id/edit': typeof AuthenticatedProductsIdEditRoute;
+  '/': typeof AuthenticatedIndexRoute
+  '/login': typeof LoginRoute
+  '/inventory': typeof AuthenticatedInventoryRoute
+  '/staff': typeof AuthenticatedStaffRoute
+  '/categories/new': typeof AuthenticatedCategoriesNewRoute
+  '/orders/$id': typeof AuthenticatedOrdersIdRoute
+  '/products/new': typeof AuthenticatedProductsNewRoute
+  '/categories/': typeof AuthenticatedCategoriesIndexRoute
+  '/orders/': typeof AuthenticatedOrdersIndexRoute
+  '/products/': typeof AuthenticatedProductsIndexRoute
+  '/categories/$id/edit': typeof AuthenticatedCategoriesIdEditRoute
+  '/products/$id/edit': typeof AuthenticatedProductsIdEditRoute
 }
 export interface FileRoutesByTo {
-  '/login': typeof LoginRoute;
-  '/inventory': typeof AuthenticatedInventoryRoute;
-  '/staff': typeof AuthenticatedStaffRoute;
-  '/': typeof AuthenticatedIndexRoute;
-  '/categories/new': typeof AuthenticatedCategoriesNewRoute;
-  '/orders/$id': typeof AuthenticatedOrdersIdRoute;
-  '/products/new': typeof AuthenticatedProductsNewRoute;
-  '/categories': typeof AuthenticatedCategoriesIndexRoute;
-  '/orders': typeof AuthenticatedOrdersIndexRoute;
-  '/products': typeof AuthenticatedProductsIndexRoute;
-  '/categories/$id/edit': typeof AuthenticatedCategoriesIdEditRoute;
-  '/products/$id/edit': typeof AuthenticatedProductsIdEditRoute;
+  '/login': typeof LoginRoute
+  '/inventory': typeof AuthenticatedInventoryRoute
+  '/staff': typeof AuthenticatedStaffRoute
+  '/': typeof AuthenticatedIndexRoute
+  '/categories/new': typeof AuthenticatedCategoriesNewRoute
+  '/orders/$id': typeof AuthenticatedOrdersIdRoute
+  '/products/new': typeof AuthenticatedProductsNewRoute
+  '/categories': typeof AuthenticatedCategoriesIndexRoute
+  '/orders': typeof AuthenticatedOrdersIndexRoute
+  '/products': typeof AuthenticatedProductsIndexRoute
+  '/categories/$id/edit': typeof AuthenticatedCategoriesIdEditRoute
+  '/products/$id/edit': typeof AuthenticatedProductsIdEditRoute
 }
 export interface FileRoutesById {
-  __root__: typeof rootRouteImport;
-  '/_authenticated': typeof AuthenticatedRouteWithChildren;
-  '/login': typeof LoginRoute;
-  '/_authenticated/inventory': typeof AuthenticatedInventoryRoute;
-  '/_authenticated/staff': typeof AuthenticatedStaffRoute;
-  '/_authenticated/': typeof AuthenticatedIndexRoute;
-  '/_authenticated/categories/new': typeof AuthenticatedCategoriesNewRoute;
-  '/_authenticated/orders/$id': typeof AuthenticatedOrdersIdRoute;
-  '/_authenticated/products/new': typeof AuthenticatedProductsNewRoute;
-  '/_authenticated/categories/': typeof AuthenticatedCategoriesIndexRoute;
-  '/_authenticated/orders/': typeof AuthenticatedOrdersIndexRoute;
-  '/_authenticated/products/': typeof AuthenticatedProductsIndexRoute;
-  '/_authenticated/categories/$id/edit': typeof AuthenticatedCategoriesIdEditRoute;
-  '/_authenticated/products/$id/edit': typeof AuthenticatedProductsIdEditRoute;
+  __root__: typeof rootRouteImport
+  '/_authenticated': typeof AuthenticatedRouteWithChildren
+  '/login': typeof LoginRoute
+  '/_authenticated/inventory': typeof AuthenticatedInventoryRoute
+  '/_authenticated/staff': typeof AuthenticatedStaffRoute
+  '/_authenticated/': typeof AuthenticatedIndexRoute
+  '/_authenticated/categories/new': typeof AuthenticatedCategoriesNewRoute
+  '/_authenticated/orders/$id': typeof AuthenticatedOrdersIdRoute
+  '/_authenticated/products/new': typeof AuthenticatedProductsNewRoute
+  '/_authenticated/categories/': typeof AuthenticatedCategoriesIndexRoute
+  '/_authenticated/orders/': typeof AuthenticatedOrdersIndexRoute
+  '/_authenticated/products/': typeof AuthenticatedProductsIndexRoute
+  '/_authenticated/categories/$id/edit': typeof AuthenticatedCategoriesIdEditRoute
+  '/_authenticated/products/$id/edit': typeof AuthenticatedProductsIdEditRoute
 }
 export interface FileRouteTypes {
-  fileRoutesByFullPath: FileRoutesByFullPath;
+  fileRoutesByFullPath: FileRoutesByFullPath
   fullPaths:
     | '/'
     | '/login'
@@ -146,8 +153,8 @@ export interface FileRouteTypes {
     | '/orders/'
     | '/products/'
     | '/categories/$id/edit'
-    | '/products/$id/edit';
-  fileRoutesByTo: FileRoutesByTo;
+    | '/products/$id/edit'
+  fileRoutesByTo: FileRoutesByTo
   to:
     | '/login'
     | '/inventory'
@@ -160,7 +167,7 @@ export interface FileRouteTypes {
     | '/orders'
     | '/products'
     | '/categories/$id/edit'
-    | '/products/$id/edit';
+    | '/products/$id/edit'
   id:
     | '__root__'
     | '/_authenticated'
@@ -175,122 +182,122 @@ export interface FileRouteTypes {
     | '/_authenticated/orders/'
     | '/_authenticated/products/'
     | '/_authenticated/categories/$id/edit'
-    | '/_authenticated/products/$id/edit';
-  fileRoutesById: FileRoutesById;
+    | '/_authenticated/products/$id/edit'
+  fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
-  AuthenticatedRoute: typeof AuthenticatedRouteWithChildren;
-  LoginRoute: typeof LoginRoute;
+  AuthenticatedRoute: typeof AuthenticatedRouteWithChildren
+  LoginRoute: typeof LoginRoute
 }
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
     '/_authenticated': {
-      id: '/_authenticated';
-      path: '';
-      fullPath: '/';
-      preLoaderRoute: typeof AuthenticatedRouteImport;
-      parentRoute: typeof rootRouteImport;
-    };
+      id: '/_authenticated'
+      path: ''
+      fullPath: '/'
+      preLoaderRoute: typeof AuthenticatedRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/login': {
-      id: '/login';
-      path: '/login';
-      fullPath: '/login';
-      preLoaderRoute: typeof LoginRouteImport;
-      parentRoute: typeof rootRouteImport;
-    };
+      id: '/login'
+      path: '/login'
+      fullPath: '/login'
+      preLoaderRoute: typeof LoginRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/_authenticated/': {
-      id: '/_authenticated/';
-      path: '/';
-      fullPath: '/';
-      preLoaderRoute: typeof AuthenticatedIndexRouteImport;
-      parentRoute: typeof AuthenticatedRoute;
-    };
+      id: '/_authenticated/'
+      path: '/'
+      fullPath: '/'
+      preLoaderRoute: typeof AuthenticatedIndexRouteImport
+      parentRoute: typeof AuthenticatedRoute
+    }
     '/_authenticated/inventory': {
-      id: '/_authenticated/inventory';
-      path: '/inventory';
-      fullPath: '/inventory';
-      preLoaderRoute: typeof AuthenticatedInventoryRouteImport;
-      parentRoute: typeof AuthenticatedRoute;
-    };
+      id: '/_authenticated/inventory'
+      path: '/inventory'
+      fullPath: '/inventory'
+      preLoaderRoute: typeof AuthenticatedInventoryRouteImport
+      parentRoute: typeof AuthenticatedRoute
+    }
     '/_authenticated/staff': {
-      id: '/_authenticated/staff';
-      path: '/staff';
-      fullPath: '/staff';
-      preLoaderRoute: typeof AuthenticatedStaffRouteImport;
-      parentRoute: typeof AuthenticatedRoute;
-    };
+      id: '/_authenticated/staff'
+      path: '/staff'
+      fullPath: '/staff'
+      preLoaderRoute: typeof AuthenticatedStaffRouteImport
+      parentRoute: typeof AuthenticatedRoute
+    }
     '/_authenticated/categories/': {
-      id: '/_authenticated/categories/';
-      path: '/categories';
-      fullPath: '/categories/';
-      preLoaderRoute: typeof AuthenticatedCategoriesIndexRouteImport;
-      parentRoute: typeof AuthenticatedRoute;
-    };
+      id: '/_authenticated/categories/'
+      path: '/categories'
+      fullPath: '/categories/'
+      preLoaderRoute: typeof AuthenticatedCategoriesIndexRouteImport
+      parentRoute: typeof AuthenticatedRoute
+    }
     '/_authenticated/categories/new': {
-      id: '/_authenticated/categories/new';
-      path: '/categories/new';
-      fullPath: '/categories/new';
-      preLoaderRoute: typeof AuthenticatedCategoriesNewRouteImport;
-      parentRoute: typeof AuthenticatedRoute;
-    };
+      id: '/_authenticated/categories/new'
+      path: '/categories/new'
+      fullPath: '/categories/new'
+      preLoaderRoute: typeof AuthenticatedCategoriesNewRouteImport
+      parentRoute: typeof AuthenticatedRoute
+    }
     '/_authenticated/orders/': {
-      id: '/_authenticated/orders/';
-      path: '/orders';
-      fullPath: '/orders/';
-      preLoaderRoute: typeof AuthenticatedOrdersIndexRouteImport;
-      parentRoute: typeof AuthenticatedRoute;
-    };
+      id: '/_authenticated/orders/'
+      path: '/orders'
+      fullPath: '/orders/'
+      preLoaderRoute: typeof AuthenticatedOrdersIndexRouteImport
+      parentRoute: typeof AuthenticatedRoute
+    }
     '/_authenticated/orders/$id': {
-      id: '/_authenticated/orders/$id';
-      path: '/orders/$id';
-      fullPath: '/orders/$id';
-      preLoaderRoute: typeof AuthenticatedOrdersIdRouteImport;
-      parentRoute: typeof AuthenticatedRoute;
-    };
+      id: '/_authenticated/orders/$id'
+      path: '/orders/$id'
+      fullPath: '/orders/$id'
+      preLoaderRoute: typeof AuthenticatedOrdersIdRouteImport
+      parentRoute: typeof AuthenticatedRoute
+    }
     '/_authenticated/products/': {
-      id: '/_authenticated/products/';
-      path: '/products';
-      fullPath: '/products/';
-      preLoaderRoute: typeof AuthenticatedProductsIndexRouteImport;
-      parentRoute: typeof AuthenticatedRoute;
-    };
+      id: '/_authenticated/products/'
+      path: '/products'
+      fullPath: '/products/'
+      preLoaderRoute: typeof AuthenticatedProductsIndexRouteImport
+      parentRoute: typeof AuthenticatedRoute
+    }
     '/_authenticated/products/new': {
-      id: '/_authenticated/products/new';
-      path: '/products/new';
-      fullPath: '/products/new';
-      preLoaderRoute: typeof AuthenticatedProductsNewRouteImport;
-      parentRoute: typeof AuthenticatedRoute;
-    };
+      id: '/_authenticated/products/new'
+      path: '/products/new'
+      fullPath: '/products/new'
+      preLoaderRoute: typeof AuthenticatedProductsNewRouteImport
+      parentRoute: typeof AuthenticatedRoute
+    }
     '/_authenticated/categories/$id/edit': {
-      id: '/_authenticated/categories/$id/edit';
-      path: '/categories/$id/edit';
-      fullPath: '/categories/$id/edit';
-      preLoaderRoute: typeof AuthenticatedCategoriesIdEditRouteImport;
-      parentRoute: typeof AuthenticatedRoute;
-    };
+      id: '/_authenticated/categories/$id/edit'
+      path: '/categories/$id/edit'
+      fullPath: '/categories/$id/edit'
+      preLoaderRoute: typeof AuthenticatedCategoriesIdEditRouteImport
+      parentRoute: typeof AuthenticatedRoute
+    }
     '/_authenticated/products/$id/edit': {
-      id: '/_authenticated/products/$id/edit';
-      path: '/products/$id/edit';
-      fullPath: '/products/$id/edit';
-      preLoaderRoute: typeof AuthenticatedProductsIdEditRouteImport;
-      parentRoute: typeof AuthenticatedRoute;
-    };
+      id: '/_authenticated/products/$id/edit'
+      path: '/products/$id/edit'
+      fullPath: '/products/$id/edit'
+      preLoaderRoute: typeof AuthenticatedProductsIdEditRouteImport
+      parentRoute: typeof AuthenticatedRoute
+    }
   }
 }
 
 interface AuthenticatedRouteChildren {
-  AuthenticatedInventoryRoute: typeof AuthenticatedInventoryRoute;
-  AuthenticatedStaffRoute: typeof AuthenticatedStaffRoute;
-  AuthenticatedIndexRoute: typeof AuthenticatedIndexRoute;
-  AuthenticatedCategoriesNewRoute: typeof AuthenticatedCategoriesNewRoute;
-  AuthenticatedOrdersIdRoute: typeof AuthenticatedOrdersIdRoute;
-  AuthenticatedProductsNewRoute: typeof AuthenticatedProductsNewRoute;
-  AuthenticatedCategoriesIndexRoute: typeof AuthenticatedCategoriesIndexRoute;
-  AuthenticatedOrdersIndexRoute: typeof AuthenticatedOrdersIndexRoute;
-  AuthenticatedProductsIndexRoute: typeof AuthenticatedProductsIndexRoute;
-  AuthenticatedCategoriesIdEditRoute: typeof AuthenticatedCategoriesIdEditRoute;
-  AuthenticatedProductsIdEditRoute: typeof AuthenticatedProductsIdEditRoute;
+  AuthenticatedInventoryRoute: typeof AuthenticatedInventoryRoute
+  AuthenticatedStaffRoute: typeof AuthenticatedStaffRoute
+  AuthenticatedIndexRoute: typeof AuthenticatedIndexRoute
+  AuthenticatedCategoriesNewRoute: typeof AuthenticatedCategoriesNewRoute
+  AuthenticatedOrdersIdRoute: typeof AuthenticatedOrdersIdRoute
+  AuthenticatedProductsNewRoute: typeof AuthenticatedProductsNewRoute
+  AuthenticatedCategoriesIndexRoute: typeof AuthenticatedCategoriesIndexRoute
+  AuthenticatedOrdersIndexRoute: typeof AuthenticatedOrdersIndexRoute
+  AuthenticatedProductsIndexRoute: typeof AuthenticatedProductsIndexRoute
+  AuthenticatedCategoriesIdEditRoute: typeof AuthenticatedCategoriesIdEditRoute
+  AuthenticatedProductsIdEditRoute: typeof AuthenticatedProductsIdEditRoute
 }
 
 const AuthenticatedRouteChildren: AuthenticatedRouteChildren = {
@@ -305,12 +312,16 @@ const AuthenticatedRouteChildren: AuthenticatedRouteChildren = {
   AuthenticatedProductsIndexRoute: AuthenticatedProductsIndexRoute,
   AuthenticatedCategoriesIdEditRoute: AuthenticatedCategoriesIdEditRoute,
   AuthenticatedProductsIdEditRoute: AuthenticatedProductsIdEditRoute,
-};
+}
 
-const AuthenticatedRouteWithChildren = AuthenticatedRoute._addFileChildren(AuthenticatedRouteChildren);
+const AuthenticatedRouteWithChildren = AuthenticatedRoute._addFileChildren(
+  AuthenticatedRouteChildren,
+)
 
 const rootRouteChildren: RootRouteChildren = {
   AuthenticatedRoute: AuthenticatedRouteWithChildren,
   LoginRoute: LoginRoute,
-};
-export const routeTree = rootRouteImport._addFileChildren(rootRouteChildren)._addFileTypes<FileRouteTypes>();
+}
+export const routeTree = rootRouteImport
+  ._addFileChildren(rootRouteChildren)
+  ._addFileTypes<FileRouteTypes>()

@@ -1,8 +1,9 @@
 import Cookies from 'js-cookie';
 import { afterEach, describe, expect, it, vi } from 'vitest';
 
-import { clearStaffAuth } from '@/core/session/staff-store';
-import { ADMIN_ACCESS_TOKEN_COOKIE } from '@/shared/constants/auth-cookies';
+import { createStaffAuthStore } from '../store';
+
+const ACCESS_TOKEN_COOKIE = 'test_access_token';
 
 vi.mock('@repo/api-sdk/endpoints/staff', () => ({
   loginStaff: vi.fn(async () => ({
@@ -14,24 +15,30 @@ vi.mock('@repo/api-sdk/endpoints/staff', () => ({
   logoutStaff: vi.fn(async () => undefined),
 }));
 
-const { loginStaffAction, performStaffLogout } = await import('../staff-auth');
+const { createStaffAuthActions } = await import('../actions');
 
-describe('staff-auth cookie side effects', () => {
+describe('staff-auth actions cookie side effects', () => {
   afterEach(() => {
-    Cookies.remove(ADMIN_ACCESS_TOKEN_COOKIE);
-    clearStaffAuth();
+    Cookies.remove(ACCESS_TOKEN_COOKIE);
   });
 
   it('persists the access token to a cookie on login, mirroring the middleware auth-guard pattern', async () => {
+    const { loginStaffAction } = createStaffAuthActions({ accessTokenCookie: ACCESS_TOKEN_COOKIE, store: createStaffAuthStore() });
+
     await loginStaffAction({ email: 'a@b.com', password: 'pw' });
 
-    expect(Cookies.get(ADMIN_ACCESS_TOKEN_COOKIE)).toBe('access-token');
+    expect(Cookies.get(ACCESS_TOKEN_COOKIE)).toBe('access-token');
   });
 
   it('clears the cookie on logout', async () => {
+    const { loginStaffAction, performStaffLogout } = createStaffAuthActions({
+      accessTokenCookie: ACCESS_TOKEN_COOKIE,
+      store: createStaffAuthStore(),
+    });
+
     await loginStaffAction({ email: 'a@b.com', password: 'pw' });
     await performStaffLogout();
 
-    expect(Cookies.get(ADMIN_ACCESS_TOKEN_COOKIE)).toBeUndefined();
+    expect(Cookies.get(ACCESS_TOKEN_COOKIE)).toBeUndefined();
   });
 });

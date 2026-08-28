@@ -13,10 +13,24 @@
   "columns": {
     "name": "Tên sản phẩm",
     "category": "Danh mục",
-    "variantCount": "Số biến thể",
-    "stock": "Tồn kho",
+    "variantCount": "Biến thể",
+    "sku": "SKU",
+    "stock": "Kho hàng",
+    "qty": "Số lượng",
+    "price": "Giá",
     "actions": "Thao tác"
   },
+  "export": "Xuất file",
+  "pageSizeLabel": "Số dòng/trang",
+  "selectedCount": "Đã chọn {count} sản phẩm",
+  "deleteSelected": "Xoá đã chọn",
+  "deleteSelectedTitle": "Xoá {count} sản phẩm đã chọn?",
+  "stockStatus": {
+    "inStock": "Còn hàng",
+    "outOfStock": "Hết hàng"
+  },
+  "filterAllCategories": "Tất cả danh mục",
+  "filterAllStock": "Tất cả tình trạng",
   "genders": {
     "men": "Nam",
     "women": "Nữ",

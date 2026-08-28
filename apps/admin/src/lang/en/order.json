@@ -22,6 +22,7 @@
     "shippingFee": "Shipping fee: {value}₫",
     "total": "Total: {value}₫"
   },
+  "statusFilterAll": "All",
   "statusLabels": {
     "PENDING": "Pending",
     "PROCESSING": "Processing",
@@ -31,6 +32,36 @@
     "CANCELLED": "Cancelled",
     "RETURN_REQUESTED": "Return requested",
     "RETURNED": "Returned"
+  },
+  "orderInfo": {
+    "title": "Order info",
+    "address": "Shipping address",
+    "note": "Note",
+    "noNote": "No note.",
+    "paymentMethod": "Payment method",
+    "paymentStatus": "Payment status",
+    "createdAt": "Placed on",
+    "deliveredAt": "Delivered on",
+    "notDeliveredYet": "Not delivered yet"
+  },
+  "paymentMethodLabels": {
+    "cod": "Cash on delivery (COD)"
+  },
+  "paymentStatusLabels": {
+    "pending": "Pending",
+    "paid": "Paid",
+    "failed": "Failed",
+    "refunded": "Refunded"
+  },
+  "shippingActivity": {
+    "title": "Shipping activity",
+    "description": {
+      "PENDING": "Order placed, awaiting processing.",
+      "PROCESSING": "Preparing the order.",
+      "PACKED": "Packed, awaiting handoff to the courier.",
+      "SHIPPED": "On the way to the customer.",
+      "DELIVERED": "Delivered successfully."
+    }
   },
   "approveReturn": "Approve return",
   "rejectReturn": "Reject return",

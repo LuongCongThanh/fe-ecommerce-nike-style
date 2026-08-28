@@ -1,3 +1,67 @@
 @import '@repo/tailwind-config/preset.css';
+@import '@repo/tailwind-config/login.css';
+/* Admin-only theme profile (TailAdmin-inspired redesign) — imported last so its `@theme`/`:root`/
+ * `.dark` declarations win over the shared defaults from preset.css/theme.css above, scoped to this
+ * app's own compiled CSS only. See packages/tailwind-config/src/admin-theme.css's header comment. */
+@import '@repo/tailwind-config/admin-theme.css';
 @source '../../../packages/ui/src';
 @source '../../../packages/shared/src';
+
+/* Sidebar menu-item utility classes — same names/behaviour as TailAdmin's `src/css/style.css`
+ * (`@utility menu-item*`), ported here since this app compiles its own Tailwind build. */
+@utility menu-item {
+  @apply text-theme-sm relative flex items-center gap-3 rounded-lg px-3 py-2 font-medium;
+}
+@utility menu-item-active {
+  @apply bg-brand-50 text-brand-500 dark:bg-brand-500/[0.12] dark:text-brand-400;
+}
+@utility menu-item-inactive {
+  @apply text-gray-700 hover:bg-gray-100 hover:text-gray-700 dark:text-gray-300 dark:hover:bg-white/5 dark:hover:text-gray-300;
+}
+@utility menu-item-icon-active {
+  @apply text-brand-500 dark:text-brand-400;
+}
+@utility menu-item-icon-inactive {
+  @apply text-gray-500 group-hover:text-gray-700 dark:text-gray-400 dark:group-hover:text-gray-300;
+}
+
+@theme {
+  --text-theme-sm: 0.875rem;
+  --text-theme-sm--line-height: 1.25rem;
+  --text-theme-xs: 0.75rem;
+  --text-theme-xs--line-height: 1.125rem;
+}
+
+/* Hallmark · macrostructure: Split Studio, card variant (centered modal-style card instead of a
+ * full-viewport split — studied from a second reference the user asked to copy structurally)
+ * design-system: design.md (root) · scope: app page, with an explicit per-page exception (see
+ * design.md § Variants) · enrichment: Tier A pure CSS art (gradient blobs, no external library, no
+ * invented stock photo)
+ * studied: yes · DNA-source: image (public reference, user-attributed — a login-modal screenshot
+ * with icon-prefixed fields, remember-me, social-login row, full-bleed photo pane)
+ * DNA adopted (near-literal, per explicit user request): centered card, X/back control top-left,
+ * icon-prefixed email/password fields with a password show/hide toggle, remember-me checkbox,
+ * full-width primary button, "or" divider, 3 social-login buttons in their real brand colours
+ * DNA deliberately adapted: the 3 social buttons and "Forgot password?" are disabled + tooltipped
+ * ("Chưa hỗ trợ") rather than live — admin has no OAuth and no forgot-password flow yet, so a
+ * working-looking control would be honest-copy slop; "Register now" was dropped entirely — staff
+ * accounts are SUPER_ADMIN-created only, self-registration doesn't apply to this product; the
+ * source's photograph was replaced by the existing blob art — no relevant photography to show.
+ *
+ * Colour anchor is --color-brand (red-orange) — a user-approved, single-page exception to
+ * design.md's rule scoping brand red to price/sale/promo (see design.md § Variants). Every other
+ * admin/cms/storefront surface keeps that rule unchanged.
+ *
+ * Follow-up pass: swapped the rotating gift-box for an apparel-themed centerpiece — a `lucide`
+ * "Shirt" icon tilted in real 3D space (perspective + oscillating rotateY/rotateX, not a flat spin)
+ * — plus 2 floating icons (tag, hand-built pants silhouette) to read "clothing store", matching an
+ * e-commerce brief better than a generic box. Still Tier A/B (lucide icon + one small hand-built
+ * SVG), no new dependency, per the enrichment hierarchy.
+ *
+ * 2026-08-27 sync pass: the mechanics (blob drift, rise-in, centerpiece tilt, icon float, social-
+ * brand colours) moved to `@repo/tailwind-config/login.css` so apps/cms and apps/storefront's login
+ * pages can share the exact same animation vocabulary instead of re-deriving it — see design.md
+ * § Variants for the cross-app decision. Classes were renamed `login-garment*` → `login-centerpiece`/
+ * `login-scene` in the shared file since the centerpiece motif differs per app (shirt for admin,
+ * document for cms, shopping bag for storefront); admin's JSX below was updated to match. Nothing
+ * in this file's own selectors changed in effect, only their new home. */

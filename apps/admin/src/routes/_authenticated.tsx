@@ -1,6 +1,6 @@
 import { createFileRoute, Outlet } from '@tanstack/react-router';
 
-import { StaffAuthGuard } from '@/core/session/StaffAuthGuard';
+import { StaffAuthGuard } from '@/core/session';
 import { AppShell } from '@/features/shell/AppShell';
 
 export const Route = createFileRoute('/_authenticated')({

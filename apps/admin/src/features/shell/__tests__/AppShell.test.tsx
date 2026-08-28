@@ -1,14 +1,18 @@
 import type { Permission, StaffRole } from '@repo/schemas/staff';
 import { render, screen } from '@testing-library/react';
-import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
+import { ThemeProvider } from 'next-themes';
 import { I18nextProvider } from 'react-i18next';
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
-import { clearStaffAuth, setStaffSession } from '@/core/session/staff-store';
+import { clearStaffAuth, setStaffSession } from '@/core/session';
 import { AppShell } from '@/features/shell/AppShell';
 import i18n from '@/i18n';
 
 vi.mock('@tanstack/react-router', () => ({
   useRouterState: () => '/',
+  // `@/core/session` wires `useNavigate` in at import time (issue #24's shared staff-auth module),
+  // so even tests that never trigger a redirect need this mocked or the module import itself throws.
+  useNavigate: () => vi.fn(),
   Link: ({ to, children, ...props }: React.ComponentProps<'a'> & { readonly to?: string }) => (
     <a href={to ?? '#'} {...props}>
       {children}
@@ -18,9 +22,11 @@ vi.mock('@tanstack/react-router', () => ({
 
 function renderAppShell(children: React.ReactNode) {
   return render(
-    <I18nextProvider i18n={i18n}>
-      <AppShell>{children}</AppShell>
-    </I18nextProvider>,
+    <ThemeProvider attribute="class" defaultTheme="light" enableSystem={false}>
+      <I18nextProvider i18n={i18n}>
+        <AppShell>{children}</AppShell>
+      </I18nextProvider>
+    </ThemeProvider>,
   );
 }
 

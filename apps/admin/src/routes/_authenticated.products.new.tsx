@@ -3,6 +3,7 @@ import { useTranslation } from 'react-i18next';
 
 import { ProductForm } from '@/features/products/ProductForm';
 import { useCreateProduct } from '@/features/products/useProductMutations';
+import { PageHeader } from '@/features/shell/PageHeader';
 
 export const Route = createFileRoute('/_authenticated/products/new')({
   component: NewProductPage,
@@ -15,7 +16,7 @@ function NewProductPage(): React.JSX.Element {
 
   return (
     <div className="max-w-2xl space-y-6">
-      <h1 className="text-xl font-bold">{t('add')}</h1>
+      <PageHeader title={t('add')} />
       <ProductForm
         submitLabel={t('create')}
         isSubmitting={createProduct.isPending}

@@ -87,6 +87,41 @@ reduce` (see `preset.css` `@layer base`)
   it conflicted with this project's already-decided Be Vietnam Pro + brand-
   red-scoped-to-sale system. Kept for reference only, not merged.
 
+## Variants
+
+- **Login pages (`apps/admin`, `apps/cms`, `apps/storefront`) — synced macrostructure,
+  2026-08-27.** All three login pages now share one Split Studio macrostructure — a
+  centered card (`max-w-4xl`, `md:grid-cols-2`), form pane on the left (back
+  control, icon-prefixed email/password fields, password show/hide, remember-me,
+  disabled+tooltipped forgot-password, "or" divider, 3 disabled+tooltipped social
+  buttons in real brand colours) and a decorative pane on the right (gradient
+  blobs, a centered 3D-tilted centerpiece icon, 2 floating icons) — hidden below
+  `md` so the form is never pushed off-screen on mobile. The shared animation/CSS
+  vocabulary (`login-blob`, `login-rise`, `login-scene`/`login-centerpiece`,
+  `login-icon-float`, `login-social-*`) lives in `packages/tailwind-config/src/
+  login.css`, imported by each app's `globals.css` — a single source of truth
+  instead of three drifting copies. `apps/cms`'s login page (and its staff-auth
+  session infra — store/guard/middleware, mirroring `apps/admin`'s) was net-new as
+  part of this sync (issue #24 baseline). Typography is unchanged across all
+  three — still the single Be Vietnam Pro family from `## System` above.
+
+  Colour anchor differs per app, per the brand-red scope rule already established
+  above:
+  - **`apps/admin`** — explicit, user-approved exception to the brand-red scope
+    rule. Uses `--color-brand` as its decorative-pane accent (gradient blobs + a
+    tilted Shirt/Tag/Pants icon set, studied from a fashion-e-commerce login
+    reference). Single-page override, not a system change.
+  - **`apps/cms`** — `--color-secondary` (trust blue), per the existing "trust
+    actions lean on secondary blue" rule. Centerpiece: Newspaper + floating
+    pen/image icons (content-management motif).
+  - **`apps/storefront`** — `--color-surface-inverse`, the same dark treatment
+    already shared by its own Hero/Newsletter/Footer sections, so the login page
+    reads as this app's own brand rather than borrowing cms's blue. Centerpiece:
+    ShoppingBag + floating heart/package icons (retail motif).
+
+  Every surface other than `apps/admin`'s login page still keeps brand red scoped
+  to price/sale/promo only — this sync did not touch that rule.
+
 ## Exports
 
 `theme.css` / `preset.css` (in `packages/tailwind-config`) are the source of

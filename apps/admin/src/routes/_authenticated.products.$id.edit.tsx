@@ -5,6 +5,7 @@ import { useTranslation } from 'react-i18next';
 
 import { ProductForm } from '@/features/products/ProductForm';
 import { useUpdateProduct } from '@/features/products/useProductMutations';
+import { PageHeader } from '@/features/shell/PageHeader';
 
 export const Route = createFileRoute('/_authenticated/products/$id/edit')({
   component: EditProductPage,
@@ -20,7 +21,7 @@ function EditProductPage(): React.JSX.Element {
 
   return (
     <div className="max-w-2xl space-y-6">
-      <h1 className="text-xl font-bold">{t('edit')}</h1>
+      <PageHeader title={t('edit')} />
 
       {isLoading ? <p className="text-muted-foreground text-sm">{tCommon('loading')}</p> : null}
       {isError ? (

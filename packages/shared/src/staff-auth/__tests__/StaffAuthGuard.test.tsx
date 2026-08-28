@@ -2,26 +2,31 @@ import type { Staff } from '@repo/schemas/staff';
 import { render, screen, waitFor } from '@testing-library/react';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
-import { StaffAuthGuard } from '@/core/session/StaffAuthGuard';
-import { clearStaffAuth, setStaffSession } from '@/core/session/staff-store';
-
-const navigate = vi.fn();
-vi.mock('@tanstack/react-router', () => ({
-  useNavigate: () => navigate,
-}));
+import { createStaffAuthModule } from '../index';
 
 const STAFF: Staff = { id: 1, email: 'super@admin.local', name: 'Super Admin', roles: ['SUPER_ADMIN'], isActive: true };
 
-beforeEach(() => {
-  navigate.mockClear();
-  clearStaffAuth();
-});
-
-afterEach(() => {
-  clearStaffAuth();
-});
+vi.mock('@repo/api-sdk/endpoints/staff', () => ({
+  loginStaff: vi.fn(async () => ({ access: 'a', refresh: 'r', staff: STAFF, permissions: [] })),
+  logoutStaff: vi.fn(async () => undefined),
+}));
 
 describe('StaffAuthGuard', () => {
+  const push = vi.fn();
+  const { StaffAuthGuard, clearStaffAuth, setStaffSession } = createStaffAuthModule({
+    accessTokenCookie: 'test_access_token',
+    useRouter: () => ({ push }),
+  });
+
+  beforeEach(() => {
+    push.mockClear();
+    clearStaffAuth();
+  });
+
+  afterEach(() => {
+    clearStaffAuth();
+  });
+
   it('redirects to /login and does not render children when there is no session', async () => {
     render(
       <StaffAuthGuard>
@@ -29,7 +34,7 @@ describe('StaffAuthGuard', () => {
       </StaffAuthGuard>,
     );
 
-    await waitFor(() => expect(navigate).toHaveBeenCalledWith({ to: '/login' }));
+    await waitFor(() => expect(push).toHaveBeenCalledWith('/login'));
     expect(screen.queryByText('Protected content')).not.toBeInTheDocument();
   });
 
@@ -43,6 +48,6 @@ describe('StaffAuthGuard', () => {
     );
 
     expect(screen.getByText('Protected content')).toBeInTheDocument();
-    expect(navigate).not.toHaveBeenCalled();
+    expect(push).not.toHaveBeenCalled();
   });
 });

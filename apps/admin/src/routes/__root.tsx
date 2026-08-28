@@ -1,9 +1,10 @@
 import { enableApiMockingBrowser } from '@repo/api-sdk/adapters/browser';
 import { Outlet, createRootRoute } from '@tanstack/react-router';
+import { ThemeProvider } from 'next-themes';
 import { useEffect, useState } from 'react';
 import { I18nextProvider } from 'react-i18next';
 
-import { StaffAuthRuntimeProvider } from '@/core/session/StaffAuthRuntimeProvider';
+import { StaffAuthRuntimeProvider } from '@/core/session';
 import i18n from '@/i18n';
 import { AppQueryProvider } from '@/providers/query-provider';
 
@@ -32,12 +33,14 @@ function RootComponent(): React.JSX.Element | null {
   if (!isMockingReady) return null;
 
   return (
-    <I18nextProvider i18n={i18n}>
-      <AppQueryProvider>
-        <StaffAuthRuntimeProvider>
-          <Outlet />
-        </StaffAuthRuntimeProvider>
-      </AppQueryProvider>
-    </I18nextProvider>
+    <ThemeProvider attribute="class" defaultTheme="light" enableSystem={false}>
+      <I18nextProvider i18n={i18n}>
+        <AppQueryProvider>
+          <StaffAuthRuntimeProvider>
+            <Outlet />
+          </StaffAuthRuntimeProvider>
+        </AppQueryProvider>
+      </I18nextProvider>
+    </ThemeProvider>
   );
 }

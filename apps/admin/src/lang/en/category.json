@@ -12,6 +12,7 @@
   "columns": {
     "name": "Category name",
     "slug": "Slug",
+    "productCount": "Products",
     "actions": "Actions"
   },
   "fields": {
