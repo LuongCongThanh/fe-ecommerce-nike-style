@@ -1,5 +1,3 @@
-'use client';
-
 import { getProducts } from '@repo/api-sdk/endpoints/catalog';
 import type { Product } from '@repo/schemas/catalog';
 import { Button } from '@repo/ui/button';
@@ -7,7 +5,7 @@ import { Card, CardContent, CardHeader, CardTitle } from '@repo/ui/card';
 import { Skeleton } from '@repo/ui/skeleton';
 import { useQuery } from '@tanstack/react-query';
 
-export function ProductsSummary() {
+export function ProductsSummary(): React.JSX.Element {
   const { data, isLoading, isError, refetch } = useQuery({
     queryKey: ['dashboard', 'products-summary'],
     queryFn: () => getProducts(),

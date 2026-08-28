@@ -1,12 +1,10 @@
-'use client';
-
 import type { Staff } from '@repo/schemas/staff';
 import { resolvePermissions } from '@repo/schemas/staff';
 import { Badge } from '@repo/ui/badge';
 import { Button } from '@repo/ui/button';
 import { Switch } from '@repo/ui/switch';
 import { TableCell, TableRow } from '@repo/ui/table';
-import { useTranslations } from 'next-intl';
+import { useTranslation } from 'react-i18next';
 
 import { AssignRolesDialog } from './AssignRolesDialog';
 import { useDeleteStaff, useUpdateStaff } from './useStaffMutations';
@@ -19,8 +17,8 @@ interface StaffRowProps {
 /** One Staff row — Roles + their *effective* permissions (the union of every assigned Role, not just
  * the Role list) rendered directly, per issue #23's "UI hiển thị đúng permission hiệu lực". */
 export function StaffRow({ staff }: StaffRowProps): React.JSX.Element {
-  const t = useTranslations('staff');
-  const tCommon = useTranslations('common');
+  const { t } = useTranslation('staff');
+  const { t: tCommon } = useTranslation('common');
   const updateStaff = useUpdateStaff(staff.id);
   const deleteStaff = useDeleteStaff();
   const effectivePermissions = resolvePermissions(staff.roles);

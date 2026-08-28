@@ -1,6 +1,6 @@
 # FE E-commerce Nike Style
 
-Frontend monorepo cho nền tảng thương mại điện tử thời trang và giày thể thao tại thị trường Việt Nam. Repository chứa ba ứng dụng Next.js (`storefront`, `admin`, `cms`) và các package dùng chung, được quản lý bằng pnpm workspace và Turborepo.
+Frontend monorepo cho nền tảng thương mại điện tử thời trang và giày thể thao tại thị trường Việt Nam. Repository chứa ứng dụng Next.js `storefront`, hai ứng dụng Vite + TanStack Router `admin`/`cms` (migrate từ Next.js — Better Auth-shaped mock auth, Zustand, react-i18next), và các package dùng chung, được quản lý bằng pnpm workspace và Turborepo.
 
 > Dự án đang phát triển theo hướng mock-first. FE và contract foundation đã tồn tại; các feature và quá trình thay MSW bằng Backend thật được triển khai theo từng lát cắt. Backend canonical là NestJS modular monolith trong repository riêng.
 
@@ -195,25 +195,21 @@ Các nhóm route hiện có:
 
 ### `apps/admin`
 
-Đặc điểm hiện tại:
+Vite + TanStack Router (SPA), migrate từ Next.js App Router. Đặc điểm hiện tại:
 
-- Next.js App Router.
-- Protected route group tại `app/(protected)`.
-- App providers và TanStack Query foundation.
-- Có feature nhỏ dùng UI + schemas + API SDK để chứng minh app shell boot đúng.
-
-Product/Category/Inventory/Order/Staff screens đầy đủ chưa nên được suy ra chỉ từ app shell hiện tại; chúng được triển khai qua các issue Admin tương ứng.
+- TanStack Router file-based routing, served dưới `/admin` qua storefront's microfrontends proxy (`vite.config.ts`'s `base: '/admin/'`, router's `basepath: '/admin'`).
+- Staff auth/RBAC thật chạy qua MSW mock backend (`@repo/api-sdk`) — session store shaped theo Better Auth client contract để có thể swap sang backend thật sau này mà không đổi API surface.
+- Zustand cho state cục bộ, react-i18next cho vi/en (thay next-intl).
+- Product/Category/Inventory/Order/Staff CRUD đầy đủ, port từ bản Next.js cũ.
 
 ### `apps/cms`
 
-Đặc điểm hiện tại:
+Vite + TanStack Router (SPA), migrate từ Next.js App Router. Đặc điểm hiện tại:
 
-- Next.js App Router.
-- Protected route group tại `app/(protected)`.
-- App providers và TanStack Query foundation.
-- Có feature nhỏ dùng UI + schemas + API SDK để chứng minh app shell boot đúng.
-
-Hero/Homepage/Collection/Promotion/SEO/Blog/Campaign workflows đầy đủ chưa nên được suy ra chỉ từ app shell hiện tại; chúng được triển khai qua các issue CMS tương ứng.
+- TanStack Router routing, served dưới `/cms` qua storefront's microfrontends proxy.
+- Chưa có auth/RBAC (giống bản Next.js cũ — đây là slice riêng, chưa triển khai).
+- App providers, TanStack Query foundation, react-i18next.
+- Chỉ có dashboard placeholder; Hero/Homepage/Collection/Promotion/SEO/Blog/Campaign workflows chưa tồn tại, sẽ triển khai qua các issue CMS tương ứng.
 
 ## Shared packages
 
@@ -237,13 +233,13 @@ Một số tài liệu kiến trúc còn mô tả package tương lai như `comm
 | Nhóm                  | Công nghệ                                                                               |
 | --------------------- | --------------------------------------------------------------------------------------- |
 | Runtime/workspace     | Node.js LTS, pnpm workspace, Turborepo, TypeScript strict                               |
-| App framework         | Next.js App Router, React 19                                                            |
+| App framework         | Next.js App Router (storefront), Vite + TanStack Router (admin, cms), React 19          |
 | Styling/UI            | Tailwind CSS v4, CSS custom properties, Radix UI, CVA, Lucide, shadcn-style composition |
 | Contract              | Zod, versioned OpenAPI direction                                                        |
 | Data                  | TanStack Query, custom API SDK, MSW                                                     |
 | Client state          | Zustand                                                                                 |
 | Forms                 | React Hook Form, `@hookform/resolvers`                                                  |
-| Localization          | `next-intl` (`vi`, `en`)                                                                |
+| Localization          | `next-intl` (storefront), `react-i18next` (admin, cms) — cả hai đều `vi`/`en`           |
 | Unit/integration test | Vitest, Testing Library, User Event, jsdom                                              |
 | End-to-end test       | Playwright                                                                              |
 | Monitoring            | Sentry integration ở Storefront                                                         |
@@ -311,32 +307,43 @@ corepack pnpm@10.28.2 install --frozen-lockfile
 # Storefront: http://localhost:3000
 corepack pnpm@10.28.2 --filter storefront dev
 
-# Admin: http://localhost:3001
-corepack pnpm@10.28.2 --filter admin dev -- --port 3001
+# Admin (Vite, served under /admin): http://localhost:3001/admin/
+corepack pnpm@10.28.2 --filter admin dev
 
-# CMS: http://localhost:3002
-corepack pnpm@10.28.2 --filter cms dev -- --port 3002
+# CMS (Vite, served under /cms): http://localhost:3002/cms/
+corepack pnpm@10.28.2 --filter cms dev
 ```
+
+Admin/cms's port và base path (`/admin`, `/cms`) đã cố định trong `vite.config.ts` để khớp `apps/storefront/microfrontends.json`'s proxy — không cần truyền `--port` nữa.
 
 Root có script `pnpm dev` để chạy song song các workspace, nhưng các app đều mặc định chọn port `3000`. Khi cần chạy cả ba, dùng lệnh riêng với port rõ ràng như ví dụ trên.
 
 ## Biến môi trường
 
-Repository hiện chưa có `.env.example`. Tạo `.env.local` trong app cần chạy và chỉ khai báo biến phù hợp với luồng đang phát triển.
+`apps/admin/.env.example` và `apps/cms/.env.example` có sẵn — copy thành `.env.local` trong app cần chạy. Storefront chưa có `.env.example`, tự khai báo biến phù hợp.
 
-Baseline cho mock mode:
+Baseline cho mock mode — storefront (Next.js) dùng tiền tố `NEXT_PUBLIC_`; admin/cms (Vite) dùng tiền tố `VITE_`, được `vite.config.ts`'s `define` map lại thành `process.env.NEXT_PUBLIC_*` để `@repo/api-sdk` (dùng chung cả ba app) không cần đổi:
 
 ```dotenv
+# apps/storefront/.env.local
 NEXT_PUBLIC_API_MOCKING=true
 NEXT_PUBLIC_SITE_URL=http://localhost:3000
+
+# apps/admin/.env.local
+VITE_API_MOCKING=true
+VITE_SITE_URL=http://127.0.0.1:3001
+
+# apps/cms/.env.local
+VITE_API_MOCKING=true
+VITE_SITE_URL=http://127.0.0.1:3002
 ```
 
 Các biến được source hiện tại đọc trực tiếp:
 
-| Biến                                | Phạm vi           | Ý nghĩa                                                                 |
-| ----------------------------------- | ----------------- | ----------------------------------------------------------------------- |
-| `NEXT_PUBLIC_API_MOCKING`           | Cả ba app/API SDK | `true` để boot MSW adapters                                             |
-| `NEXT_PUBLIC_SITE_URL`              | API SDK           | Absolute origin cho server-side fetch; mặc định `http://localhost:3000` |
+| Biến                                            | Phạm vi           | Ý nghĩa                                                                 |
+| ------------------------------------------------ | ----------------- | ------------------------------------------------------------------------ |
+| `NEXT_PUBLIC_API_MOCKING` / `VITE_API_MOCKING`   | Cả ba app/API SDK | `true` để boot MSW adapters                                             |
+| `NEXT_PUBLIC_SITE_URL` / `VITE_SITE_URL`         | API SDK           | Absolute origin cho server-side fetch; mặc định `http://localhost:3000` |
 | `NEXT_PUBLIC_APP_URL`               | Storefront        | Base URL cho canonical metadata và URL ứng dụng                         |
 | `NEXT_PUBLIC_APP_NAME`              | Storefront        | Tên site trong metadata                                                 |
 | `NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME` | Storefront        | Cloudinary cloud name cho image URL builder                             |

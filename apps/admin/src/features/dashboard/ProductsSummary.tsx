@@ -1,15 +1,13 @@
-'use client';
-
 import { getProducts } from '@repo/api-sdk/endpoints/catalog';
 import type { Product } from '@repo/schemas/catalog';
 import { Button } from '@repo/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@repo/ui/card';
 import { Skeleton } from '@repo/ui/skeleton';
 import { useQuery } from '@tanstack/react-query';
-import { useTranslations } from 'next-intl';
+import { useTranslation } from 'react-i18next';
 
-export function ProductsSummary() {
-  const t = useTranslations('common');
+export function ProductsSummary(): React.JSX.Element {
+  const { t } = useTranslation('common');
   const { data, isLoading, isError, refetch } = useQuery({
     queryKey: ['dashboard', 'products-summary'],
     queryFn: () => getProducts(),

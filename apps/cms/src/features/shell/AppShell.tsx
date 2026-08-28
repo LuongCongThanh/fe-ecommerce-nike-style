@@ -1,16 +1,12 @@
-'use client';
-
-import { useState } from 'react';
-import Link from 'next/link';
-
 import { Button } from '@repo/ui/button';
 import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger } from '@repo/ui/sheet';
+import { Link, useRouterState } from '@tanstack/react-router';
 import { Menu } from 'lucide-react';
-import { usePathname } from '@/i18n/navigation';
+import { useState } from 'react';
 
 import { NAV_ITEMS } from '@/features/shell/nav-items';
 
-function NavList({ pathname, onNavigate }: { readonly pathname: string; readonly onNavigate?: () => void }) {
+function NavList({ pathname, onNavigate }: { readonly pathname: string; readonly onNavigate?: () => void }): React.JSX.Element {
   return (
     <nav className="flex flex-col gap-1">
       {NAV_ITEMS.map((item) => {
@@ -19,7 +15,7 @@ function NavList({ pathname, onNavigate }: { readonly pathname: string; readonly
         return (
           <Link
             key={item.href}
-            href={item.href}
+            to={item.href}
             onClick={onNavigate}
             aria-current={isActive ? 'page' : undefined}
             className={`flex items-center gap-3 rounded-lg px-3 py-2 text-sm font-medium transition-colors ${
@@ -35,8 +31,8 @@ function NavList({ pathname, onNavigate }: { readonly pathname: string; readonly
   );
 }
 
-export function AppShell({ children }: { readonly children: React.ReactNode }) {
-  const pathname = usePathname();
+export function AppShell({ children }: { readonly children: React.ReactNode }): React.JSX.Element {
+  const pathname = useRouterState({ select: (s) => s.location.pathname });
   const [mobileOpen, setMobileOpen] = useState(false);
 
   return (

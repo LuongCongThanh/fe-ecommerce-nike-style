@@ -1,5 +1,3 @@
-'use client';
-
 import { useState } from 'react';
 import type { SyntheticEvent } from 'react';
 
@@ -7,7 +5,7 @@ import type { StaffCreateInput, StaffRole } from '@repo/schemas/staff';
 import { Button } from '@repo/ui/button';
 import { Input } from '@repo/ui/input';
 import { Label } from '@repo/ui/label';
-import { useTranslations } from 'next-intl';
+import { useTranslation } from 'react-i18next';
 
 import { RoleCheckboxes } from './RoleCheckboxes';
 
@@ -18,8 +16,8 @@ interface CreateStaffFormProps {
 }
 
 export function CreateStaffForm({ isSubmitting, errorMessage, onSubmit }: CreateStaffFormProps): React.JSX.Element {
-  const t = useTranslations('staff');
-  const tCommon = useTranslations('common');
+  const { t } = useTranslation('staff');
+  const { t: tCommon } = useTranslation('common');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [name, setName] = useState('');

@@ -1,18 +1,15 @@
-'use client';
-
-import { useState } from 'react';
-
 import { Button } from '@repo/ui/button';
 import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger } from '@repo/ui/sheet';
+import { Link, useRouterState } from '@tanstack/react-router';
 import { Menu } from 'lucide-react';
-import { useTranslations } from 'next-intl';
-import { Link, usePathname } from '@/i18n/navigation';
+import { useState } from 'react';
+import { useTranslation } from 'react-i18next';
 
 import { useStaffAuth } from '@/core/session/useStaffAuth';
 import { NAV_ITEMS } from '@/features/shell/nav-items';
 
-function NavList({ pathname, onNavigate }: { readonly pathname: string; readonly onNavigate?: () => void }) {
-  const t = useTranslations('common');
+function NavList({ pathname, onNavigate }: { readonly pathname: string; readonly onNavigate?: () => void }): React.JSX.Element {
+  const { t } = useTranslation('common');
   const { hasPermission } = useStaffAuth();
   const visibleItems = NAV_ITEMS.filter((item) => item.permission === undefined || hasPermission(item.permission));
 
@@ -24,7 +21,7 @@ function NavList({ pathname, onNavigate }: { readonly pathname: string; readonly
         return (
           <Link
             key={item.href}
-            href={item.href}
+            to={item.href}
             onClick={onNavigate}
             aria-current={isActive ? 'page' : undefined}
             className={`flex items-center gap-3 rounded-lg px-3 py-2 text-sm font-medium transition-colors ${
@@ -40,9 +37,9 @@ function NavList({ pathname, onNavigate }: { readonly pathname: string; readonly
   );
 }
 
-export function AppShell({ children }: { readonly children: React.ReactNode }) {
-  const t = useTranslations('common');
-  const pathname = usePathname();
+export function AppShell({ children }: { readonly children: React.ReactNode }): React.JSX.Element {
+  const { t } = useTranslation('common');
+  const pathname = useRouterState({ select: (s) => s.location.pathname });
   const [mobileOpen, setMobileOpen] = useState(false);
 
   return (

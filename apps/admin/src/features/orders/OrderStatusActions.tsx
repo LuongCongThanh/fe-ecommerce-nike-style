@@ -1,9 +1,7 @@
-'use client';
-
 import { adminTransitionsFrom } from '@repo/api-sdk/endpoints/order-transitions';
 import type { Order } from '@repo/schemas/order';
 import { Button } from '@repo/ui/button';
-import { useTranslations } from 'next-intl';
+import { useTranslation } from 'react-i18next';
 
 import { useApproveOrderReturn, useRejectOrderReturn, useUpdateOrderStatus } from './useOrderMutations';
 import { ConfirmDialog } from '@/features/shell/ConfirmDialog';
@@ -17,8 +15,8 @@ interface OrderStatusActionsProps {
  * "UI chặn transition không hợp lệ, không chỉ dựa vào BE"). Return approve/reject is a separate action,
  * shown only while the order is RETURN_REQUESTED. */
 export function OrderStatusActions({ order }: OrderStatusActionsProps): React.JSX.Element {
-  const t = useTranslations('order');
-  const tCommon = useTranslations('common');
+  const { t } = useTranslation('order');
+  const { t: tCommon } = useTranslation('common');
   const updateStatus = useUpdateOrderStatus(order.id);
   const approveReturn = useApproveOrderReturn(order.id);
   const rejectReturn = useRejectOrderReturn(order.id);

@@ -1,8 +1,5 @@
-'use client';
-
-import { useEffect } from 'react';
-
 import { registerAuthRuntimeAdapter } from '@repo/api-sdk/client/runtime';
+import { useEffect } from 'react';
 
 import { bootstrapStaffAuth, getStaffAccessToken, refreshStaffAccessToken } from '@/core/session/staff-auth';
 import { clearStaffAuth } from '@/core/session/staff-store';

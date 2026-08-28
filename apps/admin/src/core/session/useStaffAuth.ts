@@ -1,5 +1,3 @@
-'use client';
-
 import type { Permission } from '@repo/schemas/staff';
 
 import { loginStaffAction, performStaffLogout } from '@/core/session/staff-auth';

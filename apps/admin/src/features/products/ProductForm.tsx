@@ -1,5 +1,3 @@
-'use client';
-
 import { useState } from 'react';
 import type { SyntheticEvent } from 'react';
 
@@ -9,10 +7,10 @@ import { Button } from '@repo/ui/button';
 import { Input } from '@repo/ui/input';
 import { Label } from '@repo/ui/label';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@repo/ui/select';
-import { Trash2 } from 'lucide-react';
 import { useQuery } from '@tanstack/react-query';
-import { useTranslations } from 'next-intl';
-import { useRouter } from '@/i18n/navigation';
+import { useNavigate } from '@tanstack/react-router';
+import { Trash2 } from 'lucide-react';
+import { useTranslation } from 'react-i18next';
 
 const GENDERS: Gender[] = ['men', 'women', 'kids', 'unisex'];
 
@@ -37,9 +35,9 @@ interface ProductFormProps {
 }
 
 export function ProductForm({ initial, submitLabel, isSubmitting, errorMessage, onSubmit }: ProductFormProps): React.JSX.Element {
-  const t = useTranslations('product');
-  const tCommon = useTranslations('common');
-  const router = useRouter();
+  const { t } = useTranslation('product');
+  const { t: tCommon } = useTranslation('common');
+  const navigate = useNavigate();
   const { data: categoriesData } = useQuery({ queryKey: ['admin', 'categories'], queryFn: getCategories });
   const categories = categoriesData?.data ?? [];
 
@@ -255,7 +253,7 @@ export function ProductForm({ initial, submitLabel, isSubmitting, errorMessage, 
           type="button"
           variant="outline"
           onClick={() => {
-            router.push('/products');
+            void navigate({ to: '/products' });
           }}
         >
           {tCommon('actions.cancel')}

@@ -1,5 +1,3 @@
-'use client';
-
 import { useState } from 'react';
 import type { SyntheticEvent } from 'react';
 
@@ -8,8 +6,8 @@ import { Button } from '@repo/ui/button';
 import { Input } from '@repo/ui/input';
 import { Label } from '@repo/ui/label';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@repo/ui/select';
-import { useTranslations } from 'next-intl';
-import { useRouter } from '@/i18n/navigation';
+import { useNavigate } from '@tanstack/react-router';
+import { useTranslation } from 'react-i18next';
 
 const NO_PARENT_VALUE = '__none__';
 
@@ -23,9 +21,9 @@ interface CategoryFormProps {
 }
 
 export function CategoryForm({ initial, categories, submitLabel, isSubmitting, errorMessage, onSubmit }: CategoryFormProps): React.JSX.Element {
-  const t = useTranslations('category');
-  const tCommon = useTranslations('common');
-  const router = useRouter();
+  const { t } = useTranslation('category');
+  const { t: tCommon } = useTranslation('common');
+  const navigate = useNavigate();
   const [slug, setSlug] = useState(initial?.slug ?? '');
   const [name, setName] = useState(initial?.name ?? '');
   const [parentId, setParentId] = useState(initial?.parentId ?? NO_PARENT_VALUE);
@@ -101,7 +99,7 @@ export function CategoryForm({ initial, categories, submitLabel, isSubmitting, e
           type="button"
           variant="outline"
           onClick={() => {
-            router.push('/categories');
+            void navigate({ to: '/categories' });
           }}
         >
           {tCommon('actions.cancel')}

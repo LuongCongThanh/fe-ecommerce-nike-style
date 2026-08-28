@@ -1,5 +1,3 @@
-'use client';
-
 import { useState } from 'react';
 import type { SyntheticEvent } from 'react';
 
@@ -8,7 +6,7 @@ import { Badge } from '@repo/ui/badge';
 import { Button } from '@repo/ui/button';
 import { Input } from '@repo/ui/input';
 import { TableCell, TableRow } from '@repo/ui/table';
-import { useTranslations } from 'next-intl';
+import { useTranslation } from 'react-i18next';
 
 import { useUpdateInventoryOnHand } from './useInventoryMutations';
 
@@ -19,8 +17,8 @@ interface InventoryRowProps {
 /** One editable SKU row — owns its own "is this row's on_hand edit in flight" state; every write
  * itself goes through `useUpdateInventoryOnHand` (issue #21), never a direct fetch from the UI. */
 export function InventoryRow({ item }: InventoryRowProps): React.JSX.Element {
-  const t = useTranslations('inventory');
-  const tCommon = useTranslations('common');
+  const { t } = useTranslation('inventory');
+  const { t: tCommon } = useTranslation('common');
   const [draftOnHand, setDraftOnHand] = useState(String(item.onHand));
   const updateOnHand = useUpdateInventoryOnHand(item.skuId);
 
