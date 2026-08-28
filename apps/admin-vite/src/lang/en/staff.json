@@ -1,0 +1,32 @@
+{
+  "title": "Staff",
+  "addStaff": "Add staff",
+  "createStaff": "Create staff",
+  "loadError": "Could not load the staff list.",
+  "empty": "No staff yet.",
+  "columns": {
+    "name": "Name",
+    "email": "Email",
+    "rolesPermissions": "Effective role & permission",
+    "actions": "Actions"
+  },
+  "active": "Active",
+  "assignRoles": "Assign roles",
+  "assignRolesTitle": "Assign roles to {name}",
+  "assignRolesDescription": "Changing roles revokes this staff member's current session.",
+  "atLeastOneRole": "You must select at least one role.",
+  "assignRolesError": "Could not update roles.",
+  "saveRoles": "Save roles",
+  "deleteTitle": "Delete staff member \"{name}\"?",
+  "fields": {
+    "name": "Name",
+    "email": "Email",
+    "password": "Password",
+    "role": "Role"
+  },
+  "roleLabels": {
+    "SUPER_ADMIN": "Super Admin",
+    "ADMIN_STAFF": "Admin Staff",
+    "CMS_EDITOR": "CMS Editor"
+  }
+}
