@@ -6,7 +6,7 @@ import type { Staff } from '@repo/schemas/staff';
 import { Button } from '@repo/ui/button';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@repo/ui/dialog';
 import type { SortingState } from '@tanstack/react-table';
-import { createColumnHelper, getCoreRowModel, getSortedRowModel, useReactTable } from '@tanstack/react-table';
+import { createColumnHelper } from '@tanstack/react-table';
 import { Plus } from 'lucide-react';
 import { useTranslations } from 'next-intl';
 
@@ -16,7 +16,7 @@ import { useAdminStaffList } from '@/features/staff/useAdminStaffList';
 import { useCreateStaff } from '@/features/staff/useStaffMutations';
 import { DataTable } from '@/features/shell/DataTable';
 import { PageHeader } from '@/features/shell/PageHeader';
-import { useClientDataTablePagination } from '@/features/shell/useClientDataTablePagination';
+import { useSortedClientDataTable } from '@/features/shell/useSortedClientDataTable';
 
 const PAGE_SIZE = 20;
 
@@ -31,11 +31,6 @@ export default function StaffPage(): React.JSX.Element {
   const createStaff = useCreateStaff();
 
   const allStaff = data?.data ?? [];
-  const { pageItems: pageStaff, pagination } = useClientDataTablePagination(allStaff, PAGE_SIZE, {
-    pageOf: (page, totalPages) => tCommon('pagination.pageOf', { page, totalPages }),
-    previous: tCommon('pagination.previous'),
-    next: tCommon('pagination.next'),
-  });
 
   /* eslint-disable react/no-unstable-nested-components -- these are TanStack column-def `header`/`cell` renderers, not
    * JSX-mounted nested components; the whole `columns` array is memoized below so their identity is stable across renders. */
@@ -68,13 +63,14 @@ export default function StaffPage(): React.JSX.Element {
   );
   /* eslint-enable react/no-unstable-nested-components */
 
-  const table = useReactTable({
-    data: pageStaff,
-    columns,
-    state: { sorting },
-    onSortingChange: setSorting,
-    getCoreRowModel: getCoreRowModel(),
-    getSortedRowModel: getSortedRowModel(),
+  const {
+    table,
+    pageItems: pageStaff,
+    pagination,
+  } = useSortedClientDataTable(allStaff, columns, sorting, setSorting, PAGE_SIZE, {
+    pageOf: (page, totalPages) => tCommon('pagination.pageOf', { page, totalPages }),
+    previous: tCommon('pagination.previous'),
+    next: tCommon('pagination.next'),
   });
 
   return (

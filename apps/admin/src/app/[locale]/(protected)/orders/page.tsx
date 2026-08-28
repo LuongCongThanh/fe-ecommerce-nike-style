@@ -6,7 +6,7 @@ import type { Order, OrderStatus } from '@repo/schemas/order';
 import { Badge } from '@repo/ui/badge';
 import { Tabs, TabsList, TabsTrigger } from '@repo/ui/tabs';
 import type { SortingState } from '@tanstack/react-table';
-import { createColumnHelper, getCoreRowModel, getSortedRowModel, useReactTable } from '@tanstack/react-table';
+import { createColumnHelper } from '@tanstack/react-table';
 import { useLocale, useTranslations } from 'next-intl';
 import { Link } from '@/i18n/navigation';
 
@@ -15,7 +15,7 @@ import { useAdminOrders } from '@/features/orders/useAdminOrders';
 import { useOrderStatusFilter } from '@/features/orders/useOrderStatusFilter';
 import { DataTable } from '@/features/shell/DataTable';
 import { PageHeader } from '@/features/shell/PageHeader';
-import { useClientDataTablePagination } from '@/features/shell/useClientDataTablePagination';
+import { useSortedClientDataTable } from '@/features/shell/useSortedClientDataTable';
 
 const PAGE_SIZE = 20;
 const STATUS_OPTIONS: readonly OrderStatus[] = [
@@ -41,11 +41,6 @@ export default function OrdersPage(): React.JSX.Element {
   const { status, setStatus } = useOrderStatusFilter();
 
   const allOrders = (data ?? []).filter((order) => status === 'ALL' || order.status === status);
-  const { pageItems: pageOrders, pagination } = useClientDataTablePagination(allOrders, PAGE_SIZE, {
-    pageOf: (page, totalPages) => tCommon('pagination.pageOf', { page, totalPages }),
-    previous: tCommon('pagination.previous'),
-    next: tCommon('pagination.next'),
-  });
 
   /* eslint-disable react/no-unstable-nested-components -- these are TanStack column-def `header`/`cell` renderers, not
    * JSX-mounted nested components; the whole `columns` array is memoized below so their identity is stable across renders. */
@@ -83,13 +78,14 @@ export default function OrdersPage(): React.JSX.Element {
   );
   /* eslint-enable react/no-unstable-nested-components */
 
-  const table = useReactTable({
-    data: pageOrders,
-    columns,
-    state: { sorting },
-    onSortingChange: setSorting,
-    getCoreRowModel: getCoreRowModel(),
-    getSortedRowModel: getSortedRowModel(),
+  const {
+    table,
+    pageItems: pageOrders,
+    pagination,
+  } = useSortedClientDataTable(allOrders, columns, sorting, setSorting, PAGE_SIZE, {
+    pageOf: (page, totalPages) => tCommon('pagination.pageOf', { page, totalPages }),
+    previous: tCommon('pagination.previous'),
+    next: tCommon('pagination.next'),
   });
 
   return (

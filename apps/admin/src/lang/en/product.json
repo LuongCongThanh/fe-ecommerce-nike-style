@@ -16,7 +16,6 @@
     "variantCount": "Variants",
     "sku": "SKU",
     "stock": "Stock",
-    "status": "Publish status",
     "qty": "Qty",
     "price": "Price",
     "actions": "Actions"
@@ -32,12 +31,6 @@
   },
   "filterAllCategories": "All categories",
   "filterAllStock": "All stock",
-  "filterAllStatus": "All statuses",
-  "mockStatus": {
-    "published": "Published",
-    "scheduled": "Scheduled",
-    "inactive": "Inactive"
-  },
   "genders": {
     "men": "Men",
     "women": "Women",

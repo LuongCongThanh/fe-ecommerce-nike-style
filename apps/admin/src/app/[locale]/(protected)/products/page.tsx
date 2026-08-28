@@ -16,7 +16,6 @@ import { useTranslations } from 'next-intl';
 import { Link } from '@/i18n/navigation';
 
 import { useAdminCategories } from '@/features/categories/useAdminCategories';
-import { MOCK_PRODUCT_STATUSES, mockProductStatus, type MockProductStatus } from '@/features/products/mockProductStatus';
 import { useAdminProducts } from '@/features/products/useAdminProducts';
 import { useDeleteProduct } from '@/features/products/useProductMutations';
 import { ConfirmDialog } from '@/features/shell/ConfirmDialog';
@@ -28,9 +27,6 @@ const PAGE_SIZE_OPTIONS = [10, 20, 50] as const;
 /** "All" sentinels — `undefined` (not `''`, which Radix Select's item can't hold as a value). */
 const ALL_CATEGORIES = 'all';
 const ALL_STOCK = 'all';
-const ALL_STATUS = 'all';
-
-const STATUS_BADGE_VARIANT = { published: 'success', scheduled: 'warning', inactive: 'secondary' } as const;
 
 /** One table row's worth of pre-computed view data — TanStack Table columns read off this instead of
  * re-deriving totalStock/minPrice/skuLabel per cell render. */
@@ -38,7 +34,6 @@ interface ProductRow {
   readonly product: Product;
   readonly totalStock: number;
   readonly minPrice: number;
-  readonly status: MockProductStatus;
   readonly skuLabel: string;
 }
 
@@ -52,7 +47,6 @@ export default function ProductsPage(): React.JSX.Element {
   const [search, setSearch] = useState('');
   const [categoryFilter, setCategoryFilter] = useState(ALL_CATEGORIES);
   const [stockFilter, setStockFilter] = useState(ALL_STOCK);
-  const [statusFilter, setStatusFilter] = useState(ALL_STATUS);
   const [rowSelection, setRowSelection] = useState<RowSelectionState>({});
   const [sorting, setSorting] = useState<SortingState>([]);
   const [deleteError, setDeleteError] = useState<string | null>(null);
@@ -67,21 +61,20 @@ export default function ProductsPage(): React.JSX.Element {
 
   const categoryNameById = new Map((categories.data?.data ?? []).map((category) => [category.id, category.name]));
 
-  // Stock is real (Σ sku.stock); status is demo data (see mockProductStatus.ts) — both filter only
-  // the already-fetched page, since neither is a real server-side query param (category is; see
-  // useAdminProducts above).
+  // Stock is real (Σ sku.stock) but filters only the already-fetched server page, since it isn't a
+  // real server-side query param (category is; see useAdminProducts above) — `stockFilterActive`
+  // below hides pagination while this filter is on, since `data.meta.totalPages` describes the
+  // *unfiltered* server page count and would otherwise contradict what's rendered (code review on
+  // PR #74: filtering could show an empty page while Next stays enabled for more unfiltered pages).
+  const stockFilterActive = stockFilter !== ALL_STOCK;
   const rows: ProductRow[] = (data?.data ?? [])
     .map((product) => {
       const totalStock = product.skus.reduce((sum, s) => sum + s.stock, 0);
       const minPrice = Math.min(...product.skus.map((s) => s.price));
       const skuLabel = product.skus.length === 1 ? product.skus[0]?.id : `${product.skus[0]?.id ?? ''} +${String(product.skus.length - 1)}`;
-      return { product, totalStock, minPrice, status: mockProductStatus(product.id), skuLabel };
+      return { product, totalStock, minPrice, skuLabel };
     })
-    .filter(({ totalStock, status }) => {
-      const matchesStock = stockFilter === ALL_STOCK || (stockFilter === 'inStock') === totalStock > 0;
-      const matchesStatus = statusFilter === ALL_STATUS || status === statusFilter;
-      return matchesStock && matchesStatus;
-    });
+    .filter(({ totalStock }) => !stockFilterActive || (stockFilter === 'inStock') === totalStock > 0);
 
   const selectedIds = Object.keys(rowSelection).filter((id) => rowSelection[id]);
 
@@ -179,12 +172,6 @@ export default function ProductsPage(): React.JSX.Element {
           </Badge>
         ),
       }),
-      columnHelper.accessor((row) => row.status, {
-        id: 'status',
-        header: t('columns.status'),
-        enableSorting: false,
-        cell: (info) => <Badge variant={STATUS_BADGE_VARIANT[info.getValue()]}>{t(`mockStatus.${info.getValue()}`)}</Badge>,
-      }),
       columnHelper.accessor((row) => row.totalStock, {
         id: 'qty',
         header: t('columns.qty'),
@@ -272,20 +259,6 @@ export default function ProductsPage(): React.JSX.Element {
               {(categories.data?.data ?? []).map((category) => (
                 <SelectItem key={category.id} value={category.id}>
                   {category.name}
-                </SelectItem>
-              ))}
-            </SelectContent>
-          </Select>
-
-          <Select value={statusFilter} onValueChange={setStatusFilter}>
-            <SelectTrigger className="w-48">
-              <SelectValue />
-            </SelectTrigger>
-            <SelectContent>
-              <SelectItem value={ALL_STATUS}>{t('filterAllStatus')}</SelectItem>
-              {MOCK_PRODUCT_STATUSES.map((status) => (
-                <SelectItem key={status} value={status}>
-                  {t(`mockStatus.${status}`)}
                 </SelectItem>
               ))}
             </SelectContent>
@@ -380,7 +353,7 @@ export default function ProductsPage(): React.JSX.Element {
           isEmpty={rows.length === 0}
           emptyMessage={t('empty')}
           pagination={
-            data !== undefined
+            data !== undefined && !stockFilterActive
               ? {
                   page,
                   totalPages: data.meta.totalPages,

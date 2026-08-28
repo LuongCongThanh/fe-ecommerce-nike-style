@@ -16,7 +16,6 @@
     "variantCount": "Biến thể",
     "sku": "SKU",
     "stock": "Kho hàng",
-    "status": "Trạng thái",
     "qty": "Số lượng",
     "price": "Giá",
     "actions": "Thao tác"
@@ -32,12 +31,6 @@
   },
   "filterAllCategories": "Tất cả danh mục",
   "filterAllStock": "Tất cả tình trạng",
-  "filterAllStatus": "Tất cả trạng thái",
-  "mockStatus": {
-    "published": "Đang bán",
-    "scheduled": "Lên lịch",
-    "inactive": "Ngừng bán"
-  },
   "genders": {
     "men": "Nam",
     "women": "Nữ",
