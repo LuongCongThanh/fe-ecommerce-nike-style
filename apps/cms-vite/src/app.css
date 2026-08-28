@@ -1,0 +1,3 @@
+@import '@repo/tailwind-config/preset.css';
+@source '../../../packages/ui/src';
+@source '../../../packages/shared/src';
