@@ -1,5 +1,6 @@
 {
   "title": "Tồn kho",
+  "searchPlaceholder": "Tìm theo tên sản phẩm...",
   "loadError": "Không thể tải danh sách tồn kho.",
   "empty": "Không có biến thể nào.",
   "columns": {

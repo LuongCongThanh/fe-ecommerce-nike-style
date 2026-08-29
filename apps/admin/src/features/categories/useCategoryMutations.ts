@@ -1,5 +1,3 @@
-'use client';
-
 import { createAdminCategory, deleteAdminCategory, updateAdminCategory } from '@repo/api-sdk/endpoints/admin-catalog';
 import type { CategoryInput } from '@repo/schemas/catalog';
 import { useMutation, useQueryClient } from '@tanstack/react-query';

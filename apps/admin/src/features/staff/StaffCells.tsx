@@ -7,7 +7,7 @@ import { useTranslation } from 'react-i18next';
 
 import { AssignRolesDialog } from './AssignRolesDialog';
 import { useDeleteStaff, useUpdateStaff } from './useStaffMutations';
-import { ConfirmDialog } from '@/features/shell/ConfirmDialog';
+import { ConfirmDialog } from '@/shell/ConfirmDialog';
 
 interface StaffCellProps {
   readonly staff: Staff;

@@ -1,0 +1,11 @@
+{
+  "title": "Tích hợp ứng dụng",
+  "subtitle": "Demo cục bộ — chưa có hệ thống tích hợp thật, trạng thái kết nối chỉ lưu trên trình duyệt này.",
+  "searchPlaceholder": "Lọc ứng dụng...",
+  "filterAll": "Tất cả",
+  "filterConnected": "Đã kết nối",
+  "filterNotConnected": "Chưa kết nối",
+  "connect": "Kết nối",
+  "connected": "Đã kết nối",
+  "empty": "Không có ứng dụng nào khớp bộ lọc."
+}

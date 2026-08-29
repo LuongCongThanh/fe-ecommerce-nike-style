@@ -9,7 +9,7 @@ import { RecentOrders } from '@/features/dashboard/RecentOrders';
 import { useAdminInventory } from '@/features/inventory/useAdminInventory';
 import { useAdminOrders } from '@/features/orders/useAdminOrders';
 import { useAdminProducts } from '@/features/products/useAdminProducts';
-import { StatCard } from '@/features/shell/StatCard';
+import { StatCard } from '@/shell/StatCard';
 import { useAdminStaffList } from '@/features/staff/useAdminStaffList';
 
 export const Route = createFileRoute('/_authenticated/')({

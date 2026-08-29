@@ -4,7 +4,7 @@ import { useTranslation } from 'react-i18next';
 import { CategoryForm } from '@/features/categories/CategoryForm';
 import { useAdminCategories } from '@/features/categories/useAdminCategories';
 import { useCreateCategory } from '@/features/categories/useCategoryMutations';
-import { PageHeader } from '@/features/shell/PageHeader';
+import { PageHeader } from '@/shell/PageHeader';
 
 export const Route = createFileRoute('/_authenticated/categories/new')({
   component: NewCategoryPage,

@@ -1,0 +1,42 @@
+{
+  "title": "Công việc",
+  "subtitle": "Theo dõi công việc nội bộ — chỉ lưu trên trình duyệt này, chưa có backend.",
+  "add": "Thêm công việc",
+  "editTitle": "Sửa công việc",
+  "deleteTitle": "Xóa công việc \"{title}\"?",
+  "deleteSelected": "Xóa mục đã chọn",
+  "deleteSelectedTitle": "Xóa {count} công việc đã chọn?",
+  "selectedCount": "Đã chọn {count}",
+  "empty": "Chưa có công việc nào.",
+  "columns": {
+    "id": "Mã",
+    "title": "Tiêu đề",
+    "status": "Trạng thái",
+    "priority": "Ưu tiên",
+    "label": "Nhãn",
+    "actions": "Thao tác"
+  },
+  "fields": {
+    "title": "Tiêu đề",
+    "status": "Trạng thái",
+    "priority": "Ưu tiên",
+    "label": "Nhãn"
+  },
+  "status": {
+    "backlog": "Tồn đọng",
+    "todo": "Cần làm",
+    "in-progress": "Đang làm",
+    "done": "Hoàn thành",
+    "canceled": "Đã hủy"
+  },
+  "priority": {
+    "low": "Thấp",
+    "medium": "Trung bình",
+    "high": "Cao"
+  },
+  "label": {
+    "bug": "Lỗi",
+    "feature": "Tính năng",
+    "documentation": "Tài liệu"
+  }
+}

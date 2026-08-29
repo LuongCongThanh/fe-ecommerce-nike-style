@@ -5,7 +5,7 @@ import { useTranslation } from 'react-i18next';
 
 import { ProductForm } from '@/features/products/ProductForm';
 import { useUpdateProduct } from '@/features/products/useProductMutations';
-import { PageHeader } from '@/features/shell/PageHeader';
+import { PageHeader } from '@/shell/PageHeader';
 
 export const Route = createFileRoute('/_authenticated/products/$id/edit')({
   component: EditProductPage,

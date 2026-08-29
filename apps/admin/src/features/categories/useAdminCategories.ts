@@ -1,5 +1,3 @@
-'use client';
-
 import { getAdminCategories } from '@repo/api-sdk/endpoints/admin-catalog';
 import { useQuery } from '@tanstack/react-query';
 

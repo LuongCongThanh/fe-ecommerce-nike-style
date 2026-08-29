@@ -20,6 +20,7 @@ import {
   toPublicUser,
   updateUserProfile,
 } from './auth-fixtures';
+import { BETTER_AUTH_COOKIE_NAME, destroyMockSession, findStaffFromRequest, mockLogin, resolveMockSession } from './better-auth-fixtures';
 import { mergeAccountCart, resolveSkus } from './cart-fixtures';
 import {
   createCategory,
@@ -58,6 +59,7 @@ import {
   deleteStaff,
   findStaffByAccessToken,
   findStaffByEmail,
+  findStaffById,
   listStaff,
   permissionsFor,
   revokeByStaffRefreshToken,
@@ -126,7 +128,7 @@ export const handlers = [
   // Admin Product/Variant/SKU CRUD (issue #19) — same `Product` shape and `listProducts` filter/sort/
   // paginate the public PLP uses, gated on a valid Staff session instead of being publicly readable.
   http.get('*/api/admin/products', ({ request }) => {
-    const staff = findStaffByAccessToken(request.headers.get('authorization'));
+    const staff = findStaffFromRequest(request);
     if (staff === undefined) {
       return errorResponse(401, 'UNAUTHORIZED', 'Chưa đăng nhập hoặc phiên đã hết hạn.');
     }
@@ -138,7 +140,7 @@ export const handlers = [
   }),
 
   http.get('*/api/admin/products/:id/', ({ request, params }) => {
-    const staff = findStaffByAccessToken(request.headers.get('authorization'));
+    const staff = findStaffFromRequest(request);
     if (staff === undefined) {
       return errorResponse(401, 'UNAUTHORIZED', 'Chưa đăng nhập hoặc phiên đã hết hạn.');
     }
@@ -151,7 +153,7 @@ export const handlers = [
   }),
 
   http.post('*/api/admin/products/', async ({ request }) => {
-    const staff = findStaffByAccessToken(request.headers.get('authorization'));
+    const staff = findStaffFromRequest(request);
     if (staff === undefined) {
       return errorResponse(401, 'UNAUTHORIZED', 'Chưa đăng nhập hoặc phiên đã hết hạn.');
     }
@@ -161,7 +163,7 @@ export const handlers = [
   }),
 
   http.patch('*/api/admin/products/:id/', async ({ request, params }) => {
-    const staff = findStaffByAccessToken(request.headers.get('authorization'));
+    const staff = findStaffFromRequest(request);
     if (staff === undefined) {
       return errorResponse(401, 'UNAUTHORIZED', 'Chưa đăng nhập hoặc phiên đã hết hạn.');
     }
@@ -176,7 +178,7 @@ export const handlers = [
   }),
 
   http.delete('*/api/admin/products/:id/', ({ request, params }) => {
-    const staff = findStaffByAccessToken(request.headers.get('authorization'));
+    const staff = findStaffFromRequest(request);
     if (staff === undefined) {
       return errorResponse(401, 'UNAUTHORIZED', 'Chưa đăng nhập hoặc phiên đã hết hạn.');
     }
@@ -192,7 +194,7 @@ export const handlers = [
   // Admin Category tree management (issue #20) — same `Category` shape the public PLP's filter panel
   // reads, gated on a valid Staff session.
   http.get('*/api/admin/categories/', ({ request }) => {
-    const staff = findStaffByAccessToken(request.headers.get('authorization'));
+    const staff = findStaffFromRequest(request);
     if (staff === undefined) {
       return errorResponse(401, 'UNAUTHORIZED', 'Chưa đăng nhập hoặc phiên đã hết hạn.');
     }
@@ -201,7 +203,7 @@ export const handlers = [
   }),
 
   http.post('*/api/admin/categories/', async ({ request }) => {
-    const staff = findStaffByAccessToken(request.headers.get('authorization'));
+    const staff = findStaffFromRequest(request);
     if (staff === undefined) {
       return errorResponse(401, 'UNAUTHORIZED', 'Chưa đăng nhập hoặc phiên đã hết hạn.');
     }
@@ -215,7 +217,7 @@ export const handlers = [
   }),
 
   http.patch('*/api/admin/categories/:id/', async ({ request, params }) => {
-    const staff = findStaffByAccessToken(request.headers.get('authorization'));
+    const staff = findStaffFromRequest(request);
     if (staff === undefined) {
       return errorResponse(401, 'UNAUTHORIZED', 'Chưa đăng nhập hoặc phiên đã hết hạn.');
     }
@@ -230,7 +232,7 @@ export const handlers = [
   }),
 
   http.delete('*/api/admin/categories/:id/', ({ request, params }) => {
-    const staff = findStaffByAccessToken(request.headers.get('authorization'));
+    const staff = findStaffFromRequest(request);
     if (staff === undefined) {
       return errorResponse(401, 'UNAUTHORIZED', 'Chưa đăng nhập hoặc phiên đã hết hạn.');
     }
@@ -246,7 +248,7 @@ export const handlers = [
   // Admin Inventory view/update (issue #21) — on_hand/reserved/available per SKU, gated on a valid
   // Staff session. Writes go through updateInventoryOnHand, which also appends an audit-log entry.
   http.get('*/api/admin/inventory/', ({ request }) => {
-    const staff = findStaffByAccessToken(request.headers.get('authorization'));
+    const staff = findStaffFromRequest(request);
     if (staff === undefined) {
       return errorResponse(401, 'UNAUTHORIZED', 'Chưa đăng nhập hoặc phiên đã hết hạn.');
     }
@@ -255,7 +257,7 @@ export const handlers = [
   }),
 
   http.get('*/api/admin/inventory/audit-log/', ({ request }) => {
-    const staff = findStaffByAccessToken(request.headers.get('authorization'));
+    const staff = findStaffFromRequest(request);
     if (staff === undefined) {
       return errorResponse(401, 'UNAUTHORIZED', 'Chưa đăng nhập hoặc phiên đã hết hạn.');
     }
@@ -265,7 +267,7 @@ export const handlers = [
   }),
 
   http.patch('*/api/admin/inventory/:skuId/', async ({ request, params }) => {
-    const staff = findStaffByAccessToken(request.headers.get('authorization'));
+    const staff = findStaffFromRequest(request);
     if (staff === undefined) {
       return errorResponse(401, 'UNAUTHORIZED', 'Chưa đăng nhập hoặc phiên đã hết hạn.');
     }
@@ -280,7 +282,7 @@ export const handlers = [
 
   // Admin Order status update + return approval (issue #22) — gated on a valid Staff session.
   http.get('*/api/admin/orders/', ({ request }) => {
-    const staff = findStaffByAccessToken(request.headers.get('authorization'));
+    const staff = findStaffFromRequest(request);
     if (staff === undefined) {
       return errorResponse(401, 'UNAUTHORIZED', 'Chưa đăng nhập hoặc phiên đã hết hạn.');
     }
@@ -289,7 +291,7 @@ export const handlers = [
   }),
 
   http.get('*/api/admin/orders/:id/', ({ request, params }) => {
-    const staff = findStaffByAccessToken(request.headers.get('authorization'));
+    const staff = findStaffFromRequest(request);
     if (staff === undefined) {
       return errorResponse(401, 'UNAUTHORIZED', 'Chưa đăng nhập hoặc phiên đã hết hạn.');
     }
@@ -302,7 +304,7 @@ export const handlers = [
   }),
 
   http.patch('*/api/admin/orders/:id/status/', async ({ request, params }) => {
-    const staff = findStaffByAccessToken(request.headers.get('authorization'));
+    const staff = findStaffFromRequest(request);
     if (staff === undefined) {
       return errorResponse(401, 'UNAUTHORIZED', 'Chưa đăng nhập hoặc phiên đã hết hạn.');
     }
@@ -317,7 +319,7 @@ export const handlers = [
   }),
 
   http.post('*/api/admin/orders/:id/approve-return/', ({ request, params }) => {
-    const staff = findStaffByAccessToken(request.headers.get('authorization'));
+    const staff = findStaffFromRequest(request);
     if (staff === undefined) {
       return errorResponse(401, 'UNAUTHORIZED', 'Chưa đăng nhập hoặc phiên đã hết hạn.');
     }
@@ -331,7 +333,7 @@ export const handlers = [
   }),
 
   http.post('*/api/admin/orders/:id/reject-return/', ({ request, params }) => {
-    const staff = findStaffByAccessToken(request.headers.get('authorization'));
+    const staff = findStaffFromRequest(request);
     if (staff === undefined) {
       return errorResponse(401, 'UNAUTHORIZED', 'Chưa đăng nhập hoặc phiên đã hết hạn.');
     }
@@ -348,7 +350,7 @@ export const handlers = [
   // permissions themselves are enforced client-side (menu/button visibility), same convention as
   // every other Admin CRUD slice in this mock server.
   http.get('*/api/admin/staff/', ({ request }) => {
-    const staff = findStaffByAccessToken(request.headers.get('authorization'));
+    const staff = findStaffFromRequest(request);
     if (staff === undefined) {
       return errorResponse(401, 'UNAUTHORIZED', 'Chưa đăng nhập hoặc phiên đã hết hạn.');
     }
@@ -357,7 +359,7 @@ export const handlers = [
   }),
 
   http.post('*/api/admin/staff/', async ({ request }) => {
-    const staff = findStaffByAccessToken(request.headers.get('authorization'));
+    const staff = findStaffFromRequest(request);
     if (staff === undefined) {
       return errorResponse(401, 'UNAUTHORIZED', 'Chưa đăng nhập hoặc phiên đã hết hạn.');
     }
@@ -371,7 +373,7 @@ export const handlers = [
   }),
 
   http.patch('*/api/admin/staff/:id/', async ({ request, params }) => {
-    const staff = findStaffByAccessToken(request.headers.get('authorization'));
+    const staff = findStaffFromRequest(request);
     if (staff === undefined) {
       return errorResponse(401, 'UNAUTHORIZED', 'Chưa đăng nhập hoặc phiên đã hết hạn.');
     }
@@ -385,7 +387,7 @@ export const handlers = [
   }),
 
   http.delete('*/api/admin/staff/:id/', ({ request, params }) => {
-    const staff = findStaffByAccessToken(request.headers.get('authorization'));
+    const staff = findStaffFromRequest(request);
     if (staff === undefined) {
       return errorResponse(401, 'UNAUTHORIZED', 'Chưa đăng nhập hoặc phiên đã hết hạn.');
     }
@@ -398,7 +400,7 @@ export const handlers = [
   }),
 
   http.patch('*/api/admin/staff/:id/roles/', async ({ request, params }) => {
-    const staff = findStaffByAccessToken(request.headers.get('authorization'));
+    const staff = findStaffFromRequest(request);
     if (staff === undefined) {
       return errorResponse(401, 'UNAUTHORIZED', 'Chưa đăng nhập hoặc phiên đã hết hạn.');
     }
@@ -503,6 +505,40 @@ export const handlers = [
 
     const body = (await request.json()) as { firstName?: string; lastName?: string; phone?: string };
     return HttpResponse.json(toPublicUser(updateUserProfile(user, body)));
+  }),
+
+  // Better Auth's own REST contract (`packages/shared/src/better-auth`) — what `apps/admin` actually
+  // calls now. Kept separate from the `/api/staff/*` JWT handlers below (still there for whatever
+  // else references them, but no longer what admin's session module talks to).
+  http.post('*/api/auth/sign-in/email', async ({ request }) => {
+    const body = (await request.json()) as { email: string; password: string };
+    const result = mockLogin(body.email, body.password);
+
+    if (!result.ok) {
+      return HttpResponse.json({ message: 'Invalid email or password' }, { status: 401 });
+    }
+
+    return HttpResponse.json(
+      { redirect: false, token: result.token, url: null, user: { ...result.staff, emailVerified: true, image: null } },
+      { headers: { 'Set-Cookie': `${BETTER_AUTH_COOKIE_NAME}=${result.token}; Path=/` } },
+    );
+  }),
+
+  http.get('*/api/auth/get-session', ({ request }) => {
+    const session = resolveMockSession(request.headers.get('cookie'));
+    const staff = session === undefined ? undefined : findStaffById(session.staffId);
+    if (session === undefined || staff === undefined) return HttpResponse.json(null);
+
+    return HttpResponse.json({
+      session: { id: session.token, token: session.token, userId: session.staffId, expiresAt: new Date(Date.now() + 86_400_000).toISOString() },
+      user: { ...toPublicStaff(staff), emailVerified: true, image: null },
+    });
+  }),
+
+  http.post('*/api/auth/sign-out', ({ request }) => {
+    const session = resolveMockSession(request.headers.get('cookie'));
+    if (session !== undefined) destroyMockSession(session.token);
+    return HttpResponse.json({ success: true }, { headers: { 'Set-Cookie': `${BETTER_AUTH_COOKIE_NAME}=; Path=/; Max-Age=0` } });
   }),
 
   // Staff auth (issue #18/#24) — a separate identity/session from Customer auth above.

@@ -1,5 +1,3 @@
-'use client';
-
 import { getAdminOrder, getAdminOrders } from '@repo/api-sdk/endpoints/admin-orders';
 import { useQuery } from '@tanstack/react-query';
 

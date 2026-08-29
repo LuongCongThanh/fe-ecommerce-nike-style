@@ -14,6 +14,22 @@ export class ApiError extends Error {
     this.details = details;
   }
 
+  get isUnauthorized(): boolean {
+    return this.status === 401;
+  }
+  get isForbidden(): boolean {
+    return this.status === 403;
+  }
+  get isNotFound(): boolean {
+    return this.status === 404;
+  }
+  get isValidation(): boolean {
+    return this.status === 400 || this.status === 422;
+  }
+  get isServerError(): boolean {
+    return this.status >= 500;
+  }
+
   static async fromResponse(response: Response): Promise<ApiError> {
     const body: unknown = await response.json().catch(() => null);
     const parsed = ErrorEnvelopeSchema.safeParse(body);

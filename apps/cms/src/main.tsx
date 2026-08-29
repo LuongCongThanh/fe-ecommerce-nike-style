@@ -3,10 +3,10 @@ import { StrictMode } from 'react';
 import { createRoot } from 'react-dom/client';
 
 import './app.css';
+import { BASE_PATH } from './base-path';
 import { routeTree } from './routeTree.gen';
 
-// '/cms' — must match vite.config.ts's `base` and the storefront's microfrontends.json proxy path.
-const router = createRouter({ routeTree, basepath: '/cms' });
+const router = createRouter({ routeTree, basepath: BASE_PATH });
 
 declare module '@tanstack/react-router' {
   interface Register {

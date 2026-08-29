@@ -1,0 +1,42 @@
+{
+  "title": "Tasks",
+  "subtitle": "Internal work tracker — saved to this browser only, no backend yet.",
+  "add": "Add task",
+  "editTitle": "Edit task",
+  "deleteTitle": "Delete task \"{title}\"?",
+  "deleteSelected": "Delete selected",
+  "deleteSelectedTitle": "Delete {count} selected tasks?",
+  "selectedCount": "{count} selected",
+  "empty": "No tasks yet.",
+  "columns": {
+    "id": "ID",
+    "title": "Title",
+    "status": "Status",
+    "priority": "Priority",
+    "label": "Label",
+    "actions": "Actions"
+  },
+  "fields": {
+    "title": "Title",
+    "status": "Status",
+    "priority": "Priority",
+    "label": "Label"
+  },
+  "status": {
+    "backlog": "Backlog",
+    "todo": "Todo",
+    "in-progress": "In progress",
+    "done": "Done",
+    "canceled": "Canceled"
+  },
+  "priority": {
+    "low": "Low",
+    "medium": "Medium",
+    "high": "High"
+  },
+  "label": {
+    "bug": "Bug",
+    "feature": "Feature",
+    "documentation": "Documentation"
+  }
+}

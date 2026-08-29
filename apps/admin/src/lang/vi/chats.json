@@ -1,0 +1,7 @@
+{
+  "title": "Tin nhắn",
+  "subtitle": "Demo nhắn tin nội bộ — chỉ lưu trên trình duyệt này, chưa có backend nhắn tin thật.",
+  "searchPlaceholder": "Tìm cuộc trò chuyện...",
+  "typeMessage": "Nhập tin nhắn...",
+  "empty": "Chọn một cuộc trò chuyện để bắt đầu."
+}

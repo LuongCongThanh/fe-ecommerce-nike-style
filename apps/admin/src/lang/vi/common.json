@@ -24,7 +24,12 @@
     "orders": "Đơn hàng",
     "categories": "Danh mục",
     "inventory": "Tồn kho",
-    "staff": "Nhân viên"
+    "staff": "Nhân viên",
+    "customers": "Khách hàng",
+    "tasks": "Công việc",
+    "chats": "Tin nhắn",
+    "apps": "Ứng dụng",
+    "settings": "Cài đặt"
   },
   "adminLabel": "Quản trị",
   "openNavMenu": "Mở menu điều hướng",

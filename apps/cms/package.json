@@ -14,7 +14,9 @@
   },
   "dependencies": {
     "@repo/api-sdk": "workspace:*",
+    "@repo/i18n": "workspace:*",
     "@repo/schemas": "workspace:*",
+    "@repo/shared": "workspace:*",
     "@repo/ui": "workspace:*",
     "@tanstack/react-query": "^5.101.2",
     "@tanstack/react-router": "^1.168.22",

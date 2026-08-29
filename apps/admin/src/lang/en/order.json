@@ -5,6 +5,8 @@
   "empty": "No orders.",
   "detailTitle": "Order detail",
   "viewDetail": "View detail",
+  "copyCode": "Copy order code",
+  "codeCopied": "Order code copied.",
   "updateError": "Could not update the order.",
   "columns": {
     "code": "Order code",

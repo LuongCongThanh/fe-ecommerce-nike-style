@@ -1,5 +1,3 @@
-'use client';
-
 import { updateAdminInventoryOnHand } from '@repo/api-sdk/endpoints/admin-inventory';
 import type { InventoryUpdateInput } from '@repo/schemas/inventory';
 import { useMutation, useQueryClient } from '@tanstack/react-query';

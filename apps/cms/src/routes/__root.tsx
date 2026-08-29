@@ -1,11 +1,12 @@
 import { enableApiMockingBrowser } from '@repo/api-sdk/adapters/browser';
+import { AppQueryProvider } from '@repo/shared/query-provider';
 import { Outlet, createRootRoute } from '@tanstack/react-router';
 import { useEffect, useState } from 'react';
 import { I18nextProvider } from 'react-i18next';
+import { BASE_PATH } from '@/base-path';
 
 import { AppShell } from '@/features/shell/AppShell';
 import i18n from '@/i18n';
-import { AppQueryProvider } from '@/providers/query-provider';
 
 export const Route = createRootRoute({
   component: RootComponent,
@@ -17,9 +18,7 @@ function RootComponent(): React.JSX.Element | null {
   // Ported from the Next.js cms's AppProviders — gates rendering until the MSW browser worker has
   // started (no-op when VITE_API_MOCKING is unset).
   useEffect(() => {
-    // '/cms' — must match vite.config.ts's `base` (the worker script itself is served from
-    // public/, prefixed by the app's own base path, same as the old Next.js basePath behavior).
-    enableApiMockingBrowser('/cms')
+    enableApiMockingBrowser(BASE_PATH)
       .then(() => {
         setIsMockingReady(true);
       })

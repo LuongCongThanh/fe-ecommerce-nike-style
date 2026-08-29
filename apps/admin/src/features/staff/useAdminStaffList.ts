@@ -1,5 +1,3 @@
-'use client';
-
 import { getAdminStaffList } from '@repo/api-sdk/endpoints/admin-staff';
 import { useQuery } from '@tanstack/react-query';
 

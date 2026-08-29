@@ -4,7 +4,7 @@ import { Button } from '@repo/ui/button';
 import { useTranslation } from 'react-i18next';
 
 import { useApproveOrderReturn, useRejectOrderReturn, useUpdateOrderStatus } from './useOrderMutations';
-import { ConfirmDialog } from '@/features/shell/ConfirmDialog';
+import { ConfirmDialog } from '@/shell/ConfirmDialog';
 
 interface OrderStatusActionsProps {
   readonly order: Order;

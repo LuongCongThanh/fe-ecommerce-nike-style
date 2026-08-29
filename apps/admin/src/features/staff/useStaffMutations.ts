@@ -1,5 +1,3 @@
-'use client';
-
 import { assignAdminStaffRoles, createAdminStaff, deleteAdminStaff, updateAdminStaff } from '@repo/api-sdk/endpoints/admin-staff';
 import type { StaffAssignRolesInput, StaffCreateInput, StaffUpdateInput } from '@repo/schemas/staff';
 import { useMutation, useQueryClient } from '@tanstack/react-query';

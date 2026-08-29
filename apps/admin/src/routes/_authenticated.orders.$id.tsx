@@ -9,7 +9,7 @@ import { OrderShippingTimeline } from '@/features/orders/OrderShippingTimeline';
 import { OrderStatusActions } from '@/features/orders/OrderStatusActions';
 import { orderStatusBadgeVariant } from '@/features/orders/orderStatusVariant';
 import { useAdminOrder } from '@/features/orders/useAdminOrders';
-import { PageHeader } from '@/features/shell/PageHeader';
+import { PageHeader } from '@/shell/PageHeader';
 
 export const Route = createFileRoute('/_authenticated/orders/$id')({
   component: OrderDetailPage,

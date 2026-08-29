@@ -13,14 +13,18 @@
   "exports": {
     "./locales": "./src/locales.ts",
     "./request-config": "./src/create-request-config.ts",
-    "./middleware": "./src/create-middleware.ts"
+    "./middleware": "./src/create-middleware.ts",
+    "./i18next": "./src/create-i18next.ts"
   },
   "dependencies": {
     "next-intl": "^4.13.2",
-    "use-intl": "^4.13.2"
+    "use-intl": "^4.13.2",
+    "i18next": "^25.7.0",
+    "react-i18next": "^15.7.2"
   },
   "peerDependencies": {
-    "next": "^16.2.10"
+    "next": "^16.2.10",
+    "react": "^19"
   },
   "devDependencies": {
     "@repo/eslint-config": "workspace:*",
@@ -28,6 +32,7 @@
     "eslint": "9.39.5",
     "next": "^16.2.10",
     "typescript": "^5",
-    "vitest": "^4.1.10"
+    "vitest": "^4.1.10",
+    "react": "19.2.7"
   }
 }

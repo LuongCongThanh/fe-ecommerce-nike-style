@@ -1,4 +1,5 @@
 import { IS_API_MOCKING } from '../env/config';
+import { setMockAutoLoginEnabled } from '../mocks/better-auth-fixtures';
 
 /**
  * Call once during app bootstrap (client-side). No-ops when `NEXT_PUBLIC_API_MOCKING` is unset.
@@ -10,6 +11,10 @@ import { IS_API_MOCKING } from '../env/config';
  */
 export async function enableApiMockingBrowser(basePath = ''): Promise<void> {
   if (!IS_API_MOCKING) return;
+
+  // Real browser bootstrap only (never the Node test suite) — see that function's own doc comment
+  // for why the auto-login mock fallback must stay off everywhere else.
+  setMockAutoLoginEnabled(true);
 
   const { worker } = await import('../testing/msw-browser');
   await worker.start({ onUnhandledRequest: 'bypass', serviceWorker: { url: `${basePath}/mockServiceWorker.js` } });

@@ -1,0 +1,20 @@
+{
+  "title": "Customers",
+  "subtitle": "Local demo — there is no admin-facing customers endpoint yet, saved to this browser only.",
+  "searchPlaceholder": "Search by name or email...",
+  "empty": "No customers yet.",
+  "columns": {
+    "name": "Name",
+    "email": "Email",
+    "phone": "Phone",
+    "orders": "Orders",
+    "status": "Status",
+    "actions": "Actions"
+  },
+  "status": {
+    "active": "Active",
+    "suspended": "Suspended"
+  },
+  "suspend": "Suspend",
+  "reactivate": "Reactivate"
+}

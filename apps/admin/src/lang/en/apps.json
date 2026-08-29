@@ -1,0 +1,11 @@
+{
+  "title": "App Integrations",
+  "subtitle": "Local demo — no real integration registry exists yet, connections are saved to this browser only.",
+  "searchPlaceholder": "Filter apps...",
+  "filterAll": "All apps",
+  "filterConnected": "Connected",
+  "filterNotConnected": "Not connected",
+  "connect": "Connect",
+  "connected": "Connected",
+  "empty": "No apps match your filter."
+}

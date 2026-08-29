@@ -1,5 +1,3 @@
-'use client';
-
 import { getAdminInventory, getAdminInventoryAuditLog } from '@repo/api-sdk/endpoints/admin-inventory';
 import { useQuery } from '@tanstack/react-query';
 

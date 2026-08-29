@@ -1,5 +1,6 @@
 {
   "title": "Danh mục",
+  "searchPlaceholder": "Tìm theo tên hoặc slug...",
   "add": "Thêm danh mục",
   "create": "Tạo danh mục",
   "edit": "Sửa danh mục",

@@ -55,6 +55,16 @@
     --card-foreground: oklch(0.16 0.006 30);
     --popover: oklch(0.98 0.006 30);
     --popover-foreground: oklch(0.16 0.006 30);
+    /* Sidebar — reuses the same surface/border/ring tokens above rather than introducing a new
+       color decision; apps that want a visually distinct sidebar surface can override these. */
+    --sidebar: var(--card);
+    --sidebar-foreground: var(--card-foreground);
+    --sidebar-primary: var(--primary);
+    --sidebar-primary-foreground: var(--primary-foreground);
+    --sidebar-accent: var(--accent);
+    --sidebar-accent-foreground: var(--accent-foreground);
+    --sidebar-border: var(--border);
+    --sidebar-ring: var(--ring);
   }
 
   .dark {
@@ -77,6 +87,14 @@
     --card-foreground: oklch(0.96 0.006 30);
     --popover: oklch(0.2 0.005 30);
     --popover-foreground: oklch(0.96 0.006 30);
+    --sidebar: var(--card);
+    --sidebar-foreground: var(--card-foreground);
+    --sidebar-primary: var(--primary);
+    --sidebar-primary-foreground: var(--primary-foreground);
+    --sidebar-accent: var(--accent);
+    --sidebar-accent-foreground: var(--accent-foreground);
+    --sidebar-border: var(--border);
+    --sidebar-ring: var(--ring);
   }
 
   *,

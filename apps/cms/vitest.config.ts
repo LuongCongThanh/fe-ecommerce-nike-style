@@ -12,7 +12,9 @@ export default defineConfig({
     },
   },
   test: {
-    include: ['src/**/__tests__/**/*.{test,spec}.{ts,tsx}'],
+    // Colocated `Foo.test.tsx` counts too — the old pattern matched only `__tests__/` directories, so a
+    // test written next to its source was skipped in silence rather than failing.
+    include: ['src/**/*.{test,spec}.{ts,tsx}'],
     environment: 'jsdom',
     setupFiles: ['./src/test/setup.ts'],
     globals: true,

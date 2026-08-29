@@ -18,6 +18,25 @@ const eslintConfig = [
     languageOptions: disableTypeChecked.languageOptions,
     rules: disableTypeChecked.rules,
   },
+  {
+    // `src/shell` is the app's foundation (chrome, table mechanics, cross-cutting hooks): every
+    // feature may depend on it, and it may depend on none of them. It used to live at
+    // `src/features/shell`, where that one-way direction was invisible and unenforced.
+    files: ['src/shell/**/*.{ts,tsx}'],
+    rules: {
+      'no-restricted-imports': [
+        'error',
+        {
+          patterns: [
+            {
+              group: ['@/features/*', '@/routes/*'],
+              message: 'src/shell must not depend on a feature or a route — the dependency runs the other way.',
+            },
+          ],
+        },
+      ],
+    },
+  },
   prettier,
 ];
 

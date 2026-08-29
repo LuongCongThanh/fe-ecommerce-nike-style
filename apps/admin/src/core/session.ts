@@ -1,26 +1,24 @@
-import { createStaffAuthModule } from '@repo/shared/staff-auth';
+import { createBetterAuthModule } from '@repo/shared/better-auth';
 import { useNavigate } from '@tanstack/react-router';
 
-import { ADMIN_ACCESS_TOKEN_COOKIE } from '@/shared/constants/auth-cookies';
+// `createAuthClient` requires an absolute URL (it does `new URL(baseURL)` internally) — a bare path
+// like '/api/auth' throws "Invalid base URL". Same-origin default resolves against the page's own
+// origin instead; set VITE_BETTER_AUTH_URL to a full URL for a backend on a different origin.
+const BETTER_AUTH_URL = (import.meta.env.VITE_BETTER_AUTH_URL as string | undefined) ?? `${window.location.origin}/api/auth`;
 
 /**
- * Staff session/auth, deepened into one shared module (issue #24) — see
- * `@repo/shared/staff-auth`'s `createStaffAuthModule`. This file is the only place admin declares
- * "which cookie, which router" — everything else (store, login/logout/refresh, the guard, the
- * runtime provider) lives in the shared module and is proven once by its own tests.
+ * Staff session/auth — now backed by Better Auth (`@repo/shared/better-auth`), replacing Clerk
+ * (which itself replaced the original cookie/JWT `@repo/shared/staff-auth` module). See that
+ * module's own doc comment for the gaps this swap leaves open (roles field, backend server).
  *
- * A single file, not a `core/session/index.ts` barrel directory (matches the upstream PR #74/#73
- * convention this replaces) — same `@/core/session` import path for every consumer.
- *
- * `useRouter` here wraps TanStack Router's `useNavigate()` in the `{ push }` shape the shared
- * module expects (it can't import an app-local routing module, only Next.js's `@/i18n/navigation`
- * or TanStack's `useNavigate` — either way it's injected, not imported directly).
+ * Same export shape as before (`useStaffAuth`, `StaffAuthGuard`, `StaffAuthRuntimeProvider`) so
+ * every existing consumer (AppShell, UserMenu, NavCommandMenu, routes/login.tsx) keeps working
+ * unchanged — this file is still the only place admin declares "which router, which auth server URL".
  */
-export const { useStaffAuth, StaffAuthGuard, StaffAuthRuntimeProvider, loginStaffAction, performStaffLogout, clearStaffAuth, setStaffSession } =
-  createStaffAuthModule({
-    accessTokenCookie: ADMIN_ACCESS_TOKEN_COOKIE,
-    useRouter: () => {
-      const navigate = useNavigate();
-      return { push: (href: string) => void navigate({ to: href }) };
-    },
-  });
+export const { useStaffAuth, StaffAuthGuard, StaffAuthRuntimeProvider } = createBetterAuthModule({
+  baseURL: BETTER_AUTH_URL,
+  useRouter: () => {
+    const navigate = useNavigate();
+    return { push: (href: string) => void navigate({ to: href }) };
+  },
+});

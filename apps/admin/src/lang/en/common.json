@@ -24,7 +24,12 @@
     "orders": "Orders",
     "categories": "Categories",
     "inventory": "Inventory",
-    "staff": "Staff"
+    "staff": "Staff",
+    "customers": "Customers",
+    "tasks": "Tasks",
+    "chats": "Chats",
+    "apps": "Apps",
+    "settings": "Settings"
   },
   "adminLabel": "Admin",
   "openNavMenu": "Open navigation menu",
