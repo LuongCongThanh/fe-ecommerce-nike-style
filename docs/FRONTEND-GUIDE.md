@@ -142,7 +142,7 @@ strict-peer-dependencies=false
 | i18n              | next-intl, storefront only                        |
 | Unit/Integration  | Vitest, jsdom, Testing Library                    |
 | E2E               | Playwright                                        |
-| Storefront PDP 3D | three, react-three-fiber, drei                    |
+| Storefront 3D     | three, react-three-fiber (+ drei on the PDP only) |
 | Storefront PWA    | @ducanh2912/next-pwa, production only             |
 
 Version policy:
@@ -888,7 +888,51 @@ Nếu thiếu bất kỳ mục nào: trạng thái là **Foundation đang triể
 
 ---
 
-## 27. Source Notes
+## 27. three.js trong storefront
+
+three.js xuất hiện ở hai chỗ, và chỉ hai chỗ:
+
+| Surface | Component | Gate |
+| --- | --- | --- |
+| PDP | `_lib/components/products/ProductViewer3D.tsx` | `next/dynamic({ ssr: false })` từ `ProductInfoPanel` |
+| Hero trang chủ | `_lib/components/home/hero3d/HeroSlides3D.tsx` | `next/dynamic({ ssr: false })` + `useCanRender3D()` |
+
+Quy ước bắt buộc:
+
+- **Không bao giờ** import `three` / `@react-three/*` từ một route hoặc layout dùng chung. WebGL không có
+  server renderer, và chunk ~200 KB gz không được phép nằm trên đường găng của bất kỳ trang nào.
+- Mọi surface 3D mới phải đi qua `useCanRender3D()` (`src/shared/hooks/`). Hook trả `'off' | 'pending' |
+  'ready'` cộng một `tier`; mọi gate được chấm trong `requestIdleCallback` nên không bao giờ tranh chấp
+  với LCP. Fail một tầng là tắt vĩnh viễn — không thử lại giữa phiên.
+- **`@react-three/drei` chỉ dùng ở PDP.** Hero cố tình chỉ dùng core `three` + fiber. Đặc biệt
+  `Environment` fetch file HDR từ CDN pmndrs lúc runtime, không được dùng ở bất cứ đâu mới.
+- Màu lấy từ design token qua `readTokenColor()`, không hardcode hex — nếu không dark mode sẽ chỏi.
+- Mỗi scene phải: pause rAF khi tab ẩn hoặc ra khỏi viewport, về 2D vĩnh viễn khi `webglcontextlost`,
+  và dispose texture/material khi unmount.
+- Lớp WebGL chỉ được sở hữu **pixel**. Link, focus, ARIA, autoplay ở lại DOM — hero là ví dụ mẫu:
+  carousel DOM giữ nguyên, canvas chỉ vẽ đè và ảnh DOM chuyển `opacity: 0` trong cùng một commit.
+
+Hai cái bẫy đã mất thời gian, đừng dẫm lại:
+
+- **Uniform phải tồn tại lúc `ShaderMaterial` được khởi tạo.** three chốt danh sách uniform khi link
+  program lần đầu; đưa `<shaderMaterial>` cho reconciler rồi gán `.uniforms` sau đó sẽ link một program
+  không bao giờ bind sampler → validate fail → canvas đen im lặng, không lỗi runtime.
+- **Comment GLSL không được chứa backtick**, vì shader nằm trong template literal TS. Và `active` là từ
+  khóa dành riêng của GLSL.
+
+Đo LCP (production build, `next start`, Chromium 390×844, CPU throttle 4x, ~1.6 Mbps / 150 ms RTT,
+trung vị 3 lần) — 2026-08-30:
+
+| | LCP |
+| --- | --- |
+| Hero có WebGL (canvas mount) | 1524 ms |
+| Hero gate tắt (reduced-motion) | 1516 ms |
+
+Chênh lệch nằm trong nhiễu ⇒ gate đang làm đúng việc của nó. Đo lại nếu ai đó đổi thời điểm mount.
+
+---
+
+## 28. Source Notes
 
 Tài liệu này được hệ thống lại từ:
 

@@ -1,6 +1,7 @@
 'use client';
 
 import { useCallback, useEffect, useState } from 'react';
+import dynamic from 'next/dynamic';
 import Image from 'next/image';
 import Link from 'next/link';
 
@@ -9,6 +10,7 @@ import { ArrowUpRight, ChevronLeft, ChevronRight } from 'lucide-react';
 import { useLocale, useTranslations } from 'next-intl';
 
 import { DURATION_SLOW, EASE_OUT } from '@/app/[locale]/(shop)/_lib/components/home/motion';
+import { useCanRender3D } from '@/shared/hooks/useCanRender3D';
 
 const AUTOPLAY_DELAY_MS = 6500;
 const SWIPE_THRESHOLD_PX = 50;
@@ -19,8 +21,34 @@ const HERO_SLIDES = [
   { id: 'bags', image: '/images/categories/tui.jpg', href: '/products?category=bags' },
 ] as const;
 
+// three.js only ever reaches the browser through this wrapper, and only after `useCanRender3D`
+// clears every gate — see docs/FRONTEND-GUIDE.md ("three.js in the storefront").
+const HeroSlides3D = dynamic(async () => import('@/app/[locale]/(shop)/_lib/components/home/hero3d/HeroSlides3D'), { ssr: false });
+
 function wrapSlideIndex(index: number): number {
   return (index + HERO_SLIDES.length) % HERO_SLIDES.length;
+}
+
+/**
+ * Rebuilds every slide's URL from the one `next/image` actually picked, so the WebGL layer reuses
+ * the exact AVIF/WebP variant the browser has already cached instead of downloading a second copy.
+ */
+function deriveSlideSources(renderedSrc: string): readonly string[] {
+  const rawPaths = HERO_SLIDES.map((slide) => slide.image);
+
+  try {
+    const rendered = new URL(renderedSrc, window.location.origin);
+    if (!rendered.searchParams.has('url')) return rawPaths;
+
+    return rawPaths.map((path) => {
+      const variant = new URL(rendered);
+      variant.searchParams.set('url', path);
+      return variant.toString();
+    });
+  } catch {
+    // Unoptimized images (dev, or a custom loader) hand back a plain path — use it as-is.
+    return rawPaths;
+  }
 }
 
 export function HeroCarousel(): React.JSX.Element {
@@ -30,6 +58,24 @@ export function HeroCarousel(): React.JSX.Element {
   const [activeIndex, setActiveIndex] = useState(0);
   const [direction, setDirection] = useState<1 | -1>(1);
   const [isPaused, setIsPaused] = useState(false);
+
+  // WebGL slide layer — the carousel below keeps owning links, focus, autoplay and swipe; the canvas
+  // only ever replaces pixels. `hasHandedOver` flips the DOM image to transparent in the same commit
+  // that reveals the canvas, so there is no frame showing both or neither.
+  const { status: render3DStatus, tier: render3DTier } = useCanRender3D();
+  const [slideSources, setSlideSources] = useState<readonly string[]>([]);
+  const [isContextLost, setIsContextLost] = useState(false);
+  const [hasHandedOver, setHasHandedOver] = useState(false);
+  const is3DEnabled = render3DStatus === 'ready' && !isContextLost && slideSources.length > 0;
+
+  const handleContextLost = useCallback(() => {
+    setIsContextLost(true);
+    setHasHandedOver(false);
+  }, []);
+
+  const handleReady = useCallback(() => {
+    setHasHandedOver(true);
+  }, []);
 
   const showSlide = useCallback((nextIndex: number, nextDirection: 1 | -1) => {
     setDirection(nextDirection);
@@ -75,6 +121,18 @@ export function HeroCarousel(): React.JSX.Element {
     >
       <div className="bg-surface-inverse relative aspect-square overflow-hidden rounded-4xl p-3 shadow-2xl shadow-neutral-950/20">
         <div className="relative size-full overflow-hidden rounded-[1.35rem]">
+          {is3DEnabled ? (
+            <div className="absolute inset-0" style={{ opacity: hasHandedOver ? 1 : 0 }}>
+              <HeroSlides3D
+                sources={slideSources}
+                activeIndex={activeIndex}
+                tier={render3DTier}
+                onReady={handleReady}
+                onContextLost={handleContextLost}
+              />
+            </div>
+          ) : null}
+
           <AnimatePresence initial={false} custom={direction} mode="popLayout">
             <motion.div
               key={activeSlide.id}
@@ -99,6 +157,10 @@ export function HeroCarousel(): React.JSX.Element {
                 priority={activeIndex === 0}
                 sizes="(max-width: 1024px) 100vw, 50vw"
                 className="object-cover"
+                style={{ opacity: hasHandedOver ? 0 : 1 }}
+                onLoad={(event) => {
+                  setSlideSources((current) => (current.length > 0 ? current : deriveSlideSources(event.currentTarget.currentSrc)));
+                }}
               />
               <div className="absolute inset-x-0 bottom-0 h-2/5 bg-linear-to-t from-black/80 via-black/25 to-transparent" />
               <div className="absolute inset-x-5 bottom-5 flex items-end justify-between gap-4 text-white">
