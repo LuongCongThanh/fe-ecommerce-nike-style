@@ -8,203 +8,213 @@
 // You should NOT make any changes in this file as it will be overwritten.
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
-import { Route as rootRouteImport } from './routes/__root';
-import { Route as AuthenticatedRouteImport } from './routes/_authenticated';
-import { Route as LoginRouteImport } from './routes/login';
-import { Route as AuthenticatedIndexRouteImport } from './routes/_authenticated.index';
-import { Route as AuthenticatedAppsRouteImport } from './routes/_authenticated.apps';
-import { Route as AuthenticatedChatsRouteImport } from './routes/_authenticated.chats';
-import { Route as AuthenticatedCustomersRouteImport } from './routes/_authenticated.customers';
-import { Route as AuthenticatedInventoryRouteImport } from './routes/_authenticated.inventory';
-import { Route as AuthenticatedSettingsRouteImport } from './routes/_authenticated.settings';
-import { Route as AuthenticatedStaffRouteImport } from './routes/_authenticated.staff';
-import { Route as AuthenticatedTasksRouteImport } from './routes/_authenticated.tasks';
-import { Route as AuthenticatedCategoriesIndexRouteImport } from './routes/_authenticated.categories.index';
-import { Route as AuthenticatedCategoriesNewRouteImport } from './routes/_authenticated.categories.new';
-import { Route as AuthenticatedOrdersIndexRouteImport } from './routes/_authenticated.orders.index';
-import { Route as AuthenticatedOrdersIdRouteImport } from './routes/_authenticated.orders.$id';
-import { Route as AuthenticatedProductsIndexRouteImport } from './routes/_authenticated.products.index';
-import { Route as AuthenticatedProductsNewRouteImport } from './routes/_authenticated.products.new';
-import { Route as AuthenticatedSettingsIndexRouteImport } from './routes/_authenticated.settings.index';
-import { Route as AuthenticatedSettingsAppearanceRouteImport } from './routes/_authenticated.settings.appearance';
-import { Route as AuthenticatedSettingsNotificationsRouteImport } from './routes/_authenticated.settings.notifications';
-import { Route as AuthenticatedCategoriesIdEditRouteImport } from './routes/_authenticated.categories.$id.edit';
-import { Route as AuthenticatedProductsIdEditRouteImport } from './routes/_authenticated.products.$id.edit';
+import { Route as rootRouteImport } from './routes/__root'
+import { Route as AuthenticatedRouteImport } from './routes/_authenticated'
+import { Route as LoginRouteImport } from './routes/login'
+import { Route as AuthenticatedIndexRouteImport } from './routes/_authenticated.index'
+import { Route as AuthenticatedAppsRouteImport } from './routes/_authenticated.apps'
+import { Route as AuthenticatedChatsRouteImport } from './routes/_authenticated.chats'
+import { Route as AuthenticatedCustomersRouteImport } from './routes/_authenticated.customers'
+import { Route as AuthenticatedInventoryRouteImport } from './routes/_authenticated.inventory'
+import { Route as AuthenticatedSettingsRouteImport } from './routes/_authenticated.settings'
+import { Route as AuthenticatedStaffRouteImport } from './routes/_authenticated.staff'
+import { Route as AuthenticatedTasksRouteImport } from './routes/_authenticated.tasks'
+import { Route as AuthenticatedCategoriesIndexRouteImport } from './routes/_authenticated.categories.index'
+import { Route as AuthenticatedCategoriesNewRouteImport } from './routes/_authenticated.categories.new'
+import { Route as AuthenticatedOrdersIndexRouteImport } from './routes/_authenticated.orders.index'
+import { Route as AuthenticatedOrdersIdRouteImport } from './routes/_authenticated.orders.$id'
+import { Route as AuthenticatedProductsIndexRouteImport } from './routes/_authenticated.products.index'
+import { Route as AuthenticatedProductsNewRouteImport } from './routes/_authenticated.products.new'
+import { Route as AuthenticatedSettingsIndexRouteImport } from './routes/_authenticated.settings.index'
+import { Route as AuthenticatedSettingsAppearanceRouteImport } from './routes/_authenticated.settings.appearance'
+import { Route as AuthenticatedSettingsNotificationsRouteImport } from './routes/_authenticated.settings.notifications'
+import { Route as AuthenticatedCategoriesIdEditRouteImport } from './routes/_authenticated.categories.$id.edit'
+import { Route as AuthenticatedProductsIdEditRouteImport } from './routes/_authenticated.products.$id.edit'
 
 const AuthenticatedRoute = AuthenticatedRouteImport.update({
   id: '/_authenticated',
   getParentRoute: () => rootRouteImport,
-} as any);
+} as any)
 const LoginRoute = LoginRouteImport.update({
   id: '/login',
   path: '/login',
   getParentRoute: () => rootRouteImport,
-} as any);
+} as any)
 const AuthenticatedIndexRoute = AuthenticatedIndexRouteImport.update({
   id: '/',
   path: '/',
   getParentRoute: () => AuthenticatedRoute,
-} as any);
+} as any)
 const AuthenticatedAppsRoute = AuthenticatedAppsRouteImport.update({
   id: '/apps',
   path: '/apps',
   getParentRoute: () => AuthenticatedRoute,
-} as any);
+} as any)
 const AuthenticatedChatsRoute = AuthenticatedChatsRouteImport.update({
   id: '/chats',
   path: '/chats',
   getParentRoute: () => AuthenticatedRoute,
-} as any);
+} as any)
 const AuthenticatedCustomersRoute = AuthenticatedCustomersRouteImport.update({
   id: '/customers',
   path: '/customers',
   getParentRoute: () => AuthenticatedRoute,
-} as any);
+} as any)
 const AuthenticatedInventoryRoute = AuthenticatedInventoryRouteImport.update({
   id: '/inventory',
   path: '/inventory',
   getParentRoute: () => AuthenticatedRoute,
-} as any);
+} as any)
 const AuthenticatedSettingsRoute = AuthenticatedSettingsRouteImport.update({
   id: '/settings',
   path: '/settings',
   getParentRoute: () => AuthenticatedRoute,
-} as any);
+} as any)
 const AuthenticatedStaffRoute = AuthenticatedStaffRouteImport.update({
   id: '/staff',
   path: '/staff',
   getParentRoute: () => AuthenticatedRoute,
-} as any);
+} as any)
 const AuthenticatedTasksRoute = AuthenticatedTasksRouteImport.update({
   id: '/tasks',
   path: '/tasks',
   getParentRoute: () => AuthenticatedRoute,
-} as any);
-const AuthenticatedCategoriesIndexRoute = AuthenticatedCategoriesIndexRouteImport.update({
-  id: '/categories/',
-  path: '/categories/',
-  getParentRoute: () => AuthenticatedRoute,
-} as any);
-const AuthenticatedCategoriesNewRoute = AuthenticatedCategoriesNewRouteImport.update({
-  id: '/categories/new',
-  path: '/categories/new',
-  getParentRoute: () => AuthenticatedRoute,
-} as any);
-const AuthenticatedOrdersIndexRoute = AuthenticatedOrdersIndexRouteImport.update({
-  id: '/orders/',
-  path: '/orders/',
-  getParentRoute: () => AuthenticatedRoute,
-} as any);
+} as any)
+const AuthenticatedCategoriesIndexRoute =
+  AuthenticatedCategoriesIndexRouteImport.update({
+    id: '/categories/',
+    path: '/categories/',
+    getParentRoute: () => AuthenticatedRoute,
+  } as any)
+const AuthenticatedCategoriesNewRoute =
+  AuthenticatedCategoriesNewRouteImport.update({
+    id: '/categories/new',
+    path: '/categories/new',
+    getParentRoute: () => AuthenticatedRoute,
+  } as any)
+const AuthenticatedOrdersIndexRoute =
+  AuthenticatedOrdersIndexRouteImport.update({
+    id: '/orders/',
+    path: '/orders/',
+    getParentRoute: () => AuthenticatedRoute,
+  } as any)
 const AuthenticatedOrdersIdRoute = AuthenticatedOrdersIdRouteImport.update({
   id: '/orders/$id',
   path: '/orders/$id',
   getParentRoute: () => AuthenticatedRoute,
-} as any);
-const AuthenticatedProductsIndexRoute = AuthenticatedProductsIndexRouteImport.update({
-  id: '/products/',
-  path: '/products/',
-  getParentRoute: () => AuthenticatedRoute,
-} as any);
-const AuthenticatedProductsNewRoute = AuthenticatedProductsNewRouteImport.update({
-  id: '/products/new',
-  path: '/products/new',
-  getParentRoute: () => AuthenticatedRoute,
-} as any);
-const AuthenticatedSettingsIndexRoute = AuthenticatedSettingsIndexRouteImport.update({
-  id: '/',
-  path: '/',
-  getParentRoute: () => AuthenticatedSettingsRoute,
-} as any);
-const AuthenticatedSettingsAppearanceRoute = AuthenticatedSettingsAppearanceRouteImport.update({
-  id: '/appearance',
-  path: '/appearance',
-  getParentRoute: () => AuthenticatedSettingsRoute,
-} as any);
-const AuthenticatedSettingsNotificationsRoute = AuthenticatedSettingsNotificationsRouteImport.update({
-  id: '/notifications',
-  path: '/notifications',
-  getParentRoute: () => AuthenticatedSettingsRoute,
-} as any);
-const AuthenticatedCategoriesIdEditRoute = AuthenticatedCategoriesIdEditRouteImport.update({
-  id: '/categories/$id/edit',
-  path: '/categories/$id/edit',
-  getParentRoute: () => AuthenticatedRoute,
-} as any);
-const AuthenticatedProductsIdEditRoute = AuthenticatedProductsIdEditRouteImport.update({
-  id: '/products/$id/edit',
-  path: '/products/$id/edit',
-  getParentRoute: () => AuthenticatedRoute,
-} as any);
+} as any)
+const AuthenticatedProductsIndexRoute =
+  AuthenticatedProductsIndexRouteImport.update({
+    id: '/products/',
+    path: '/products/',
+    getParentRoute: () => AuthenticatedRoute,
+  } as any)
+const AuthenticatedProductsNewRoute =
+  AuthenticatedProductsNewRouteImport.update({
+    id: '/products/new',
+    path: '/products/new',
+    getParentRoute: () => AuthenticatedRoute,
+  } as any)
+const AuthenticatedSettingsIndexRoute =
+  AuthenticatedSettingsIndexRouteImport.update({
+    id: '/',
+    path: '/',
+    getParentRoute: () => AuthenticatedSettingsRoute,
+  } as any)
+const AuthenticatedSettingsAppearanceRoute =
+  AuthenticatedSettingsAppearanceRouteImport.update({
+    id: '/appearance',
+    path: '/appearance',
+    getParentRoute: () => AuthenticatedSettingsRoute,
+  } as any)
+const AuthenticatedSettingsNotificationsRoute =
+  AuthenticatedSettingsNotificationsRouteImport.update({
+    id: '/notifications',
+    path: '/notifications',
+    getParentRoute: () => AuthenticatedSettingsRoute,
+  } as any)
+const AuthenticatedCategoriesIdEditRoute =
+  AuthenticatedCategoriesIdEditRouteImport.update({
+    id: '/categories/$id/edit',
+    path: '/categories/$id/edit',
+    getParentRoute: () => AuthenticatedRoute,
+  } as any)
+const AuthenticatedProductsIdEditRoute =
+  AuthenticatedProductsIdEditRouteImport.update({
+    id: '/products/$id/edit',
+    path: '/products/$id/edit',
+    getParentRoute: () => AuthenticatedRoute,
+  } as any)
 
 export interface FileRoutesByFullPath {
-  '/': typeof AuthenticatedIndexRoute;
-  '/login': typeof LoginRoute;
-  '/apps': typeof AuthenticatedAppsRoute;
-  '/chats': typeof AuthenticatedChatsRoute;
-  '/customers': typeof AuthenticatedCustomersRoute;
-  '/inventory': typeof AuthenticatedInventoryRoute;
-  '/settings': typeof AuthenticatedSettingsRouteWithChildren;
-  '/staff': typeof AuthenticatedStaffRoute;
-  '/tasks': typeof AuthenticatedTasksRoute;
-  '/categories/new': typeof AuthenticatedCategoriesNewRoute;
-  '/orders/$id': typeof AuthenticatedOrdersIdRoute;
-  '/products/new': typeof AuthenticatedProductsNewRoute;
-  '/settings/appearance': typeof AuthenticatedSettingsAppearanceRoute;
-  '/settings/notifications': typeof AuthenticatedSettingsNotificationsRoute;
-  '/categories/': typeof AuthenticatedCategoriesIndexRoute;
-  '/orders/': typeof AuthenticatedOrdersIndexRoute;
-  '/products/': typeof AuthenticatedProductsIndexRoute;
-  '/settings/': typeof AuthenticatedSettingsIndexRoute;
-  '/categories/$id/edit': typeof AuthenticatedCategoriesIdEditRoute;
-  '/products/$id/edit': typeof AuthenticatedProductsIdEditRoute;
+  '/': typeof AuthenticatedIndexRoute
+  '/login': typeof LoginRoute
+  '/apps': typeof AuthenticatedAppsRoute
+  '/chats': typeof AuthenticatedChatsRoute
+  '/customers': typeof AuthenticatedCustomersRoute
+  '/inventory': typeof AuthenticatedInventoryRoute
+  '/settings': typeof AuthenticatedSettingsRouteWithChildren
+  '/staff': typeof AuthenticatedStaffRoute
+  '/tasks': typeof AuthenticatedTasksRoute
+  '/categories/new': typeof AuthenticatedCategoriesNewRoute
+  '/orders/$id': typeof AuthenticatedOrdersIdRoute
+  '/products/new': typeof AuthenticatedProductsNewRoute
+  '/settings/appearance': typeof AuthenticatedSettingsAppearanceRoute
+  '/settings/notifications': typeof AuthenticatedSettingsNotificationsRoute
+  '/categories/': typeof AuthenticatedCategoriesIndexRoute
+  '/orders/': typeof AuthenticatedOrdersIndexRoute
+  '/products/': typeof AuthenticatedProductsIndexRoute
+  '/settings/': typeof AuthenticatedSettingsIndexRoute
+  '/categories/$id/edit': typeof AuthenticatedCategoriesIdEditRoute
+  '/products/$id/edit': typeof AuthenticatedProductsIdEditRoute
 }
 export interface FileRoutesByTo {
-  '/login': typeof LoginRoute;
-  '/apps': typeof AuthenticatedAppsRoute;
-  '/chats': typeof AuthenticatedChatsRoute;
-  '/customers': typeof AuthenticatedCustomersRoute;
-  '/inventory': typeof AuthenticatedInventoryRoute;
-  '/staff': typeof AuthenticatedStaffRoute;
-  '/tasks': typeof AuthenticatedTasksRoute;
-  '/': typeof AuthenticatedIndexRoute;
-  '/categories/new': typeof AuthenticatedCategoriesNewRoute;
-  '/orders/$id': typeof AuthenticatedOrdersIdRoute;
-  '/products/new': typeof AuthenticatedProductsNewRoute;
-  '/settings/appearance': typeof AuthenticatedSettingsAppearanceRoute;
-  '/settings/notifications': typeof AuthenticatedSettingsNotificationsRoute;
-  '/categories': typeof AuthenticatedCategoriesIndexRoute;
-  '/orders': typeof AuthenticatedOrdersIndexRoute;
-  '/products': typeof AuthenticatedProductsIndexRoute;
-  '/settings': typeof AuthenticatedSettingsIndexRoute;
-  '/categories/$id/edit': typeof AuthenticatedCategoriesIdEditRoute;
-  '/products/$id/edit': typeof AuthenticatedProductsIdEditRoute;
+  '/login': typeof LoginRoute
+  '/apps': typeof AuthenticatedAppsRoute
+  '/chats': typeof AuthenticatedChatsRoute
+  '/customers': typeof AuthenticatedCustomersRoute
+  '/inventory': typeof AuthenticatedInventoryRoute
+  '/staff': typeof AuthenticatedStaffRoute
+  '/tasks': typeof AuthenticatedTasksRoute
+  '/': typeof AuthenticatedIndexRoute
+  '/categories/new': typeof AuthenticatedCategoriesNewRoute
+  '/orders/$id': typeof AuthenticatedOrdersIdRoute
+  '/products/new': typeof AuthenticatedProductsNewRoute
+  '/settings/appearance': typeof AuthenticatedSettingsAppearanceRoute
+  '/settings/notifications': typeof AuthenticatedSettingsNotificationsRoute
+  '/categories': typeof AuthenticatedCategoriesIndexRoute
+  '/orders': typeof AuthenticatedOrdersIndexRoute
+  '/products': typeof AuthenticatedProductsIndexRoute
+  '/settings': typeof AuthenticatedSettingsIndexRoute
+  '/categories/$id/edit': typeof AuthenticatedCategoriesIdEditRoute
+  '/products/$id/edit': typeof AuthenticatedProductsIdEditRoute
 }
 export interface FileRoutesById {
-  __root__: typeof rootRouteImport;
-  '/_authenticated': typeof AuthenticatedRouteWithChildren;
-  '/login': typeof LoginRoute;
-  '/_authenticated/apps': typeof AuthenticatedAppsRoute;
-  '/_authenticated/chats': typeof AuthenticatedChatsRoute;
-  '/_authenticated/customers': typeof AuthenticatedCustomersRoute;
-  '/_authenticated/inventory': typeof AuthenticatedInventoryRoute;
-  '/_authenticated/settings': typeof AuthenticatedSettingsRouteWithChildren;
-  '/_authenticated/staff': typeof AuthenticatedStaffRoute;
-  '/_authenticated/tasks': typeof AuthenticatedTasksRoute;
-  '/_authenticated/': typeof AuthenticatedIndexRoute;
-  '/_authenticated/categories/new': typeof AuthenticatedCategoriesNewRoute;
-  '/_authenticated/orders/$id': typeof AuthenticatedOrdersIdRoute;
-  '/_authenticated/products/new': typeof AuthenticatedProductsNewRoute;
-  '/_authenticated/settings/appearance': typeof AuthenticatedSettingsAppearanceRoute;
-  '/_authenticated/settings/notifications': typeof AuthenticatedSettingsNotificationsRoute;
-  '/_authenticated/categories/': typeof AuthenticatedCategoriesIndexRoute;
-  '/_authenticated/orders/': typeof AuthenticatedOrdersIndexRoute;
-  '/_authenticated/products/': typeof AuthenticatedProductsIndexRoute;
-  '/_authenticated/settings/': typeof AuthenticatedSettingsIndexRoute;
-  '/_authenticated/categories/$id/edit': typeof AuthenticatedCategoriesIdEditRoute;
-  '/_authenticated/products/$id/edit': typeof AuthenticatedProductsIdEditRoute;
+  __root__: typeof rootRouteImport
+  '/_authenticated': typeof AuthenticatedRouteWithChildren
+  '/login': typeof LoginRoute
+  '/_authenticated/apps': typeof AuthenticatedAppsRoute
+  '/_authenticated/chats': typeof AuthenticatedChatsRoute
+  '/_authenticated/customers': typeof AuthenticatedCustomersRoute
+  '/_authenticated/inventory': typeof AuthenticatedInventoryRoute
+  '/_authenticated/settings': typeof AuthenticatedSettingsRouteWithChildren
+  '/_authenticated/staff': typeof AuthenticatedStaffRoute
+  '/_authenticated/tasks': typeof AuthenticatedTasksRoute
+  '/_authenticated/': typeof AuthenticatedIndexRoute
+  '/_authenticated/categories/new': typeof AuthenticatedCategoriesNewRoute
+  '/_authenticated/orders/$id': typeof AuthenticatedOrdersIdRoute
+  '/_authenticated/products/new': typeof AuthenticatedProductsNewRoute
+  '/_authenticated/settings/appearance': typeof AuthenticatedSettingsAppearanceRoute
+  '/_authenticated/settings/notifications': typeof AuthenticatedSettingsNotificationsRoute
+  '/_authenticated/categories/': typeof AuthenticatedCategoriesIndexRoute
+  '/_authenticated/orders/': typeof AuthenticatedOrdersIndexRoute
+  '/_authenticated/products/': typeof AuthenticatedProductsIndexRoute
+  '/_authenticated/settings/': typeof AuthenticatedSettingsIndexRoute
+  '/_authenticated/categories/$id/edit': typeof AuthenticatedCategoriesIdEditRoute
+  '/_authenticated/products/$id/edit': typeof AuthenticatedProductsIdEditRoute
 }
 export interface FileRouteTypes {
-  fileRoutesByFullPath: FileRoutesByFullPath;
+  fileRoutesByFullPath: FileRoutesByFullPath
   fullPaths:
     | '/'
     | '/login'
@@ -225,8 +235,8 @@ export interface FileRouteTypes {
     | '/products/'
     | '/settings/'
     | '/categories/$id/edit'
-    | '/products/$id/edit';
-  fileRoutesByTo: FileRoutesByTo;
+    | '/products/$id/edit'
+  fileRoutesByTo: FileRoutesByTo
   to:
     | '/login'
     | '/apps'
@@ -246,7 +256,7 @@ export interface FileRouteTypes {
     | '/products'
     | '/settings'
     | '/categories/$id/edit'
-    | '/products/$id/edit';
+    | '/products/$id/edit'
   id:
     | '__root__'
     | '/_authenticated'
@@ -269,197 +279,201 @@ export interface FileRouteTypes {
     | '/_authenticated/products/'
     | '/_authenticated/settings/'
     | '/_authenticated/categories/$id/edit'
-    | '/_authenticated/products/$id/edit';
-  fileRoutesById: FileRoutesById;
+    | '/_authenticated/products/$id/edit'
+  fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
-  AuthenticatedRoute: typeof AuthenticatedRouteWithChildren;
-  LoginRoute: typeof LoginRoute;
+  AuthenticatedRoute: typeof AuthenticatedRouteWithChildren
+  LoginRoute: typeof LoginRoute
 }
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
     '/_authenticated': {
-      id: '/_authenticated';
-      path: '';
-      fullPath: '/';
-      preLoaderRoute: typeof AuthenticatedRouteImport;
-      parentRoute: typeof rootRouteImport;
-    };
+      id: '/_authenticated'
+      path: ''
+      fullPath: '/'
+      preLoaderRoute: typeof AuthenticatedRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/login': {
-      id: '/login';
-      path: '/login';
-      fullPath: '/login';
-      preLoaderRoute: typeof LoginRouteImport;
-      parentRoute: typeof rootRouteImport;
-    };
+      id: '/login'
+      path: '/login'
+      fullPath: '/login'
+      preLoaderRoute: typeof LoginRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/_authenticated/': {
-      id: '/_authenticated/';
-      path: '/';
-      fullPath: '/';
-      preLoaderRoute: typeof AuthenticatedIndexRouteImport;
-      parentRoute: typeof AuthenticatedRoute;
-    };
+      id: '/_authenticated/'
+      path: '/'
+      fullPath: '/'
+      preLoaderRoute: typeof AuthenticatedIndexRouteImport
+      parentRoute: typeof AuthenticatedRoute
+    }
     '/_authenticated/apps': {
-      id: '/_authenticated/apps';
-      path: '/apps';
-      fullPath: '/apps';
-      preLoaderRoute: typeof AuthenticatedAppsRouteImport;
-      parentRoute: typeof AuthenticatedRoute;
-    };
+      id: '/_authenticated/apps'
+      path: '/apps'
+      fullPath: '/apps'
+      preLoaderRoute: typeof AuthenticatedAppsRouteImport
+      parentRoute: typeof AuthenticatedRoute
+    }
     '/_authenticated/chats': {
-      id: '/_authenticated/chats';
-      path: '/chats';
-      fullPath: '/chats';
-      preLoaderRoute: typeof AuthenticatedChatsRouteImport;
-      parentRoute: typeof AuthenticatedRoute;
-    };
+      id: '/_authenticated/chats'
+      path: '/chats'
+      fullPath: '/chats'
+      preLoaderRoute: typeof AuthenticatedChatsRouteImport
+      parentRoute: typeof AuthenticatedRoute
+    }
     '/_authenticated/customers': {
-      id: '/_authenticated/customers';
-      path: '/customers';
-      fullPath: '/customers';
-      preLoaderRoute: typeof AuthenticatedCustomersRouteImport;
-      parentRoute: typeof AuthenticatedRoute;
-    };
+      id: '/_authenticated/customers'
+      path: '/customers'
+      fullPath: '/customers'
+      preLoaderRoute: typeof AuthenticatedCustomersRouteImport
+      parentRoute: typeof AuthenticatedRoute
+    }
     '/_authenticated/inventory': {
-      id: '/_authenticated/inventory';
-      path: '/inventory';
-      fullPath: '/inventory';
-      preLoaderRoute: typeof AuthenticatedInventoryRouteImport;
-      parentRoute: typeof AuthenticatedRoute;
-    };
+      id: '/_authenticated/inventory'
+      path: '/inventory'
+      fullPath: '/inventory'
+      preLoaderRoute: typeof AuthenticatedInventoryRouteImport
+      parentRoute: typeof AuthenticatedRoute
+    }
     '/_authenticated/settings': {
-      id: '/_authenticated/settings';
-      path: '/settings';
-      fullPath: '/settings';
-      preLoaderRoute: typeof AuthenticatedSettingsRouteImport;
-      parentRoute: typeof AuthenticatedRoute;
-    };
+      id: '/_authenticated/settings'
+      path: '/settings'
+      fullPath: '/settings'
+      preLoaderRoute: typeof AuthenticatedSettingsRouteImport
+      parentRoute: typeof AuthenticatedRoute
+    }
     '/_authenticated/staff': {
-      id: '/_authenticated/staff';
-      path: '/staff';
-      fullPath: '/staff';
-      preLoaderRoute: typeof AuthenticatedStaffRouteImport;
-      parentRoute: typeof AuthenticatedRoute;
-    };
+      id: '/_authenticated/staff'
+      path: '/staff'
+      fullPath: '/staff'
+      preLoaderRoute: typeof AuthenticatedStaffRouteImport
+      parentRoute: typeof AuthenticatedRoute
+    }
     '/_authenticated/tasks': {
-      id: '/_authenticated/tasks';
-      path: '/tasks';
-      fullPath: '/tasks';
-      preLoaderRoute: typeof AuthenticatedTasksRouteImport;
-      parentRoute: typeof AuthenticatedRoute;
-    };
+      id: '/_authenticated/tasks'
+      path: '/tasks'
+      fullPath: '/tasks'
+      preLoaderRoute: typeof AuthenticatedTasksRouteImport
+      parentRoute: typeof AuthenticatedRoute
+    }
     '/_authenticated/categories/': {
-      id: '/_authenticated/categories/';
-      path: '/categories';
-      fullPath: '/categories/';
-      preLoaderRoute: typeof AuthenticatedCategoriesIndexRouteImport;
-      parentRoute: typeof AuthenticatedRoute;
-    };
+      id: '/_authenticated/categories/'
+      path: '/categories'
+      fullPath: '/categories/'
+      preLoaderRoute: typeof AuthenticatedCategoriesIndexRouteImport
+      parentRoute: typeof AuthenticatedRoute
+    }
     '/_authenticated/categories/new': {
-      id: '/_authenticated/categories/new';
-      path: '/categories/new';
-      fullPath: '/categories/new';
-      preLoaderRoute: typeof AuthenticatedCategoriesNewRouteImport;
-      parentRoute: typeof AuthenticatedRoute;
-    };
+      id: '/_authenticated/categories/new'
+      path: '/categories/new'
+      fullPath: '/categories/new'
+      preLoaderRoute: typeof AuthenticatedCategoriesNewRouteImport
+      parentRoute: typeof AuthenticatedRoute
+    }
     '/_authenticated/orders/': {
-      id: '/_authenticated/orders/';
-      path: '/orders';
-      fullPath: '/orders/';
-      preLoaderRoute: typeof AuthenticatedOrdersIndexRouteImport;
-      parentRoute: typeof AuthenticatedRoute;
-    };
+      id: '/_authenticated/orders/'
+      path: '/orders'
+      fullPath: '/orders/'
+      preLoaderRoute: typeof AuthenticatedOrdersIndexRouteImport
+      parentRoute: typeof AuthenticatedRoute
+    }
     '/_authenticated/orders/$id': {
-      id: '/_authenticated/orders/$id';
-      path: '/orders/$id';
-      fullPath: '/orders/$id';
-      preLoaderRoute: typeof AuthenticatedOrdersIdRouteImport;
-      parentRoute: typeof AuthenticatedRoute;
-    };
+      id: '/_authenticated/orders/$id'
+      path: '/orders/$id'
+      fullPath: '/orders/$id'
+      preLoaderRoute: typeof AuthenticatedOrdersIdRouteImport
+      parentRoute: typeof AuthenticatedRoute
+    }
     '/_authenticated/products/': {
-      id: '/_authenticated/products/';
-      path: '/products';
-      fullPath: '/products/';
-      preLoaderRoute: typeof AuthenticatedProductsIndexRouteImport;
-      parentRoute: typeof AuthenticatedRoute;
-    };
+      id: '/_authenticated/products/'
+      path: '/products'
+      fullPath: '/products/'
+      preLoaderRoute: typeof AuthenticatedProductsIndexRouteImport
+      parentRoute: typeof AuthenticatedRoute
+    }
     '/_authenticated/products/new': {
-      id: '/_authenticated/products/new';
-      path: '/products/new';
-      fullPath: '/products/new';
-      preLoaderRoute: typeof AuthenticatedProductsNewRouteImport;
-      parentRoute: typeof AuthenticatedRoute;
-    };
+      id: '/_authenticated/products/new'
+      path: '/products/new'
+      fullPath: '/products/new'
+      preLoaderRoute: typeof AuthenticatedProductsNewRouteImport
+      parentRoute: typeof AuthenticatedRoute
+    }
     '/_authenticated/settings/': {
-      id: '/_authenticated/settings/';
-      path: '/';
-      fullPath: '/settings/';
-      preLoaderRoute: typeof AuthenticatedSettingsIndexRouteImport;
-      parentRoute: typeof AuthenticatedSettingsRoute;
-    };
+      id: '/_authenticated/settings/'
+      path: '/'
+      fullPath: '/settings/'
+      preLoaderRoute: typeof AuthenticatedSettingsIndexRouteImport
+      parentRoute: typeof AuthenticatedSettingsRoute
+    }
     '/_authenticated/settings/appearance': {
-      id: '/_authenticated/settings/appearance';
-      path: '/appearance';
-      fullPath: '/settings/appearance';
-      preLoaderRoute: typeof AuthenticatedSettingsAppearanceRouteImport;
-      parentRoute: typeof AuthenticatedSettingsRoute;
-    };
+      id: '/_authenticated/settings/appearance'
+      path: '/appearance'
+      fullPath: '/settings/appearance'
+      preLoaderRoute: typeof AuthenticatedSettingsAppearanceRouteImport
+      parentRoute: typeof AuthenticatedSettingsRoute
+    }
     '/_authenticated/settings/notifications': {
-      id: '/_authenticated/settings/notifications';
-      path: '/notifications';
-      fullPath: '/settings/notifications';
-      preLoaderRoute: typeof AuthenticatedSettingsNotificationsRouteImport;
-      parentRoute: typeof AuthenticatedSettingsRoute;
-    };
+      id: '/_authenticated/settings/notifications'
+      path: '/notifications'
+      fullPath: '/settings/notifications'
+      preLoaderRoute: typeof AuthenticatedSettingsNotificationsRouteImport
+      parentRoute: typeof AuthenticatedSettingsRoute
+    }
     '/_authenticated/categories/$id/edit': {
-      id: '/_authenticated/categories/$id/edit';
-      path: '/categories/$id/edit';
-      fullPath: '/categories/$id/edit';
-      preLoaderRoute: typeof AuthenticatedCategoriesIdEditRouteImport;
-      parentRoute: typeof AuthenticatedRoute;
-    };
+      id: '/_authenticated/categories/$id/edit'
+      path: '/categories/$id/edit'
+      fullPath: '/categories/$id/edit'
+      preLoaderRoute: typeof AuthenticatedCategoriesIdEditRouteImport
+      parentRoute: typeof AuthenticatedRoute
+    }
     '/_authenticated/products/$id/edit': {
-      id: '/_authenticated/products/$id/edit';
-      path: '/products/$id/edit';
-      fullPath: '/products/$id/edit';
-      preLoaderRoute: typeof AuthenticatedProductsIdEditRouteImport;
-      parentRoute: typeof AuthenticatedRoute;
-    };
+      id: '/_authenticated/products/$id/edit'
+      path: '/products/$id/edit'
+      fullPath: '/products/$id/edit'
+      preLoaderRoute: typeof AuthenticatedProductsIdEditRouteImport
+      parentRoute: typeof AuthenticatedRoute
+    }
   }
 }
 
 interface AuthenticatedSettingsRouteChildren {
-  AuthenticatedSettingsAppearanceRoute: typeof AuthenticatedSettingsAppearanceRoute;
-  AuthenticatedSettingsNotificationsRoute: typeof AuthenticatedSettingsNotificationsRoute;
-  AuthenticatedSettingsIndexRoute: typeof AuthenticatedSettingsIndexRoute;
+  AuthenticatedSettingsAppearanceRoute: typeof AuthenticatedSettingsAppearanceRoute
+  AuthenticatedSettingsNotificationsRoute: typeof AuthenticatedSettingsNotificationsRoute
+  AuthenticatedSettingsIndexRoute: typeof AuthenticatedSettingsIndexRoute
 }
 
 const AuthenticatedSettingsRouteChildren: AuthenticatedSettingsRouteChildren = {
   AuthenticatedSettingsAppearanceRoute: AuthenticatedSettingsAppearanceRoute,
-  AuthenticatedSettingsNotificationsRoute: AuthenticatedSettingsNotificationsRoute,
+  AuthenticatedSettingsNotificationsRoute:
+    AuthenticatedSettingsNotificationsRoute,
   AuthenticatedSettingsIndexRoute: AuthenticatedSettingsIndexRoute,
-};
+}
 
-const AuthenticatedSettingsRouteWithChildren = AuthenticatedSettingsRoute._addFileChildren(AuthenticatedSettingsRouteChildren);
+const AuthenticatedSettingsRouteWithChildren =
+  AuthenticatedSettingsRoute._addFileChildren(
+    AuthenticatedSettingsRouteChildren,
+  )
 
 interface AuthenticatedRouteChildren {
-  AuthenticatedAppsRoute: typeof AuthenticatedAppsRoute;
-  AuthenticatedChatsRoute: typeof AuthenticatedChatsRoute;
-  AuthenticatedCustomersRoute: typeof AuthenticatedCustomersRoute;
-  AuthenticatedInventoryRoute: typeof AuthenticatedInventoryRoute;
-  AuthenticatedSettingsRoute: typeof AuthenticatedSettingsRouteWithChildren;
-  AuthenticatedStaffRoute: typeof AuthenticatedStaffRoute;
-  AuthenticatedTasksRoute: typeof AuthenticatedTasksRoute;
-  AuthenticatedIndexRoute: typeof AuthenticatedIndexRoute;
-  AuthenticatedCategoriesNewRoute: typeof AuthenticatedCategoriesNewRoute;
-  AuthenticatedOrdersIdRoute: typeof AuthenticatedOrdersIdRoute;
-  AuthenticatedProductsNewRoute: typeof AuthenticatedProductsNewRoute;
-  AuthenticatedCategoriesIndexRoute: typeof AuthenticatedCategoriesIndexRoute;
-  AuthenticatedOrdersIndexRoute: typeof AuthenticatedOrdersIndexRoute;
-  AuthenticatedProductsIndexRoute: typeof AuthenticatedProductsIndexRoute;
-  AuthenticatedCategoriesIdEditRoute: typeof AuthenticatedCategoriesIdEditRoute;
-  AuthenticatedProductsIdEditRoute: typeof AuthenticatedProductsIdEditRoute;
+  AuthenticatedAppsRoute: typeof AuthenticatedAppsRoute
+  AuthenticatedChatsRoute: typeof AuthenticatedChatsRoute
+  AuthenticatedCustomersRoute: typeof AuthenticatedCustomersRoute
+  AuthenticatedInventoryRoute: typeof AuthenticatedInventoryRoute
+  AuthenticatedSettingsRoute: typeof AuthenticatedSettingsRouteWithChildren
+  AuthenticatedStaffRoute: typeof AuthenticatedStaffRoute
+  AuthenticatedTasksRoute: typeof AuthenticatedTasksRoute
+  AuthenticatedIndexRoute: typeof AuthenticatedIndexRoute
+  AuthenticatedCategoriesNewRoute: typeof AuthenticatedCategoriesNewRoute
+  AuthenticatedOrdersIdRoute: typeof AuthenticatedOrdersIdRoute
+  AuthenticatedProductsNewRoute: typeof AuthenticatedProductsNewRoute
+  AuthenticatedCategoriesIndexRoute: typeof AuthenticatedCategoriesIndexRoute
+  AuthenticatedOrdersIndexRoute: typeof AuthenticatedOrdersIndexRoute
+  AuthenticatedProductsIndexRoute: typeof AuthenticatedProductsIndexRoute
+  AuthenticatedCategoriesIdEditRoute: typeof AuthenticatedCategoriesIdEditRoute
+  AuthenticatedProductsIdEditRoute: typeof AuthenticatedProductsIdEditRoute
 }
 
 const AuthenticatedRouteChildren: AuthenticatedRouteChildren = {
@@ -479,12 +493,16 @@ const AuthenticatedRouteChildren: AuthenticatedRouteChildren = {
   AuthenticatedProductsIndexRoute: AuthenticatedProductsIndexRoute,
   AuthenticatedCategoriesIdEditRoute: AuthenticatedCategoriesIdEditRoute,
   AuthenticatedProductsIdEditRoute: AuthenticatedProductsIdEditRoute,
-};
+}
 
-const AuthenticatedRouteWithChildren = AuthenticatedRoute._addFileChildren(AuthenticatedRouteChildren);
+const AuthenticatedRouteWithChildren = AuthenticatedRoute._addFileChildren(
+  AuthenticatedRouteChildren,
+)
 
 const rootRouteChildren: RootRouteChildren = {
   AuthenticatedRoute: AuthenticatedRouteWithChildren,
   LoginRoute: LoginRoute,
-};
-export const routeTree = rootRouteImport._addFileChildren(rootRouteChildren)._addFileTypes<FileRouteTypes>();
+}
+export const routeTree = rootRouteImport
+  ._addFileChildren(rootRouteChildren)
+  ._addFileTypes<FileRouteTypes>()
