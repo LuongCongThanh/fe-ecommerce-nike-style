@@ -3,8 +3,10 @@
 import { Boxes, Package, ShoppingBag, Users } from 'lucide-react';
 import { useTranslations } from 'next-intl';
 
+import { DashboardHero } from '@/features/dashboard/DashboardHero';
 import { OrderStatusBreakdown } from '@/features/dashboard/OrderStatusBreakdown';
 import { ProductsSummary } from '@/features/dashboard/ProductsSummary';
+import { RecentOrders } from '@/features/dashboard/RecentOrders';
 import { useAdminInventory } from '@/features/inventory/useAdminInventory';
 import { useAdminOrders } from '@/features/orders/useAdminOrders';
 import { useAdminProducts } from '@/features/products/useAdminProducts';
@@ -31,6 +33,15 @@ export default function DashboardPage() {
         <p className="text-muted-foreground mt-1 text-sm">{t('subtitle')}</p>
       </div>
 
+      <div className="grid gap-6 lg:grid-cols-3">
+        <div className="lg:col-span-1">
+          <DashboardHero />
+        </div>
+        <div className="lg:col-span-2">
+          <OrderStatusBreakdown />
+        </div>
+      </div>
+
       <div className="grid grid-cols-2 gap-4 lg:grid-cols-4">
         <StatCard label={t('statTotalProducts')} value={products.data?.meta.total} icon={Package} isLoading={products.isLoading} />
         <StatCard label={t('statTotalOrders')} value={orders.data?.length} icon={ShoppingBag} isLoading={orders.isLoading} />
@@ -38,9 +49,13 @@ export default function DashboardPage() {
         <StatCard label={t('statTotalStaff')} value={staff.data?.data.length} icon={Users} isLoading={staff.isLoading} />
       </div>
 
-      <div className="grid gap-4 lg:grid-cols-2">
-        <OrderStatusBreakdown />
-        <ProductsSummary />
+      <div className="grid gap-6 lg:grid-cols-3">
+        <div className="lg:col-span-2">
+          <RecentOrders />
+        </div>
+        <div className="lg:col-span-1">
+          <ProductsSummary />
+        </div>
       </div>
     </div>
   );

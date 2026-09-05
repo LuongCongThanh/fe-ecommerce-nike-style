@@ -14,9 +14,23 @@
     "name": "Product name",
     "category": "Category",
     "variantCount": "Variants",
+    "sku": "SKU",
     "stock": "Stock",
+    "qty": "Qty",
+    "price": "Price",
     "actions": "Actions"
   },
+  "export": "Export",
+  "pageSizeLabel": "Rows per page",
+  "selectedCount": "{count} selected",
+  "deleteSelected": "Delete selected",
+  "deleteSelectedTitle": "Delete {count} selected products?",
+  "stockStatus": {
+    "inStock": "In stock",
+    "outOfStock": "Out of stock"
+  },
+  "filterAllCategories": "All categories",
+  "filterAllStock": "All stock",
   "genders": {
     "men": "Men",
     "women": "Women",

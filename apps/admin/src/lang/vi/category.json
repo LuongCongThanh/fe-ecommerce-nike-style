@@ -12,6 +12,7 @@
   "columns": {
     "name": "Tên danh mục",
     "slug": "Slug",
+    "productCount": "Số sản phẩm",
     "actions": "Thao tác"
   },
   "fields": {

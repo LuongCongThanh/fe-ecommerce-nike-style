@@ -18,6 +18,7 @@
     "next": "Next"
   },
   "nav": {
+    "groupLabel": "Menu",
     "dashboard": "Overview",
     "products": "Products",
     "orders": "Orders",
@@ -27,6 +28,17 @@
   },
   "adminLabel": "Admin",
   "openNavMenu": "Open navigation menu",
+  "collapseSidebar": "Collapse sidebar",
+  "expandSidebar": "Expand sidebar",
+  "logout": "Log out",
+  "notAvailableYet": "Not available yet",
+  "languageSwitcher": "Language",
+  "appsSwitcher": "Other apps",
+  "notifications": "Notifications",
+  "search": {
+    "placeholder": "Search pages...",
+    "empty": "No pages found."
+  },
   "dashboard": {
     "title": "Overview",
     "subtitle": "Product status and store activity.",
@@ -36,6 +48,10 @@
     "statTotalProducts": "Total products",
     "statTotalOrders": "Total orders",
     "statLowStock": "Low stock",
-    "statTotalStaff": "Staff"
+    "statTotalStaff": "Staff",
+    "recentOrdersTitle": "Recent orders",
+    "heroGreeting": "Hi, {name} 👋",
+    "heroSubtitle": "Here's what's happening in your store today.",
+    "heroRevenueLabel": "Total revenue"
   }
 }

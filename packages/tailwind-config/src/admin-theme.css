@@ -1,0 +1,92 @@
+/**
+ * Admin-only theme profile — layered on top of `./preset.css`/`./theme.css` (imported first), this
+ * file redeclares the same CSS custom-property names with values taken from TailAdmin Free v2.3.0
+ * (MIT, © TailAdmin — see docs/adr/0001-tailadmin-reuse-no-attribution.md). Because Tailwind v4
+ * resolves `@theme`/`:root` custom properties last-value-wins per app build, and `apps/cms` and
+ * `apps/storefront` never import this file, `packages/tailwind-config/src/theme.css`'s canonical
+ * red `brand` (price/sale/promotion) is completely untouched there — this is a second "profile" of
+ * the same token names, not a parallel token *source* (docs/FRONTEND-GUIDE.md §4's "không tạo token
+ * source khác song song" is about the source of truth, which stays this package).
+ *
+ * `--font-sans`/`--font-display` are deliberately NOT overridden — Be Vietnam Pro stays the typeface
+ * everywhere, including admin (a locked decision, theme.css line ~75), even though TailAdmin itself
+ * ships with "Outfit".
+ */
+@theme {
+  /* ── Brand → TailAdmin's blue (was Nike-red in the default theme; admin-only override) ──── */
+  --color-brand-25: #f2f7ff;
+  --color-brand-50: #ecf3ff;
+  --color-brand-100: #dde9ff;
+  --color-brand-200: #c2d6ff;
+  --color-brand-300: #9cb9ff;
+  --color-brand-400: #7592ff;
+  --color-brand-500: #465fff;
+  --color-brand-600: #3641f5;
+  --color-brand-700: #2a31d8;
+  --color-brand-800: #252dae;
+  --color-brand-900: #262e89;
+  --color-brand-950: #161950;
+
+  /* ── Gray — TailAdmin's own scale, distinct from Tailwind's stock `gray-*` shades ─────────── */
+  --color-gray-25: #fcfcfd;
+  --color-gray-50: #f9fafb;
+  --color-gray-100: #f2f4f7;
+  --color-gray-200: #e4e7ec;
+  --color-gray-300: #d0d5dd;
+  --color-gray-400: #98a2b3;
+  --color-gray-500: #667085;
+  --color-gray-600: #475467;
+  --color-gray-700: #344054;
+  --color-gray-800: #1d2939;
+  --color-gray-900: #101828;
+  --color-gray-950: #0c111d;
+
+  /* ── Radius — TailAdmin's rounder card language (rounded-2xl cards, rounded-lg controls) ──── */
+  --radius: 0.75rem;
+}
+
+@layer base {
+  :root {
+    --background: #f9fafb; /* gray-50 */
+    --foreground: #101828; /* gray-900 */
+    --primary: #465fff; /* brand-500 */
+    --primary-foreground: #ffffff;
+    --secondary: #f2f4f7; /* gray-100 */
+    --secondary-foreground: #344054; /* gray-700 */
+    --muted: #f2f4f7; /* gray-100 */
+    --muted-foreground: #667085; /* gray-500 */
+    --accent: #ecf3ff; /* brand-50 */
+    --accent-foreground: #465fff; /* brand-500 */
+    --destructive: #f04438;
+    --destructive-foreground: #ffffff;
+    --border: #e4e7ec; /* gray-200 */
+    --input: #e4e7ec;
+    --ring: #465fff;
+    --card: #ffffff;
+    --card-foreground: #101828;
+    --popover: #ffffff;
+    --popover-foreground: #101828;
+  }
+
+  .dark {
+    --background: #101828; /* gray-900 */
+    --foreground: #f2f4f7; /* gray-100 */
+    --primary: #465fff;
+    --primary-foreground: #ffffff;
+    --secondary: #1d2939; /* gray-800 */
+    --secondary-foreground: #d0d5dd; /* gray-300 */
+    --muted: #1d2939;
+    --muted-foreground: #98a2b3; /* gray-400 */
+    --accent: color-mix(in oklab, #465fff 12%, transparent);
+    --accent-foreground: #7592ff; /* brand-400 */
+    --destructive: #f97066;
+    --destructive-foreground: #101828;
+    --border: #1d2939; /* gray-800 */
+    --input: #1d2939;
+    --ring: #465fff;
+    --card: #0c111d; /* gray-950, TailAdmin's header/sidebar dark surface */
+    --card-foreground: #f2f4f7;
+    --popover: #101828;
+    --popover-foreground: #f2f4f7;
+  }
+}

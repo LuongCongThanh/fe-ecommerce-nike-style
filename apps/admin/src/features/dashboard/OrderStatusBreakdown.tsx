@@ -1,5 +1,6 @@
 'use client';
 
+import { ChartContainer, ChartTooltip, ChartTooltipContent, RechartsPrimitives, type ChartConfig } from '@repo/ui/chart';
 import { Skeleton } from '@repo/ui/skeleton';
 import { useTranslations } from 'next-intl';
 
@@ -7,20 +8,26 @@ import { useAdminOrders } from '@/features/orders/useAdminOrders';
 
 const STATUS_ORDER = ['PENDING', 'PROCESSING', 'PACKED', 'SHIPPED', 'DELIVERED', 'CANCELLED', 'RETURN_REQUESTED', 'RETURNED'] as const;
 
-/** Tier A CSS bar chart — bar widths are real counts from `useAdminOrders`, never invented numbers.
- * Statuses with zero orders are still listed (at 0 width) so the chart doesn't silently drop them. */
+const CHART_CONFIG: ChartConfig = {
+  count: { label: 'Orders', color: 'var(--color-brand-500)' },
+};
+
+/** Real order-status counts from `useAdminOrders`, never invented numbers — same data contract as
+ * the CSS-bar version this replaces, now rendered with `@repo/ui/chart` (Recharts) per the admin
+ * redesign's "shadcn/ui Charts" decision. Statuses with zero orders still get a (zero-width) bar so
+ * the chart doesn't silently drop them. */
 export function OrderStatusBreakdown(): React.JSX.Element {
   const t = useTranslations('order');
   const { data, isLoading, isError } = useAdminOrders();
 
   const counts = STATUS_ORDER.map((status) => ({
     status,
+    label: t(`statusLabels.${status}`),
     count: data?.filter((order) => order.status === status).length ?? 0,
   }));
-  const max = Math.max(1, ...counts.map((c) => c.count));
 
   return (
-    <div className="bg-card space-y-3 rounded-xl border p-4">
+    <div className="space-y-3 rounded-2xl border border-gray-200 bg-white p-5 dark:border-gray-800 dark:bg-white/3">
       <h2 className="text-foreground text-sm font-semibold">{t('columns.status')}</h2>
 
       {isError ? (
@@ -35,19 +42,19 @@ export function OrderStatusBreakdown(): React.JSX.Element {
             <Skeleton key={status} className="h-5 w-full" />
           ))}
         </div>
-      ) : (
-        <ul className="space-y-2">
-          {counts.map(({ status, count }) => (
-            <li key={status} className="flex items-center gap-3 text-sm">
-              <span className="text-muted-foreground w-28 shrink-0 truncate">{t(`statusLabels.${status}`)}</span>
-              <span className="bg-muted relative h-2 flex-1 overflow-hidden rounded-full">
-                <span className="bg-primary absolute inset-y-0 left-0 rounded-full" style={{ width: `${String((count / max) * 100)}%` }} />
-              </span>
-              <span className="text-foreground w-6 shrink-0 text-right font-medium">{count}</span>
-            </li>
-          ))}
-        </ul>
-      )}
+      ) : null}
+
+      {!isLoading && !isError && data?.length !== 0 ? (
+        <ChartContainer config={CHART_CONFIG} className="aspect-auto h-64 w-full">
+          <RechartsPrimitives.BarChart data={counts} layout="vertical" margin={{ left: 8 }}>
+            <RechartsPrimitives.CartesianGrid horizontal={false} strokeDasharray="3 3" />
+            <RechartsPrimitives.XAxis type="number" allowDecimals={false} tickLine={false} axisLine={false} />
+            <RechartsPrimitives.YAxis type="category" dataKey="label" tickLine={false} axisLine={false} width={110} />
+            <ChartTooltip cursor={{ fill: 'var(--color-muted)' }} content={<ChartTooltipContent hideLabel />} />
+            <RechartsPrimitives.Bar dataKey="count" fill="var(--color-count)" radius={4} />
+          </RechartsPrimitives.BarChart>
+        </ChartContainer>
+      ) : null}
 
       {!isLoading && !isError && data?.length === 0 ? <p className="text-muted-foreground text-sm">{t('empty')}</p> : null}
     </div>

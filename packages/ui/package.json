@@ -37,6 +37,7 @@
     "./switch": "./src/components/Switch.tsx",
     "./table": "./src/components/Table.tsx",
     "./tabs": "./src/components/Tabs.tsx",
+    "./chart": "./src/components/Chart.tsx",
     "./textarea": "./src/components/Textarea.tsx",
     "./tooltip": "./src/components/Tooltip.tsx",
     "./container": "./src/layout/Container.tsx",
@@ -67,6 +68,7 @@
     "cmdk": "^1.1.1",
     "lucide-react": "^1.25.0",
     "react-hook-form": "^7.82.0",
+    "recharts": "3.10.1",
     "tailwind-merge": "^3.6.0"
   },
   "devDependencies": {
