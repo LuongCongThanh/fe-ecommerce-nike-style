@@ -2,24 +2,26 @@
 
 Tài liệu này là bản đồ điều hướng. Convention có hiệu lực nằm trong `.claude/rules/` để được nạp theo đường dẫn và không làm phình context của mọi tác vụ.
 
-| Chủ đề                                 | Rule canonical                                   |
-| -------------------------------------- | ------------------------------------------------ |
-| Vị trí code và cây thư mục             | `.claude/rules/project-structure-conventions.md` |
-| Kiến trúc và dependency boundary       | `.claude/rules/frontend-architecture.md`         |
-| TypeScript, React, naming và import    | `.claude/rules/typescript-react-conventions.md`  |
-| TypeScript strict và type safety       | `.claude/rules/typescript-strict-style.md`       |
-| Import alias và tái sử dụng code       | `.claude/rules/imports-and-reuse-conventions.md` |
-| Schema, API, TanStack Query và Zustand | `.claude/rules/api-data-conventions.md`          |
-| Xử lý lỗi                              | `.claude/rules/error-handling-conventions.md`    |
-| Clean Code, SOLID và pattern           | `.claude/rules/solid-patterns.md`                |
-| Kiểm soát re-render React              | `.claude/rules/react-render-performance.md`      |
-| UI và accessibility                    | `.claude/rules/ui-accessibility-conventions.md`  |
-| Loading state và toast message         | `.claude/rules/loading-and-toast-conventions.md` |
-| Localization                           | `.claude/rules/localization-conventions.md`      |
-| Unit, integration và E2E testing       | `.claude/rules/testing.md`                       |
-| Storefront                             | `.claude/rules/storefront.md`                    |
-| Admin/CMS                              | `.claude/rules/admin-cms.md`                     |
-| Git, commit và Pull Request            | `.claude/rules/git-workflow-conventions.md`      |
+| Chủ đề                                 | Rule canonical                                  |
+| -------------------------------------- | ----------------------------------------------- |
+| Vị trí code và cây thư mục             | `.claude/rules/apps/project-structure.md`       |
+| Kiến trúc và dependency boundary       | `.claude/rules/apps/frontend-architecture.md`   |
+| TypeScript, React, naming và import    | `.claude/rules/core/typescript-react.md`        |
+| TypeScript strict và type safety       | `.claude/rules/core/typescript-strict-style.md` |
+| Import alias và tái sử dụng code       | `.claude/rules/core/imports-and-reuse.md`       |
+| Schema, API, TanStack Query và Zustand | `.claude/rules/data/api-data.md`                |
+| Xử lý lỗi                              | `.claude/rules/data/error-handling.md`          |
+| Clean Code, SOLID và pattern           | `.claude/rules/core/solid-patterns.md`          |
+| Kiểm soát re-render React              | `.claude/rules/react/render-performance.md`     |
+| UI và accessibility                    | `.claude/rules/react/ui-accessibility.md`       |
+| Loading state và toast message         | `.claude/rules/react/loading-and-toast.md`      |
+| Localization                           | `.claude/rules/data/localization.md`            |
+| Unit, integration và E2E testing       | `.claude/rules/process/testing.md`              |
+| Storefront                             | `.claude/rules/apps/storefront.md`              |
+| Admin/CMS                              | `.claude/rules/apps/admin-cms.md`               |
+| Git, commit và Pull Request            | `.claude/rules/process/git-workflow.md`         |
+
+Danh sách đầy đủ kèm mô tả ngắn từng file: [`.claude/rules/README.md`](../../.claude/rules/README.md).
 
 ## Thứ tự ra quyết định
 
