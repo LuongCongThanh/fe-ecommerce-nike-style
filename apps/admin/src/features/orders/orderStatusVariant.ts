@@ -7,7 +7,7 @@ export type OrderStatusBadgeVariant = 'warning' | 'info' | 'success' | 'destruct
  * `@repo/ui/badge`'s existing semantic variants — no new colours invented, just consistent meaning
  * (pending/needs-attention = warning, in-flight = info, terminal-good = success, terminal-bad =
  * destructive, terminal-neutral = secondary) reused across the orders list, order detail, and
- * dashboard.
+ * dashboard (design reference: Sneat admin template's colour-coded order status badges).
  */
 const ORDER_STATUS_BADGE_VARIANT: Record<OrderStatus, OrderStatusBadgeVariant> = {
   PENDING: 'warning',

@@ -72,7 +72,9 @@ export function AddToCartSection({
             >
               <Minus className="size-4" />
             </motion.button>
-            <span className="w-12 text-center font-bold tabular-nums">{quantity}</span>
+            <span aria-live="polite" aria-atomic="true" className="w-12 text-center font-bold tabular-nums">
+              {quantity}
+            </span>
             <motion.button
               type="button"
               onClick={() => {

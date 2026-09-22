@@ -7,9 +7,10 @@ import { useAdminOrders } from '@/features/orders/useAdminOrders';
 
 /**
  * Personalized headline card — 1/3-width pairing with a 2/3-width chart, same proportion as Sneat
- * admin template's dashboard hero row. The greeting name is the real signed-in Staff
- * (`useStaffAuth`), and the headline number is `Σ order.total` over every real order — not invented
- * copy (design review: "chỉ giữ bố cục cho phần có dữ liệu thật").
+ * admin template's dashboard hero row (`MuiGrid2-grid-md-4` + `MuiGrid2-grid-md-8`). The greeting name
+ * is the real signed-in Staff (`useStaffAuth`), and the headline number is `Σ order.total` over every
+ * real order — not the invented "Best seller of the month" copy Sneat's version shows (design review:
+ * "chỉ giữ bố cục cho phần có dữ liệu thật").
  */
 export function DashboardHero(): React.JSX.Element {
   const { t } = useTranslation('common');

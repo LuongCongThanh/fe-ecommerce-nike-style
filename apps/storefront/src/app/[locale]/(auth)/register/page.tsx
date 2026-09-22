@@ -12,7 +12,7 @@ export default async function RegisterPage({ params }: RegisterPageProps) {
   setRequestLocale(locale);
 
   return (
-    <div className="bg-card rounded-xl border p-8 shadow-sm">
+    <div className="bg-card mx-auto w-full max-w-md rounded-xl border p-8 shadow-sm">
       <div className="mb-8 text-center">
         <h1 className="text-2xl font-bold tracking-tight text-balance">Tạo tài khoản</h1>
         <p className="text-muted-foreground mt-2 text-sm">Tham gia cùng chúng tôi hôm nay!</p>

@@ -11,7 +11,8 @@ interface OrderShippingTimelineProps {
 /**
  * Renders the order's progress along the real linear MVP state machine (PENDING → PROCESSING →
  * PACKED → SHIPPED → DELIVERED, see `OrderStatusSchema`'s doc comment) — every step shown is derived
- * from `order.status`, never an invented event log.
+ * from `order.status`, never an invented event log (docs/FRONTEND-GUIDE.md §14 Honest UI; design
+ * reference: Sneat admin template's order-detail "Shipping Activity" timeline).
  *
  * CANCELLED/RETURN_REQUESTED/RETURNED are branches off this line, not steps on it — there's no
  * meaningful "how far along the forward timeline" for those, so this renders nothing for them.

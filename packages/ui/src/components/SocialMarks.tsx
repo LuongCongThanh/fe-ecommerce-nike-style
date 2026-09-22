@@ -1,6 +1,6 @@
 /** Minimal single-colour brand marks — good enough for a disabled/decorative button, not claiming
  * pixel-exact Simple Icons fidelity. Shared by storefront/admin/cms login pages, which each used to
- * carry a byte-for-byte-identical copy. */
+ * carry a byte-for-byte-identical copy (code review on PR #73). */
 export function FacebookMark(): React.JSX.Element {
   return (
     <svg viewBox="0 0 24 24" className="size-4 fill-current" aria-hidden="true">

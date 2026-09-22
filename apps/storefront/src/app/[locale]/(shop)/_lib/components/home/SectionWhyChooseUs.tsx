@@ -2,6 +2,7 @@ import * as Icons from 'lucide-react';
 import { useTranslations } from 'next-intl';
 
 import { Reveal } from '@/app/[locale]/(shop)/_lib/components/common/Reveal';
+import { SectionHeading } from '@/app/[locale]/(shop)/_lib/components/common/SectionHeading';
 import { homeBenefitsData } from '@/app/[locale]/(shop)/_lib/data/home';
 
 export function SectionWhyChooseUs(): React.JSX.Element {
@@ -10,7 +11,10 @@ export function SectionWhyChooseUs(): React.JSX.Element {
   return (
     <section className="border-border border-y py-(--space-section-why-choose-us)">
       <div className="container mx-auto px-4">
-        <Reveal className="divide-border grid grid-cols-1 divide-y sm:grid-cols-2 sm:divide-x sm:divide-y-0 lg:grid-cols-4">
+        {/* Was a bare grid of h3 tiles with no section-level h2 — a heading-level skip for
+         * screen-reader heading navigation (UI/UX audit finding, home page § 2). */}
+        <SectionHeading title={t('sectionTitle')} align="center" />
+        <Reveal className="divide-border mt-7 grid grid-cols-1 divide-y sm:grid-cols-2 sm:divide-x sm:divide-y-0 lg:grid-cols-4">
           {homeBenefitsData.map((benefit) => {
             const Icon = (Icons as unknown as Record<string, React.ComponentType<{ className?: string }> | undefined>)[benefit.icon];
             return (

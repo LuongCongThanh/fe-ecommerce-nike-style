@@ -8,9 +8,9 @@ import { useAdminOrders } from '@/features/orders/useAdminOrders';
 
 const RECENT_ORDERS_COUNT = 5;
 
-/** Latest orders by `created_at`, real data from `useAdminOrders` — no invented rows (Honest UI).
- * Design reference: Sneat admin dashboard's order table widget, trimmed to fields this repo's
- * `Order` schema actually has. */
+/** Latest orders by `created_at`, real data from `useAdminOrders` — no invented rows (docs/
+ * FRONTEND-GUIDE.md §14 Honest UI). Design reference: Sneat admin dashboard's "best seller"/order
+ * table widget, trimmed to fields this repo's `Order` schema actually has. */
 export function RecentOrders(): React.JSX.Element {
   const { t, i18n } = useTranslation('order');
   const { t: tCommon } = useTranslation('common');

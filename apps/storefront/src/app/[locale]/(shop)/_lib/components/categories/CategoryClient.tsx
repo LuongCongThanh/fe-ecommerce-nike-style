@@ -1,6 +1,10 @@
 // Hallmark redesign · design-system: design.md · scope: app page (functional, no enrichment)
 'use client';
 
+import { usePathname, useRouter, useSearchParams } from 'next/navigation';
+
+import { Button } from '@repo/ui/button';
+
 import { Pagination } from '@/app/[locale]/(shop)/_lib/components/common/Pagination';
 import { CatalogProductGrid } from '@/app/[locale]/(shop)/_lib/components/products/CatalogProductGrid';
 import { useCatalogListing } from '@/app/[locale]/(shop)/_lib/hooks/products/useCatalogListing';
@@ -11,6 +15,17 @@ interface CategoryClientProps {
 
 export function CategoryClient({ categorySlug }: CategoryClientProps): React.JSX.Element {
   const { data, isLoading, isError, onPageChange } = useCatalogListing(categorySlug);
+  const router = useRouter();
+  const pathname = usePathname();
+  const searchParams = useSearchParams();
+  // Any query param other than `category` itself is a narrowing filter (price, sort, gender…) —
+  // this is what an empty result set with an active filter should offer to clear (UI/UX audit
+  // finding, PLP § 3: empty state had no way back to the unfiltered listing).
+  const hasActiveFilters = Array.from(searchParams.keys()).some((key) => key !== 'category');
+
+  function clearFilters(): void {
+    router.push(pathname);
+  }
 
   if (isLoading) {
     return <p className="text-muted-foreground py-16 text-center text-sm">Đang tải sản phẩm…</p>;
@@ -27,9 +42,16 @@ export function CategoryClient({ categorySlug }: CategoryClientProps): React.JSX
 
   if (data.data.length === 0) {
     return (
-      <div className="flex min-h-100 flex-col items-center justify-center gap-1 rounded-xl border border-dashed py-16 text-center">
-        <h3 className="text-lg font-semibold">Không tìm thấy sản phẩm nào</h3>
-        <p className="text-muted-foreground text-sm">Thử thay đổi bộ lọc để tìm thấy nhiều kết quả hơn.</p>
+      <div className="flex min-h-100 flex-col items-center justify-center gap-3 rounded-xl border border-dashed py-16 text-center">
+        <div className="space-y-1">
+          <h3 className="text-lg font-semibold">Không tìm thấy sản phẩm nào</h3>
+          <p className="text-muted-foreground text-sm">Thử thay đổi bộ lọc để tìm thấy nhiều kết quả hơn.</p>
+        </div>
+        {hasActiveFilters ? (
+          <Button type="button" variant="outline" size="sm" onClick={clearFilters} className="cursor-pointer">
+            Xoá bộ lọc
+          </Button>
+        ) : null}
       </div>
     );
   }

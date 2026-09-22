@@ -22,7 +22,8 @@ function InfoRow({ label, value }: InfoRowProps): React.JSX.Element {
 /**
  * Order summary sidebar card — every field is a real `Order` field (address/note/payment/dates), no
  * fabricated customer name/avatar/card-brand section (`OrderSchema` doesn't carry a customer relation
- * and MVP is COD-only, no payment gateway — Decision #7).
+ * and MVP is COD-only, no payment gateway — Decision #7). Design reference: Sneat admin template's
+ * order-detail "Customer details"/"Billing Address" sidebar, trimmed to fields this repo actually has.
  */
 export function OrderInfoCard({ order }: OrderInfoCardProps): React.JSX.Element {
   const { t, i18n } = useTranslation('order');

@@ -1,4 +1,6 @@
 {
   "dashboardTitle": "Tổng quan",
-  "dashboardSubtitle": "Trạng thái nội dung và danh mục sản phẩm liên quan."
+  "dashboardSubtitle": "Trạng thái nội dung và danh mục sản phẩm liên quan.",
+  "statTotalProducts": "Tổng sản phẩm",
+  "statTotalCategories": "Tổng danh mục"
 }

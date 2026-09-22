@@ -63,7 +63,7 @@ export function MobileBuyBar({ productName, price, isPriceApproximate, canAdd, o
           animate={prefersReducedMotion ? { opacity: 1 } : { y: '0%', opacity: 1 }}
           exit={prefersReducedMotion ? { opacity: 0 } : { y: '100%', opacity: 0 }}
           transition={prefersReducedMotion ? { duration: 0.2, ease: 'easeOut' } : SPRING_SHEET}
-          className="bg-background/85 supports-[backdrop-filter]:bg-background/70 fixed inset-x-0 bottom-0 z-40 border-t border-white/40 pb-[env(safe-area-inset-bottom)] backdrop-blur-xl backdrop-saturate-150 lg:hidden"
+          className="bg-background/85 supports-[backdrop-filter]:bg-background/70 fixed inset-x-0 bottom-0 z-(--z-index-drawer) border-t border-white/40 pb-[env(safe-area-inset-bottom)] backdrop-blur-xl backdrop-saturate-150 lg:hidden"
         >
           <div className="mx-auto flex max-w-7xl items-center gap-3 px-4 py-3">
             <div className="min-w-0 flex-1">

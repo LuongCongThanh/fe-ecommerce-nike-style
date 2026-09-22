@@ -15,8 +15,8 @@ export interface ClientDataTablePaginationLabels {
 /**
  * Client-side "fetch everything, slice one page" pagination shared by every list page that has no
  * server-side pagination (categories/inventory/orders/staff). Centralizes the `page/totalPages/slice/
- * onPrevious/onNext` shape that used to be reimplemented per page and reads page state from the URL
- * via `useUrlPage`, not local `useState`.
+ * onPrevious/onNext` shape that used to be reimplemented per page (code review on PR #73) and reads
+ * page state from the URL via `useUrlPage`, not local `useState`.
  */
 export function useClientDataTablePagination<T>(
   items: readonly T[],

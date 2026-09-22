@@ -47,7 +47,7 @@ function VariantAxis({ title, layoutId, options, selected, onSelect, textCase, p
             transition={SPRING_UI}
             aria-pressed={selected === option}
             className={cn(
-              'focus-visible:ring-ring relative min-w-13 rounded-full border px-4 py-2.5 text-sm font-medium transition-colors duration-150 focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:outline-none',
+              'focus-visible:ring-ring relative flex min-h-11 min-w-13 items-center justify-center rounded-full border px-4 py-2.5 text-sm font-medium transition-colors duration-150 focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:outline-none',
               textCase,
               selected === option ? 'border-transparent' : 'hover:border-foreground active:bg-muted',
             )}

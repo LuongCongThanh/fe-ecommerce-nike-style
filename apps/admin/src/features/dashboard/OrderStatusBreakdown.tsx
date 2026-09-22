@@ -10,9 +10,10 @@ const CHART_CONFIG: ChartConfig = {
   count: { label: 'Orders', color: 'var(--color-brand-500)' },
 };
 
-/** Real order-status counts from `useAdminOrders`, never invented numbers — rendered with
- * `@repo/ui/chart` (Recharts) per the admin redesign's "shadcn/ui Charts" decision. Statuses with
- * zero orders still get a (zero-width) bar so the chart doesn't silently drop them. */
+/** Real order-status counts from `useAdminOrders`, never invented numbers — same data contract as
+ * the CSS-bar version this replaces, now rendered with `@repo/ui/chart` (Recharts) per the admin
+ * redesign's "shadcn/ui Charts" decision. Statuses with zero orders still get a (zero-width) bar so
+ * the chart doesn't silently drop them. */
 export function OrderStatusBreakdown(): React.JSX.Element {
   const { t } = useTranslation('order');
   const { data, isLoading, isError } = useAdminOrders();

@@ -15,8 +15,8 @@ export interface SortedClientDataTableResult<T> {
 /**
  * `useClientDataTablePagination` + `useReactTable` combined so sorting happens on the *full* item
  * list before it gets sliced into a page, instead of only reordering whatever the current page
- * already contains (sorting orders/inventory/staff only reshuffled the visible page because
- * `getSortedRowModel` ran on the already-paginated slice).
+ * already contains (code review on PR #74 — sorting orders/inventory/staff only reshuffled the
+ * visible page because `getSortedRowModel` ran on the already-paginated slice).
  *
  * Runs sorting twice: once over the full `items` to compute the correct page slice, once (a no-op,
  * since the slice is already ordered) over that slice so the returned `table` still owns sorting

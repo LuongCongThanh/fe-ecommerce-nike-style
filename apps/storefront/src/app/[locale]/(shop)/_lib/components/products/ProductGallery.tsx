@@ -152,7 +152,7 @@ export function ProductGallery({ images, name }: ProductGalleryProps) {
               whileTap={{ scale: 0.9 }}
               transition={SPRING_UI}
               aria-label="Ảnh trước"
-              className="absolute top-1/2 left-3 flex size-9 -translate-y-1/2 items-center justify-center rounded-full bg-black/40 text-white opacity-100 backdrop-blur-md transition-opacity hover:bg-black/60 focus-visible:opacity-100 focus-visible:ring-2 focus-visible:ring-white focus-visible:outline-none lg:opacity-0 lg:group-focus-within:opacity-100 lg:group-hover:opacity-100"
+              className="absolute top-1/2 left-3 flex size-11 -translate-y-1/2 items-center justify-center rounded-full bg-black/40 text-white opacity-100 backdrop-blur-md transition-opacity hover:bg-black/60 focus-visible:opacity-100 focus-visible:ring-2 focus-visible:ring-white focus-visible:outline-none lg:opacity-0 lg:group-focus-within:opacity-100 lg:group-hover:opacity-100"
             >
               <ChevronLeft className="size-5" />
             </motion.button>
@@ -164,7 +164,7 @@ export function ProductGallery({ images, name }: ProductGalleryProps) {
               whileTap={{ scale: 0.9 }}
               transition={SPRING_UI}
               aria-label="Ảnh tiếp theo"
-              className="absolute top-1/2 right-3 flex size-9 -translate-y-1/2 items-center justify-center rounded-full bg-black/40 text-white opacity-100 backdrop-blur-md transition-opacity hover:bg-black/60 focus-visible:opacity-100 focus-visible:ring-2 focus-visible:ring-white focus-visible:outline-none lg:opacity-0 lg:group-focus-within:opacity-100 lg:group-hover:opacity-100"
+              className="absolute top-1/2 right-3 flex size-11 -translate-y-1/2 items-center justify-center rounded-full bg-black/40 text-white opacity-100 backdrop-blur-md transition-opacity hover:bg-black/60 focus-visible:opacity-100 focus-visible:ring-2 focus-visible:ring-white focus-visible:outline-none lg:opacity-0 lg:group-focus-within:opacity-100 lg:group-hover:opacity-100"
             >
               <ChevronRight className="size-5" />
             </motion.button>

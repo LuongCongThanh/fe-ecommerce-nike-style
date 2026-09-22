@@ -40,6 +40,7 @@
     "./skeleton": "./src/components/Skeleton.tsx",
     "./social-marks": "./src/components/SocialMarks.tsx",
     "./sonner": "./src/components/Sonner.tsx",
+    "./stat-card": "./src/components/StatCard.tsx",
     "./switch": "./src/components/Switch.tsx",
     "./table": "./src/components/Table.tsx",
     "./tabs": "./src/components/Tabs.tsx",

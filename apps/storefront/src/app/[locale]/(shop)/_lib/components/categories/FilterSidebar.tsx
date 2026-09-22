@@ -88,9 +88,9 @@ export function FilterSidebar({ activeCategorySlug }: FilterSidebarProps = {}): 
         <h3 className="text-muted-foreground text-sm font-bold tracking-wider uppercase">Khoảng giá (VNĐ)</h3>
         <form onSubmit={submitPriceRange} className="space-y-3">
           <div className="flex items-center gap-2">
-            <Input name="minPrice" type="number" placeholder="Từ" defaultValue={filters.minPrice ?? ''} className="h-10" aria-label="Giá từ" />
+            <Input name="minPrice" type="number" placeholder="Từ" defaultValue={filters.minPrice ?? ''} className="h-11" aria-label="Giá từ" />
             <span className="text-muted-foreground">-</span>
-            <Input name="maxPrice" type="number" placeholder="Đến" defaultValue={filters.maxPrice ?? ''} className="h-10" aria-label="Giá đến" />
+            <Input name="maxPrice" type="number" placeholder="Đến" defaultValue={filters.maxPrice ?? ''} className="h-11" aria-label="Giá đến" />
           </div>
           <Button type="submit" size="md" className="w-full" disabled={isPending} aria-busy={isPending}>
             {isPending ? 'Đang áp dụng...' : 'Áp dụng'}
