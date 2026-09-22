@@ -322,7 +322,7 @@ Root có script `pnpm dev` để chạy song song các workspace, nhưng các ap
 
 `apps/admin/.env.example` và `apps/cms/.env.example` có sẵn — copy thành `.env.local` trong app cần chạy. Storefront chưa có `.env.example`, tự khai báo biến phù hợp.
 
-Baseline cho mock mode — storefront (Next.js) dùng tiền tố `NEXT_PUBLIC_`; admin/cms (Vite) dùng tiền tố `VITE_`, được `vite.config.ts`'s `define` map lại thành `process.env.NEXT_PUBLIC_*` để `@repo/api-sdk` (dùng chung cả ba app) không cần đổi:
+Baseline cho mock mode — storefront (Next.js) dùng tiền tố `NEXT_PUBLIC_`; admin/cms (Vite) dùng tiền tố `VITE_`. `@repo/api-sdk` (dùng chung cả ba app) đọc qua `readEnv()` (`packages/api-sdk/src/env/config.ts`): thử `import.meta.env.VITE_*` trước, fallback sang `process.env.NEXT_PUBLIC_*` nếu không có — không cần `define` map lại ở `vite.config.ts`:
 
 ```dotenv
 # apps/storefront/.env.local

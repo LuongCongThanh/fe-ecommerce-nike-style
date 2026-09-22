@@ -24,8 +24,7 @@ export interface SortedClientDataTableResult<T> {
  */
 export function useSortedClientDataTable<T>(
   items: readonly T[],
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any -- matches `useReactTable`'s own `ColumnDef<TData, any>` signature; callers pass columns built by `createColumnHelper<T>()` with concrete value types.
-  columns: ColumnDef<T, any>[],
+  columns: ColumnDef<T>[],
   sorting: SortingState,
   onSortingChange: OnChangeFn<SortingState>,
   pageSize: number,

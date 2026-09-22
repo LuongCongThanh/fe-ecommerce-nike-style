@@ -7,6 +7,7 @@ import { useTranslation } from 'react-i18next';
 
 import { AssignRolesDialog } from './AssignRolesDialog';
 import { useDeleteStaff, useUpdateStaff } from './useStaffMutations';
+import { useStaffAuth } from '@/core/session';
 import { ConfirmDialog } from '@/shell/ConfirmDialog';
 
 interface StaffCellProps {
@@ -35,12 +36,13 @@ export function StaffRolesCell({ staff }: StaffCellProps): React.JSX.Element {
 }
 
 export function StaffActiveCell({ staff }: StaffCellProps): React.JSX.Element {
+  const { hasPermission } = useStaffAuth();
   const updateStaff = useUpdateStaff(staff.id);
 
   return (
     <Switch
       checked={staff.isActive}
-      disabled={updateStaff.isPending}
+      disabled={updateStaff.isPending || !hasPermission('staff:update')}
       onCheckedChange={(checked) => {
         updateStaff.mutate({ name: staff.name, isActive: checked });
       }}
@@ -51,32 +53,40 @@ export function StaffActiveCell({ staff }: StaffCellProps): React.JSX.Element {
 export function StaffActionsCell({ staff }: StaffCellProps): React.JSX.Element {
   const { t } = useTranslation('staff');
   const { t: tCommon } = useTranslation('common');
+  const { hasPermission } = useStaffAuth();
   const deleteStaff = useDeleteStaff();
+
+  const canAssignRoles = hasPermission('staff:assign-role');
+  const canDelete = hasPermission('staff:delete');
 
   return (
     <div className="flex justify-end gap-2">
-      <AssignRolesDialog
-        staff={staff}
-        trigger={
-          <Button variant="outline" size="sm">
-            {t('assignRoles')}
-          </Button>
-        }
-      />
-      <ConfirmDialog
-        trigger={
-          <Button variant="outline" size="sm" className="text-destructive hover:bg-destructive/10" disabled={deleteStaff.isPending}>
-            {tCommon('actions.delete')}
-          </Button>
-        }
-        title={t('deleteTitle', { name: staff.name })}
-        description={tCommon('confirmIrreversible')}
-        confirmLabel={tCommon('actions.delete')}
-        loading={deleteStaff.isPending}
-        onConfirm={() => {
-          deleteStaff.mutate(staff.id);
-        }}
-      />
+      {canAssignRoles && (
+        <AssignRolesDialog
+          staff={staff}
+          trigger={
+            <Button variant="outline" size="sm">
+              {t('assignRoles')}
+            </Button>
+          }
+        />
+      )}
+      {canDelete && (
+        <ConfirmDialog
+          trigger={
+            <Button variant="outline" size="sm" className="text-destructive hover:bg-destructive/10" disabled={deleteStaff.isPending}>
+              {tCommon('actions.delete')}
+            </Button>
+          }
+          title={t('deleteTitle', { name: staff.name })}
+          description={tCommon('confirmIrreversible')}
+          confirmLabel={tCommon('actions.delete')}
+          loading={deleteStaff.isPending}
+          onConfirm={() => {
+            deleteStaff.mutate(staff.id);
+          }}
+        />
+      )}
     </div>
   );
 }
