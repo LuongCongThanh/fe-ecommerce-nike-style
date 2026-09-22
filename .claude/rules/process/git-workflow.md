@@ -78,15 +78,15 @@ test(schemas): cover invalid order transitions
 
 ## Pre-commit checks
 
+The `.husky/pre-commit` hook already runs `lint-staged` (Prettier on staged files), `pnpm lint`, `pnpm typecheck` and `pnpm build` (turbo, cached) on every commit and blocks it on failure. That covers formatting, linting, type safety and the build — it does not run tests. Before committing:
+
 1. `git status --short` — scope is correct, no stray files.
 2. `git diff --check` — no whitespace errors/conflict markers.
-3. Run the focused test for the changed behavior.
-4. Run lint/typecheck/test for the affected workspace(s).
-5. Run the build when framework, routing, config, dependency, or the production bundle changed.
-6. Review `git diff` for debug code, secrets, vague TODOs, generated noise, and out-of-scope changes.
-7. Stage specific paths; re-review `git diff --cached`.
+3. Run the focused test for the changed behavior (the hook does not do this).
+4. Review `git diff` for debug code, secrets, vague TODOs, generated noise, and out-of-scope changes.
+5. Stage specific paths; re-review `git diff --cached`.
 
-Never claim a commit is "fully checked" while a gate was skipped; state clearly which gate was skipped and why.
+Do not treat a hook failure as something to bypass; fix the underlying lint/type/build error. Never claim a commit is "fully checked" while a gate was skipped; state clearly which gate was skipped and why.
 
 ## Rebase and merge
 
