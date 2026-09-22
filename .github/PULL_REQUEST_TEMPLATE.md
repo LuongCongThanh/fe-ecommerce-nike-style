@@ -18,4 +18,4 @@ Refs #
 
 ---
 
-- [ ] No AI/assistant co-author attribution in this PR's commit messages or description (see CONTRIBUTING.md).
+- [ ] Commit, PR và comment không chứa tên AI/model/agent/assistant hoặc AI attribution dưới bất kỳ hình thức nào (xem `CONTRIBUTING.md`).

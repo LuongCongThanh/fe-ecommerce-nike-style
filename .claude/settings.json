@@ -2,5 +2,20 @@
   "permissions": {
     "allow": ["Bash(git push)", "Bash(git push *)"],
     "deny": ["Bash(git push --force*)", "Bash(git push -f*)"]
+  },
+  "hooks": {
+    "PostToolUse": [
+      {
+        "matcher": "Edit|Write",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "node",
+            "args": ["${CLAUDE_PROJECT_DIR}/.claude/hooks/format-edited.mjs"],
+            "timeout": 30
+          }
+        ]
+      }
+    ]
   }
 }

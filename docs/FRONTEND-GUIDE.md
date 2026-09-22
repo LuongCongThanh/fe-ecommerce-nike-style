@@ -127,23 +127,23 @@ strict-peer-dependencies=false
 
 ## 3. Stack
 
-| Nhóm              | Công nghệ                                         |
-| ----------------- | ------------------------------------------------- |
-| Workspace         | Turborepo, pnpm                                   |
-| App               | Next.js App Router, React                         |
-| Language          | TypeScript strict                                 |
-| Styling           | Tailwind CSS v4, CSS variables                    |
-| UI                | Radix UI, cva, clsx, tailwind-merge, lucide-react |
-| Contract          | Zod                                               |
-| Mock API          | MSW                                               |
-| Server state      | TanStack Query                                    |
-| Client state      | Zustand                                           |
-| Forms             | react-hook-form + zodResolver                     |
-| i18n              | next-intl, storefront only                        |
-| Unit/Integration  | Vitest, jsdom, Testing Library                    |
-| E2E               | Playwright                                        |
-| Storefront 3D     | three, react-three-fiber (+ drei on the PDP only) |
-| Storefront PWA    | @ducanh2912/next-pwa, production only             |
+| Nhóm             | Công nghệ                                         |
+| ---------------- | ------------------------------------------------- |
+| Workspace        | Turborepo, pnpm                                   |
+| App              | Next.js App Router, React                         |
+| Language         | TypeScript strict                                 |
+| Styling          | Tailwind CSS v4, CSS variables                    |
+| UI               | Radix UI, cva, clsx, tailwind-merge, lucide-react |
+| Contract         | Zod                                               |
+| Mock API         | MSW                                               |
+| Server state     | TanStack Query                                    |
+| Client state     | Zustand                                           |
+| Forms            | react-hook-form + zodResolver                     |
+| i18n             | next-intl, storefront only                        |
+| Unit/Integration | Vitest, jsdom, Testing Library                    |
+| E2E              | Playwright                                        |
+| Storefront 3D    | three, react-three-fiber (+ drei on the PDP only) |
+| Storefront PWA   | @ducanh2912/next-pwa, production only             |
 
 Version policy:
 
@@ -352,17 +352,18 @@ Không barrel `index.ts`; package export subpath bằng `package.json#exports`.
 
 ## 7. Naming
 
-- Interface: `IProduct`.
+- Interface/type: `PascalCase`, không dùng tiền tố `I` (`Product`, `ProductCardProps`).
 - Component/file: `ProductCard.tsx`.
 - Hook/file: `useProduct.ts`.
 - Route folder: `kebab-case`.
 - Store: `cart.store.ts`.
 - Utility/config: `camelCase`.
 - Constant: `SCREAMING_SNAKE_CASE`.
-- Type alias: `PascalCase`, không prefix.
 - Boolean: `is*`, `has*`, `should*`.
 - Event prop: `on*`; internal handler: `handle*`.
 - Không TypeScript `enum`; dùng string union hoặc `as const`.
+- Zod schema: danh từ `PascalCase` + hậu tố `Schema`; type được suy ra bằng `z.infer` và bỏ hậu tố `Schema`.
+- Query key factory: `<domain>Keys`; mutation hook bắt đầu bằng động từ như `useCreate*`, `useUpdate*`, `useDelete*`.
 
 ---
 
@@ -892,17 +893,17 @@ Nếu thiếu bất kỳ mục nào: trạng thái là **Foundation đang triể
 
 three.js xuất hiện ở hai chỗ, và chỉ hai chỗ:
 
-| Surface | Component | Gate |
-| --- | --- | --- |
-| PDP | `_lib/components/products/ProductViewer3D.tsx` | `next/dynamic({ ssr: false })` từ `ProductInfoPanel` |
-| Hero trang chủ | `_lib/components/home/hero3d/HeroSlides3D.tsx` | `next/dynamic({ ssr: false })` + `useCanRender3D()` |
+| Surface        | Component                                      | Gate                                                 |
+| -------------- | ---------------------------------------------- | ---------------------------------------------------- |
+| PDP            | `_lib/components/products/ProductViewer3D.tsx` | `next/dynamic({ ssr: false })` từ `ProductInfoPanel` |
+| Hero trang chủ | `_lib/components/home/hero3d/HeroSlides3D.tsx` | `next/dynamic({ ssr: false })` + `useCanRender3D()`  |
 
 Quy ước bắt buộc:
 
 - **Không bao giờ** import `three` / `@react-three/*` từ một route hoặc layout dùng chung. WebGL không có
   server renderer, và chunk ~200 KB gz không được phép nằm trên đường găng của bất kỳ trang nào.
 - Mọi surface 3D mới phải đi qua `useCanRender3D()` (`src/shared/hooks/`). Hook trả `'off' | 'pending' |
-  'ready'` cộng một `tier`; mọi gate được chấm trong `requestIdleCallback` nên không bao giờ tranh chấp
+'ready'` cộng một `tier`; mọi gate được chấm trong `requestIdleCallback` nên không bao giờ tranh chấp
   với LCP. Fail một tầng là tắt vĩnh viễn — không thử lại giữa phiên.
 - **`@react-three/drei` chỉ dùng ở PDP.** Hero cố tình chỉ dùng core `three` + fiber. Đặc biệt
   `Environment` fetch file HDR từ CDN pmndrs lúc runtime, không được dùng ở bất cứ đâu mới.
@@ -923,9 +924,9 @@ Hai cái bẫy đã mất thời gian, đừng dẫm lại:
 Đo LCP (production build, `next start`, Chromium 390×844, CPU throttle 4x, ~1.6 Mbps / 150 ms RTT,
 trung vị 3 lần) — 2026-08-30:
 
-| | LCP |
-| --- | --- |
-| Hero có WebGL (canvas mount) | 1524 ms |
+|                                | LCP     |
+| ------------------------------ | ------- |
+| Hero có WebGL (canvas mount)   | 1524 ms |
 | Hero gate tắt (reduced-motion) | 1516 ms |
 
 Chênh lệch nằm trong nhiễu ⇒ gate đang làm đúng việc của nó. Đo lại nếu ai đó đổi thời điểm mount.

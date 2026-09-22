@@ -1,6 +1,6 @@
 import { ErrorEnvelopeSchema } from '@repo/schemas/errors';
 
-/** Thrown by `fetcher` on a non-2xx response. Parses the body against the shared `ErrorEnvelopeSchema` so callers get a typed code/message instead of a raw status. */
+/** Lỗi chuẩn của tầng API, giúp UI không phụ thuộc trực tiếp vào cấu trúc lỗi của Axios. */
 export class ApiError extends Error {
   readonly status: number;
   readonly code: string;
@@ -30,14 +30,18 @@ export class ApiError extends Error {
     return this.status >= 500;
   }
 
-  static async fromResponse(response: Response): Promise<ApiError> {
-    const body: unknown = await response.json().catch(() => null);
+  static fromPayload(status: number, body: unknown): ApiError {
     const parsed = ErrorEnvelopeSchema.safeParse(body);
 
     if (parsed.success) {
-      return new ApiError(response.status, parsed.data.error.code, parsed.data.error.message, parsed.data.error.details);
+      return new ApiError(status, parsed.data.error.code, parsed.data.error.message, parsed.data.error.details);
     }
 
-    return new ApiError(response.status, 'UNKNOWN_ERROR', `Request failed: ${String(response.status)}`);
+    return new ApiError(status, 'UNKNOWN_ERROR', `Request failed: ${String(status)}`);
+  }
+
+  static async fromResponse(response: Response): Promise<ApiError> {
+    const body: unknown = await response.json().catch(() => null);
+    return ApiError.fromPayload(response.status, body);
   }
 }

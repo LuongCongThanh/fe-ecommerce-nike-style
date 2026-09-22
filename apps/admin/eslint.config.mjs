@@ -10,7 +10,7 @@ const eslintConfig = [
   js.configs.recommended,
   ...sharedReactConfig,
   {
-    ignores: ['dist/**', 'node_modules/**', 'coverage/**', 'src/routeTree.gen.ts'],
+    ignores: ['dist/**', 'node_modules/**', 'coverage/**', 'src/routeTree.gen.ts', 'next-env.d.ts'],
   },
   {
     // Config files (this one included) aren't part of tsconfig.json's `include` — type-aware rules can't run on them.

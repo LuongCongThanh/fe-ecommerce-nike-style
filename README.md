@@ -282,36 +282,36 @@ Version chính xác được pin trong từng `package.json` và `pnpm-lock.yaml
 
 - Git.
 - Node.js LTS; CI hiện dùng Node.js 24.
-- pnpm `10.28.2`, đúng với trường `packageManager` ở root.
+- pnpm `11.24.0`, đúng với trường `packageManager` ở root.
 
 Kiểm tra package manager:
 
 ```bash
 corepack enable
-corepack pnpm@10.28.2 --version
+corepack pnpm@11.24.0 --version
 ```
 
-Nếu máy đã cài một pnpm global khác phiên bản, ưu tiên gọi `corepack pnpm@10.28.2` để tránh lỗi version mismatch.
+Nếu máy đã cài một pnpm global khác phiên bản, ưu tiên gọi `corepack pnpm@11.24.0` để tránh lỗi version mismatch.
 
 ### Clone và cài dependency
 
 ```bash
 git clone git@github.com:LuongCongThanh/fe-ecommerce-nike-style.git
 cd fe-ecommerce-nike-style
-corepack pnpm@10.28.2 install --frozen-lockfile
+corepack pnpm@11.24.0 install --frozen-lockfile
 ```
 
 ### Chạy từng app
 
 ```bash
 # Storefront: http://localhost:3000
-corepack pnpm@10.28.2 --filter storefront dev
+corepack pnpm@11.24.0 --filter storefront dev
 
 # Admin (Vite, served under /admin): http://localhost:3001/admin/
-corepack pnpm@10.28.2 --filter admin dev
+corepack pnpm@11.24.0 --filter admin dev
 
 # CMS (Vite, served under /cms): http://localhost:3002/cms/
-corepack pnpm@10.28.2 --filter cms dev
+corepack pnpm@11.24.0 --filter cms dev
 ```
 
 Admin/cms's port và base path (`/admin`, `/cms`) đã cố định trong `vite.config.ts` để khớp `apps/storefront/microfrontends.json`'s proxy — không cần truyền `--port` nữa.
@@ -340,16 +340,16 @@ VITE_SITE_URL=http://127.0.0.1:3002
 
 Các biến được source hiện tại đọc trực tiếp:
 
-| Biến                                            | Phạm vi           | Ý nghĩa                                                                 |
-| ------------------------------------------------ | ----------------- | ------------------------------------------------------------------------ |
-| `NEXT_PUBLIC_API_MOCKING` / `VITE_API_MOCKING`   | Cả ba app/API SDK | `true` để boot MSW adapters                                             |
-| `NEXT_PUBLIC_SITE_URL` / `VITE_SITE_URL`         | API SDK           | Absolute origin cho server-side fetch; mặc định `http://localhost:3000` |
-| `NEXT_PUBLIC_APP_URL`               | Storefront        | Base URL cho canonical metadata và URL ứng dụng                         |
-| `NEXT_PUBLIC_APP_NAME`              | Storefront        | Tên site trong metadata                                                 |
-| `NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME` | Storefront        | Cloudinary cloud name cho image URL builder                             |
-| `NEXT_PUBLIC_SENTRY_DSN`            | Storefront        | DSN cho Sentry nếu monitoring được bật                                  |
-| `PLAYWRIGHT_BASE_URL`               | E2E               | Override base URL của Playwright                                        |
-| `ANALYZE`                           | Storefront build  | `true` để bật bundle analyzer                                           |
+| Biến                                           | Phạm vi           | Ý nghĩa                                                                 |
+| ---------------------------------------------- | ----------------- | ----------------------------------------------------------------------- |
+| `NEXT_PUBLIC_API_MOCKING` / `VITE_API_MOCKING` | Cả ba app/API SDK | `true` để boot MSW adapters                                             |
+| `NEXT_PUBLIC_SITE_URL` / `VITE_SITE_URL`       | API SDK           | Absolute origin cho server-side fetch; mặc định `http://localhost:3000` |
+| `NEXT_PUBLIC_APP_URL`                          | Storefront        | Base URL cho canonical metadata và URL ứng dụng                         |
+| `NEXT_PUBLIC_APP_NAME`                         | Storefront        | Tên site trong metadata                                                 |
+| `NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME`            | Storefront        | Cloudinary cloud name cho image URL builder                             |
+| `NEXT_PUBLIC_SENTRY_DSN`                       | Storefront        | DSN cho Sentry nếu monitoring được bật                                  |
+| `PLAYWRIGHT_BASE_URL`                          | E2E               | Override base URL của Playwright                                        |
+| `ANALYZE`                                      | Storefront build  | `true` để bật bundle analyzer                                           |
 
 Không commit secret vào Git. Các biến có tiền tố `NEXT_PUBLIC_` được đưa vào client bundle và không được chứa secret.
 

@@ -25,12 +25,12 @@ jobs:
             style
             build
             revert
-      - name: No AI/assistant attribution
+      - name: No AI, agent, or assistant references
         env:
           PR_TITLE: ${{ github.event.pull_request.title }}
           PR_BODY: ${{ github.event.pull_request.body }}
         run: |
-          if printf '%s\n%s' "$PR_TITLE" "$PR_BODY" | grep -iE "claude|anthropic" > /dev/null; then
-            echo "PR title/body must not reference Claude/Anthropic (no AI co-author attribution). See CONTRIBUTING.md." >&2
+          if printf '%s\n%s' "$PR_TITLE" "$PR_BODY" | grep -iE "claude|anthropic|codex|openai|chatgpt|copilot|gemini|cursor|windsurf|perplexity|deepseek|qwen|grok|llama|mistral|co-authored-by:.*(ai|bot|agent|assistant)" > /dev/null; then
+            echo "PR title/body must not reference an AI tool, model, agent, assistant, or AI co-author. See CONTRIBUTING.md." >&2
             exit 1
           fi
