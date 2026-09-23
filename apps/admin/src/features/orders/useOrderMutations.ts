@@ -1,5 +1,3 @@
-'use client';
-
 import { approveAdminOrderReturn, rejectAdminOrderReturn, updateAdminOrderStatus } from '@repo/api-sdk/endpoints/admin-orders';
 import type { OrderStatus } from '@repo/schemas/order';
 import { useMutation, useQueryClient } from '@tanstack/react-query';

@@ -1,5 +1,6 @@
 {
   "title": "Inventory",
+  "searchPlaceholder": "Search by product name...",
   "loadError": "Could not load the inventory list.",
   "empty": "No variants.",
   "columns": {

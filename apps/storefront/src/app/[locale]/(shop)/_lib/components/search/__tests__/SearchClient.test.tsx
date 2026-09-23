@@ -1,7 +1,6 @@
 import { server } from '@repo/api-sdk/testing/msw-server';
 import { screen, waitFor } from '@testing-library/react';
 import { http, HttpResponse } from 'msw';
-import { NextIntlClientProvider } from 'next-intl';
 import { afterAll, afterEach, beforeAll, describe, expect, it, vi } from 'vitest';
 
 import { renderWithProviders } from '@/__tests__/helpers/render';
@@ -18,13 +17,10 @@ beforeAll(() => server.listen({ onUnhandledRequest: 'error' }));
 afterEach(() => server.resetHandlers());
 afterAll(() => server.close());
 
-// `CatalogProductGrid` (rendered by `SearchClient` on results) reads `useLocale()`, hence the provider.
+// `renderWithProviders` already wraps with a real-messages `NextIntlClientProvider` — needed since
+// SearchClient reads `useTranslations()` and `CatalogProductGrid` reads `useLocale()`.
 function renderSearchClient() {
-  return renderWithProviders(
-    <NextIntlClientProvider locale="vi" messages={{}}>
-      <SearchClient />
-    </NextIntlClientProvider>,
-  );
+  return renderWithProviders(<SearchClient />);
 }
 
 describe('SearchClient (FE-INT-006)', () => {
@@ -62,7 +58,7 @@ describe('SearchClient (FE-INT-006)', () => {
     renderSearchClient();
 
     await waitFor(() => {
-      expect(screen.getByText('Không thể tìm kiếm sản phẩm')).toBeInTheDocument();
+      expect(screen.getByText('Không thể tải sản phẩm')).toBeInTheDocument();
     });
   });
 });

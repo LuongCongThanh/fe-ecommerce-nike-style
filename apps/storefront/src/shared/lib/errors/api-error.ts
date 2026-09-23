@@ -1,29 +1,7 @@
-export class ApiError extends Error {
-  status: number;
-  code?: string;
-  details?: unknown;
-
-  constructor(params: { message: string; status: number; code?: string; details?: unknown }) {
-    super(params.message);
-    this.name = 'ApiError';
-    this.status = params.status;
-    this.code = params.code;
-    this.details = params.details;
-  }
-
-  get isUnauthorized() {
-    return this.status === 401;
-  }
-  get isForbidden() {
-    return this.status === 403;
-  }
-  get isNotFound() {
-    return this.status === 404;
-  }
-  get isValidation() {
-    return this.status === 400 || this.status === 422;
-  }
-  get isServerError() {
-    return this.status >= 500;
-  }
-}
+/**
+ * The storefront's `ApiError` is the SDK's `ApiError` — one module, one shape. It used to be a second
+ * class with the same fields plus the `isUnauthorized`/`isValidation`/… predicates, joined to the SDK's
+ * by a translation shim that existed only to convert one into the other; the predicates now live on
+ * the SDK class, so there is nothing left to translate.
+ */
+export { ApiError } from '@repo/api-sdk/client/error';

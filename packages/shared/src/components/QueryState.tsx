@@ -19,9 +19,14 @@ interface QueryStateProps {
   readonly onRetry?: () => void;
   /** Custom loading UI (e.g. a skeleton matching the page layout). Defaults to a centered spinner. */
   readonly loadingFallback?: ReactNode;
-  readonly errorTitle?: string;
+  /** Accessible label for the default spinner. Storefront/Admin/CMS each own their own i18n library, so
+   * this package cannot translate on their behalf — every caller must pass its own translated string. */
+  readonly loadingLabel: string;
+  readonly errorTitle: string;
   readonly errorDescription?: string;
-  readonly retryLabel?: string;
+  /** Used when `errorDescription` is omitted and `error` has no usable message. */
+  readonly errorFallbackDescription: string;
+  readonly retryLabel: string;
   readonly children: ReactNode;
 }
 
@@ -31,7 +36,7 @@ interface QueryStateProps {
  * consistent across the app instead of every client component re-inventing it.
  *
  * ```tsx
- * <QueryState isLoading={isLoading} error={error} onRetry={refetch}>
+ * <QueryState isLoading={isLoading} error={error} onRetry={refetch} loadingLabel={t('loading')} errorTitle={t('error.title')} retryLabel={t('actions.retry')} errorFallbackDescription={t('error.fallback')}>
  *   <ProductGrid products={data} />
  * </QueryState>
  * ```
@@ -41,9 +46,11 @@ export function QueryState({
   error,
   onRetry,
   loadingFallback,
-  errorTitle = 'Đã có lỗi xảy ra',
+  loadingLabel,
+  errorTitle,
   errorDescription,
-  retryLabel = 'Thử lại',
+  errorFallbackDescription,
+  retryLabel,
   children,
 }: QueryStateProps): React.JSX.Element {
   if (isLoading) {
@@ -51,7 +58,7 @@ export function QueryState({
       <>
         {loadingFallback ?? (
           <div className="flex min-h-60 items-center justify-center py-12">
-            <LoadingSpinner size="lg" label="Đang tải" />
+            <LoadingSpinner size="lg" label={loadingLabel} />
           </div>
         )}
       </>
@@ -62,7 +69,7 @@ export function QueryState({
     return (
       <ErrorState
         title={errorTitle}
-        description={errorDescription ?? getErrorMessage(error, 'Vui lòng thử lại sau.')}
+        description={errorDescription ?? getErrorMessage(error, errorFallbackDescription)}
         retryLabel={retryLabel}
         onRetry={onRetry}
       />

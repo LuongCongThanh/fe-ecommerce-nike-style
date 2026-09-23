@@ -1,8 +1,6 @@
-'use client';
-
 import { ChartContainer, ChartTooltip, ChartTooltipContent, RechartsPrimitives, type ChartConfig } from '@repo/ui/chart';
 import { Skeleton } from '@repo/ui/skeleton';
-import { useTranslations } from 'next-intl';
+import { useTranslation } from 'react-i18next';
 
 import { useAdminOrders } from '@/features/orders/useAdminOrders';
 
@@ -17,7 +15,7 @@ const CHART_CONFIG: ChartConfig = {
  * redesign's "shadcn/ui Charts" decision. Statuses with zero orders still get a (zero-width) bar so
  * the chart doesn't silently drop them. */
 export function OrderStatusBreakdown(): React.JSX.Element {
-  const t = useTranslations('order');
+  const { t } = useTranslation('order');
   const { data, isLoading, isError } = useAdminOrders();
 
   const counts = STATUS_ORDER.map((status) => ({

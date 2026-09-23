@@ -1,5 +1,6 @@
 {
   "title": "Nhân viên",
+  "searchPlaceholder": "Tìm theo tên hoặc email...",
   "addStaff": "Thêm nhân viên",
   "createStaff": "Tạo nhân viên",
   "loadError": "Không thể tải danh sách nhân viên.",

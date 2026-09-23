@@ -6,5 +6,7 @@
   "total": "Total",
   "cancel": "Cancel Order",
   "success": "Order placed successfully!",
-  "detail": "Order Details"
+  "detail": "Order Details",
+  "loadError": "Could not load the order",
+  "retryHint": "Please try again."
 }

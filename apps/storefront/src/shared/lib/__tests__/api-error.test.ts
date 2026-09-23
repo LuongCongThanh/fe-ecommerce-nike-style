@@ -4,7 +4,7 @@ import { ApiError } from '@/shared/lib/errors/api-error';
 
 describe('ApiError', () => {
   it('is an instance of Error with name ApiError', () => {
-    const err = new ApiError({ message: 'something broke', status: 500 });
+    const err = new ApiError(500, 'UNKNOWN_ERROR', 'something broke');
 
     expect(err).toBeInstanceOf(Error);
     expect(err.name).toBe('ApiError');
@@ -12,7 +12,7 @@ describe('ApiError', () => {
   });
 
   it('stores status, code, and details', () => {
-    const err = new ApiError({ message: 'bad request', status: 400, code: 'required', details: { field: 'email' } });
+    const err = new ApiError(400, 'required', 'bad request', { field: 'email' });
 
     expect(err.status).toBe(400);
     expect(err.code).toBe('required');
@@ -20,29 +20,29 @@ describe('ApiError', () => {
   });
 
   it('isUnauthorized for 401', () => {
-    expect(new ApiError({ message: '', status: 401 }).isUnauthorized).toBe(true);
-    expect(new ApiError({ message: '', status: 403 }).isUnauthorized).toBe(false);
+    expect(new ApiError(401, 'UNKNOWN_ERROR', '').isUnauthorized).toBe(true);
+    expect(new ApiError(403, 'UNKNOWN_ERROR', '').isUnauthorized).toBe(false);
   });
 
   it('isForbidden for 403', () => {
-    expect(new ApiError({ message: '', status: 403 }).isForbidden).toBe(true);
-    expect(new ApiError({ message: '', status: 401 }).isForbidden).toBe(false);
+    expect(new ApiError(403, 'UNKNOWN_ERROR', '').isForbidden).toBe(true);
+    expect(new ApiError(401, 'UNKNOWN_ERROR', '').isForbidden).toBe(false);
   });
 
   it('isNotFound for 404', () => {
-    expect(new ApiError({ message: '', status: 404 }).isNotFound).toBe(true);
-    expect(new ApiError({ message: '', status: 200 }).isNotFound).toBe(false);
+    expect(new ApiError(404, 'UNKNOWN_ERROR', '').isNotFound).toBe(true);
+    expect(new ApiError(200, 'UNKNOWN_ERROR', '').isNotFound).toBe(false);
   });
 
   it('isValidation for 400 and 422', () => {
-    expect(new ApiError({ message: '', status: 400 }).isValidation).toBe(true);
-    expect(new ApiError({ message: '', status: 422 }).isValidation).toBe(true);
-    expect(new ApiError({ message: '', status: 404 }).isValidation).toBe(false);
+    expect(new ApiError(400, 'UNKNOWN_ERROR', '').isValidation).toBe(true);
+    expect(new ApiError(422, 'UNKNOWN_ERROR', '').isValidation).toBe(true);
+    expect(new ApiError(404, 'UNKNOWN_ERROR', '').isValidation).toBe(false);
   });
 
   it('isServerError for 500 and above', () => {
-    expect(new ApiError({ message: '', status: 500 }).isServerError).toBe(true);
-    expect(new ApiError({ message: '', status: 503 }).isServerError).toBe(true);
-    expect(new ApiError({ message: '', status: 499 }).isServerError).toBe(false);
+    expect(new ApiError(500, 'UNKNOWN_ERROR', '').isServerError).toBe(true);
+    expect(new ApiError(503, 'UNKNOWN_ERROR', '').isServerError).toBe(true);
+    expect(new ApiError(499, 'UNKNOWN_ERROR', '').isServerError).toBe(false);
   });
 });

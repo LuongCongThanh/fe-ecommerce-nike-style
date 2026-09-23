@@ -1,9 +1,7 @@
-'use client';
-
 import { Badge } from '@repo/ui/badge';
 import { Skeleton } from '@repo/ui/skeleton';
-import { useLocale, useTranslations } from 'next-intl';
-import { Link } from '@/i18n/navigation';
+import { Link } from '@tanstack/react-router';
+import { useTranslation } from 'react-i18next';
 
 import { orderStatusBadgeVariant } from '@/features/orders/orderStatusVariant';
 import { useAdminOrders } from '@/features/orders/useAdminOrders';
@@ -14,17 +12,16 @@ const RECENT_ORDERS_COUNT = 5;
  * FRONTEND-GUIDE.md §14 Honest UI). Design reference: Sneat admin dashboard's "best seller"/order
  * table widget, trimmed to fields this repo's `Order` schema actually has. */
 export function RecentOrders(): React.JSX.Element {
-  const t = useTranslations('order');
-  const tDashboard = useTranslations('common.dashboard');
-  const locale = useLocale();
-  const dateLocale = locale === 'en' ? 'en-US' : 'vi-VN';
+  const { t, i18n } = useTranslation('order');
+  const { t: tCommon } = useTranslation('common');
+  const dateLocale = i18n.language === 'en' ? 'en-US' : 'vi-VN';
   const { data, isLoading, isError } = useAdminOrders();
 
   const recentOrders = [...(data ?? [])].sort((a, b) => b.created_at.localeCompare(a.created_at)).slice(0, RECENT_ORDERS_COUNT);
 
   return (
     <div className="space-y-3 rounded-2xl border border-gray-200 bg-white p-5 dark:border-gray-800 dark:bg-white/3">
-      <h2 className="text-foreground text-sm font-semibold">{tDashboard('recentOrdersTitle')}</h2>
+      <h2 className="text-foreground text-sm font-semibold">{tCommon('dashboard.recentOrdersTitle')}</h2>
 
       {isError ? (
         <p role="alert" className="text-destructive text-sm">
@@ -47,7 +44,7 @@ export function RecentOrders(): React.JSX.Element {
           {recentOrders.map((order) => (
             <li key={order.id} className="flex items-center justify-between gap-3 px-1 py-2">
               <div className="min-w-0">
-                <Link href={`/orders/${String(order.id)}`} className="text-foreground truncate text-sm font-medium hover:underline">
+                <Link to="/orders/$id" params={{ id: String(order.id) }} className="text-foreground truncate text-sm font-medium hover:underline">
                   {order.code}
                 </Link>
                 <p className="text-muted-foreground text-xs">{new Date(order.created_at).toLocaleDateString(dateLocale)}</p>

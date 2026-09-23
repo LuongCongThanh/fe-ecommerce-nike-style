@@ -1,0 +1,12 @@
+{
+  "title": "Settings",
+  "subtitle": "Notification preferences for this browser.",
+  "notifications": {
+    "title": "Notifications",
+    "description": "Saved to this browser only — there is no server-side notification service yet.",
+    "contentPublished": "Content published",
+    "contentPublishedDescription": "Notify me when a post or page is published.",
+    "mediaUploaded": "Media uploaded",
+    "mediaUploadedDescription": "Notify me when new media finishes uploading."
+  }
+}

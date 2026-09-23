@@ -1,0 +1,20 @@
+{
+  "title": "Khách hàng",
+  "subtitle": "Demo cục bộ — chưa có API khách hàng phía admin, chỉ lưu trên trình duyệt này.",
+  "searchPlaceholder": "Tìm theo tên hoặc email...",
+  "empty": "Chưa có khách hàng nào.",
+  "columns": {
+    "name": "Tên",
+    "email": "Email",
+    "phone": "Điện thoại",
+    "orders": "Đơn hàng",
+    "status": "Trạng thái",
+    "actions": "Thao tác"
+  },
+  "status": {
+    "active": "Đang hoạt động",
+    "suspended": "Đã khóa"
+  },
+  "suspend": "Khóa tài khoản",
+  "reactivate": "Kích hoạt lại"
+}

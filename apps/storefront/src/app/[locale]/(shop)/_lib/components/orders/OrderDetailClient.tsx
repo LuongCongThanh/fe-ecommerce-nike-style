@@ -8,7 +8,7 @@ import { formatCurrency } from '@repo/shared/utils';
 import { Button } from '@repo/ui/button';
 import { Separator } from '@repo/ui/separator';
 import { ChevronLeft } from 'lucide-react';
-import { useLocale } from 'next-intl';
+import { useLocale, useTranslations } from 'next-intl';
 
 import { OrderStatusBadge } from '@/app/[locale]/(shop)/_lib/components/common/OrderStatusBadge';
 import { useCancelOrder } from '@/app/[locale]/(shop)/_lib/hooks/orders/useCancelOrder';
@@ -23,6 +23,8 @@ interface OrderDetailClientProps {
 
 export function OrderDetailClient({ id }: OrderDetailClientProps): React.JSX.Element {
   const locale = useLocale();
+  const t = useTranslations('common');
+  const tOrder = useTranslations('order');
   const { data: order, isPending, error, refetch } = useOrder(id);
   const cancelOrder = useCancelOrder(id);
   const requestReturn = useRequestReturn(id);
@@ -36,18 +38,21 @@ export function OrderDetailClient({ id }: OrderDetailClientProps): React.JSX.Ele
         className="text-secondary-600 hover:text-secondary-700 mb-4 inline-flex items-center gap-1 text-sm font-medium transition-colors"
       >
         <ChevronLeft className="size-4" />
-        Đơn hàng của tôi
+        {tOrder('myOrders')}
       </Link>
       <QueryState
         isLoading={isPending}
-        error={!notFound && (error != null || order == null) ? (error ?? new Error('Đã có lỗi xảy ra khi tải đơn hàng.')) : null}
+        error={!notFound && (error != null || order == null) ? (error ?? new Error(tOrder('loadError'))) : null}
         onRetry={() => {
           refetch().catch(() => {
             /* error state already surfaced via isError */
           });
         }}
-        errorTitle="Không thể tải đơn hàng"
-        errorDescription="Vui lòng thử lại."
+        loadingLabel={t('loading')}
+        errorTitle={tOrder('loadError')}
+        errorDescription={tOrder('retryHint')}
+        errorFallbackDescription={t('errorDescription')}
+        retryLabel={t('retry')}
       >
         {notFound || order == null ? (
           <p className="text-center">Không tìm thấy đơn hàng.</p>

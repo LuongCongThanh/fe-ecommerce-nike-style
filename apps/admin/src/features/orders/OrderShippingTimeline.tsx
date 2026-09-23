@@ -1,6 +1,6 @@
 import type { Order } from '@repo/schemas/order';
 import { Check } from 'lucide-react';
-import { useTranslations } from 'next-intl';
+import { useTranslation } from 'react-i18next';
 
 import { ORDER_TIMELINE_STEPS } from '@/features/orders/orderStatusVariant';
 
@@ -18,7 +18,7 @@ interface OrderShippingTimelineProps {
  * meaningful "how far along the forward timeline" for those, so this renders nothing for them.
  */
 export function OrderShippingTimeline({ order }: OrderShippingTimelineProps): React.JSX.Element | null {
-  const t = useTranslations('order');
+  const { t } = useTranslation('order');
   const currentIndex = ORDER_TIMELINE_STEPS.findIndex((step) => step === order.status);
 
   if (currentIndex === -1) return null;

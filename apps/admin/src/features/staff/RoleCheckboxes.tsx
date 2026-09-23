@@ -1,10 +1,8 @@
-'use client';
-
 import { StaffRoleSchema } from '@repo/schemas/staff';
 import type { StaffRole } from '@repo/schemas/staff';
 import { Checkbox } from '@repo/ui/checkbox';
 import { Label } from '@repo/ui/label';
-import { useTranslations } from 'next-intl';
+import { useTranslation } from 'react-i18next';
 
 interface RoleCheckboxesProps {
   readonly value: StaffRole[];
@@ -14,7 +12,7 @@ interface RoleCheckboxesProps {
 /** A Staff can hold multiple Roles at once (many-to-many) — this is a checkbox group, not a single-select
  * picker, so assigning more than one Role is a first-class case in the UI, not an edge case (issue #23). */
 export function RoleCheckboxes({ value, onChange }: RoleCheckboxesProps): React.JSX.Element {
-  const t = useTranslations('staff');
+  const { t } = useTranslation('staff');
   const toggle = (role: StaffRole, checked: boolean): void => {
     onChange(checked ? [...value, role] : value.filter((r) => r !== role));
   };

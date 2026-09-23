@@ -1,5 +1,6 @@
 {
   "title": "Categories",
+  "searchPlaceholder": "Search by name or slug...",
   "add": "Add category",
   "create": "Create category",
   "edit": "Edit category",

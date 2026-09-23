@@ -1,5 +1,6 @@
 {
   "title": "Staff",
+  "searchPlaceholder": "Search by name or email...",
   "addStaff": "Add staff",
   "createStaff": "Create staff",
   "loadError": "Could not load the staff list.",

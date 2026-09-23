@@ -5,6 +5,8 @@
   "empty": "Không có đơn hàng nào.",
   "detailTitle": "Chi tiết đơn hàng",
   "viewDetail": "Xem chi tiết",
+  "copyCode": "Sao chép mã đơn",
+  "codeCopied": "Đã sao chép mã đơn.",
   "updateError": "Không thể cập nhật đơn hàng.",
   "columns": {
     "code": "Mã đơn",

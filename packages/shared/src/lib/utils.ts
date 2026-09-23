@@ -1,14 +1,13 @@
-import { type ClassValue, clsx } from 'clsx';
 import { format } from 'date-fns';
 import { vi } from 'date-fns/locale';
-import { twMerge } from 'tailwind-merge';
+
+/** One `cn`, defined in `@repo/ui` where the components that use it live. It used to be implemented
+ * twice — identically — here and there; this re-export keeps the 49 `@repo/shared/utils` call sites
+ * working without a second implementation behind them. */
+export { cn } from '@repo/ui/cn';
 
 function isQueryValue(value: unknown): value is string | number | boolean {
   return typeof value === 'string' || typeof value === 'number' || typeof value === 'boolean';
-}
-
-export function cn(...inputs: ClassValue[]): string {
-  return twMerge(clsx(inputs));
 }
 
 export function formatCurrency(amount: number): string {

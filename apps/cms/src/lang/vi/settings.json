@@ -1,0 +1,12 @@
+{
+  "title": "Cài đặt",
+  "subtitle": "Tùy chọn thông báo trên trình duyệt này.",
+  "notifications": {
+    "title": "Thông báo",
+    "description": "Chỉ lưu trên trình duyệt này — chưa có dịch vụ thông báo phía máy chủ.",
+    "contentPublished": "Nội dung đã xuất bản",
+    "contentPublishedDescription": "Báo khi một bài viết hoặc trang được xuất bản.",
+    "mediaUploaded": "Media đã tải lên",
+    "mediaUploadedDescription": "Báo khi media mới tải lên xong."
+  }
+}

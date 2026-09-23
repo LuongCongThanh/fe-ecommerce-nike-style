@@ -2,25 +2,31 @@
 
 import { QueryState } from '@repo/shared/query-state';
 import { SearchX } from 'lucide-react';
+import { useTranslations } from 'next-intl';
 
 import { Pagination } from '@/app/[locale]/(shop)/_lib/components/common/Pagination';
 import { CatalogProductGrid } from '@/app/[locale]/(shop)/_lib/components/products/CatalogProductGrid';
 import { useProductSearchListing } from '@/app/[locale]/(shop)/_lib/hooks/products/useProductSearchListing';
 
 export function SearchClient(): React.JSX.Element {
+  const t = useTranslations('common');
+  const tProduct = useTranslations('product');
   const { data, isLoading, isError, refetch, query, onPageChange } = useProductSearchListing();
 
   return (
     <QueryState
       isLoading={isLoading}
-      error={isError ? new Error('Không thể tìm kiếm sản phẩm') : null}
+      error={isError ? new Error(tProduct('loadError')) : null}
       onRetry={() => {
         refetch().catch(() => {
           /* error state already surfaced via isError */
         });
       }}
-      errorTitle="Không thể tìm kiếm sản phẩm"
-      errorDescription="Vui lòng thử lại sau."
+      loadingLabel={t('loading')}
+      errorTitle={tProduct('loadError')}
+      errorDescription={t('errorDescription')}
+      errorFallbackDescription={t('errorDescription')}
+      retryLabel={t('retry')}
     >
       {data === undefined ? null : data.data.length === 0 ? (
         <div className="flex min-h-100 flex-col items-center justify-center rounded-2xl border border-dashed text-center">

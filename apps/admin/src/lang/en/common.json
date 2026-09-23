@@ -8,7 +8,9 @@
     "create": "Create",
     "creating": "Creating...",
     "add": "Add",
-    "reload": "Reload"
+    "reload": "Reload",
+    "confirm": "Confirm",
+    "processing": "Processing..."
   },
   "loading": "Loading...",
   "confirmIrreversible": "This action cannot be undone.",
@@ -24,7 +26,12 @@
     "orders": "Orders",
     "categories": "Categories",
     "inventory": "Inventory",
-    "staff": "Staff"
+    "staff": "Staff",
+    "customers": "Customers",
+    "tasks": "Tasks",
+    "chats": "Chats",
+    "apps": "Apps",
+    "settings": "Settings"
   },
   "adminLabel": "Admin",
   "openNavMenu": "Open navigation menu",
@@ -33,6 +40,8 @@
   "logout": "Log out",
   "notAvailableYet": "Not available yet",
   "languageSwitcher": "Language",
+  "themeToggleToLight": "Switch to light theme",
+  "themeToggleToDark": "Switch to dark theme",
   "appsSwitcher": "Other apps",
   "notifications": "Notifications",
   "search": {

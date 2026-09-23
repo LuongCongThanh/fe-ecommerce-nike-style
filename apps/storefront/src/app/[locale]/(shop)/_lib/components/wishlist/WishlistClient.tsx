@@ -7,6 +7,7 @@ import { QueryState } from '@repo/shared/query-state';
 import { formatCurrency } from '@repo/shared/utils';
 import { Button } from '@repo/ui/button';
 import { Heart, ShoppingCart, Trash2 } from 'lucide-react';
+import { useTranslations } from 'next-intl';
 
 import { useWishlist } from '@/app/[locale]/(shop)/_lib/hooks/useWishlist';
 import { useMoveToCart } from '@/app/[locale]/(shop)/_lib/hooks/wishlist/useMoveToCart';
@@ -17,6 +18,8 @@ interface WishlistClientProps {
 }
 
 export function WishlistClient({ locale }: WishlistClientProps) {
+  const t = useTranslations('common');
+  const tWishlist = useTranslations('wishlist');
   const { products, isLoading, isError, removeFromWishlist } = useWishlist();
   const { moveToCart } = useMoveToCart(locale);
 
@@ -40,8 +43,11 @@ export function WishlistClient({ locale }: WishlistClientProps) {
   return (
     <QueryState
       isLoading={isLoading}
-      error={isError ? new Error('Không thể tải danh sách yêu thích') : null}
-      errorTitle="Không thể tải danh sách yêu thích"
+      error={isError ? new Error(tWishlist('loadError')) : null}
+      loadingLabel={t('loading')}
+      errorTitle={tWishlist('loadError')}
+      errorFallbackDescription={t('errorDescription')}
+      retryLabel={t('retry')}
     >
       <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
         {products.map((product) => {

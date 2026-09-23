@@ -31,7 +31,7 @@ describe('useApiMutation (issue: double toast on mutation failure)', () => {
   it('toasts the ApiError message on failure — exactly once', async () => {
     const { result } = renderWithClient(() =>
       useApiMutation({
-        mutationFn: () => Promise.reject(new ApiError({ message: 'Địa chỉ không hợp lệ', status: 422 })),
+        mutationFn: () => Promise.reject(new ApiError(422, 'UNKNOWN_ERROR', 'Địa chỉ không hợp lệ')),
         errorFallback: 'Lưu thất bại. Vui lòng thử lại.',
       }),
     );

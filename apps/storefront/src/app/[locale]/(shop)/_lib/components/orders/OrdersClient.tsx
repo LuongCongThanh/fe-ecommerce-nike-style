@@ -5,7 +5,7 @@ import Link from 'next/link';
 
 import { QueryState } from '@repo/shared/query-state';
 import { formatCurrency } from '@repo/shared/utils';
-import { useLocale } from 'next-intl';
+import { useLocale, useTranslations } from 'next-intl';
 
 import { OrderStatusBadge } from '@/app/[locale]/(shop)/_lib/components/common/OrderStatusBadge';
 import { useOrders } from '@/app/[locale]/(shop)/_lib/hooks/orders/useOrders';
@@ -17,19 +17,24 @@ import { useOrders } from '@/app/[locale]/(shop)/_lib/hooks/orders/useOrders';
  */
 export function OrdersClient(): React.JSX.Element {
   const locale = useLocale();
+  const t = useTranslations('common');
+  const tOrder = useTranslations('order');
   const { data: orders, isLoading, isError, refetch } = useOrders();
 
   return (
     <QueryState
       isLoading={isLoading}
-      error={isError ? new Error('Đã có lỗi xảy ra khi tải đơn hàng.') : null}
+      error={isError ? new Error(tOrder('loadError')) : null}
       onRetry={() => {
         refetch().catch(() => {
           /* error state already surfaced via isError */
         });
       }}
-      errorTitle="Không thể tải đơn hàng"
-      errorDescription="Vui lòng thử lại."
+      loadingLabel={t('loading')}
+      errorTitle={tOrder('loadError')}
+      errorDescription={tOrder('retryHint')}
+      errorFallbackDescription={t('errorDescription')}
+      retryLabel={t('retry')}
     >
       {orders === undefined ? null : orders.length === 0 ? (
         <p className="text-muted-foreground py-10 text-center">Bạn chưa có đơn hàng nào.</p>

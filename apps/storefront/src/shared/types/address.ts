@@ -1,14 +1,18 @@
-import { z } from 'zod';
+import { createAddressFormSchema } from '@repo/schemas/address';
 
-export const VIETNAM_PHONE_REGEX = /^(0|\+84)(3[2-9]|5[6-9]|7[06-9]|8[1-9]|9\d)\d{7}$/;
+export { VIETNAM_PHONE_REGEX } from '@repo/schemas/address';
 
-export const ShippingAddressSchema = z.object({
-  fullName: z.string().min(2, 'Họ tên phải có ít nhất 2 ký tự'),
-  phone: z.string().regex(VIETNAM_PHONE_REGEX, 'Số điện thoại không hợp lệ (VD: 0912345678)'),
-  province: z.string().min(1, 'Vui lòng nhập tỉnh/thành phố'),
-  district: z.string().min(1, 'Vui lòng nhập quận/huyện'),
-  ward: z.string().min(1, 'Vui lòng nhập phường/xã'),
-  detail: z.string().min(5, 'Địa chỉ chi tiết phải có ít nhất 5 ký tự'),
+/**
+ * The shared address-book form shape with this app's Vietnamese copy. The field list itself is
+ * `@repo/schemas`' — this module used to redeclare all six fields just to carry these messages.
+ */
+export const ShippingAddressSchema = createAddressFormSchema({
+  fullName: 'Họ tên phải có ít nhất 2 ký tự',
+  phone: 'Số điện thoại không hợp lệ (VD: 0912345678)',
+  province: 'Vui lòng nhập tỉnh/thành phố',
+  district: 'Vui lòng nhập quận/huyện',
+  ward: 'Vui lòng nhập phường/xã',
+  detail: 'Địa chỉ chi tiết phải có ít nhất 5 ký tự',
 });
 
-export type ShippingAddress = z.infer<typeof ShippingAddressSchema>;
+export type ShippingAddress = ReturnType<typeof createAddressFormSchema>['_output'];

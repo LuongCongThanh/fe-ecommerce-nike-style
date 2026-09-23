@@ -4,7 +4,6 @@ import { encodeAccessToken } from '@repo/api-sdk/mocks/auth-fixtures';
 import { resetMockOrderDbForTesting, setOrderStatusForTesting } from '@repo/api-sdk/mocks/order-fixtures';
 import { server } from '@repo/api-sdk/testing/msw-server';
 import { fireEvent, screen, waitFor } from '@testing-library/react';
-import { NextIntlClientProvider } from 'next-intl';
 import { afterAll, afterEach, beforeAll, beforeEach, describe, expect, it } from 'vitest';
 
 import { renderWithProviders } from '@/__tests__/helpers/render';
@@ -14,14 +13,10 @@ import { OrderDetailClient } from '@/app/[locale]/(shop)/_lib/components/orders/
 const ACCOUNT_USER_ID = 1;
 const ORDER_ID = '1002';
 
-// OrderDetailClient reads `useLocale()` (for the "back to orders" link) — same pattern as
-// OrdersClient.test.tsx, needs a NextIntlClientProvider in the tree.
+// `renderWithProviders` already wraps with a real-messages `NextIntlClientProvider` — needed since
+// OrderDetailClient reads both `useLocale()` and `useTranslations()`.
 function renderOrderDetailClient(id: string) {
-  return renderWithProviders(
-    <NextIntlClientProvider locale="vi" messages={{}}>
-      <OrderDetailClient id={id} />
-    </NextIntlClientProvider>,
-  );
+  return renderWithProviders(<OrderDetailClient id={id} />);
 }
 
 beforeAll(() => server.listen({ onUnhandledRequest: 'error' }));

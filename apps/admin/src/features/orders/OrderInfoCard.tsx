@@ -1,5 +1,5 @@
 import type { Order } from '@repo/schemas/order';
-import { useLocale, useTranslations } from 'next-intl';
+import { useTranslation } from 'react-i18next';
 
 interface OrderInfoCardProps {
   readonly order: Order;
@@ -26,9 +26,8 @@ function InfoRow({ label, value }: InfoRowProps): React.JSX.Element {
  * order-detail "Customer details"/"Billing Address" sidebar, trimmed to fields this repo actually has.
  */
 export function OrderInfoCard({ order }: OrderInfoCardProps): React.JSX.Element {
-  const t = useTranslations('order');
-  const locale = useLocale();
-  const dateLocale = locale === 'en' ? 'en-US' : 'vi-VN';
+  const { t, i18n } = useTranslation('order');
+  const dateLocale = i18n.language === 'en' ? 'en-US' : 'vi-VN';
 
   return (
     <div className="space-y-4 rounded-2xl border border-gray-200 bg-white p-5 dark:border-gray-800 dark:bg-white/3">

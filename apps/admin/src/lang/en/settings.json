@@ -1,0 +1,33 @@
+{
+  "title": "Settings",
+  "subtitle": "Manage your account, appearance, and notification preferences.",
+  "tabs": {
+    "profile": "Profile",
+    "appearance": "Appearance",
+    "notifications": "Notifications"
+  },
+  "profile": {
+    "title": "Profile",
+    "description": "Your signed-in account. There is no self-service profile editor yet — ask a SUPER_ADMIN to change your name or roles.",
+    "name": "Name",
+    "email": "Email",
+    "roles": "Roles",
+    "signOut": "Sign out"
+  },
+  "appearance": {
+    "title": "Appearance",
+    "description": "Choose how the admin looks and which language it's displayed in.",
+    "theme": "Theme",
+    "themeLight": "Light",
+    "themeDark": "Dark",
+    "language": "Language"
+  },
+  "notifications": {
+    "title": "Notifications",
+    "description": "Saved to this browser only — there is no server-side notification service yet.",
+    "orderUpdates": "Order status updates",
+    "orderUpdatesDescription": "Notify me when an order changes status.",
+    "lowStock": "Low stock alerts",
+    "lowStockDescription": "Notify me when a product's stock runs low."
+  }
+}

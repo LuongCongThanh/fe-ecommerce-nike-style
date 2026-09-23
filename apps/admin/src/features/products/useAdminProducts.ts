@@ -1,5 +1,3 @@
-'use client';
-
 import { getAdminProducts } from '@repo/api-sdk/endpoints/admin-catalog';
 import type { ProductListRequest } from '@repo/schemas/catalog';
 import { useQuery } from '@tanstack/react-query';

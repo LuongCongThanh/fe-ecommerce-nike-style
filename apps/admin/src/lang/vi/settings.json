@@ -1,0 +1,33 @@
+{
+  "title": "Cài đặt",
+  "subtitle": "Quản lý tài khoản, giao diện và tùy chọn thông báo.",
+  "tabs": {
+    "profile": "Hồ sơ",
+    "appearance": "Giao diện",
+    "notifications": "Thông báo"
+  },
+  "profile": {
+    "title": "Hồ sơ",
+    "description": "Tài khoản đang đăng nhập. Chưa có công cụ tự chỉnh sửa hồ sơ — hãy nhờ SUPER_ADMIN đổi tên hoặc vai trò.",
+    "name": "Tên",
+    "email": "Email",
+    "roles": "Vai trò",
+    "signOut": "Đăng xuất"
+  },
+  "appearance": {
+    "title": "Giao diện",
+    "description": "Chọn giao diện hiển thị và ngôn ngữ cho trang quản trị.",
+    "theme": "Chủ đề",
+    "themeLight": "Sáng",
+    "themeDark": "Tối",
+    "language": "Ngôn ngữ"
+  },
+  "notifications": {
+    "title": "Thông báo",
+    "description": "Chỉ lưu trên trình duyệt này — chưa có dịch vụ thông báo phía máy chủ.",
+    "orderUpdates": "Cập nhật trạng thái đơn hàng",
+    "orderUpdatesDescription": "Báo khi đơn hàng đổi trạng thái.",
+    "lowStock": "Cảnh báo sắp hết hàng",
+    "lowStockDescription": "Báo khi tồn kho sản phẩm sắp hết."
+  }
+}

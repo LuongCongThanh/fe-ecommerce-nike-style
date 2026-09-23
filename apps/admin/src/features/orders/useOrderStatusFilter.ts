@@ -1,7 +1,5 @@
-'use client';
-
 import type { OrderStatus } from '@repo/schemas/order';
-import { usePathname, useRouter, useSearchParams } from 'next/navigation';
+import { useNavigate, useSearch } from '@tanstack/react-router';
 
 export type OrderStatusFilter = OrderStatus | 'ALL';
 
@@ -23,23 +21,18 @@ function isOrderStatus(value: string): value is OrderStatus {
  * anything against the filtered set.
  */
 export function useOrderStatusFilter(): OrderStatusFilterResult {
-  const router = useRouter();
-  const pathname = usePathname();
-  const searchParams = useSearchParams();
+  const navigate = useNavigate();
+  const search: { status?: string } = useSearch({ strict: false });
 
-  const raw = searchParams.get('status');
-  const status: OrderStatusFilter = raw !== null && isOrderStatus(raw) ? raw : 'ALL';
+  const raw = search.status;
+  const status: OrderStatusFilter = raw !== undefined && isOrderStatus(raw) ? raw : 'ALL';
 
   function setStatus(nextStatus: OrderStatusFilter): void {
-    const params = new URLSearchParams(searchParams.toString());
-    if (nextStatus === 'ALL') {
-      params.delete('status');
-    } else {
-      params.set('status', nextStatus);
-    }
-    params.delete('page');
-    const query = params.toString();
-    router.push(query === '' ? pathname : `${pathname}?${query}`);
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any -- generic across routes, same as useUrlPage's `strict: false` usage.
+    (navigate as (opts: any) => void)({
+      to: '.',
+      search: (prev: Record<string, unknown>) => ({ ...prev, status: nextStatus === 'ALL' ? undefined : nextStatus, page: undefined }),
+    });
   }
 
   return { status, setStatus };

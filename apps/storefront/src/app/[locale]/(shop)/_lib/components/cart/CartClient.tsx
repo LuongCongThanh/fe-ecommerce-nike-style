@@ -6,6 +6,7 @@ import Link from 'next/link';
 import { QueryState } from '@repo/shared/query-state';
 import { Button } from '@repo/ui/button';
 import { ShoppingBag } from 'lucide-react';
+import { useTranslations } from 'next-intl';
 
 import { CartSummary } from '@/app/[locale]/(shop)/_lib/components/cart/CartSummary';
 import { CartTable } from '@/app/[locale]/(shop)/_lib/components/cart/CartTable';
@@ -16,10 +17,18 @@ interface CartClientProps {
 }
 
 export function CartClient({ locale }: CartClientProps) {
+  const t = useTranslations('common');
   const { items, isLoading, isHydrated, isError } = useCart();
 
   return (
-    <QueryState isLoading={isLoading || !isHydrated} error={isError ? true : null}>
+    <QueryState
+      isLoading={isLoading || !isHydrated}
+      error={isError ? true : null}
+      loadingLabel={t('loading')}
+      errorTitle={t('errorTitle')}
+      errorFallbackDescription={t('errorDescription')}
+      retryLabel={t('retry')}
+    >
       {items.length === 0 ? (
         <div className="flex min-h-[60vh] flex-col items-center justify-center gap-6 rounded-xl border border-dashed p-8 text-center">
           <div className="bg-muted flex size-20 items-center justify-center rounded-full">

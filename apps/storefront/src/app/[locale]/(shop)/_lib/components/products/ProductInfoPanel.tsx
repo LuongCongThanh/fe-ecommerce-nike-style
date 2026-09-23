@@ -18,7 +18,7 @@ import { useAddToCart } from '@/app/[locale]/(shop)/_lib/hooks/products/useAddTo
 import { getProductPriceRange } from '@/app/[locale]/(shop)/_lib/utils/priceRange';
 import { SPRING_UI } from '@/shared/lib/motion';
 
-// Decision #59 / FE-ARCHITECTURE.md §4.1.1 — three.js only ever loads for a mounted PDP, never at a
+// Decision #59 / docs/FRONTEND-GUIDE.md §27 — three.js only ever loads for a mounted PDP, never at a
 // higher-level route/layout, and never during SSR (WebGL has no server-side renderer).
 const ProductViewer3D = dynamic(async () => import('@/app/[locale]/(shop)/_lib/components/products/ProductViewer3D'), {
   ssr: false,

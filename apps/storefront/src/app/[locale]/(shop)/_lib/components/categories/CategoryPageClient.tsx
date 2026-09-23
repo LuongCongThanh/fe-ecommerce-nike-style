@@ -3,6 +3,7 @@
 
 import { QueryState } from '@repo/shared/query-state';
 import { ChevronRight } from 'lucide-react';
+import { useTranslations } from 'next-intl';
 
 import { CategoryClient } from '@/app/[locale]/(shop)/_lib/components/categories/CategoryClient';
 import { FilterSidebar } from '@/app/[locale]/(shop)/_lib/components/categories/FilterSidebar';
@@ -19,11 +20,20 @@ interface CategoryPageClientProps {
  * catalog reads only intercept reliably in the browser. See Decision #87 (decision-log.md).
  */
 export function CategoryPageClient({ slug }: CategoryPageClientProps): React.JSX.Element {
+  const t = useTranslations('common');
   const { data: categories, isLoading, error, refetch } = useCategoryTree();
 
   return (
     <PageShell.Browse>
-      <QueryState isLoading={isLoading} error={error} onRetry={refetch}>
+      <QueryState
+        isLoading={isLoading}
+        error={error}
+        onRetry={refetch}
+        loadingLabel={t('loading')}
+        errorTitle={t('errorTitle')}
+        errorFallbackDescription={t('errorDescription')}
+        retryLabel={t('retry')}
+      >
         <CategoryPageContent slug={slug} categories={categories ?? []} />
       </QueryState>
     </PageShell.Browse>

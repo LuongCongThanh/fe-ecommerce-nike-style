@@ -44,6 +44,7 @@
   },
   "dependencies": {
     "@repo/schemas": "workspace:*",
+    "axios": "^1.20.0",
     "msw": "^2.15.0"
   },
   "devDependencies": {

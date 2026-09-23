@@ -1,5 +1,5 @@
 import { type VariantProps, cva } from 'class-variance-authority';
-import { Children, cloneElement, isValidElement, type ButtonHTMLAttributes, type ReactElement } from 'react';
+import { Children, cloneElement, isValidElement, type ButtonHTMLAttributes, type ReactElement, type Ref } from 'react';
 
 import { cn } from '../lib/cn';
 
@@ -39,6 +39,7 @@ const buttonVariants = cva(
 export interface ButtonProps extends ButtonHTMLAttributes<HTMLButtonElement>, VariantProps<typeof buttonVariants> {
   asChild?: boolean;
   loading?: boolean;
+  ref?: Ref<HTMLButtonElement>;
 }
 
 export function Button({
@@ -49,6 +50,7 @@ export function Button({
   loading = false,
   disabled,
   children,
+  ref,
   ...props
 }: ButtonProps) {
   const resolvedClassName = cn(buttonVariants({ variant, size }), className);
@@ -76,6 +78,7 @@ export function Button({
   return (
     <button
       {...props}
+      ref={ref}
       type={props.type === 'submit' ? 'submit' : props.type === 'reset' ? 'reset' : 'button'}
       data-slot="button"
       data-variant={variant}

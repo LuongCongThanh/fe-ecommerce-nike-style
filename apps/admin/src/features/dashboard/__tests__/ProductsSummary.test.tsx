@@ -1,12 +1,11 @@
 import { server } from '@repo/api-sdk/testing/msw-server';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { render, screen } from '@testing-library/react';
-import { NextIntlClientProvider } from 'next-intl';
 import { afterAll, afterEach, beforeAll, describe, expect, it } from 'vitest';
-
-import commonMessages from '@/lang/vi/common.json';
+import { I18nextProvider } from 'react-i18next';
 
 import { ProductsSummary } from '@/features/dashboard/ProductsSummary';
+import i18n from '@/i18n';
 
 beforeAll(() => {
   server.listen({ onUnhandledRequest: 'error' });
@@ -21,11 +20,11 @@ afterAll(() => {
 function renderWithQueryClient() {
   const queryClient = new QueryClient({ defaultOptions: { queries: { retry: false } } });
   return render(
-    <NextIntlClientProvider locale="vi" messages={{ common: commonMessages }}>
+    <I18nextProvider i18n={i18n}>
       <QueryClientProvider client={queryClient}>
         <ProductsSummary />
       </QueryClientProvider>
-    </NextIntlClientProvider>,
+    </I18nextProvider>,
   );
 }
 

@@ -1,91 +1,58 @@
-'use client';
+import { SidebarGroup, SidebarGroupLabel, SidebarMenu, SidebarMenuButton, SidebarMenuItem } from '@repo/ui/sidebar';
+import { AppShellLayout } from '@repo/ui/app-shell-layout';
+import { Link, useRouterState } from '@tanstack/react-router';
+import { useTranslation } from 'react-i18next';
 
-import { useState } from 'react';
-import Link from 'next/link';
-
-import { Button } from '@repo/ui/button';
-import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger } from '@repo/ui/sheet';
-import { Menu } from 'lucide-react';
-import { usePathname } from '@/i18n/navigation';
-
-import { useStaffAuth } from '@/core/session';
 import { NAV_ITEMS } from '@/features/shell/nav-items';
 
-function NavList({ pathname, onNavigate }: { readonly pathname: string; readonly onNavigate?: () => void }) {
-  const { hasPermission } = useStaffAuth();
-  const visibleItems = NAV_ITEMS.filter((item) => item.permission === undefined || hasPermission(item.permission));
+/** Shadcn-admin's Sidebar primitive replaces the old hand-rolled `<aside>`/Sheet shell — same
+ * `NAV_ITEMS`, now with cookie-persisted collapse state and an icon-rail collapsed mode for free. */
+function NavMenu({ pathname, onNavigate }: { readonly pathname: string; readonly onNavigate?: () => void }): React.JSX.Element {
+  const { t } = useTranslation('common');
 
   return (
-    <nav className="flex flex-col gap-1">
-      {visibleItems.map((item) => {
-        const isActive = pathname === item.href;
+    <SidebarGroup>
+      <SidebarGroupLabel>{t('nav.groupLabel')}</SidebarGroupLabel>
+      <SidebarMenu>
+        {NAV_ITEMS.map((item) => {
+          const isActive = pathname === item.href;
 
-        return (
-          <Link
-            key={item.href}
-            href={item.href}
-            onClick={onNavigate}
-            aria-current={isActive ? 'page' : undefined}
-            className={`flex items-center gap-3 rounded-lg px-3 py-2 text-sm font-medium transition-colors ${
-              isActive ? 'bg-accent text-accent-foreground' : 'text-muted-foreground hover:bg-accent/50 hover:text-foreground'
-            }`}
-          >
-            <item.icon className="size-4 shrink-0" />
-            {item.label}
-          </Link>
-        );
-      })}
-    </nav>
+          return (
+            <SidebarMenuItem key={item.href}>
+              <SidebarMenuButton asChild isActive={isActive} tooltip={t(`nav.${item.labelKey}`)}>
+                <Link to={item.href} onClick={onNavigate} aria-current={isActive ? 'page' : undefined}>
+                  <item.icon />
+                  <span>{t(`nav.${item.labelKey}`)}</span>
+                </Link>
+              </SidebarMenuButton>
+            </SidebarMenuItem>
+          );
+        })}
+      </SidebarMenu>
+    </SidebarGroup>
   );
 }
 
-export function AppShell({ children }: { readonly children: React.ReactNode }) {
-  const pathname = usePathname();
-  const [mobileOpen, setMobileOpen] = useState(false);
+export function AppShell({ children }: { readonly children: React.ReactNode }): React.JSX.Element {
+  const { t } = useTranslation('common');
+  const pathname = useRouterState({ select: (s) => s.location.pathname });
 
   return (
-    <div className="bg-background text-foreground flex min-h-screen">
-      <aside className="bg-card hidden w-60 shrink-0 border-r md:flex md:flex-col">
-        <div className="flex h-14 items-center border-b px-4">
-          <span className="text-base font-black tracking-tight">
+    <AppShellLayout
+      sidebarHeaderClassName="h-14"
+      headerClassName="bg-background/95 h-14 backdrop-blur-sm"
+      brand={
+        <span className="flex items-center gap-1 px-2 text-base font-black tracking-tight group-data-[collapsible=icon]:justify-center">
+          <span className="group-data-[collapsible=icon]:hidden">
             ANTIGRAVITY<span className="text-muted-foreground">.CMS</span>
           </span>
-        </div>
-        <div className="flex-1 overflow-y-auto p-3">
-          <NavList pathname={pathname} />
-        </div>
-      </aside>
-
-      <div className="flex min-w-0 flex-1 flex-col">
-        <header className="bg-background/95 sticky top-0 z-10 flex h-14 items-center gap-3 border-b px-4 backdrop-blur-sm">
-          <Sheet open={mobileOpen} onOpenChange={setMobileOpen}>
-            <SheetTrigger asChild>
-              <Button variant="ghost" size="icon" className="md:hidden" aria-label="Mở menu điều hướng">
-                <Menu className="size-5" />
-              </Button>
-            </SheetTrigger>
-            <SheetContent side="left" className="w-64 p-0">
-              <SheetHeader className="border-b p-4 text-left">
-                <SheetTitle className="text-base font-black tracking-tight">
-                  ANTIGRAVITY<span className="text-muted-foreground">.CMS</span>
-                </SheetTitle>
-              </SheetHeader>
-              <div className="flex-1 overflow-y-auto p-3">
-                <NavList
-                  pathname={pathname}
-                  onNavigate={() => {
-                    setMobileOpen(false);
-                  }}
-                />
-              </div>
-            </SheetContent>
-          </Sheet>
-
-          <span className="text-sm font-semibold">Nội dung</span>
-        </header>
-
-        <main className="min-w-0 flex-1 p-4 md:p-6">{children}</main>
-      </div>
-    </div>
+          <span className="hidden group-data-[collapsible=icon]:inline">A</span>
+        </span>
+      }
+      nav={<NavMenu pathname={pathname} />}
+      headerContent={<span className="text-sm font-semibold">{t('cmsLabel')}</span>}
+    >
+      {children}
+    </AppShellLayout>
   );
 }

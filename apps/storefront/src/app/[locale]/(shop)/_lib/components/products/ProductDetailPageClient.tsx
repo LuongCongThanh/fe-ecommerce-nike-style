@@ -8,6 +8,7 @@ import Link from 'next/link';
 import { QueryState } from '@repo/shared/query-state';
 import { motion, useReducedMotion } from 'framer-motion';
 import { ChevronRight } from 'lucide-react';
+import { useTranslations } from 'next-intl';
 
 import { SectionHeading } from '@/app/[locale]/(shop)/_lib/components/common/SectionHeading';
 import { PageShell } from '@/app/[locale]/(shop)/_lib/components/layout/PageShell';
@@ -27,12 +28,23 @@ interface ProductDetailPageClientProps {
 
 /** Client-driven for the same reason as `CategoryPageClient` — MSW only intercepts reliably in the browser (Decision #87). */
 export function ProductDetailPageClient({ slug, locale }: ProductDetailPageClientProps): React.JSX.Element {
+  const t = useTranslations('common');
+  const tProduct = useTranslations('product');
   const { data: product, isLoading, isError, error, refetch } = useProduct(slug);
   const { related } = useRelatedProducts(product?.categoryId, slug);
 
   return (
     <PageShell.Browse className="min-h-screen pb-24">
-      <QueryState isLoading={isLoading} error={isError ? error : null} onRetry={refetch} loadingFallback={<ProductDetailSkeleton />}>
+      <QueryState
+        isLoading={isLoading}
+        error={isError ? error : null}
+        onRetry={refetch}
+        loadingFallback={<ProductDetailSkeleton />}
+        loadingLabel={t('loading')}
+        errorTitle={tProduct('loadError')}
+        errorFallbackDescription={t('errorDescription')}
+        retryLabel={t('retry')}
+      >
         {product !== undefined ? (
           <ProductDetailContent product={product} locale={locale} related={related} />
         ) : (

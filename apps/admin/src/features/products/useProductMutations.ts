@@ -1,5 +1,3 @@
-'use client';
-
 import { createAdminProduct, deleteAdminProduct, updateAdminProduct } from '@repo/api-sdk/endpoints/admin-catalog';
 import type { ProductInput } from '@repo/schemas/catalog';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
