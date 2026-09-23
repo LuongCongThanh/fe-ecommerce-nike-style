@@ -5,22 +5,28 @@ import { QueryState } from '@repo/shared/query-state';
 import { Button } from '@repo/ui/button';
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '@repo/ui/form';
 import { Input } from '@repo/ui/input';
+import { useTranslations } from 'next-intl';
 
 import { useProfileForm } from '@/app/[locale]/(shop)/_lib/hooks/profile/useProfileForm';
 
 export function ProfileClient(): React.JSX.Element {
+  const t = useTranslations('common');
+  const tProfile = useTranslations('profile');
   const { form, onSubmit, isLoading, isError, refetch, isSaving } = useProfileForm();
 
   return (
     <QueryState
       isLoading={isLoading}
-      error={isError ? new Error('Không thể tải thông tin hồ sơ') : null}
+      error={isError ? new Error(tProfile('loadError')) : null}
       onRetry={() => {
         refetch().catch(() => {
           /* error state already surfaced via isError */
         });
       }}
-      errorTitle="Không thể tải thông tin hồ sơ"
+      loadingLabel={t('loading')}
+      errorTitle={tProfile('loadError')}
+      errorFallbackDescription={t('errorDescription')}
+      retryLabel={t('retry')}
     >
       <Form {...form}>
         <form onSubmit={form.handleSubmit(onSubmit)} className="bg-card space-y-5 rounded-xl border p-6">

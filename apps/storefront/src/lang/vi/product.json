@@ -6,5 +6,6 @@
   "lowStock": "Còn {count} sản phẩm",
   "price": "Giá",
   "category": "Danh mục",
-  "description": "Mô tả"
+  "description": "Mô tả",
+  "loadError": "Không thể tải sản phẩm"
 }

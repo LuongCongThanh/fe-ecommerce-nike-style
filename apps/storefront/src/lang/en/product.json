@@ -6,5 +6,6 @@
   "lowStock": "{count} left in stock",
   "price": "Price",
   "category": "Category",
-  "description": "Description"
+  "description": "Description",
+  "loadError": "Could not load products"
 }

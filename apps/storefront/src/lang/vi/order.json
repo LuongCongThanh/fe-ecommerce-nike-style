@@ -6,5 +6,7 @@
   "total": "Tổng tiền",
   "cancel": "Huỷ đơn",
   "success": "Đặt hàng thành công!",
-  "detail": "Chi tiết đơn hàng"
+  "detail": "Chi tiết đơn hàng",
+  "loadError": "Không thể tải đơn hàng",
+  "retryHint": "Vui lòng thử lại."
 }

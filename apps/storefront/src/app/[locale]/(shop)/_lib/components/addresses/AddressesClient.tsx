@@ -12,6 +12,7 @@ import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '
 import { Input } from '@repo/ui/input';
 import { Label } from '@repo/ui/label';
 import { Plus } from 'lucide-react';
+import { useTranslations } from 'next-intl';
 import { Controller } from 'react-hook-form';
 
 import { ConfirmDialog } from '@/app/[locale]/(shop)/_lib/components/common/ConfirmDialog';
@@ -219,19 +220,24 @@ function AddressCard({ address }: { readonly address: StorefrontAddress }) {
 }
 
 export function AddressesClient(): React.JSX.Element {
+  const t = useTranslations('common');
+  const tAddress = useTranslations('address');
   const { data: addresses, isLoading, isError, refetch } = useAddresses();
   const [isAdding, setIsAdding] = useState(false);
 
   return (
     <QueryState
       isLoading={isLoading}
-      error={isError ? new Error('Không thể tải danh sách địa chỉ') : null}
+      error={isError ? new Error(tAddress('loadError')) : null}
       onRetry={() => {
         refetch().catch(() => {
           /* error state already surfaced via isError */
         });
       }}
-      errorTitle="Không thể tải danh sách địa chỉ"
+      loadingLabel={t('loading')}
+      errorTitle={tAddress('loadError')}
+      errorFallbackDescription={t('errorDescription')}
+      retryLabel={t('retry')}
     >
       <div className="space-y-4">
         {addresses?.map((address) => (

@@ -7,6 +7,7 @@ import { usePathname, useRouter, useSearchParams } from 'next/navigation';
 import { QueryState } from '@repo/shared/query-state';
 import { cn } from '@repo/shared/utils';
 import { Button } from '@repo/ui/button';
+import { useTranslations } from 'next-intl';
 
 import { Pagination } from '@/app/[locale]/(shop)/_lib/components/common/Pagination';
 import { SectionHeading } from '@/app/[locale]/(shop)/_lib/components/common/SectionHeading';
@@ -15,6 +16,8 @@ import { CatalogGridSkeleton } from '@/app/[locale]/(shop)/_lib/components/produ
 import { useCatalogListing } from '@/app/[locale]/(shop)/_lib/hooks/products/useCatalogListing';
 
 export default function ProductsClient(): React.JSX.Element {
+  const t = useTranslations('common');
+  const tProduct = useTranslations('product');
   const { data, isLoading, isPlaceholderData, error, refetch, categorySlug: category, onPageChange } = useCatalogListing();
   const router = useRouter();
   const pathname = usePathname();
@@ -35,8 +38,11 @@ export default function ProductsClient(): React.JSX.Element {
         error={error}
         onRetry={refetch}
         loadingFallback={<CatalogGridSkeleton />}
-        errorTitle="Không thể tải sản phẩm"
-        errorDescription="Vui lòng thử lại sau."
+        loadingLabel={t('loading')}
+        errorTitle={tProduct('loadError')}
+        errorDescription={t('errorDescription')}
+        errorFallbackDescription={t('errorDescription')}
+        retryLabel={t('retry')}
       >
         {data !== undefined ? (
           <>

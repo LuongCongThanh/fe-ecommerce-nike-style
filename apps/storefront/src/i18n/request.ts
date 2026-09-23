@@ -3,7 +3,7 @@ import { getRequestConfig } from 'next-intl/server';
 import type { AbstractIntlMessages } from 'use-intl';
 
 // Danh sách các module dịch — mỗi module tương ứng một file JSON trong src/lang/{locale}/
-const modules = ['common', 'auth', 'product', 'cart', 'order', 'payment', 'home', 'checkout'] as const;
+const modules = ['common', 'auth', 'product', 'cart', 'order', 'payment', 'home', 'checkout', 'wishlist', 'profile', 'address'] as const;
 
 // Kiểu union của tên module, dùng để type-safe khi gọi useTranslations('module')
 export type MessageModule = (typeof modules)[number];

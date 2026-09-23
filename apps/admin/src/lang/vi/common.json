@@ -8,7 +8,9 @@
     "create": "Tạo",
     "creating": "Đang tạo...",
     "add": "Thêm",
-    "reload": "Tải lại"
+    "reload": "Tải lại",
+    "confirm": "Xác nhận",
+    "processing": "Đang xử lý..."
   },
   "loading": "Đang tải...",
   "confirmIrreversible": "Hành động này không thể hoàn tác.",
@@ -38,6 +40,8 @@
   "logout": "Đăng xuất",
   "notAvailableYet": "Chưa hỗ trợ",
   "languageSwitcher": "Ngôn ngữ",
+  "themeToggleToLight": "Chuyển sang giao diện sáng",
+  "themeToggleToDark": "Chuyển sang giao diện tối",
   "appsSwitcher": "Ứng dụng khác",
   "notifications": "Thông báo",
   "search": {

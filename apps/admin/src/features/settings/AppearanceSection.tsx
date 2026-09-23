@@ -11,6 +11,7 @@ export function AppearanceSection(): React.JSX.Element {
   const { resolvedTheme, setTheme } = useTheme();
   const activeLocale = i18n.language as Locale;
 
+  // Tên ngôn ngữ tự thân (autonym) — không dịch theo locale hiện tại, đây là ngoại lệ có chủ đích.
   const localeLabel: Record<Locale, string> = {
     vi: 'Tiếng Việt',
     en: 'English',

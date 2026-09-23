@@ -3,6 +3,7 @@ import { LOCALES, type Locale } from '@repo/i18n/locales';
 import { Check, Globe } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 
+// Tên ngôn ngữ tự thân (autonym) — không dịch theo locale hiện tại, đây là ngoại lệ có chủ đích.
 const LOCALE_LABEL: Record<Locale, string> = {
   vi: 'Tiếng Việt',
   en: 'English',

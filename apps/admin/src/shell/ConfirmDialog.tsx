@@ -2,6 +2,7 @@ import type { ReactNode } from 'react';
 
 import { Button } from '@repo/ui/button';
 import { Dialog, DialogClose, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from '@repo/ui/dialog';
+import { useTranslation } from 'react-i18next';
 
 interface ConfirmDialogProps {
   readonly trigger: ReactNode;
@@ -20,11 +21,13 @@ export function ConfirmDialog({
   trigger,
   title,
   description,
-  confirmLabel = 'Xác nhận',
-  cancelLabel = 'Huỷ',
+  confirmLabel,
+  cancelLabel,
   onConfirm,
   loading = false,
 }: ConfirmDialogProps): React.JSX.Element {
+  const { t } = useTranslation('common');
+
   return (
     <Dialog>
       <DialogTrigger asChild>{trigger}</DialogTrigger>
@@ -36,11 +39,11 @@ export function ConfirmDialog({
         <DialogFooter>
           <DialogClose asChild>
             <Button type="button" variant="outline">
-              {cancelLabel}
+              {cancelLabel ?? t('actions.cancel')}
             </Button>
           </DialogClose>
           <Button type="button" onClick={onConfirm} disabled={loading}>
-            {loading ? 'Đang xử lý...' : confirmLabel}
+            {loading ? t('actions.processing') : (confirmLabel ?? t('actions.confirm'))}
           </Button>
         </DialogFooter>
       </DialogContent>

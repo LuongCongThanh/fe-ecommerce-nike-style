@@ -3,7 +3,6 @@ import { registerAuthRuntimeAdapter } from '@repo/api-sdk/client/runtime';
 import { encodeAccessToken } from '@repo/api-sdk/mocks/auth-fixtures';
 import { server } from '@repo/api-sdk/testing/msw-server';
 import { screen } from '@testing-library/react';
-import { NextIntlClientProvider } from 'next-intl';
 import { afterAll, afterEach, beforeAll, describe, expect, it } from 'vitest';
 
 import { renderWithProviders } from '@/__tests__/helpers/render';
@@ -18,12 +17,10 @@ afterEach(() => {
 });
 afterAll(() => server.close());
 
+// `renderWithProviders` already wraps with a real-messages `NextIntlClientProvider` — needed since
+// OrdersClient reads both `useLocale()` and `useTranslations()`.
 function renderOrdersClient() {
-  return renderWithProviders(
-    <NextIntlClientProvider locale="vi" messages={{}}>
-      <OrdersClient />
-    </NextIntlClientProvider>,
-  );
+  return renderWithProviders(<OrdersClient />);
 }
 
 describe('OrdersClient — fetches client-side (issue #16, closing the #15 SSR-auth gap)', () => {
