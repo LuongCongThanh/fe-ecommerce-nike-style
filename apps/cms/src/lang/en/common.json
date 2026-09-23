@@ -2,5 +2,23 @@
   "dashboardTitle": "Overview",
   "dashboardSubtitle": "Content status and related product categories.",
   "statTotalProducts": "Total products",
-  "statTotalCategories": "Total categories"
+  "statTotalCategories": "Total categories",
+  "actions": {
+    "reload": "Reload"
+  },
+  "dashboard": {
+    "productsCardTitle": "Products",
+    "loadError": "Could not load the product list. Please try again.",
+    "empty": "No products yet."
+  },
+  "nav": {
+    "groupLabel": "Menu",
+    "dashboard": "Overview",
+    "posts": "Posts",
+    "pages": "Pages",
+    "taxonomy": "Content categories",
+    "media": "Media",
+    "settings": "Settings"
+  },
+  "cmsLabel": "Content"
 }

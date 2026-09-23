@@ -1,6 +1,5 @@
 import { useLocalStorage } from '@repo/shared/hooks/useLocalStorage';
-import { Label } from '@repo/ui/label';
-import { Switch } from '@repo/ui/switch';
+import { ToggleSettingsList } from '@repo/ui/toggle-settings-list';
 import { useTranslation } from 'react-i18next';
 
 interface NotificationPrefs {
@@ -17,36 +16,28 @@ export function NotificationsSection(): React.JSX.Element {
   const [prefs, setPrefs] = useLocalStorage<NotificationPrefs>('cms.notification-prefs', DEFAULT_PREFS);
 
   return (
-    <div className="max-w-md space-y-6">
-      <p className="text-muted-foreground text-sm">{t('notifications.description')}</p>
-
-      <div className="flex items-start justify-between gap-4 rounded-lg border p-4">
-        <div className="space-y-0.5">
-          <Label htmlFor="pref-content-published">{t('notifications.contentPublished')}</Label>
-          <p className="text-muted-foreground text-sm">{t('notifications.contentPublishedDescription')}</p>
-        </div>
-        <Switch
-          id="pref-content-published"
-          checked={prefs.contentPublished}
-          onCheckedChange={(checked) => {
+    <ToggleSettingsList
+      description={t('notifications.description')}
+      items={[
+        {
+          id: 'pref-content-published',
+          checked: prefs.contentPublished,
+          label: t('notifications.contentPublished'),
+          description: t('notifications.contentPublishedDescription'),
+          onCheckedChange: (checked) => {
             setPrefs((p) => ({ ...p, contentPublished: checked }));
-          }}
-        />
-      </div>
-
-      <div className="flex items-start justify-between gap-4 rounded-lg border p-4">
-        <div className="space-y-0.5">
-          <Label htmlFor="pref-media-uploaded">{t('notifications.mediaUploaded')}</Label>
-          <p className="text-muted-foreground text-sm">{t('notifications.mediaUploadedDescription')}</p>
-        </div>
-        <Switch
-          id="pref-media-uploaded"
-          checked={prefs.mediaUploaded}
-          onCheckedChange={(checked) => {
+          },
+        },
+        {
+          id: 'pref-media-uploaded',
+          checked: prefs.mediaUploaded,
+          label: t('notifications.mediaUploaded'),
+          description: t('notifications.mediaUploadedDescription'),
+          onCheckedChange: (checked) => {
             setPrefs((p) => ({ ...p, mediaUploaded: checked }));
-          }}
-        />
-      </div>
-    </div>
+          },
+        },
+      ]}
+    />
   );
 }

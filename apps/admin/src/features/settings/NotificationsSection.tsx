@@ -1,6 +1,5 @@
 import { useLocalStorage } from '@repo/shared/hooks/useLocalStorage';
-import { Label } from '@repo/ui/label';
-import { Switch } from '@repo/ui/switch';
+import { ToggleSettingsList } from '@repo/ui/toggle-settings-list';
 import { useTranslation } from 'react-i18next';
 
 interface NotificationPrefs {
@@ -17,36 +16,28 @@ export function NotificationsSection(): React.JSX.Element {
   const [prefs, setPrefs] = useLocalStorage<NotificationPrefs>('admin.notification-prefs', DEFAULT_PREFS);
 
   return (
-    <div className="max-w-md space-y-6">
-      <p className="text-muted-foreground text-sm">{t('notifications.description')}</p>
-
-      <div className="flex items-start justify-between gap-4 rounded-lg border p-4">
-        <div className="space-y-0.5">
-          <Label htmlFor="pref-order-updates">{t('notifications.orderUpdates')}</Label>
-          <p className="text-muted-foreground text-sm">{t('notifications.orderUpdatesDescription')}</p>
-        </div>
-        <Switch
-          id="pref-order-updates"
-          checked={prefs.orderUpdates}
-          onCheckedChange={(checked) => {
+    <ToggleSettingsList
+      description={t('notifications.description')}
+      items={[
+        {
+          id: 'pref-order-updates',
+          checked: prefs.orderUpdates,
+          label: t('notifications.orderUpdates'),
+          description: t('notifications.orderUpdatesDescription'),
+          onCheckedChange: (checked) => {
             setPrefs((p) => ({ ...p, orderUpdates: checked }));
-          }}
-        />
-      </div>
-
-      <div className="flex items-start justify-between gap-4 rounded-lg border p-4">
-        <div className="space-y-0.5">
-          <Label htmlFor="pref-low-stock">{t('notifications.lowStock')}</Label>
-          <p className="text-muted-foreground text-sm">{t('notifications.lowStockDescription')}</p>
-        </div>
-        <Switch
-          id="pref-low-stock"
-          checked={prefs.lowStock}
-          onCheckedChange={(checked) => {
+          },
+        },
+        {
+          id: 'pref-low-stock',
+          checked: prefs.lowStock,
+          label: t('notifications.lowStock'),
+          description: t('notifications.lowStockDescription'),
+          onCheckedChange: (checked) => {
             setPrefs((p) => ({ ...p, lowStock: checked }));
-          }}
-        />
-      </div>
-    </div>
+          },
+        },
+      ]}
+    />
   );
 }

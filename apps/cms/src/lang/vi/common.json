@@ -2,5 +2,23 @@
   "dashboardTitle": "Tổng quan",
   "dashboardSubtitle": "Trạng thái nội dung và danh mục sản phẩm liên quan.",
   "statTotalProducts": "Tổng sản phẩm",
-  "statTotalCategories": "Tổng danh mục"
+  "statTotalCategories": "Tổng danh mục",
+  "actions": {
+    "reload": "Tải lại"
+  },
+  "dashboard": {
+    "productsCardTitle": "Sản phẩm",
+    "loadError": "Không tải được danh sách sản phẩm. Vui lòng thử lại.",
+    "empty": "Chưa có sản phẩm nào."
+  },
+  "nav": {
+    "groupLabel": "Menu",
+    "dashboard": "Tổng quan",
+    "posts": "Bài viết",
+    "pages": "Trang",
+    "taxonomy": "Danh mục nội dung",
+    "media": "Media",
+    "settings": "Cài đặt"
+  },
+  "cmsLabel": "Nội dung"
 }

@@ -1,18 +1,5 @@
-import {
-  Sidebar,
-  SidebarContent,
-  SidebarFooter,
-  SidebarGroup,
-  SidebarGroupLabel,
-  SidebarHeader,
-  SidebarInset,
-  SidebarMenu,
-  SidebarMenuButton,
-  SidebarMenuItem,
-  SidebarProvider,
-  SidebarRail,
-  SidebarTrigger,
-} from '@repo/ui/sidebar';
+import { SidebarGroup, SidebarGroupLabel, SidebarMenu, SidebarMenuButton, SidebarMenuItem } from '@repo/ui/sidebar';
+import { AppShellLayout } from '@repo/ui/app-shell-layout';
 import { Link, useRouterState } from '@tanstack/react-router';
 import { useTranslation } from 'react-i18next';
 
@@ -60,27 +47,18 @@ export function AppShell({ children }: { readonly children: React.ReactNode }): 
   const pathname = useRouterState({ select: (s) => s.location.pathname });
 
   return (
-    <SidebarProvider>
-      <Sidebar collapsible="icon">
-        <SidebarHeader className="h-16 justify-center px-3">
-          <span className="text-brand-500 flex items-center gap-1 px-2 text-base font-black tracking-tight group-data-[collapsible=icon]:justify-center">
-            <span className="group-data-[collapsible=icon]:hidden">
-              ANTIGRAVITY<span className="text-muted-foreground">.ADMIN</span>
-            </span>
-            <span className="hidden group-data-[collapsible=icon]:inline">A</span>
+    <AppShellLayout
+      brand={
+        <span className="text-brand-500 flex items-center gap-1 px-2 text-base font-black tracking-tight group-data-[collapsible=icon]:justify-center">
+          <span className="group-data-[collapsible=icon]:hidden">
+            ANTIGRAVITY<span className="text-muted-foreground">.ADMIN</span>
           </span>
-        </SidebarHeader>
-        <SidebarContent>
-          <NavMenu pathname={pathname} />
-        </SidebarContent>
-        <SidebarFooter />
-        <SidebarRail />
-      </Sidebar>
-
-      <SidebarInset>
-        <header className="bg-background sticky top-0 z-(--z-index-sticky) flex h-16 items-center gap-3 border-b px-4">
-          <SidebarTrigger />
-
+          <span className="hidden group-data-[collapsible=icon]:inline">A</span>
+        </span>
+      }
+      nav={<NavMenu pathname={pathname} />}
+      headerContent={
+        <>
           <span className="hidden text-sm font-semibold md:inline">{t('adminLabel')}</span>
 
           <div className="hidden flex-1 justify-center sm:flex">
@@ -93,10 +71,10 @@ export function AppShell({ children }: { readonly children: React.ReactNode }): 
             <ThemeToggle />
             <UserMenu />
           </div>
-        </header>
-
-        <main className="min-w-0 flex-1 p-4 md:p-6">{children}</main>
-      </SidebarInset>
-    </SidebarProvider>
+        </>
+      }
+    >
+      {children}
+    </AppShellLayout>
   );
 }

@@ -3,15 +3,15 @@ import type { LucideIcon } from 'lucide-react';
 
 export interface NavItem {
   readonly href: string;
-  readonly label: string;
+  readonly labelKey: string;
   readonly icon: LucideIcon;
 }
 
 export const NAV_ITEMS: NavItem[] = [
-  { href: '/', label: 'Tổng quan', icon: LayoutDashboard },
-  { href: '/posts', label: 'Bài viết', icon: Newspaper },
-  { href: '/pages', label: 'Trang', icon: FileText },
-  { href: '/taxonomy', label: 'Danh mục nội dung', icon: FolderTree },
-  { href: '/media', label: 'Media', icon: Image },
-  { href: '/settings', label: 'Cài đặt', icon: Settings },
+  { href: '/', labelKey: 'dashboard', icon: LayoutDashboard },
+  { href: '/posts', labelKey: 'posts', icon: Newspaper },
+  { href: '/pages', labelKey: 'pages', icon: FileText },
+  { href: '/taxonomy', labelKey: 'taxonomy', icon: FolderTree },
+  { href: '/media', labelKey: 'media', icon: Image },
+  { href: '/settings', labelKey: 'settings', icon: Settings },
 ];

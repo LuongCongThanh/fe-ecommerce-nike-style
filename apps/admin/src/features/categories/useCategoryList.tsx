@@ -1,6 +1,7 @@
 import { useMemo, useState } from 'react';
 
 import type { Category } from '@repo/schemas/catalog';
+import { useCatalogProducts } from '@repo/shared/hooks/useCatalogProducts';
 import { Badge } from '@repo/ui/badge';
 import { Button } from '@repo/ui/button';
 import { Link } from '@tanstack/react-router';
@@ -10,7 +11,6 @@ import { useTranslation } from 'react-i18next';
 
 import { useAdminCategories } from '@/features/categories/useAdminCategories';
 import { useDeleteCategory } from '@/features/categories/useCategoryMutations';
-import { useCatalogProducts } from '@/features/products/useCatalogProducts';
 import { ConfirmDialog } from '@/shell/ConfirmDialog';
 import type { DataTablePagination } from '@/shell/DataTable';
 import { filterBySearch } from '@/shell/filterBySearch';

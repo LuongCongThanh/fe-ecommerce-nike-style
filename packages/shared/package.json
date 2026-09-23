@@ -18,7 +18,7 @@
     "./loading-spinner": "./src/components/LoadingSpinner.tsx",
     "./page-loader": "./src/components/PageLoader.tsx",
     "./query-state": "./src/components/QueryState.tsx",
-    "./hooks/useDebounce": "./src/hooks/useDebounce.ts",
+    "./hooks/useCatalogProducts": "./src/hooks/useCatalogProducts.ts",
     "./hooks/useLocalStorage": "./src/hooks/useLocalStorage.ts",
     "./hooks/useMediaQuery": "./src/hooks/useMediaQuery.ts",
     "./hooks/usePagination": "./src/hooks/usePagination.ts",
