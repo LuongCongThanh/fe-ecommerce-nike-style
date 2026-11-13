@@ -1,5 +1,5 @@
-import { Footer } from '@/app/[locale]/(shop)/_lib/components/layout/Footer';
-import { Header } from '@/app/[locale]/(shop)/_lib/components/layout/Header';
+import { Footer } from '@/features/storefront-shell/components/Footer';
+import { Header } from '@/features/storefront-shell/components/Header';
 
 interface ShopLayoutProps {
   readonly children: React.ReactNode;

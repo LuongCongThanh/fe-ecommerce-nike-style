@@ -27,8 +27,7 @@ description: Full testing strategy — layer selection, naming, Vitest/RTL/MSW/P
 ## Test naming and location
 
 - Unit/integration tests live near the source, per the workspace pattern:
-  - Storefront/packages currently use `src/**/__tests__/<subject>.test.ts(x)`.
-  - Admin/CMS accept `src/**/*.{test,spec}.ts(x)`; prefer `__tests__` next to the feature for consistency with the rest of the codebase.
+  - Put `*.test.ts(x)` beside the code or flow entry it exercises.
   - E2E tests only live at `e2e/<flow>.spec.ts`.
 - Name test files after the subject/flow, not `test1`, `misc`, `all-tests`.
 - `describe` names the unit/subject; `it`/`test` describes an observable behavior and condition: `rejects checkout when stock changed`, not `works correctly`.

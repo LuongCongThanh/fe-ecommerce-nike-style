@@ -1,6 +1,6 @@
 import { setRequestLocale } from 'next-intl/server';
 
-import { ProductDetailPageClient } from '@/app/[locale]/(shop)/_lib/components/products/ProductDetailPageClient';
+import { ProductDetailPageClient } from '@/features/catalog/product-detail/components/ProductDetailPageClient';
 
 interface ProductPageProps {
   readonly params: Promise<{

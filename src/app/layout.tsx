@@ -3,10 +3,10 @@ import { Be_Vietnam_Pro } from 'next/font/google';
 import type { Metadata, Viewport } from 'next';
 import { getLocale } from 'next-intl/server';
 
-import { Providers } from '@/app/providers';
-import { cn } from '@/shared/lib/utils';
+import { Providers } from '@/features/storefront-shell/providers/AppProviders';
+import { cn } from '@/shared/utils/utils';
 
-import '@/app/globals.css';
+import '@/styles/globals.css';
 
 const beVietnamPro = Be_Vietnam_Pro({
   subsets: ['latin', 'vietnamese'],

@@ -3,18 +3,17 @@
 ## Cấu trúc dự án
 
 - Repo này là một app Next.js độc lập ở root (App Router; phục vụ khách hàng; hỗ trợ `vi` và `en`); không còn Turborepo/pnpm workspace.
-- Code ứng dụng nằm trong `src/`: `src/components/ui` (UI primitive), `src/lib/api` (client, endpoints, mock MSW), `src/lib/schemas` (Zod transport contract), `src/i18n`, `src/shared`.
-- `apps/admin`, `apps/cms`, `packages/*` là code legacy còn trên đĩa đến cleanup slice; không thuộc build/lint/typecheck ở root và root không được import từ đó.
-
-- Frontend phát triển mock-first; backend production là repository NestJS riêng.
+- `src/app` giữ các entry point Next.js. Code màn hình và nghiệp vụ nằm trong `src/features`, UI và tiện ích dùng xuyên nghiệp vụ nằm trong `src/shared`. HTTP và hợp đồng nằm trong `src/lib/api` và `src/lib/schemas`.
+- Đặt file `*.test.ts(x)` cạnh mã hoặc điểm vào được kiểm thử. Vitest setup nằm ở `src/testing/setup.ts`.
+- Catalog đọc API thật từ `be-demo`. MSW hỗ trợ các luồng storefront đang chờ API tương ứng.
 - Không import source backend hoặc gọi API trực tiếp ngoài `src/lib/api`.
 
 ## Nguồn sự thật
 
 - `README.md`: phạm vi sản phẩm, kiến trúc, môi trường và quy ước repository.
 - `CONTRIBUTING.md`: branch, commit, pull request, hook và CI.
-- `docs/FRONTEND-GUIDE.md`: hướng dẫn triển khai frontend.
-- `docs/nike-ui-ux-analysis.md`, `design.md` và `vocabulary.md`: định hướng UI.
+- `docs/nike-ui-ux-analysis.md` và `design.md`: định hướng UI.
+- `docs/plan/storefront-restructure-plan.md`: thứ tự chuyển sang API thật và ranh giới feature.
 - `docs/adr/`: các quyết định kiến trúc đã được chấp nhận và có trên branch này.
 
 - Không dựa vào đường dẫn tài liệu trước khi xác nhận nó tồn tại trong checkout hiện tại.
@@ -42,16 +41,16 @@ pnpm build
 
 - Chạy kiểm tra hẹp trước, sau đó gate cấp root tương ứng với phạm vi thay đổi.
 - Chỉ chạy `pnpm test:e2e` khi thay đổi browser flow hoặc hạ tầng E2E.
-- Không sửa thủ công file sinh tự động như `apps/*/src/routeTree.gen.ts`.
+- Không sửa thủ công file sinh tự động như `src/lib/api/generated/openapi.ts`.
 
 ## Ranh giới triển khai
 
 - Giữ đúng chiều phụ thuộc: route/layout của app -> feature -> UI hoặc utility dùng chung -> API SDK và schema.
-- Dùng `@/*` cho import nội bộ app, ví dụ `@/components/ui/Button`.
+- Dùng `@/*` cho import nội bộ app, ví dụ `@/shared/ui/Button`.
 - Không dùng parent-relative import xuyên module, deep import vào file private của module khác hoặc tạo barrel `index.ts` mới.
 - Dùng TanStack Query cho server state, Zustand cho shared client state, React Hook Form cho form và URL cho filter/sort/pagination có thể chia sẻ.
 - Guard xác thực phía frontend chỉ phục vụ UX; backend phải chịu trách nhiệm enforce authorization.
-- Storefront hỗ trợ hai ngôn ngữ. UI vận hành của Admin và CMS mặc định dùng tiếng Việt.
+- Storefront hỗ trợ hai ngôn ngữ.
 - Giữ thay đổi theo vertical slice có thể kiểm thử và bổ sung test gần nhất có giá trị.
 
 - Convention chi tiết nằm trong `.claude/rules/` và được nạp theo đường dẫn.

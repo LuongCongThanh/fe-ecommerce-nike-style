@@ -1,21 +1,57 @@
-## Summary
+# 🏷️ Type
 
-<!-- What changed, in 1-3 bullet points. -->
+- [ ] ✨ Feature
+- [ ] 🐛 Bug
+- [ ] ♻️ Refactor
+- [ ] ⚡ Perf
+- [ ] 🧪 Test
+- [ ] 🧹 Chore
+- [ ] 📚 Docs
 
--
+## 📌 Summary
 
-## Test plan
+**Làm gì:** <!-- Điền nội dung hoặc ghi Không -->
 
-<!-- How this was verified: commands run, checks passed, manual steps. -->
+**Vì sao:** <!-- Điền nội dung hoặc ghi Không -->
 
--
+**Giải pháp:** <!-- Điền nội dung hoặc ghi Không -->
 
-## Related
+**Kết quả:** <!-- Điền nội dung hoặc ghi Không -->
 
-<!-- Refs #<issue-number>, or "None". -->
+**Module:** <!-- Điền nội dung hoặc ghi Không -->
 
-Refs #
+**📋 Task:** <!-- Điền nội dung hoặc ghi Không -->
 
----
+## 📋 Changes
 
-- [ ] Commit, PR và comment không chứa tên AI/model/agent/assistant hoặc AI attribution dưới bất kỳ hình thức nào (xem `CONTRIBUTING.md`).
+- <!-- Gom thay đổi theo hành vi -->
+
+## 🔌 API / Migration / Cấu hình
+
+- **Endpoint:** <!-- Điền nội dung hoặc ghi Không -->
+- **Migration:** <!-- Điền nội dung hoặc ghi Không -->
+- **Biến môi trường, npm script:** <!-- Điền nội dung hoặc ghi Không -->
+
+## 🧪 Cách kiểm
+
+- **Tự động:** <!-- Điền nội dung hoặc ghi Không -->
+- **Kiểm tay:** <!-- Điền nội dung hoặc ghi Không -->
+
+## ⚠️ Gap và lưu ý
+
+- **Chưa làm:** <!-- Điền nội dung hoặc ghi Không -->
+- **Gap / rủi ro:** <!-- Điền nội dung hoặc ghi Không -->
+- **Quyết định tạm:** <!-- Điền nội dung hoặc ghi Không -->
+- **Ticket mới:** <!-- Điền nội dung hoặc ghi Không -->
+- **Reviewer cần chú ý:** <!-- Điền nội dung hoặc ghi Không -->
+- **Sau khi merge:** <!-- Điền nội dung hoặc ghi Không -->
+
+## ✅ Checklist
+
+- [ ] Đã cập nhật tài liệu và kiểm thử liên quan.
+- [ ] CI xanh trước khi merge.
+- [ ] Kiểm tra trình duyệt với backend thật nếu cần cho lần phát hành.
+
+## 💬 Notes
+
+<!-- Ghi liên kết hoặc lưu ý bổ sung -->

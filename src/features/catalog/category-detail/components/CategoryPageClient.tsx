@@ -1,0 +1,87 @@
+// Hallmark redesign · design-system: design.md · scope: app page (functional, no enrichment)
+'use client';
+
+import { ChevronRight } from 'lucide-react';
+import { useTranslations } from 'next-intl';
+
+import { CategoryClient } from '@/features/catalog/category-detail/components/CategoryClient';
+import { FilterSidebar } from '@/features/catalog/components/FilterSidebar';
+import { useCategoryTree } from '@/features/catalog/queries/useCategoryTree';
+import { PageShell } from '@/features/storefront-shell/components/PageShell';
+import type { CategoryEntry } from '@/lib/api/models/catalog';
+import { QueryState } from '@/shared/ui/QueryState';
+
+interface CategoryPageClientProps {
+  readonly slug: string;
+}
+
+/** Client-driven (Decision #87); the Category tree and products come from the API. */
+export function CategoryPageClient({ slug }: CategoryPageClientProps): React.JSX.Element {
+  const t = useTranslations('common');
+  const { data: categories, isLoading, error, refetch } = useCategoryTree();
+
+  return (
+    <PageShell.Browse>
+      <QueryState
+        isLoading={isLoading}
+        error={error}
+        onRetry={refetch}
+        loadingLabel={t('loading')}
+        errorTitle={t('errorTitle')}
+        errorFallbackDescription={t('errorDescription')}
+        retryLabel={t('retry')}
+      >
+        <CategoryPageContent slug={slug} categories={categories?.flat ?? []} />
+      </QueryState>
+    </PageShell.Browse>
+  );
+}
+
+function CategoryPageContent({ slug, categories }: { readonly slug: string; readonly categories: readonly CategoryEntry[] }): React.JSX.Element {
+  const category = categories.find((c) => c.slug === slug) ?? null;
+
+  if (category === null) {
+    return (
+      <div className="flex min-h-100 flex-col items-center justify-center text-center">
+        <h1 className="text-2xl font-bold">Không tìm thấy danh mục</h1>
+        <p className="text-muted-foreground mt-2">Danh mục bạn tìm không tồn tại.</p>
+      </div>
+    );
+  }
+
+  const parent = category.parentId !== null ? (categories.find((c) => c.id === category.parentId) ?? null) : null;
+
+  return (
+    <>
+      <nav className="text-muted-foreground mb-8 flex items-center gap-1.5 text-sm">
+        <span>Trang chủ</span>
+        <ChevronRight className="size-3.5" />
+        <span>Danh mục</span>
+        {parent !== null ? (
+          <>
+            <ChevronRight className="size-3.5" />
+            <span>{parent.name}</span>
+          </>
+        ) : null}
+        <ChevronRight className="size-3.5" />
+        <span className="text-foreground line-clamp-1 font-medium">{category.name}</span>
+      </nav>
+
+      <header className="mb-10">
+        <h1 className="text-3xl font-bold tracking-tight text-balance sm:text-4xl">{category.name}</h1>
+      </header>
+
+      <div className="flex flex-col gap-8 lg:flex-row lg:gap-10">
+        {/* Sidebar */}
+        <div className="w-full lg:w-64 lg:shrink-0">
+          <FilterSidebar activeCategorySlug={slug} />
+        </div>
+
+        {/* Content */}
+        <div className="flex-1">
+          <CategoryClient categorySlug={slug} />
+        </div>
+      </div>
+    </>
+  );
+}

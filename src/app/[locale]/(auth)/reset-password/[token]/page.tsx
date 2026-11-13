@@ -3,8 +3,8 @@ import { redirect } from 'next/navigation';
 
 import { setRequestLocale } from 'next-intl/server';
 
-import { ResetPasswordForm } from '@/app/[locale]/(auth)/_lib/components/ResetPasswordForm';
-import { isValidResetPasswordRequest } from '@/app/[locale]/(auth)/_lib/schemas/auth';
+import { ResetPasswordForm } from '@/features/auth/reset-password/components/ResetPasswordForm';
+import { isValidResetPasswordRequest } from '@/features/auth/schemas/auth';
 
 interface ResetPasswordPageProps {
   readonly params: Promise<{ locale: string; token: string }>;

@@ -1,7 +1,5 @@
 # Standalone Next.js app at the repo root (slice 0 of the three-repo restructure).
-# The legacy apps/admin, apps/cms and packages/* stay on disk until the cleanup slice but are
-# deliberately NOT workspace members: `pnpm install` / `pnpm build` only see the root app.
-packages: []
+# pnpm project settings for the single root package.
 
 allowBuilds:
   '@parcel/watcher': false

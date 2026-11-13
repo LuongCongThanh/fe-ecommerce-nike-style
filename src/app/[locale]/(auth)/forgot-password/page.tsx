@@ -1,7 +1,7 @@
 // Hallmark redesign · design-system: design.md · scope: app page (functional, no enrichment)
 import { setRequestLocale } from 'next-intl/server';
 
-import { ForgotPasswordForm } from '@/app/[locale]/(auth)/_lib/components/ForgotPasswordForm';
+import { ForgotPasswordForm } from '@/features/auth/forgot-password/components/ForgotPasswordForm';
 
 interface ForgotPasswordPageProps {
   readonly params: Promise<{ locale: string }>;

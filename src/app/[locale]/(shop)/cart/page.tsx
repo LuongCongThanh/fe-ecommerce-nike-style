@@ -1,8 +1,8 @@
 // Hallmark redesign · design-system: design.md · scope: app page (functional, no enrichment)
 import { setRequestLocale } from 'next-intl/server';
 
-import { CartClient } from '@/app/[locale]/(shop)/_lib/components/cart/CartClient';
-import { PageShell } from '@/app/[locale]/(shop)/_lib/components/layout/PageShell';
+import { CartClient } from '@/features/cart/components/CartClient';
+import { PageShell } from '@/features/storefront-shell/components/PageShell';
 
 interface CartPageProps {
   readonly params: Promise<{ locale: string }>;

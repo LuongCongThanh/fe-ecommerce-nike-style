@@ -8,7 +8,7 @@ const withAnalyzer = withBundleAnalyzer({
 });
 
 const withSerwist = withSerwistInit({
-  swSrc: 'src/app/sw.ts',
+  swSrc: 'src/pwa/sw.ts',
   swDest: 'public/sw.js',
   disable: process.env.NODE_ENV === 'development',
   register: true,

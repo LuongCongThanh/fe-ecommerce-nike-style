@@ -3,7 +3,7 @@ import { notFound } from 'next/navigation';
 import { NextIntlClientProvider } from 'next-intl';
 import { setRequestLocale } from 'next-intl/server';
 
-import { Providers } from '@/app/providers';
+import { Providers } from '@/features/storefront-shell/providers/AppProviders';
 
 const locales = ['vi', 'en'];
 

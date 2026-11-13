@@ -1,7 +1,6 @@
 # Frontend Guide
 
-> Tài liệu Frontend duy nhất cho `storefront`, `admin`, `cms` trong Turborepo.
-> Mục tiêu: dev đọc nhanh, biết chạy project, đặt code ở đâu, dùng package nào, test gì và khi nào được coi là DONE.
+> Tài liệu tham khảo về kiến trúc Turborepo trước khi tách repo. Hướng dẫn hiện hành nằm trong [README](../README.md), [AGENTS](../AGENTS.md) và [kế hoạch Storefront](plan/storefront-restructure-plan.md).
 
 ---
 

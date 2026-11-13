@@ -1,6 +1,6 @@
 // Hallmark redesign · design-system: design.md · scope: app page (functional, no enrichment)
-import { AddressesClient } from '@/app/[locale]/(shop)/_lib/components/addresses/AddressesClient';
-import { PageShell } from '@/app/[locale]/(shop)/_lib/components/layout/PageShell';
+import { AddressesClient } from '@/features/account/addresses/components/AddressesClient';
+import { PageShell } from '@/features/storefront-shell/components/PageShell';
 
 export default function AddressesPage(): React.JSX.Element {
   return (
