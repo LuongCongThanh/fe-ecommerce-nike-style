@@ -5,10 +5,7 @@ import { Mail, Phone } from 'lucide-react';
 const UTILITY_GROUPS = [
   {
     heading: 'Mua sắm',
-    links: [
-      { href: '/products', label: 'Tất cả sản phẩm' },
-      { href: '/products?category=sale', label: 'Flash Sale' },
-    ],
+    links: [{ href: '/products', label: 'Tất cả sản phẩm' }],
   },
   {
     heading: 'Tài khoản',

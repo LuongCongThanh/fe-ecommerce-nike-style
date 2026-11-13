@@ -8,17 +8,14 @@ import { CategoryClient } from '@/app/[locale]/(shop)/_lib/components/categories
 import { FilterSidebar } from '@/app/[locale]/(shop)/_lib/components/categories/FilterSidebar';
 import { PageShell } from '@/app/[locale]/(shop)/_lib/components/layout/PageShell';
 import { useCategoryTree } from '@/app/[locale]/(shop)/_lib/hooks/categories/useCategoryTree';
+import type { CategoryEntry } from '@/lib/api/models/catalog';
 import { QueryState } from '@/shared/components/QueryState';
 
 interface CategoryPageClientProps {
   readonly slug: string;
 }
 
-/**
- * Client-driven (not server-rendered) on purpose: Next.js App Router patches global `fetch` for its
- * own caching, which bypasses MSW's Node interceptor for server-component `fetch` calls — mocked
- * catalog reads only intercept reliably in the browser. See Decision #87 (decision-log.md).
- */
+/** Client-driven (Decision #87); the Category tree and products come from the API. */
 export function CategoryPageClient({ slug }: CategoryPageClientProps): React.JSX.Element {
   const t = useTranslations('common');
   const { data: categories, isLoading, error, refetch } = useCategoryTree();
@@ -34,19 +31,13 @@ export function CategoryPageClient({ slug }: CategoryPageClientProps): React.JSX
         errorFallbackDescription={t('errorDescription')}
         retryLabel={t('retry')}
       >
-        <CategoryPageContent slug={slug} categories={categories ?? []} />
+        <CategoryPageContent slug={slug} categories={categories?.flat ?? []} />
       </QueryState>
     </PageShell.Browse>
   );
 }
 
-function CategoryPageContent({
-  slug,
-  categories,
-}: {
-  readonly slug: string;
-  readonly categories: NonNullable<ReturnType<typeof useCategoryTree>['data']>;
-}): React.JSX.Element {
+function CategoryPageContent({ slug, categories }: { readonly slug: string; readonly categories: readonly CategoryEntry[] }): React.JSX.Element {
   const category = categories.find((c) => c.slug === slug) ?? null;
 
   if (category === null) {

@@ -74,9 +74,6 @@ export function SectionHero(): React.JSX.Element {
                 <ArrowUpRight className="size-4" />
               </Link>
             </Button>
-            <Button asChild size="lg" variant="outline" className="bg-background/70 h-12 rounded-full px-7 text-sm font-semibold backdrop-blur">
-              <Link href={`/${locale}/products?flash-sale=true`}>{t('ctaSale')}</Link>
-            </Button>
           </motion.div>
 
           <motion.div variants={variants} transition={childTransition} className="border-border mt-8 border-t pt-5">

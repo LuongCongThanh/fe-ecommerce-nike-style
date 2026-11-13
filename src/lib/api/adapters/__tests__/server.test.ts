@@ -14,7 +14,7 @@ describe('enableApiMockingServer', () => {
 
     await enableApiMockingServer();
     try {
-      const response = await fetch('http://localhost:3000/api/catalog/products');
+      const response = await fetch('http://localhost:3000/api/catalog/skus');
       expect(response.ok).toBe(true);
     } finally {
       server.close();

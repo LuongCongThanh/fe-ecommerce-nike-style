@@ -1,6 +1,9 @@
-import type { Gender } from '@/lib/schemas/catalog/catalog';
+import type { Gender as ApiGender } from '@/lib/api/models/catalog';
 
-/** Matches the sort options `FilterSidebar` renders and `packages/api-sdk` `getProducts` accepts. */
+/** URL spelling of a Gender (`?gender=men`); `toApiGender` maps it to the API value. */
+export type Gender = 'men' | 'women' | 'kids' | 'unisex';
+
+/** Matches the sort options `FilterSidebar` renders and the API's `sort` accepts. */
 export type CatalogSort = 'newest' | 'price_asc' | 'price_desc';
 
 export interface CatalogFilters {
@@ -74,6 +77,34 @@ export function clearCatalogFilters(searchParams: URLSearchParams): URLSearchPar
   next.delete('sortBy');
   next.delete('minPrice');
   next.delete('maxPrice');
+  next.delete('size');
+  next.delete('color');
   next.delete('page');
+  return next;
+}
+
+export function toApiGender(gender: Gender): ApiGender {
+  return gender.toUpperCase() as ApiGender;
+}
+
+/** Size and color codes picked in the PLP filter, repeated in the URL (`?size=M&size=L&color=WHT`). */
+export interface CatalogOptionFilters {
+  readonly size: readonly string[];
+  readonly color: readonly string[];
+}
+
+export type CatalogOptionKey = keyof CatalogOptionFilters;
+
+export function parseCatalogOptionFilters(searchParams: URLSearchParams): CatalogOptionFilters {
+  return { size: searchParams.getAll('size'), color: searchParams.getAll('color') };
+}
+
+/** Adds or removes one size/color code and resets pagination to page 1. */
+export function withToggledCatalogOption(searchParams: URLSearchParams, key: CatalogOptionKey, code: string): URLSearchParams {
+  const next = new URLSearchParams(searchParams.toString());
+  const current = next.getAll(key);
+  next.delete(key);
+  for (const value of current.includes(code) ? current.filter((c) => c !== code) : [...current, code]) next.append(key, value);
+  next.set('page', '1');
   return next;
 }

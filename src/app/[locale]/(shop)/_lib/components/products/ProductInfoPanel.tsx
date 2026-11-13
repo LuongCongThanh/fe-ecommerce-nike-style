@@ -8,15 +8,14 @@ import dynamic from 'next/dynamic';
 import Link from 'next/link';
 
 import { AnimatePresence, motion, useReducedMotion } from 'framer-motion';
-import { ArrowLeft, RotateCcw, ShieldCheck, Star, Truck } from 'lucide-react';
+import { ArrowLeft, RotateCcw, ShieldCheck, Truck } from 'lucide-react';
 
 import { AddToCartSection } from '@/app/[locale]/(shop)/_lib/components/products/AddToCartSection';
 import { MobileBuyBar } from '@/app/[locale]/(shop)/_lib/components/products/MobileBuyBar';
-import { useAddToCart } from '@/app/[locale]/(shop)/_lib/hooks/products/useAddToCart';
-import { getProductPriceRange } from '@/app/[locale]/(shop)/_lib/utils/priceRange';
-import type { Product } from '@/lib/schemas/catalog/catalog';
+import type { VariantSelectionState } from '@/app/[locale]/(shop)/_lib/hooks/products/useVariantSelection';
+import type { ProductDetail } from '@/lib/api/models/catalog';
 import { SPRING_UI } from '@/shared/lib/motion';
-import { cn, formatCurrency } from '@/shared/lib/utils';
+import { formatCurrency } from '@/shared/lib/utils';
 
 // Decision #59 / docs/FRONTEND-GUIDE.md §27 — three.js only ever loads for a mounted PDP, never at a
 // higher-level route/layout, and never during SSR (WebGL has no server-side renderer).
@@ -32,45 +31,33 @@ const TRUST_BADGES = [
 ] as const;
 
 interface ProductInfoPanelProps {
-  readonly product: Product;
+  readonly product: ProductDetail;
   readonly locale: string;
+  readonly selection: VariantSelectionState;
 }
 
-export function ProductInfoPanel({ product, locale }: ProductInfoPanelProps) {
+/** Ordering opens in slice C; until then the buy actions render disabled. */
+const NO_OP = (): void => undefined;
+
+export function ProductInfoPanel({ product, locale, selection }: ProductInfoPanelProps) {
   const prefersReducedMotion = useReducedMotion() ?? false;
-  const cartState = useAddToCart(product);
-  const { selectedSku, selection } = cartState;
-  const { min: priceFrom, isRange } = getProductPriceRange(product);
-  const displayPrice = selectedSku?.price ?? priceFrom;
-  const isPriceApproximate = selectedSku === null && isRange;
-  const canAdd = selectedSku !== null && selectedSku.stock > 0;
+  const { selectedVariant, selectedColor, minPrice, isRange } = selection;
+  const displayPrice = selectedVariant?.price ?? minPrice;
+  const isPriceApproximate = selectedVariant === null && isRange;
   const buyBlockRef = useRef<HTMLDivElement>(null);
 
   return (
     // `self-start` + `sticky` keeps the decision (price, variants, CTA) in view while the reader
     // scrolls the gallery — the two columns stop being one long page and start being two panes.
     <div className="flex flex-col gap-6 lg:sticky lg:top-24 lg:self-start">
-      {/* Name + rating */}
+      {/* Name — reviews arrive with slice R. */}
       <div>
         {/* Large type wants negative tracking; body copy below stays near 0 (§15). */}
         <h1 className="text-3xl leading-tight font-bold tracking-tight wrap-anywhere sm:text-4xl">{product.name}</h1>
-
-        <div className="mt-3 flex items-center gap-3">
-          <div className="flex items-center gap-1">
-            {Array.from({ length: 5 }).map((_, i) => (
-              <Star
-                key={`star-${i.toString()}`}
-                className={cn('size-4', i < Math.floor(product.rating) ? 'fill-amber-400 text-amber-400' : 'text-neutral-300')}
-              />
-            ))}
-          </div>
-          <span className="text-sm font-semibold">{product.rating.toFixed(1)}</span>
-          <span className="text-muted-foreground text-sm">({product.reviewCount.toString()} đánh giá)</span>
-        </div>
       </div>
 
       {/* 3D viewer — lazy, synced to the selected Color */}
-      <ProductViewer3D color={selection.color ?? null} />
+      <ProductViewer3D color={selectedColor?.hex ?? null} />
 
       {/* Price — resolving a SKU is a real state change, so the number moves rather than blinking. */}
       <div>
@@ -89,14 +76,12 @@ export function ProductInfoPanel({ product, locale }: ProductInfoPanelProps) {
             </motion.span>
           </AnimatePresence>
         </div>
-        {selectedSku === null && (product.skus.length > 1 || isRange) ? (
-          <p className="text-muted-foreground mt-1.5 text-xs">Chọn phân loại để xem giá và tồn kho chính xác</p>
-        ) : null}
+        {selectedVariant === null && isRange ? <p className="text-muted-foreground mt-1.5 text-xs">Chọn màu và size để xem giá chính xác</p> : null}
       </div>
 
       {/* Variant + Qty + Cart */}
       <div ref={buyBlockRef}>
-        <AddToCartSection {...cartState} />
+        <AddToCartSection {...selection} />
       </div>
 
       {/* Trust badges */}
@@ -127,9 +112,9 @@ export function ProductInfoPanel({ product, locale }: ProductInfoPanelProps) {
         productName={product.name}
         price={displayPrice}
         isPriceApproximate={isPriceApproximate}
-        canAdd={canAdd}
-        onAdd={cartState.add}
-        onBuyNow={cartState.buyNow}
+        canAdd={false}
+        onAdd={NO_OP}
+        onBuyNow={NO_OP}
         anchorRef={buyBlockRef}
       />
     </div>

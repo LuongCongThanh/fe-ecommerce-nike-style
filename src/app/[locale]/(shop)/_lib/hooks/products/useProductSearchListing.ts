@@ -11,8 +11,8 @@ export function useProductSearchListing() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const query = searchParams.get('q') ?? '';
-  const pageParam = searchParams.get('page');
-  const page = pageParam !== null ? Math.max(1, Number(pageParam)) : 1;
+  const pageParam = Number(searchParams.get('page'));
+  const page = Number.isInteger(pageParam) && pageParam > 0 ? pageParam : 1;
 
   const result = useProductSearch(query, page);
 

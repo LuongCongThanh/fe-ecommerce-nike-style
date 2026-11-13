@@ -2,17 +2,21 @@
 
 import { useQuery } from '@tanstack/react-query';
 
-import { getProduct } from '@/lib/api/endpoints/catalog';
-import { ensureApiMockingReady } from '@/shared/lib/api-mocking';
+import { catalogKeys } from '@/app/[locale]/(shop)/_lib/hooks/products/catalogKeys';
+import { ApiError } from '@/lib/api/client/api-error';
+import { getProductBySlug } from '@/lib/api/endpoints/catalog';
 
-/** PDP product lookup — backed by `packages/api-sdk` (MSW mock today). Client-driven per Decision #87. */
+/** PDP lookup by slug. `null` means the API has no ACTIVE Product with that slug (404). */
 export function useProduct(slug: string) {
   return useQuery({
-    queryKey: ['catalog', 'product', slug],
+    queryKey: catalogKeys.product(slug),
     queryFn: async () => {
-      await ensureApiMockingReady();
-      const { data } = await getProduct(slug);
-      return data;
+      try {
+        return await getProductBySlug(slug);
+      } catch (error) {
+        if (error instanceof ApiError && error.status === 404) return null;
+        throw error;
+      }
     },
   });
 }

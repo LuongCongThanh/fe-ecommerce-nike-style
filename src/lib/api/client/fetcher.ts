@@ -4,7 +4,7 @@ import { ApiError } from '@/lib/api/client/api-error';
 import { type AuthRuntimeAdapter, clearAuthRuntimeAdapter, getAuthRuntimeAdapter } from '@/lib/api/client/runtime';
 
 export type RequestMethod = 'GET' | 'POST' | 'PUT' | 'PATCH' | 'DELETE';
-export type QueryParamValue = string | number | boolean | null | undefined;
+export type QueryParamValue = string | number | boolean | null | undefined | readonly string[];
 
 export interface ErrorEnvelope {
   message?: string;
@@ -46,6 +46,11 @@ function withQueryString(url: string, params?: Record<string, QueryParamValue>):
   for (const [key, value] of Object.entries(params)) {
     if (value === undefined || value === null) continue;
 
+    // Arrays repeat the key (`?size=M&size=L`), the form the API's list filters expect.
+    if (Array.isArray(value)) {
+      for (const item of value as readonly string[]) searchParams.append(key, item);
+      continue;
+    }
     searchParams.set(key, String(value));
   }
 

@@ -30,6 +30,7 @@ const eslintConfig = [
       '.husky/**',
       'public/**',
       'scripts/**',
+      'src/lib/api/generated/**',
       'src/**/*.d.ts',
       '.skills/**',
       '.claude/**',

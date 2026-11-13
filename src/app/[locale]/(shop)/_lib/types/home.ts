@@ -5,14 +5,6 @@ export interface HomeBenefit {
   description: string;
 }
 
-export interface HomeCategory {
-  slug: string;
-  name: string;
-  image: string;
-  productCount: number;
-  description?: string;
-}
-
 export interface HomeHero {
   badge: string;
   title: string;
@@ -21,18 +13,6 @@ export interface HomeHero {
   ctaSale: string;
   image: string;
   trustItems: string[];
-}
-
-export interface HomeProductHighlight {
-  id: number;
-  name: string;
-  slug: string;
-  price: number;
-  salePrice: number | null;
-  images: string[];
-  rating: number;
-  reviewCount: number;
-  badges: Array<'best-seller' | 'new' | 'sale' | 'low-stock'>;
 }
 
 export interface HomeTestimonial {

@@ -18,6 +18,10 @@ const withSerwist = withSerwistInit({
 
 const withNextIntl = createNextIntlPlugin('./src/i18n/request.ts');
 
+// The browser calls the API same-origin through this proxy, so be-demo needs no CORS entry for the
+// storefront and its cookies stay first-party. Server-only setting; see .env.example.
+const API_ORIGIN = process.env.API_ORIGIN ?? 'http://localhost:8080';
+
 const nextConfig: NextConfig = {
   turbopack: {},
   serverExternalPackages: ['msw', '@mswjs/interceptors'],
@@ -31,7 +35,11 @@ const nextConfig: NextConfig = {
       { protocol: 'https', hostname: 'i.pravatar.cc' },
       { protocol: 'https', hostname: 'images.unsplash.com' },
       { protocol: 'https', hostname: 'placehold.co' },
+      { protocol: 'https', hostname: 'res.cloudinary.com' },
     ],
+  },
+  async rewrites() {
+    return [{ source: '/api/v1/:path*', destination: `${API_ORIGIN}/api/v1/:path*` }];
   },
   async headers() {
     return [

@@ -8,9 +8,14 @@ import { motion, useReducedMotion } from 'framer-motion';
 import { SPRING_UI } from '@/shared/lib/motion';
 import { cn } from '@/shared/lib/utils';
 
+export interface VariantOption {
+  readonly value: string;
+  readonly label: string;
+}
+
 interface VariantSelectorProps {
-  readonly colors: string[];
-  readonly sizes: string[];
+  readonly colors: readonly VariantOption[];
+  readonly sizes: readonly VariantOption[];
   readonly selectedColor?: string;
   readonly selectedSize?: string;
   readonly onSelectColor: (color: string) => void;
@@ -20,10 +25,10 @@ interface VariantSelectorProps {
 interface VariantAxisProps {
   readonly title: string;
   readonly layoutId: string;
-  readonly options: string[];
+  readonly options: readonly VariantOption[];
   readonly selected: string | undefined;
   readonly onSelect: (value: string) => void;
-  readonly textCase: 'capitalize' | 'uppercase';
+  readonly textCase: 'normal' | 'uppercase';
   readonly prefersReducedMotion: boolean;
 }
 
@@ -32,34 +37,38 @@ function VariantAxis({ title, layoutId, options, selected, onSelect, textCase, p
     <div className="space-y-3">
       <div className="flex items-center justify-between">
         <h3 className="text-muted-foreground text-sm font-bold tracking-wider uppercase">{title}</h3>
-        {selected !== undefined && <span className={cn('text-sm font-semibold', textCase)}>{selected}</span>}
+        {selected !== undefined && (
+          <span className={cn('text-sm font-semibold', textCase === 'uppercase' && 'uppercase')}>
+            {options.find((o) => o.value === selected)?.label}
+          </span>
+        )}
       </div>
       <div className="flex flex-wrap gap-2">
         {options.map((option) => (
           <motion.button
-            key={option}
+            key={option.value}
             type="button"
             onClick={() => {
-              onSelect(option);
+              onSelect(option.value);
             }}
             // Highlight lands on pointer-down, not on release — waiting for click feels dead.
             whileTap={{ scale: 0.95 }}
             transition={SPRING_UI}
-            aria-pressed={selected === option}
+            aria-pressed={selected === option.value}
             className={cn(
               'focus-visible:ring-ring relative flex min-h-11 min-w-13 items-center justify-center rounded-full border px-4 py-2.5 text-sm font-medium transition-colors duration-150 focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:outline-none',
-              textCase,
-              selected === option ? 'border-transparent' : 'hover:border-foreground active:bg-muted',
+              textCase === 'uppercase' && 'uppercase',
+              selected === option.value ? 'border-transparent' : 'hover:border-foreground active:bg-muted',
             )}
           >
-            {selected === option && (
+            {selected === option.value && (
               <motion.span
                 layoutId={layoutId}
                 transition={prefersReducedMotion ? { duration: 0 } : SPRING_UI}
                 className="border-foreground pointer-events-none absolute inset-0 rounded-full border-2"
               />
             )}
-            <span className="relative">{option}</span>
+            <span className="relative">{option.label}</span>
           </motion.button>
         ))}
       </div>
@@ -67,7 +76,7 @@ function VariantAxis({ title, layoutId, options, selected, onSelect, textCase, p
   );
 }
 
-/** Two independent Variant axes (Color, Size) — a Product may have either, both, or neither (glossary.md — Variant is `{Color?, Size?}`). */
+/** The two Variant axes, color and size (BR-CAT-02). */
 export function VariantSelector({
   colors,
   sizes,
@@ -89,7 +98,7 @@ export function VariantSelector({
           options={colors}
           selected={selectedColor}
           onSelect={onSelectColor}
-          textCase="capitalize"
+          textCase="normal"
           prefersReducedMotion={prefersReducedMotion}
         />
       )}

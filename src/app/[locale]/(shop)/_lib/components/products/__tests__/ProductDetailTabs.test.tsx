@@ -6,8 +6,6 @@ import { ProductDetailTabs } from '@/app/[locale]/(shop)/_lib/components/product
 
 const baseProps = {
   description: 'Áo thun cotton thoáng mát.',
-  rating: 4.5,
-  reviewCount: 10,
 };
 
 describe('ProductDetailTabs', () => {
@@ -21,17 +19,5 @@ describe('ProductDetailTabs', () => {
     render(<ProductDetailTabs {...baseProps} />);
     await user.click(screen.getByText('Thông số'));
     expect(screen.getByText('Việt Nam')).toBeInTheDocument();
-  });
-
-  it('reveals reviews after activating the reviews section', async () => {
-    const user = userEvent.setup();
-    render(<ProductDetailTabs {...baseProps} />);
-    await user.click(screen.getByText(/Đánh giá/));
-    expect(screen.getByText('Nguyễn Văn A')).toBeInTheDocument();
-  });
-
-  it('shows the review count in the reviews section trigger', () => {
-    render(<ProductDetailTabs {...baseProps} />);
-    expect(screen.getByText(/Đánh giá \(10\)/)).toBeInTheDocument();
   });
 });
