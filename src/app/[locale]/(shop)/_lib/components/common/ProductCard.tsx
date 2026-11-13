@@ -35,6 +35,8 @@ interface ProductCardProps {
   readonly badgeLabels?: Partial<BadgeLabels>;
   /** Product's SKUs diverge in price — render "Từ {price}" instead of a single price (glossary.md — SKU). */
   readonly isPriceRange?: boolean;
+  /** Off for API catalog cards until the wishlist moves to the API (slice C); it still keys mock products. */
+  readonly showWishlist?: boolean;
 }
 
 const BADGE_VARIANTS: Record<BadgeValue, 'warning' | 'info' | 'brand'> = {
@@ -64,9 +66,10 @@ export function ProductCard({
   locale,
   badgeLabels,
   isPriceRange = false,
+  showWishlist = true,
 }: ProductCardProps): React.JSX.Element {
   const { hasDiscount, finalPrice: displayPrice } = resolveDiscount(price, salePrice);
-  const coverImage = images[0] ?? '/placeholder-product.png';
+  const coverImage = images[0] ?? '/images/products/placeholder.jpg';
   const resolvedBadgeLabels = { ...DEFAULT_BADGE_LABELS, ...badgeLabels };
   const { isWishlisted, toggle: toggleWishlist } = useIsWishlisted(String(id));
 
@@ -129,21 +132,23 @@ export function ProductCard({
       </Link>
 
       {/* Favouriting is a playful confirm — the one place a little overshoot is earned. */}
-      <motion.button
-        type="button"
-        aria-label={isWishlisted ? 'Bỏ khỏi yêu thích' : 'Thêm vào yêu thích'}
-        aria-pressed={isWishlisted}
-        onClick={() => {
-          toggleWishlist();
-        }}
-        whileTap={{ scale: 0.88 }}
-        transition={SPRING_UI}
-        className="bg-background/80 hover:bg-background focus-visible:ring-ring absolute top-3 right-3 flex size-10 items-center justify-center rounded-full backdrop-blur-sm transition-colors focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:outline-none"
-      >
-        <motion.span key={String(isWishlisted)} initial={{ scale: 0.7 }} animate={{ scale: 1 }} transition={SPRING_MOMENTUM} className="flex">
-          <Heart className={isWishlisted ? 'text-accent-600 fill-accent-600 size-4' : 'text-foreground size-4'} />
-        </motion.span>
-      </motion.button>
+      {showWishlist ? (
+        <motion.button
+          type="button"
+          aria-label={isWishlisted ? 'Bỏ khỏi yêu thích' : 'Thêm vào yêu thích'}
+          aria-pressed={isWishlisted}
+          onClick={() => {
+            toggleWishlist();
+          }}
+          whileTap={{ scale: 0.88 }}
+          transition={SPRING_UI}
+          className="bg-background/80 hover:bg-background focus-visible:ring-ring absolute top-3 right-3 flex size-10 items-center justify-center rounded-full backdrop-blur-sm transition-colors focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:outline-none"
+        >
+          <motion.span key={String(isWishlisted)} initial={{ scale: 0.7 }} animate={{ scale: 1 }} transition={SPRING_MOMENTUM} className="flex">
+            <Heart className={isWishlisted ? 'text-accent-600 fill-accent-600 size-4' : 'text-foreground size-4'} />
+          </motion.span>
+        </motion.button>
+      ) : null}
     </div>
   );
 }

@@ -3,7 +3,7 @@
 import { useRouter, useSearchParams } from 'next/navigation';
 
 import { useProducts } from '@/app/[locale]/(shop)/_lib/hooks/products/useProducts';
-import { parseCatalogFilters, withCatalogPage } from '@/app/[locale]/(shop)/_lib/utils/catalogUrlState';
+import { parseCatalogFilters, parseCatalogOptionFilters, withCatalogPage } from '@/app/[locale]/(shop)/_lib/utils/catalogUrlState';
 
 /**
  * PLP/Category listing: parses filters out of the URL, fetches the page, and exposes `onPageChange` as
@@ -15,8 +15,9 @@ export function useCatalogListing(categorySlugOverride?: string) {
   const searchParams = useSearchParams();
   const categorySlug = categorySlugOverride ?? searchParams.get('category') ?? undefined;
   const filters = parseCatalogFilters(searchParams);
+  const options = parseCatalogOptionFilters(searchParams);
 
-  const query = useProducts(categorySlug, filters);
+  const query = useProducts(categorySlug, filters, options);
 
   function onPageChange(page: number): void {
     router.push(`?${withCatalogPage(searchParams, page).toString()}`);

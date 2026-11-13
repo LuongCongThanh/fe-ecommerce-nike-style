@@ -6,8 +6,7 @@ import Link from 'next/link';
 import { AnimatePresence, motion } from 'framer-motion';
 import { ChevronDown, ChevronRight } from 'lucide-react';
 
-import type { NavCategory } from '@/app/[locale]/(shop)/_lib/data/nav-categories';
-import { NAV_CATEGORIES } from '@/app/[locale]/(shop)/_lib/data/nav-categories';
+import { useCategoryTree } from '@/app/[locale]/(shop)/_lib/hooks/categories/useCategoryTree';
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/Popover';
 
 // Apple Design pass · springs + instant feedback + materials (safe-mode: no new gesture code)
@@ -18,7 +17,10 @@ interface DesktopMegaMenuProps {
 
 export function DesktopMegaMenu({ locale }: DesktopMegaMenuProps) {
   const [isOpen, setIsOpen] = useState(false);
-  const [activeCategory, setActiveCategory] = useState<NavCategory>(NAV_CATEGORIES[0]);
+  const { data } = useCategoryTree();
+  const roots = data?.tree ?? [];
+  const [activeId, setActiveId] = useState<string | undefined>(undefined);
+  const activeCategory = roots.find((c) => c.id === activeId) ?? roots[0];
   const timeoutRef = useRef<NodeJS.Timeout | null>(null);
 
   const openMenu = () => {
@@ -34,6 +36,8 @@ export function DesktopMegaMenu({ locale }: DesktopMegaMenuProps) {
     }, 150); // slight delay to prevent accidental closing
   };
 
+  if (activeCategory === undefined) return null;
+
   return (
     // openMenu/closeMenu also drive focus/blur (not just hover): PopoverContent renders through a
     // portal, but React dispatches focus/blur/mouse events along the *component* tree, so they still
@@ -47,7 +51,7 @@ export function DesktopMegaMenu({ locale }: DesktopMegaMenuProps) {
             type="button"
             className="text-muted-foreground hover:text-foreground active:scale-0.97 flex items-center gap-1.5 rounded-lg px-3 py-2 text-sm font-medium transition-[color,transform] active:duration-100"
           >
-            Categories
+            Danh mục
             <ChevronDown className={`size-3.5 transition-transform duration-300 ease-out ${isOpen ? 'text-foreground rotate-180' : ''}`} />
           </button>
         </PopoverTrigger>
@@ -64,26 +68,23 @@ export function DesktopMegaMenu({ locale }: DesktopMegaMenuProps) {
             {/* Left Column: Categories */}
             <div className="bg-muted/50 w-50 shrink-0 border-r py-3">
               <ul className="relative flex flex-col px-2">
-                {NAV_CATEGORIES.map((cat) => {
-                  const isActive = activeCategory.slug === cat.slug;
+                {roots.map((cat) => {
+                  const isActive = activeCategory.id === cat.id;
                   return (
                     <li key={cat.slug} className="relative">
                       <button
                         type="button"
                         onMouseEnter={() => {
-                          setActiveCategory(cat);
+                          setActiveId(cat.id);
                         }}
                         onFocus={() => {
-                          setActiveCategory(cat);
+                          setActiveId(cat.id);
                         }}
                         className={`active:scale-0.97 relative z-10 flex w-full items-center justify-between rounded-lg px-3 py-2.5 text-sm font-medium transition-[color,transform] active:duration-100 ${
                           isActive ? 'text-foreground' : 'text-muted-foreground hover:text-foreground'
                         }`}
                       >
-                        <span className="flex items-center gap-2.5">
-                          <cat.icon className="size-4" />
-                          {cat.name}
-                        </span>
+                        <span className="flex items-center gap-2.5">{cat.name}</span>
                         <ChevronRight className={`size-3.5 transition-opacity ${isActive ? 'opacity-100' : 'opacity-0'}`} />
                       </button>
                       {isActive ? (
@@ -112,10 +113,7 @@ export function DesktopMegaMenu({ locale }: DesktopMegaMenuProps) {
                   className="flex h-full flex-col"
                 >
                   <div className="mb-6 flex items-center justify-between">
-                    <h3 className="text-foreground flex items-center gap-2 text-lg font-bold">
-                      <activeCategory.icon className="size-4.5" />
-                      {activeCategory.name}
-                    </h3>
+                    <h3 className="text-foreground flex items-center gap-2 text-lg font-bold">{activeCategory.name}</h3>
                     <Link
                       href={`/${locale}/categories/${activeCategory.slug}`}
                       onClick={() => {
@@ -123,13 +121,12 @@ export function DesktopMegaMenu({ locale }: DesktopMegaMenuProps) {
                       }}
                       className="group text-muted-foreground hover:text-foreground flex items-center gap-1 text-xs font-semibold tracking-wide transition-colors"
                     >
-                      <span>View all</span>
-                      <span className="bg-muted rounded-full px-1.5 py-0.5 text-[10px]">{activeCategory.productCount}</span>
+                      <span>Xem tất cả</span>
                     </Link>
                   </div>
 
                   <ul className="grid grid-cols-2 gap-x-4 gap-y-3">
-                    {activeCategory.sub.map((sub, i) => (
+                    {activeCategory.children.map((sub, i) => (
                       <motion.li
                         key={sub.slug}
                         initial={{ opacity: 0, y: 5 }}
@@ -152,30 +149,6 @@ export function DesktopMegaMenu({ locale }: DesktopMegaMenuProps) {
                       </motion.li>
                     ))}
                   </ul>
-
-                  {/* Promotional Banner for specific categories */}
-                  {activeCategory.slug === 'sale' && (
-                    <motion.div
-                      initial={{ opacity: 0, y: 10 }}
-                      animate={{ opacity: 1, y: 0 }}
-                      transition={{ delay: 0.2, duration: 0.3 }}
-                      className="bg-brand-50 relative mt-auto overflow-hidden rounded-xl p-4"
-                    >
-                      <div className="relative z-10">
-                        <p className="text-brand-700 text-sm font-bold tracking-wider uppercase">Flash Sale</p>
-                        <p className="text-brand-700 mt-1 text-lg leading-tight font-black">Up to 70% off</p>
-                        <Link
-                          href={`/${locale}/categories/sale`}
-                          onClick={() => {
-                            setIsOpen(false);
-                          }}
-                          className="bg-brand-600 hover:bg-brand-500 active:scale-0.97 mt-3 inline-flex items-center gap-1 rounded-md px-3 py-1.5 text-xs font-semibold text-white transition-[color,background-color,transform] active:duration-100"
-                        >
-                          Shop now <ChevronRight className="size-3" />
-                        </Link>
-                      </div>
-                    </motion.div>
-                  )}
                 </motion.div>
               </AnimatePresence>
             </div>

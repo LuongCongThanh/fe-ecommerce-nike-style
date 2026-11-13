@@ -4,7 +4,7 @@ import { useEffect, useState } from 'react';
 import Link from 'next/link';
 
 import { motion, useMotionValue, useReducedMotion, useSpring, useTransform } from 'framer-motion';
-import { Flame, Heart, LogOut, Search, ShoppingCart, User, X } from 'lucide-react';
+import { Heart, LogOut, Search, ShoppingCart, User, X } from 'lucide-react';
 import { useLocale, useTranslations } from 'next-intl';
 
 import { CartDrawer } from '@/app/[locale]/(shop)/_lib/components/cart/CartDrawer';
@@ -122,14 +122,7 @@ export function Header() {
             </Link>
 
             <DesktopMegaMenu locale={locale} />
-
-            <Link
-              href={`/${locale}/categories/sale`}
-              className="text-brand-600 hover:text-brand-500 flex items-center gap-1.5 rounded-lg px-3 py-2 text-sm font-bold transition-colors"
-            >
-              <Flame className="size-4" />
-              Flash Sale
-            </Link>
+            {/* Flash Sale link returns with SalePrice (slice B2). */}
           </nav>
         </div>
 

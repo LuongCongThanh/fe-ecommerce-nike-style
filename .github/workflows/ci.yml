@@ -24,6 +24,21 @@ jobs:
       - run: pnpm run lint
       - run: pnpm run format:check
 
+  openapi-contract:
+    name: OpenAPI contract
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: pnpm/action-setup@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 24
+          cache: pnpm
+      - run: pnpm install --frozen-lockfile
+      # The committed types must match the contract tag pinned in scripts/gen-api.mjs.
+      - run: pnpm gen:api
+      - run: git diff --exit-code src/lib/api/generated
+
   typecheck:
     name: Typecheck
     runs-on: ubuntu-latest

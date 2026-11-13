@@ -149,6 +149,8 @@ Các boundary quan trọng:
 
 Trong mock mode, browser/server adapter của `@repo/api-sdk` khởi động MSW và intercept request. Khi tắt mock mode, cùng API SDK sẽ gọi endpoint thật.
 
+Catalog (trang chủ, danh sách, danh mục, tìm kiếm, chi tiết Sản phẩm) luôn đọc API thật từ slice B1, kể cả khi bật mock mode. Next.js proxy `/api/v1/*` sang `API_ORIGIN` (mặc định `http://localhost:8080`), nên trình duyệt gọi cùng origin, không cần CORS. Type của API sinh từ hợp đồng OpenAPI của be-demo bằng `pnpm gen:api` vào `src/lib/api/generated/openapi.ts`. Tag hợp đồng được pin trong `scripts/gen-api.mjs`, và CI báo lỗi khi file đã commit lệch với tag đó. Giỏ hàng, wishlist, đăng nhập và đơn hàng vẫn chạy MSW tới slice C.
+
 Kiến trúc production mục tiêu dùng same-origin API proxy:
 
 ```text

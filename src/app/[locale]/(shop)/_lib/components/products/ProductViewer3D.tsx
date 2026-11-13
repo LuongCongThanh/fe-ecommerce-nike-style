@@ -3,10 +3,8 @@
 import { OrbitControls, RoundedBox } from '@react-three/drei';
 import { Canvas } from '@react-three/fiber';
 
-import { getVariantColorHex } from '@/app/[locale]/(shop)/_lib/utils/variantColor';
-
 interface ProductViewer3DProps {
-  /** Currently selected Variant's Color — `null` when the Product has no Color axis (glossary.md — Variant). */
+  /** Hex of the selected Color; `null` before one is picked. */
   readonly color: string | null;
 }
 
@@ -21,7 +19,7 @@ interface ProductViewer3DProps {
  * an offline visitor would otherwise sit in the Suspense fallback forever.
  */
 export default function ProductViewer3D({ color }: ProductViewer3DProps): React.JSX.Element {
-  const hex = getVariantColorHex(color);
+  const hex = color ?? '#9a9a9a';
 
   return (
     <div className="bg-muted aspect-square w-full overflow-hidden rounded-xl" data-testid="product-viewer-3d">

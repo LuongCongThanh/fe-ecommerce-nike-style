@@ -5,11 +5,13 @@ import { useLocale } from 'next-intl';
 
 import { CategoryNav } from '@/app/[locale]/(shop)/_lib/components/categories/CategoryNav';
 import { useCatalogFilterControls } from '@/app/[locale]/(shop)/_lib/hooks/categories/useCatalogFilterControls';
+import { useCatalogOptions } from '@/app/[locale]/(shop)/_lib/hooks/categories/useCatalogOptions';
 import { useCategoryTree } from '@/app/[locale]/(shop)/_lib/hooks/categories/useCategoryTree';
+import type { Gender } from '@/app/[locale]/(shop)/_lib/utils/catalogUrlState';
 import { Button } from '@/components/ui/Button';
 import { Input } from '@/components/ui/Input';
 import { Select, SelectContent, SelectGroup, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/Select';
-import type { Gender } from '@/lib/schemas/catalog/catalog';
+import { cn } from '@/shared/lib/utils';
 
 const GENDER_LABELS: Record<Gender, string> = {
   men: 'Nam',
@@ -26,14 +28,15 @@ interface FilterSidebarProps {
 export function FilterSidebar({ activeCategorySlug }: FilterSidebarProps = {}): React.JSX.Element {
   const locale = useLocale();
   const { data: categories } = useCategoryTree();
-  const { filters, applyFilter, submitPriceRange, clearFilters, isPending } = useCatalogFilterControls();
+  const { sizes, colors } = useCatalogOptions();
+  const { filters, options, applyFilter, toggleOption, submitPriceRange, clearFilters, isPending } = useCatalogFilterControls();
 
   return (
     // Translucent material rather than an opaque slab: content reads *through* the floating filter
     // panel as it scrolls under, and reduced-transparency users get the solid card back (§12/§14).
     <aside className="bg-card supports-[backdrop-filter]:bg-card/80 space-y-8 rounded-xl border p-5 backdrop-blur-xl backdrop-saturate-150 motion-reduce:backdrop-blur-none">
-      {categories !== undefined && categories.length > 0 ? (
-        <CategoryNav categories={categories} locale={locale} activeSlug={activeCategorySlug} />
+      {categories !== undefined && categories.tree.length > 0 ? (
+        <CategoryNav categories={categories.tree} locale={locale} activeSlug={activeCategorySlug} />
       ) : null}
 
       {/* Gender */}
@@ -60,6 +63,66 @@ export function FilterSidebar({ activeCategorySlug }: FilterSidebarProps = {}): 
           </SelectContent>
         </Select>
       </div>
+
+      {/* Size — several may be picked; a Product matches when one active Variant has any of them. */}
+      {sizes.length > 0 ? (
+        <div className="space-y-3 border-t pt-6">
+          <h3 className="text-muted-foreground text-sm font-bold tracking-wider uppercase">Kích thước</h3>
+          <div className="flex flex-wrap gap-2">
+            {sizes.map((size) => {
+              const isOn = options.size.includes(size.code);
+              return (
+                <button
+                  key={size.id}
+                  type="button"
+                  aria-pressed={isOn}
+                  disabled={isPending}
+                  onClick={() => {
+                    toggleOption('size', size.code);
+                  }}
+                  className={cn(
+                    'focus-visible:ring-ring min-h-10 min-w-11 rounded-full border px-3 text-sm font-medium transition-colors focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:outline-none',
+                    isOn ? 'border-foreground bg-foreground text-background' : 'hover:border-foreground',
+                  )}
+                >
+                  {size.name}
+                </button>
+              );
+            })}
+          </div>
+        </div>
+      ) : null}
+
+      {/* Color */}
+      {colors.length > 0 ? (
+        <div className="space-y-3 border-t pt-6">
+          <h3 className="text-muted-foreground text-sm font-bold tracking-wider uppercase">Màu sắc</h3>
+          <div className="flex flex-wrap gap-2">
+            {colors.map((color) => {
+              const isOn = options.color.includes(color.code);
+              return (
+                <button
+                  key={color.id}
+                  type="button"
+                  aria-pressed={isOn}
+                  aria-label={color.name}
+                  title={color.name}
+                  disabled={isPending}
+                  onClick={() => {
+                    toggleOption('color', color.code);
+                  }}
+                  className={cn(
+                    'focus-visible:ring-ring flex size-10 items-center justify-center rounded-full border-2 transition-colors focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:outline-none',
+                    isOn ? 'border-foreground' : 'hover:border-foreground/50 border-transparent',
+                  )}
+                >
+                  <span className="size-7 rounded-full border border-black/10" style={{ backgroundColor: color.hex }} />
+                </button>
+              );
+            })}
+          </div>
+        </div>
+      ) : null}
 
       {/* Sorting */}
       <div className="space-y-3 border-t pt-6">

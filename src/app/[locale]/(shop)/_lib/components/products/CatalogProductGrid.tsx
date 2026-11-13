@@ -6,12 +6,11 @@ import { motion, useReducedMotion } from 'framer-motion';
 import { useLocale } from 'next-intl';
 
 import { ProductCard } from '@/app/[locale]/(shop)/_lib/components/common/ProductCard';
-import { getProductPriceRange } from '@/app/[locale]/(shop)/_lib/utils/priceRange';
-import type { Product } from '@/lib/schemas/catalog/catalog';
+import type { ProductSummary } from '@/lib/api/models/catalog';
 import { SPRING_MOVE } from '@/shared/lib/motion';
 
 interface CatalogProductGridProps {
-  readonly products: readonly Product[];
+  readonly products: readonly ProductSummary[];
   /** Rendered under the empty-state message — e.g. a "clear filters" button when the caller knows
    * an active filter narrowed the result set to zero (UI/UX audit finding, PLP § 3). Omit for
    * contexts with no filters to clear (search results, PDP related-products). */
@@ -22,7 +21,7 @@ interface CatalogProductGridProps {
 const MAX_STAGGERED_CARDS = 8;
 const STAGGER_STEP_SECONDS = 0.035;
 
-/** PLP/Category grid for the canonical catalog Product (SKU-priced) — see `ProductGrid` for the legacy PDP-related-products grid. */
+/** PLP, Category, Search and related-products grid; a card shows the lowest active Variant price. */
 export function CatalogProductGrid({ products, emptyStateAction }: CatalogProductGridProps): React.JSX.Element {
   const locale = useLocale();
   const prefersReducedMotion = useReducedMotion() ?? false;
@@ -39,7 +38,6 @@ export function CatalogProductGrid({ products, emptyStateAction }: CatalogProduc
   return (
     <div className="grid grid-cols-2 gap-x-4 gap-y-8 sm:grid-cols-3 lg:grid-cols-4 lg:gap-x-6">
       {products.map((product, index) => {
-        const { min, isRange } = getProductPriceRange(product);
         return (
           <motion.div
             key={product.id}
@@ -54,10 +52,11 @@ export function CatalogProductGrid({ products, emptyStateAction }: CatalogProduc
               id={product.id}
               name={product.name}
               slug={product.slug}
-              price={min}
-              images={product.images}
+              price={product.minPrice}
+              images={product.imageUrl === null ? [] : [product.imageUrl]}
               locale={locale}
-              isPriceRange={isRange}
+              isPriceRange={product.minPrice !== product.maxPrice}
+              showWishlist={false}
             />
           </motion.div>
         );

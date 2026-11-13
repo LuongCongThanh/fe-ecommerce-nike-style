@@ -5,10 +5,17 @@ import { useRouter, useSearchParams } from 'next/navigation';
 
 import type { SyntheticEvent } from 'react';
 
-import { clearCatalogFilters, parseCatalogFilters, withCatalogFilter } from '@/app/[locale]/(shop)/_lib/utils/catalogUrlState';
+import type { CatalogOptionKey } from '@/app/[locale]/(shop)/_lib/utils/catalogUrlState';
+import {
+  clearCatalogFilters,
+  parseCatalogFilters,
+  parseCatalogOptionFilters,
+  withCatalogFilter,
+  withToggledCatalogOption,
+} from '@/app/[locale]/(shop)/_lib/utils/catalogUrlState';
 
 /** Owns `FilterSidebar`'s URL-state — reading the current filters and writing every change (gender,
- * sort, price range, clear-all) back via `router.push` inside a transition, so the sidebar only wires
+ * size, color, sort, price range, clear-all) back via `router.push` inside a transition, so the sidebar only wires
  * up form controls to what this hook returns. */
 export function useCatalogFilterControls() {
   const router = useRouter();
@@ -16,10 +23,17 @@ export function useCatalogFilterControls() {
   const [isPending, startTransition] = useTransition();
 
   const filters = parseCatalogFilters(searchParams);
+  const options = parseCatalogOptionFilters(searchParams);
 
   function applyFilter(key: 'gender' | 'sortBy' | 'minPrice' | 'maxPrice', value: string | undefined): void {
     startTransition(() => {
       router.push(`?${withCatalogFilter(searchParams, key, value).toString()}`);
+    });
+  }
+
+  function toggleOption(key: CatalogOptionKey, code: string): void {
+    startTransition(() => {
+      router.push(`?${withToggledCatalogOption(searchParams, key, code).toString()}`);
     });
   }
 
@@ -42,5 +56,5 @@ export function useCatalogFilterControls() {
     });
   }
 
-  return { filters, applyFilter, submitPriceRange, clearFilters, isPending };
+  return { filters, options, applyFilter, toggleOption, submitPriceRange, clearFilters, isPending };
 }

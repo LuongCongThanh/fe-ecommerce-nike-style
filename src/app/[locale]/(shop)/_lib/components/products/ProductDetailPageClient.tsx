@@ -18,6 +18,8 @@ import { ProductInfoPanel } from '@/app/[locale]/(shop)/_lib/components/products
 import { ProductDetailSkeleton } from '@/app/[locale]/(shop)/_lib/components/products/ProductSkeletons';
 import { useProduct } from '@/app/[locale]/(shop)/_lib/hooks/products/useProduct';
 import { useRelatedProducts } from '@/app/[locale]/(shop)/_lib/hooks/products/useRelatedProducts';
+import { useVariantSelection } from '@/app/[locale]/(shop)/_lib/hooks/products/useVariantSelection';
+import type { ProductDetail } from '@/lib/api/models/catalog';
 import { QueryState } from '@/shared/components/QueryState';
 import { SPRING_MOVE } from '@/shared/lib/motion';
 
@@ -26,7 +28,7 @@ interface ProductDetailPageClientProps {
   readonly locale: string;
 }
 
-/** Client-driven for the same reason as `CategoryPageClient` — MSW only intercepts reliably in the browser (Decision #87). */
+/** Client-driven like `CategoryPageClient` (Decision #87); the Product is read from the API by slug. */
 export function ProductDetailPageClient({ slug, locale }: ProductDetailPageClientProps): React.JSX.Element {
   const t = useTranslations('common');
   const tProduct = useTranslations('product');
@@ -45,8 +47,8 @@ export function ProductDetailPageClient({ slug, locale }: ProductDetailPageClien
         errorFallbackDescription={t('errorDescription')}
         retryLabel={t('retry')}
       >
-        {product !== undefined ? (
-          <ProductDetailContent product={product} locale={locale} related={related} />
+        {product !== undefined && product !== null ? (
+          <ProductDetailContent key={product.id} product={product} locale={locale} related={related} />
         ) : (
           <div className="flex min-h-100 flex-col items-center justify-center text-center">
             <h1 className="text-2xl font-bold">Không tìm thấy sản phẩm</h1>
@@ -63,11 +65,12 @@ function ProductDetailContent({
   locale,
   related,
 }: {
-  readonly product: NonNullable<ReturnType<typeof useProduct>['data']>;
+  readonly product: ProductDetail;
   readonly locale: string;
   readonly related: ReturnType<typeof useRelatedProducts>['related'];
 }): React.JSX.Element {
   const prefersReducedMotion = useReducedMotion() ?? false;
+  const selection = useVariantSelection(product);
 
   // Below-the-fold sections arrive as the reader reaches them, and they arrive from *below* — the
   // intermediate motion points where the content is coming from (§8).
@@ -95,13 +98,14 @@ function ProductDetailContent({
 
       {/* Main 2-col layout — `items-start` lets the info panel stick while the gallery scrolls. */}
       <div className="grid grid-cols-1 items-start gap-10 lg:grid-cols-2 lg:gap-16">
-        <ProductGallery images={product.images} name={product.name} />
-        <ProductInfoPanel product={product} locale={locale} />
+        {/* Re-mounts per color so the gallery starts at that color's first image. */}
+        <ProductGallery key={selection.colorCode ?? 'all'} images={selection.images} name={product.name} />
+        <ProductInfoPanel product={product} locale={locale} selection={selection} />
       </div>
 
-      {/* Tabs: Description / Specs / Reviews */}
+      {/* Tabs: Description / Specs */}
       <motion.div className="mt-16" {...reveal}>
-        <ProductDetailTabs description={product.description} rating={product.rating} reviewCount={product.reviewCount} />
+        <ProductDetailTabs description={product.description} />
       </motion.div>
 
       {/* Related Products */}

@@ -30,7 +30,6 @@ import {
   deleteProduct,
   findProductById,
   findProductBySkuId,
-  findProductBySlug,
   listProducts,
   mockCategories,
   updateCategory,
@@ -109,26 +108,8 @@ function parseProductListQuery(url: URL): { page: number; pageSize: number; quer
 
 /** MSW request handlers shared by both the browser worker and the node server — see ./`../testing`. */
 export const handlers = [
-  http.get('*/api/catalog/categories', () => {
-    return HttpResponse.json({ data: mockCategories });
-  }),
-
-  http.get('*/api/catalog/products', ({ request }) => {
-    const { page, pageSize, query } = parseProductListQuery(new URL(request.url));
-    const { data, total, totalPages } = listProducts(query);
-
-    return HttpResponse.json({ data, meta: { page, pageSize, total, totalPages } });
-  }),
-
-  http.get('*/api/catalog/products/:slug', ({ params }) => {
-    const product = findProductBySlug(String(params.slug));
-
-    if (product === undefined) {
-      return HttpResponse.json({ error: { code: 'NOT_FOUND', message: 'Product not found' } }, { status: 404 });
-    }
-
-    return HttpResponse.json({ data: product });
-  }),
+  // Public catalog reads (`/api/v1/products`, `/categories`, `/sizes`, `/colors`) go to the real API
+  // through the Next.js rewrite; no mock handlers for them (slice B1).
 
   // Admin Product/Variant/SKU CRUD (issue #19) — same `Product` shape and `listProducts` filter/sort/
   // paginate the public PLP uses, gated on a valid Staff session instead of being publicly readable.

@@ -3,9 +3,9 @@
 import { useState } from 'react';
 import Link from 'next/link';
 
-import { Flame, Menu } from 'lucide-react';
+import { Menu } from 'lucide-react';
 
-import { NAV_CATEGORIES } from '@/app/[locale]/(shop)/_lib/data/nav-categories';
+import { useCategoryTree } from '@/app/[locale]/(shop)/_lib/hooks/categories/useCategoryTree';
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from '@/components/ui/Accordion';
 import { Button } from '@/components/ui/Button';
 import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger } from '@/components/ui/Sheet';
@@ -16,6 +16,7 @@ interface MobileNavProps {
 
 export function MobileNav({ locale }: MobileNavProps) {
   const [open, setOpen] = useState(false);
+  const { data } = useCategoryTree();
 
   return (
     <Sheet open={open} onOpenChange={setOpen}>
@@ -40,20 +41,17 @@ export function MobileNav({ locale }: MobileNavProps) {
               }}
               className="text-foreground hover:text-muted-foreground block rounded-lg px-2 py-3 text-sm font-semibold transition-colors"
             >
-              All Products
+              Tất cả sản phẩm
             </Link>
           </div>
 
           <Accordion type="single" collapsible className="w-full">
-            {NAV_CATEGORIES.map((cat) => (
-              <AccordionItem value={cat.slug} key={cat.slug} className="border-b">
+            {(data?.tree ?? []).map((cat) => (
+              <AccordionItem value={cat.id} key={cat.id} className="border-b">
                 <AccordionTrigger className="px-2 py-3 text-sm font-medium hover:no-underline">
-                  <div className="flex items-center gap-3">
-                    <cat.icon className="size-5" />
-                    <span className="text-foreground">{cat.name}</span>
-                  </div>
+                  <span className="text-foreground">{cat.name}</span>
                 </AccordionTrigger>
-                <AccordionContent className="pr-2 pb-3 pl-11">
+                <AccordionContent className="pr-2 pb-3 pl-4">
                   <div className="flex flex-col gap-1">
                     <Link
                       href={`/${locale}/categories/${cat.slug}`}
@@ -62,11 +60,11 @@ export function MobileNav({ locale }: MobileNavProps) {
                       }}
                       className="text-muted-foreground hover:text-foreground mb-2 py-1 text-xs font-bold transition-colors"
                     >
-                      ALL {cat.name.toUpperCase()} ({cat.productCount})
+                      Tất cả {cat.name}
                     </Link>
-                    {cat.sub.map((sub) => (
+                    {cat.children.map((sub) => (
                       <Link
-                        key={sub.slug}
+                        key={sub.id}
                         href={`/${locale}/categories/${sub.slug}`}
                         onClick={() => {
                           setOpen(false);
@@ -81,19 +79,6 @@ export function MobileNav({ locale }: MobileNavProps) {
               </AccordionItem>
             ))}
           </Accordion>
-
-          <div className="mt-6 border-t pt-4">
-            <Link
-              href={`/${locale}/categories/sale`}
-              onClick={() => {
-                setOpen(false);
-              }}
-              className="text-brand-600 hover:bg-brand-50 flex items-center gap-3 rounded-lg px-2 py-3 text-sm font-bold transition-colors"
-            >
-              <Flame className="size-5" />
-              Flash Sale
-            </Link>
-          </div>
         </div>
       </SheetContent>
     </Sheet>

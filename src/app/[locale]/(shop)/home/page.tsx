@@ -1,8 +1,6 @@
 import { setRequestLocale } from 'next-intl/server';
 
-import { SectionBestSellers } from '@/app/[locale]/(shop)/_lib/components/home/SectionBestSellers';
 import { SectionFeaturedCategories } from '@/app/[locale]/(shop)/_lib/components/home/SectionFeaturedCategories';
-import { SectionFlashSale } from '@/app/[locale]/(shop)/_lib/components/home/SectionFlashSale';
 import { SectionHero } from '@/app/[locale]/(shop)/_lib/components/home/SectionHero';
 import { SectionNewArrivals } from '@/app/[locale]/(shop)/_lib/components/home/SectionNewArrivals';
 import { SectionNewsletter } from '@/app/[locale]/(shop)/_lib/components/home/SectionNewsletter';
@@ -21,8 +19,7 @@ export default async function HomePage({ params }: { readonly params: Promise<{ 
     <>
       <SectionHero />
       <SectionFeaturedCategories />
-      <SectionFlashSale />
-      <SectionBestSellers />
+      {/* Flash sale returns with SalePrice (slice B2), best sellers with Orders (slice C). */}
       <SectionNewArrivals />
       <SectionWhyChooseUs />
       {showTestimonials ? <SectionTestimonials /> : null}
