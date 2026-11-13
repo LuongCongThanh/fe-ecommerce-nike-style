@@ -1,6 +1,6 @@
 ---
 paths:
-  - 'apps/storefront/**'
+  - 'src/**'
 description: Storefront-specific rules (Next.js App Router, locale, mock-first API, Serwist/MSW, Vitest/Playwright).
 ---
 

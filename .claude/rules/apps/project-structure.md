@@ -20,7 +20,7 @@ description: Canonical directory trees per app/package and the decision rules fo
 ## Storefront
 
 ```text
-apps/storefront/src/
+src/
 ├── app/                         # Next.js route, layout, loading, error, metadata
 │   └── [locale]/
 │       ├── (auth)/

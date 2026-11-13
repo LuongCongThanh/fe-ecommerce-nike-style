@@ -325,7 +325,7 @@ Root có script `pnpm dev` để chạy song song các workspace, nhưng các ap
 Baseline cho mock mode — storefront (Next.js) dùng tiền tố `NEXT_PUBLIC_`; admin/cms (Vite) dùng tiền tố `VITE_`. `@repo/api-sdk` (dùng chung cả ba app) đọc qua `readEnv()` (`packages/api-sdk/src/env/config.ts`): thử `import.meta.env.VITE_*` trước, fallback sang `process.env.NEXT_PUBLIC_*` nếu không có — không cần `define` map lại ở `vite.config.ts`:
 
 ```dotenv
-# apps/storefront/.env.local
+# .env.local (repo root)
 NEXT_PUBLIC_API_MOCKING=true
 NEXT_PUBLIC_SITE_URL=http://localhost:3000
 
