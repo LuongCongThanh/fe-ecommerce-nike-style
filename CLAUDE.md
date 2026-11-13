@@ -14,4 +14,4 @@ Default five canonical labels (`needs-triage`, `needs-info`, `ready-for-agent`, 
 
 ### Domain docs
 
-Multi-context: `CONTEXT-MAP.md` at root pointing to per-app `CONTEXT.md`/`docs/adr/` under `apps/storefront`, `apps/admin`, `apps/cms`; system-wide ADRs stay in root `docs/adr/`. See `docs/agents/domain.md`.
+Single-context: the storefront is the one app at the repo root; ADRs live in root `docs/adr/`. `apps/admin` and `apps/cms` are legacy code awaiting deletion. See `docs/agents/domain.md`.

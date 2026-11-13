@@ -6,7 +6,7 @@ vi.mock('next-intl/middleware', () => ({
   default: () => () => NextResponse.next(),
 }));
 
-const { middleware } = await import('../../middleware');
+const { middleware } = await import('../middleware');
 
 function makeRequest(path: string, cookies: Record<string, string> = {}): NextRequest {
   const request = new NextRequest(new URL(path, 'http://localhost:3000'));

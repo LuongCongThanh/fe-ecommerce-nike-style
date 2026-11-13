@@ -1,7 +1,6 @@
 ---
 paths:
-  - 'apps/**/*.{ts,tsx}'
-  - 'packages/**/*.{ts,tsx}'
+  - 'src/**/*.{ts,tsx}'
 description: General TypeScript/React naming, file-naming, import-order and component conventions.
 ---
 
@@ -39,7 +38,7 @@ description: General TypeScript/React naming, file-naming, import-order and comp
 | Query key factory      | `<domain>Keys`                              | `adminProductKeys`     |
 
 - A file name should reflect its main export; do not use generic names like `helpers.ts`, `common.ts`, `misc.ts` when a more specific responsibility can be named.
-- A file holding only types shared within one feature can be `types.ts`; canonical transport types must live in their domain under `packages/schemas`.
+- A file holding only types shared within one feature can be `types.ts`; canonical transport types must live in their domain under `src/lib/schemas`.
 - Do not bulk-rename legacy files just to match this convention; apply it to new files and rename when already touching the related boundary.
 
 ## Variable and function naming
@@ -60,11 +59,11 @@ Group order, separated by one blank line, with ESLint deciding the order within 
 import { useState } from 'react';
 import type { FormEvent } from 'react';
 
-import { getProducts } from '@repo/api-sdk/endpoints/catalog';
-import type { Product } from '@repo/schemas/catalog';
-import { Button } from '@repo/ui/button';
 import { useQuery } from '@tanstack/react-query';
 
+import { Button } from '@/components/ui/Button';
+import { getProducts } from '@/lib/api/endpoints/catalog';
+import type { Product } from '@/lib/schemas/catalog/catalog';
 import { ROUTES } from '@/shared/constants/routes';
 
 import { ProductCard } from './ProductCard';
@@ -72,7 +71,7 @@ import { ProductCard } from './ProductCard';
 
 - Use the public alias/subpath for cross-boundary imports; relative imports are only for files in the same module or a submodule.
 - Do not use parent-relative imports (`../`); ESLint forbids them. If existing files still use the old pattern, do not spread it further — use the right alias/public subpath.
-- Do not import from `@repo/<package>/src/*`, another feature's private files, or `routeTree.gen.ts`.
+- Do not import another feature's private files or generated artifacts.
 - Do not import the same module more than once when it could be merged while still keeping `import type` correct.
 - Avoid circular dependencies; if one appears, revisit ownership or extract a pure contract/type to a lower layer.
 
