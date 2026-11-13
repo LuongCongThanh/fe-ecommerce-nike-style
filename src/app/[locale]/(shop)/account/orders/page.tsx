@@ -1,6 +1,6 @@
 // Hallmark redesign · design-system: design.md · scope: app page (functional, no enrichment)
-import { OrdersClient } from '@/app/[locale]/(shop)/account/orders/components/OrdersClient';
-import { PageShell } from '@/app/[locale]/(shop)/components/PageShell';
+import { OrdersClient } from '@/features/orders/order-list/components/OrdersClient';
+import { PageShell } from '@/features/storefront-shell/components/PageShell';
 
 export default function OrdersPage(): React.JSX.Element {
   return (

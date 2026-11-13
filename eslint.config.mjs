@@ -12,7 +12,7 @@ import noRelativeImportPaths from 'eslint-plugin-no-relative-import-paths';
 import sonarjs from 'eslint-plugin-sonarjs';
 import createNextConfig from './eslint.base.mjs';
 
-const tailwindEntryCss = path.join(import.meta.dirname, 'src/app/globals.css');
+const tailwindEntryCss = path.join(import.meta.dirname, 'src/styles/globals.css');
 const disableTypeChecked = typescript.configs['flat/disable-type-checked'];
 const sharedNextConfig = createNextConfig({ tsconfigRootDir: import.meta.dirname });
 

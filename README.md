@@ -18,8 +18,8 @@ Mở `http://127.0.0.1:3000`. Next.js chuyển tiếp `/api/v1/*` đến `API_OR
 
 | Đường dẫn | Trách nhiệm |
 | --- | --- |
-| `src/app/[locale]/` | Route và layout App Router, cùng các module theo route trong giai đoạn chuyển tiếp |
-| `src/features/` | Module nghiệp vụ dùng qua nhiều route |
+| `src/app/[locale]/` | Entry point route và layout của App Router |
+| `src/features/` | Màn hình và module nghiệp vụ |
 | `src/shared/ui/` | UI primitives và trạng thái hiển thị dùng chung |
 | `src/lib/api/` | HTTP client, endpoint, hợp đồng sinh từ OpenAPI và MSW chuyển tiếp |
 | `src/lib/schemas/` | Zod validation hiện có |

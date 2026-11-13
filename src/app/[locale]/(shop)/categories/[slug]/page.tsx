@@ -1,4 +1,4 @@
-import { CategoryPageClient } from '@/app/[locale]/(shop)/categories/[slug]/components/CategoryPageClient';
+import { CategoryPageClient } from '@/features/catalog/category-detail/components/CategoryPageClient';
 
 interface CategoryPageProps {
   readonly params: Promise<{

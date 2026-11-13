@@ -6,7 +6,7 @@ paths:
 
 # Storefront project structure
 
-- Place route UI, React hooks, queries and orchestration next to the owning `page.tsx`. Create folders only when needed.
+- Keep Next.js entry points in `src/app`. Place screen UI, React hooks, queries and orchestration under the owning module in `src/features`. Create folders only when needed.
 - Put business logic used across routes in `src/features`. Put generic UI in `src/shared/ui` and generic helpers in `src/shared/utils`.
 - Keep HTTP endpoints, OpenAPI and transitional MSW handlers in `src/lib/api`.
 - Use TanStack Query for server state, Zustand for shared client state, and the URL for filters, sorting and pagination.

@@ -1,10 +1,10 @@
-# Cây thư mục đích page-first của Storefront
+# Cây thư mục đích route-only của Storefront
 
 **Bản đề xuất để review.** Áp dụng mẫu Products cho toàn bộ App Router. [Cây hiện tại](storefront-current-file-tree.md) mô tả vai trò của từng file trước khi sắp xếp.
 
 ## 1. Quy ước sở hữu
 
-Mỗi route có `page.tsx` và các thư mục cần thiết nằm ngang hàng. Ví dụ `products/` sở hữu trang danh sách và `products/[slug]/` sở hữu trang chi tiết. Giữ URL, metadata, layout và hai locale.
+`app/` giữ các entry point theo quy ước Next.js. UI, hooks, queries và services riêng của từng màn hình nằm trong `features/`. Hai màn hình Sản phẩm nằm trong `features/catalog/product-list/` và `features/catalog/product-detail/`. Giữ URL, metadata, layout và hai locale.
 
 | Tên | Vai trò |
 | --- | --- |
@@ -42,183 +42,50 @@ fe-ecommerce-nike-style/
 │           └── README.md  [M] ← src/app/[locale]/(shop)/_lib/components/home/plans/README.md
 └── src/
     ├── app/
-    │   ├── _composition/
-    │   │   └── useMergeGuestDataOnLogin.ts  [M] ← src/app/[locale]/(shop)/_lib/hooks/useMergeGuestDataOnLogin.ts
     │   ├── [locale]/
     │   │   ├── (auth)/
     │   │   │   ├── forgot-password/
-    │   │   │   │   ├── components/
-    │   │   │   │   │   └── ForgotPasswordForm.tsx  [M] ← src/app/[locale]/(auth)/_lib/components/ForgotPasswordForm.tsx
     │   │   │   │   └── page.tsx  [K]
     │   │   │   ├── layout.tsx  [K]
     │   │   │   ├── login/
-    │   │   │   │   ├── components/
-    │   │   │   │   │   └── LoginForm.tsx  [M] ← src/app/[locale]/(auth)/_lib/components/LoginForm.tsx
     │   │   │   │   └── page.tsx  [K]
     │   │   │   ├── register/
-    │   │   │   │   ├── components/
-    │   │   │   │   │   └── RegisterForm.tsx  [M] ← src/app/[locale]/(auth)/_lib/components/RegisterForm.tsx
     │   │   │   │   └── page.tsx  [K]
     │   │   │   └── reset-password/
     │   │   │       └── [token]/
-    │   │   │           ├── components/
-    │   │   │           │   └── ResetPasswordForm.tsx  [M] ← src/app/[locale]/(auth)/_lib/components/ResetPasswordForm.tsx
     │   │   │           └── page.tsx  [K]
     │   │   ├── (shop)/
     │   │   │   ├── account/
     │   │   │   │   ├── addresses/
-    │   │   │   │   │   ├── components/
-    │   │   │   │   │   │   ├── AddressesClient.test.tsx  [M] ← src/app/[locale]/(shop)/_lib/components/addresses/__tests__/AddressesClient.test.tsx
-    │   │   │   │   │   │   └── AddressesClient.tsx  [M] ← src/app/[locale]/(shop)/_lib/components/addresses/AddressesClient.tsx
-    │   │   │   │   │   ├── hooks/
-    │   │   │   │   │   │   └── useAddressForm.ts  [M] ← src/app/[locale]/(shop)/_lib/hooks/addresses/useAddressForm.ts
-    │   │   │   │   │   ├── page.tsx  [K]
-    │   │   │   │   │   ├── queries/
-    │   │   │   │   │   │   ├── addressKeys.ts  [M] ← src/app/[locale]/(shop)/_lib/hooks/addresses/addressKeys.ts
-    │   │   │   │   │   │   ├── useAddresses.ts  [M] ← src/app/[locale]/(shop)/_lib/hooks/addresses/useAddresses.ts
-    │   │   │   │   │   │   ├── useDeleteAddress.ts  [M] ← src/app/[locale]/(shop)/_lib/hooks/addresses/useDeleteAddress.ts
-    │   │   │   │   │   │   ├── useSaveAddress.ts  [M] ← src/app/[locale]/(shop)/_lib/hooks/addresses/useSaveAddress.ts
-    │   │   │   │   │   │   └── useSetDefaultAddress.ts  [M] ← src/app/[locale]/(shop)/_lib/hooks/addresses/useSetDefaultAddress.ts
-    │   │   │   │   │   ├── schemas/
-    │   │   │   │   │   │   └── address.ts  [M] ← src/app/[locale]/(shop)/_lib/schemas/address.ts
-    │   │   │   │   │   └── services/
-    │   │   │   │   │       └── address.ts  [M] ← src/app/[locale]/(shop)/_lib/api/address.ts
+    │   │   │   │   │   └── page.tsx  [K]
     │   │   │   │   ├── layout.tsx  [K]
     │   │   │   │   ├── orders/
     │   │   │   │   │   ├── [id]/
-    │   │   │   │   │   │   ├── components/
-    │   │   │   │   │   │   │   ├── OrderDetailClient.test.tsx  [M] ← src/app/[locale]/(shop)/_lib/components/orders/__tests__/OrderDetailClient.test.tsx
-    │   │   │   │   │   │   │   └── OrderDetailClient.tsx  [M] ← src/app/[locale]/(shop)/_lib/components/orders/OrderDetailClient.tsx
-    │   │   │   │   │   │   ├── page.tsx  [K]
-    │   │   │   │   │   │   └── queries/
-    │   │   │   │   │   │       ├── useCancelOrder.ts  [M] ← src/app/[locale]/(shop)/_lib/hooks/orders/useCancelOrder.ts
-    │   │   │   │   │   │       ├── useOrder.ts  [M] ← src/app/[locale]/(shop)/_lib/hooks/orders/useOrder.ts
-    │   │   │   │   │   │       └── useRequestReturn.ts  [M] ← src/app/[locale]/(shop)/_lib/hooks/orders/useRequestReturn.ts
-    │   │   │   │   │   ├── components/
-    │   │   │   │   │   │   ├── OrdersClient.test.tsx  [M] ← src/app/[locale]/(shop)/_lib/components/orders/__tests__/OrdersClient.test.tsx
-    │   │   │   │   │   │   └── OrdersClient.tsx  [M] ← src/app/[locale]/(shop)/_lib/components/orders/OrdersClient.tsx
-    │   │   │   │   │   ├── page.tsx  [K]
-    │   │   │   │   │   └── queries/
-    │   │   │   │   │       ├── useOrders.test.tsx  [M] ← src/app/[locale]/(shop)/_lib/hooks/orders/__tests__/useOrders.test.tsx
-    │   │   │   │   │       └── useOrders.ts  [M] ← src/app/[locale]/(shop)/_lib/hooks/orders/useOrders.ts
+    │   │   │   │   │   │   └── page.tsx  [K]
+    │   │   │   │   │   └── page.tsx  [K]
     │   │   │   │   └── profile/
-    │   │   │   │       ├── components/
-    │   │   │   │       │   ├── ProfileClient.test.tsx  [M] ← src/app/[locale]/(shop)/_lib/components/profile/__tests__/ProfileClient.test.tsx
-    │   │   │   │       │   └── ProfileClient.tsx  [M] ← src/app/[locale]/(shop)/_lib/components/profile/ProfileClient.tsx
-    │   │   │   │       ├── hooks/
-    │   │   │   │       │   └── useProfileForm.ts  [M] ← src/app/[locale]/(shop)/_lib/hooks/profile/useProfileForm.ts
-    │   │   │   │       ├── page.tsx  [K]
-    │   │   │   │       ├── queries/
-    │   │   │   │       │   ├── useProfile.ts  [M] ← src/app/[locale]/(shop)/_lib/hooks/profile/useProfile.ts
-    │   │   │   │       │   └── useUpdateProfile.ts  [M] ← src/app/[locale]/(shop)/_lib/hooks/profile/useUpdateProfile.ts
-    │   │   │   │       ├── schemas/
-    │   │   │   │       │   └── profile.ts  [M] ← src/app/[locale]/(shop)/_lib/schemas/profile.ts
-    │   │   │   │       └── services/
-    │   │   │   │           └── profile.ts  [M] ← src/app/[locale]/(shop)/_lib/api/profile.ts
+    │   │   │   │       └── page.tsx  [K]
     │   │   │   ├── cart/
-    │   │   │   │   ├── components/
-    │   │   │   │   │   ├── CartClient.tsx  [M] ← src/app/[locale]/(shop)/_lib/components/cart/CartClient.tsx
-    │   │   │   │   │   ├── CartSummary.tsx  [M] ← src/app/[locale]/(shop)/_lib/components/cart/CartSummary.tsx
-    │   │   │   │   │   └── CartTable.tsx  [M] ← src/app/[locale]/(shop)/_lib/components/cart/CartTable.tsx
     │   │   │   │   └── page.tsx  [K]
     │   │   │   ├── categories/
     │   │   │   │   └── [slug]/
-    │   │   │   │       ├── components/
-    │   │   │   │       │   ├── CategoryClient.tsx  [M] ← src/app/[locale]/(shop)/_lib/components/categories/CategoryClient.tsx
-    │   │   │   │       │   └── CategoryPageClient.tsx  [M] ← src/app/[locale]/(shop)/_lib/components/categories/CategoryPageClient.tsx
     │   │   │   │       └── page.tsx  [K]
     │   │   │   ├── checkout/
-    │   │   │   │   ├── components/
-    │   │   │   │   │   ├── checkout-flow.test.tsx  [M] ← src/app/[locale]/(shop)/_lib/hooks/checkout/__tests__/checkout-flow.test.tsx
-    │   │   │   │   │   ├── CheckoutClient.tsx  [M] ← src/app/[locale]/(shop)/_lib/components/checkout/CheckoutClient.tsx
-    │   │   │   │   │   └── OrderSummary.tsx  [M] ← src/app/[locale]/(shop)/_lib/components/checkout/OrderSummary.tsx
-    │   │   │   │   ├── constants/
-    │   │   │   │   │   └── payment-config.ts  [M] ← src/app/[locale]/(shop)/_lib/constants/payment-config.ts
-    │   │   │   │   ├── hooks/
-    │   │   │   │   │   ├── useCheckoutForm.ts  [M] ← src/app/[locale]/(shop)/_lib/hooks/checkout/useCheckoutForm.ts
-    │   │   │   │   │   └── useRedirectIfCartEmpty.ts  [M] ← src/app/[locale]/(shop)/_lib/hooks/checkout/useRedirectIfCartEmpty.ts
     │   │   │   │   ├── layout.tsx  [K]
     │   │   │   │   ├── page.tsx  [K]
-    │   │   │   │   ├── queries/
-    │   │   │   │   │   ├── useCreateOrder.ts  [M] ← src/app/[locale]/(shop)/_lib/hooks/checkout/useCreateOrder.ts
-    │   │   │   │   │   ├── useReservation.test.tsx  [M] ← src/app/[locale]/(shop)/_lib/hooks/checkout/__tests__/useReservation.test.tsx
-    │   │   │   │   │   └── useReservation.ts  [M] ← src/app/[locale]/(shop)/_lib/hooks/checkout/useReservation.ts
-    │   │   │   │   ├── schemas/
-    │   │   │   │   │   └── checkout.ts  [M] ← src/app/[locale]/(shop)/_lib/schemas/checkout.ts
-    │   │   │   │   ├── services/
-    │   │   │   │   │   └── checkout.ts  [M] ← src/app/[locale]/(shop)/_lib/api/checkout.ts
     │   │   │   │   └── success/
     │   │   │   │       └── page.tsx  [K]
-    │   │   │   ├── components/
-    │   │   │   │   ├── DesktopMegaMenu.tsx  [M] ← src/app/[locale]/(shop)/_lib/components/navigation/DesktopMegaMenu.tsx
-    │   │   │   │   ├── Footer.tsx  [M] ← src/app/[locale]/(shop)/_lib/components/layout/Footer.tsx
-    │   │   │   │   ├── Header.tsx  [M] ← src/app/[locale]/(shop)/_lib/components/layout/Header.tsx
-    │   │   │   │   ├── MobileNav.tsx  [M] ← src/app/[locale]/(shop)/_lib/components/navigation/MobileNav.tsx
-    │   │   │   │   └── PageShell.tsx  [M] ← src/app/[locale]/(shop)/_lib/components/layout/PageShell.tsx
     │   │   │   ├── home/
-    │   │   │   │   ├── components/
-    │   │   │   │   │   ├── CountdownTimer.test.tsx  [M] ← src/app/[locale]/(shop)/_lib/components/home/__tests__/CountdownTimer.test.tsx
-    │   │   │   │   │   ├── CountdownTimer.tsx  [M] ← src/app/[locale]/(shop)/_lib/components/home/CountdownTimer.tsx
-    │   │   │   │   │   ├── FlashSaleBanner.tsx  [M] ← src/app/[locale]/(shop)/_lib/components/common/FlashSaleBanner.tsx
-    │   │   │   │   │   ├── hero3d/
-    │   │   │   │   │   │   ├── cssColor.ts  [M] ← src/app/[locale]/(shop)/_lib/components/home/hero3d/cssColor.ts
-    │   │   │   │   │   │   ├── dissolveShader.ts  [M] ← src/app/[locale]/(shop)/_lib/components/home/hero3d/dissolveShader.ts
-    │   │   │   │   │   │   └── HeroSlides3D.tsx  [M] ← src/app/[locale]/(shop)/_lib/components/home/hero3d/HeroSlides3D.tsx
-    │   │   │   │   │   ├── HeroBanner.tsx  [M] ← src/app/[locale]/(shop)/_lib/components/common/HeroBanner.tsx
-    │   │   │   │   │   ├── HeroCarousel.tsx  [M] ← src/app/[locale]/(shop)/_lib/components/home/HeroCarousel.tsx
-    │   │   │   │   │   ├── motion.ts  [M] ← src/app/[locale]/(shop)/_lib/components/home/motion.ts
-    │   │   │   │   │   ├── NewsletterForm.test.tsx  [M] ← src/app/[locale]/(shop)/_lib/components/home/__tests__/NewsletterForm.test.tsx
-    │   │   │   │   │   ├── NewsletterForm.tsx  [M] ← src/app/[locale]/(shop)/_lib/components/home/NewsletterForm.tsx
-    │   │   │   │   │   ├── SectionFeaturedCategories.tsx  [M] ← src/app/[locale]/(shop)/_lib/components/home/SectionFeaturedCategories.tsx
-    │   │   │   │   │   ├── SectionHero.tsx  [M] ← src/app/[locale]/(shop)/_lib/components/home/SectionHero.tsx
-    │   │   │   │   │   ├── SectionNewArrivals.tsx  [M] ← src/app/[locale]/(shop)/_lib/components/home/SectionNewArrivals.tsx
-    │   │   │   │   │   ├── SectionNewsletter.tsx  [M] ← src/app/[locale]/(shop)/_lib/components/home/SectionNewsletter.tsx
-    │   │   │   │   │   ├── SectionTestimonials.tsx  [M] ← src/app/[locale]/(shop)/_lib/components/home/SectionTestimonials.tsx
-    │   │   │   │   │   ├── SectionWhyChooseUs.tsx  [M] ← src/app/[locale]/(shop)/_lib/components/home/SectionWhyChooseUs.tsx
-    │   │   │   │   │   ├── TestimonialCard.tsx  [M] ← src/app/[locale]/(shop)/_lib/components/home/TestimonialCard.tsx
-    │   │   │   │   │   └── TrustBadgeList.tsx  [M] ← src/app/[locale]/(shop)/_lib/components/home/TrustBadgeList.tsx
-    │   │   │   │   ├── home-content.ts  [M] ← src/app/[locale]/(shop)/_lib/data/home.ts
-    │   │   │   │   ├── hooks/
-    │   │   │   │   │   ├── useHomeFlashSaleCountdown.ts  [M] ← src/app/[locale]/(shop)/_lib/hooks/home/useHomeFlashSaleCountdown.ts
-    │   │   │   │   │   └── useNewsletterForm.ts  [M] ← src/app/[locale]/(shop)/_lib/hooks/home/useNewsletterForm.ts
-    │   │   │   │   ├── page.tsx  [K]
-    │   │   │   │   └── types/
-    │   │   │   │       └── home.ts  [M] ← src/app/[locale]/(shop)/_lib/types/home.ts
+    │   │   │   │   └── page.tsx  [K]
     │   │   │   ├── layout.tsx  [K]
     │   │   │   ├── page.tsx  [K]
     │   │   │   ├── products/
     │   │   │   │   ├── [slug]/
-    │   │   │   │   │   ├── components/
-    │   │   │   │   │   │   ├── AddToCartSection.tsx  [M] ← src/app/[locale]/(shop)/_lib/components/products/AddToCartSection.tsx
-    │   │   │   │   │   │   ├── MobileBuyBar.tsx  [M] ← src/app/[locale]/(shop)/_lib/components/products/MobileBuyBar.tsx
-    │   │   │   │   │   │   ├── ProductDetailPageClient.tsx  [M] ← src/app/[locale]/(shop)/_lib/components/products/ProductDetailPageClient.tsx
-    │   │   │   │   │   │   ├── ProductDetailTabs.test.tsx  [M] ← src/app/[locale]/(shop)/_lib/components/products/__tests__/ProductDetailTabs.test.tsx
-    │   │   │   │   │   │   ├── ProductDetailTabs.tsx  [M] ← src/app/[locale]/(shop)/_lib/components/products/ProductDetailTabs.tsx
-    │   │   │   │   │   │   ├── ProductGallery.tsx  [M] ← src/app/[locale]/(shop)/_lib/components/products/ProductGallery.tsx
-    │   │   │   │   │   │   ├── ProductInfoPanel.tsx  [M] ← src/app/[locale]/(shop)/_lib/components/products/ProductInfoPanel.tsx
-    │   │   │   │   │   │   ├── ProductViewer3D.tsx  [M] ← src/app/[locale]/(shop)/_lib/components/products/ProductViewer3D.tsx
-    │   │   │   │   │   │   └── VariantSelector.tsx  [M] ← src/app/[locale]/(shop)/_lib/components/products/VariantSelector.tsx
-    │   │   │   │   │   ├── hooks/
-    │   │   │   │   │   │   └── useVariantSelection.ts  [M] ← src/app/[locale]/(shop)/_lib/hooks/products/useVariantSelection.ts
-    │   │   │   │   │   ├── page.tsx  [K]
-    │   │   │   │   │   ├── queries/
-    │   │   │   │   │   │   ├── useProduct.ts  [M] ← src/app/[locale]/(shop)/_lib/hooks/products/useProduct.ts
-    │   │   │   │   │   │   └── useRelatedProducts.ts  [M] ← src/app/[locale]/(shop)/_lib/hooks/products/useRelatedProducts.ts
-    │   │   │   │   │   ├── variantColor.test.ts  [M] ← src/app/[locale]/(shop)/_lib/utils/__tests__/variantColor.test.ts
-    │   │   │   │   │   ├── variantColor.ts  [M] ← src/app/[locale]/(shop)/_lib/utils/variantColor.ts
-
-    │   │   │   │   ├── components/
-    │   │   │   │   │   └── ProductsClient.tsx  [M] ← src/app/[locale]/(shop)/_lib/components/products/ProductsClient.tsx
+    │   │   │   │   │   └── page.tsx  [K]
     │   │   │   │   └── page.tsx  [K]
     │   │   │   ├── search/
-    │   │   │   │   ├── components/
-    │   │   │   │   │   ├── SearchClient.test.tsx  [M] ← src/app/[locale]/(shop)/_lib/components/search/__tests__/SearchClient.test.tsx
-    │   │   │   │   │   └── SearchClient.tsx  [M] ← src/app/[locale]/(shop)/_lib/components/search/SearchClient.tsx
     │   │   │   │   └── page.tsx  [K]
     │   │   │   └── wishlist/
-    │   │   │       ├── components/
-    │   │   │       │   ├── WishlistClient.test.tsx  [M] ← src/app/[locale]/(shop)/_lib/components/wishlist/__tests__/WishlistClient.test.tsx
-    │   │   │       │   └── WishlistClient.tsx  [M] ← src/app/[locale]/(shop)/_lib/components/wishlist/WishlistClient.tsx
     │   │   │       └── page.tsx  [K]
     │   │   ├── error.tsx  [K]
     │   │   ├── layout.tsx  [K]
@@ -226,21 +93,61 @@ fe-ecommerce-nike-style/
     │   ├── ~offline/
     │   │   └── page.tsx  [K]
     │   ├── favicon.ico  [K]
-    │   ├── globals.css  [K]
     │   ├── layout.tsx  [K]
     │   ├── not-found.tsx  [K]
     │   ├── opengraph-image.tsx  [K]
-    │   ├── page.tsx  [K]
-    │   ├── providers.tsx  [K]
-    │   └── sw.ts  [K]
+    │   └── page.tsx  [K]
     ├── features/
+    │   ├── account/
+    │   │   ├── addresses/
+    │   │   │   ├── components/
+    │   │   │   │   ├── AddressesClient.test.tsx  [M] ← src/app/[locale]/(shop)/_lib/components/addresses/__tests__/AddressesClient.test.tsx
+    │   │   │   │   └── AddressesClient.tsx  [M] ← src/app/[locale]/(shop)/_lib/components/addresses/AddressesClient.tsx
+    │   │   │   ├── hooks/
+    │   │   │   │   └── useAddressForm.ts  [M] ← src/app/[locale]/(shop)/_lib/hooks/addresses/useAddressForm.ts
+    │   │   │   ├── queries/
+    │   │   │   │   ├── addressKeys.ts  [M] ← src/app/[locale]/(shop)/_lib/hooks/addresses/addressKeys.ts
+    │   │   │   │   ├── useAddresses.ts  [M] ← src/app/[locale]/(shop)/_lib/hooks/addresses/useAddresses.ts
+    │   │   │   │   ├── useDeleteAddress.ts  [M] ← src/app/[locale]/(shop)/_lib/hooks/addresses/useDeleteAddress.ts
+    │   │   │   │   ├── useSaveAddress.ts  [M] ← src/app/[locale]/(shop)/_lib/hooks/addresses/useSaveAddress.ts
+    │   │   │   │   └── useSetDefaultAddress.ts  [M] ← src/app/[locale]/(shop)/_lib/hooks/addresses/useSetDefaultAddress.ts
+    │   │   │   ├── schemas/
+    │   │   │   │   └── address.ts  [M] ← src/app/[locale]/(shop)/_lib/schemas/address.ts
+    │   │   │   └── services/
+    │   │   │       └── address.ts  [M] ← src/app/[locale]/(shop)/_lib/api/address.ts
+    │   │   └── profile/
+    │   │       ├── components/
+    │   │       │   ├── ProfileClient.test.tsx  [M] ← src/app/[locale]/(shop)/_lib/components/profile/__tests__/ProfileClient.test.tsx
+    │   │       │   └── ProfileClient.tsx  [M] ← src/app/[locale]/(shop)/_lib/components/profile/ProfileClient.tsx
+    │   │       ├── hooks/
+    │   │       │   └── useProfileForm.ts  [M] ← src/app/[locale]/(shop)/_lib/hooks/profile/useProfileForm.ts
+    │   │       ├── queries/
+    │   │       │   ├── useProfile.ts  [M] ← src/app/[locale]/(shop)/_lib/hooks/profile/useProfile.ts
+    │   │       │   └── useUpdateProfile.ts  [M] ← src/app/[locale]/(shop)/_lib/hooks/profile/useUpdateProfile.ts
+    │   │       ├── schemas/
+    │   │       │   └── profile.ts  [M] ← src/app/[locale]/(shop)/_lib/schemas/profile.ts
+    │   │       └── services/
+    │   │           └── profile.ts  [M] ← src/app/[locale]/(shop)/_lib/api/profile.ts
     │   ├── auth/
     │   │   ├── components/
     │   │   │   ├── ApiErrorAlert.tsx  [M] ← src/app/[locale]/(auth)/_lib/components/ApiErrorAlert.tsx
     │   │   │   ├── PasswordInput.test.tsx  [M] ← src/app/[locale]/(auth)/_lib/components/__tests__/PasswordInput.test.tsx
     │   │   │   └── PasswordInput.tsx  [M] ← src/app/[locale]/(auth)/_lib/components/PasswordInput.tsx
+    │   │   ├── forgot-password/
+    │   │   │   └── components/
+    │   │   │       └── ForgotPasswordForm.tsx  [M] ← src/app/[locale]/(auth)/_lib/components/ForgotPasswordForm.tsx
     │   │   ├── hooks/
-    │   │   │   └── useApiErrorMessage.ts  [M] ← src/app/[locale]/(auth)/_lib/hooks/useApiErrorMessage.ts
+    │   │   │   ├── useApiErrorMessage.ts  [M] ← src/app/[locale]/(auth)/_lib/hooks/useApiErrorMessage.ts
+    │   │   │   └── useMergeGuestDataOnLogin.ts  [M] ← src/app/[locale]/(shop)/_lib/hooks/useMergeGuestDataOnLogin.ts
+    │   │   ├── login/
+    │   │   │   └── components/
+    │   │   │       └── LoginForm.tsx  [M] ← src/app/[locale]/(auth)/_lib/components/LoginForm.tsx
+    │   │   ├── register/
+    │   │   │   └── components/
+    │   │   │       └── RegisterForm.tsx  [M] ← src/app/[locale]/(auth)/_lib/components/RegisterForm.tsx
+    │   │   ├── reset-password/
+    │   │   │   └── components/
+    │   │   │       └── ResetPasswordForm.tsx  [M] ← src/app/[locale]/(auth)/_lib/components/ResetPasswordForm.tsx
     │   │   ├── schemas/
     │   │   │   └── auth.ts  [M] ← src/app/[locale]/(auth)/_lib/schemas/auth.ts
     │   │   ├── services/
@@ -257,17 +164,22 @@ fe-ecommerce-nike-style/
     │   │       └── auth.store.ts  [M] ← src/core/session/auth-store.ts
     │   ├── cart/
     │   │   ├── components/
-    │   │   │   └── CartDrawer.tsx  [M] ← src/app/[locale]/(shop)/_lib/components/cart/CartDrawer.tsx
+    │   │   │   ├── CartClient.tsx  [M] ← src/app/[locale]/(shop)/_lib/components/cart/CartClient.tsx
+    │   │   │   ├── CartDrawer.tsx  [M] ← src/app/[locale]/(shop)/_lib/components/cart/CartDrawer.tsx
+    │   │   │   ├── CartSummary.tsx  [M] ← src/app/[locale]/(shop)/_lib/components/cart/CartSummary.tsx
+    │   │   │   └── CartTable.tsx  [M] ← src/app/[locale]/(shop)/_lib/components/cart/CartTable.tsx
     │   │   ├── hooks/
     │   │   │   ├── useCart.test.tsx  [M] ← src/app/[locale]/(shop)/_lib/hooks/__tests__/useCart.test.tsx
     │   │   │   └── useCart.ts  [M] ← src/app/[locale]/(shop)/_lib/hooks/useCart.ts
     │   │   └── stores/
     │   │       └── cart.store.ts  [N] Tách phần Zustand từ useCart.ts
     │   ├── catalog/
-    │   │   ├── variantResolution.test.ts  [M] ← src/app/[locale]/(shop)/_lib/utils/__tests__/variantResolution.test.ts
-    │   │   ├── variantResolution.ts  [M] ← src/app/[locale]/(shop)/_lib/utils/variantResolution.ts
     │   │   ├── catalogUrlState.test.ts  [M] ← src/app/[locale]/(shop)/_lib/utils/__tests__/catalogUrlState.test.ts
     │   │   ├── catalogUrlState.ts  [M] ← src/app/[locale]/(shop)/_lib/utils/catalogUrlState.ts
+    │   │   ├── category-detail/
+    │   │   │   └── components/
+    │   │   │       ├── CategoryClient.tsx  [M] ← src/app/[locale]/(shop)/_lib/components/categories/CategoryClient.tsx
+    │   │   │       └── CategoryPageClient.tsx  [M] ← src/app/[locale]/(shop)/_lib/components/categories/CategoryPageClient.tsx
     │   │   ├── categoryTree.ts  [M] ← src/app/[locale]/(shop)/_lib/utils/categoryTree.ts
     │   │   ├── components/
     │   │   │   ├── CatalogProductGrid.tsx  [M] ← src/app/[locale]/(shop)/_lib/components/products/CatalogProductGrid.tsx
@@ -288,6 +200,27 @@ fe-ecommerce-nike-style/
     │   │   │   └── useProductSearchListing.ts  [M] ← src/app/[locale]/(shop)/_lib/hooks/products/useProductSearchListing.ts
     │   │   ├── priceRange.test.ts  [M] ← src/app/[locale]/(shop)/_lib/utils/__tests__/priceRange.test.ts
     │   │   ├── priceRange.ts  [M] ← src/app/[locale]/(shop)/_lib/utils/priceRange.ts
+    │   │   ├── product-detail/
+    │   │   │   ├── components/
+    │   │   │   │   ├── AddToCartSection.tsx  [M] ← src/app/[locale]/(shop)/_lib/components/products/AddToCartSection.tsx
+    │   │   │   │   ├── MobileBuyBar.tsx  [M] ← src/app/[locale]/(shop)/_lib/components/products/MobileBuyBar.tsx
+    │   │   │   │   ├── ProductDetailPageClient.tsx  [M] ← src/app/[locale]/(shop)/_lib/components/products/ProductDetailPageClient.tsx
+    │   │   │   │   ├── ProductDetailTabs.test.tsx  [M] ← src/app/[locale]/(shop)/_lib/components/products/__tests__/ProductDetailTabs.test.tsx
+    │   │   │   │   ├── ProductDetailTabs.tsx  [M] ← src/app/[locale]/(shop)/_lib/components/products/ProductDetailTabs.tsx
+    │   │   │   │   ├── ProductGallery.tsx  [M] ← src/app/[locale]/(shop)/_lib/components/products/ProductGallery.tsx
+    │   │   │   │   ├── ProductInfoPanel.tsx  [M] ← src/app/[locale]/(shop)/_lib/components/products/ProductInfoPanel.tsx
+    │   │   │   │   ├── ProductViewer3D.tsx  [M] ← src/app/[locale]/(shop)/_lib/components/products/ProductViewer3D.tsx
+    │   │   │   │   └── VariantSelector.tsx  [M] ← src/app/[locale]/(shop)/_lib/components/products/VariantSelector.tsx
+    │   │   │   ├── hooks/
+    │   │   │   │   └── useVariantSelection.ts  [M] ← src/app/[locale]/(shop)/_lib/hooks/products/useVariantSelection.ts
+    │   │   │   ├── queries/
+    │   │   │   │   ├── useProduct.ts  [M] ← src/app/[locale]/(shop)/_lib/hooks/products/useProduct.ts
+    │   │   │   │   └── useRelatedProducts.ts  [M] ← src/app/[locale]/(shop)/_lib/hooks/products/useRelatedProducts.ts
+    │   │   │   ├── variantColor.test.ts  [M] ← src/app/[locale]/(shop)/_lib/utils/__tests__/variantColor.test.ts
+    │   │   │   └── variantColor.ts  [M] ← src/app/[locale]/(shop)/_lib/utils/variantColor.ts
+    │   │   ├── product-list/
+    │   │   │   └── components/
+    │   │   │       └── ProductsClient.tsx  [M] ← src/app/[locale]/(shop)/_lib/components/products/ProductsClient.tsx
     │   │   ├── queries/
     │   │   │   ├── catalogKeys.ts  [M] ← src/app/[locale]/(shop)/_lib/hooks/products/catalogKeys.ts
     │   │   │   ├── useCatalogOptions.ts  [M] ← src/app/[locale]/(shop)/_lib/hooks/categories/useCatalogOptions.ts
@@ -296,17 +229,95 @@ fe-ecommerce-nike-style/
     │   │   │   └── useProductSearch.ts  [M] ← src/app/[locale]/(shop)/_lib/hooks/products/useProductSearch.ts
     │   │   ├── schemas/
     │   │   │   └── filter.ts  [M] ← src/app/[locale]/(shop)/_lib/schemas/filter.ts
-    │   │   └── search/
-    │   │       └── hooks/
-    │   │           └── useHeaderSearch.ts  [M] ← src/app/[locale]/(shop)/_lib/hooks/useHeaderSearch.ts
+    │   │   ├── search/
+    │   │   │   ├── components/
+    │   │   │   │   ├── SearchClient.test.tsx  [M] ← src/app/[locale]/(shop)/_lib/components/search/__tests__/SearchClient.test.tsx
+    │   │   │   │   └── SearchClient.tsx  [M] ← src/app/[locale]/(shop)/_lib/components/search/SearchClient.tsx
+    │   │   │   └── hooks/
+    │   │   │       └── useHeaderSearch.ts  [M] ← src/app/[locale]/(shop)/_lib/hooks/useHeaderSearch.ts
+    │   │   ├── variantResolution.test.ts  [M] ← src/app/[locale]/(shop)/_lib/utils/__tests__/variantResolution.test.ts
+    │   │   └── variantResolution.ts  [M] ← src/app/[locale]/(shop)/_lib/utils/variantResolution.ts
+    │   ├── checkout/
+    │   │   ├── components/
+    │   │   │   ├── checkout-flow.test.tsx  [M] ← src/app/[locale]/(shop)/_lib/hooks/checkout/__tests__/checkout-flow.test.tsx
+    │   │   │   ├── CheckoutClient.tsx  [M] ← src/app/[locale]/(shop)/_lib/components/checkout/CheckoutClient.tsx
+    │   │   │   └── OrderSummary.tsx  [M] ← src/app/[locale]/(shop)/_lib/components/checkout/OrderSummary.tsx
+    │   │   ├── constants/
+    │   │   │   └── payment-config.ts  [M] ← src/app/[locale]/(shop)/_lib/constants/payment-config.ts
+    │   │   ├── hooks/
+    │   │   │   ├── useCheckoutForm.ts  [M] ← src/app/[locale]/(shop)/_lib/hooks/checkout/useCheckoutForm.ts
+    │   │   │   └── useRedirectIfCartEmpty.ts  [M] ← src/app/[locale]/(shop)/_lib/hooks/checkout/useRedirectIfCartEmpty.ts
+    │   │   ├── queries/
+    │   │   │   ├── useCreateOrder.ts  [M] ← src/app/[locale]/(shop)/_lib/hooks/checkout/useCreateOrder.ts
+    │   │   │   ├── useReservation.test.tsx  [M] ← src/app/[locale]/(shop)/_lib/hooks/checkout/__tests__/useReservation.test.tsx
+    │   │   │   └── useReservation.ts  [M] ← src/app/[locale]/(shop)/_lib/hooks/checkout/useReservation.ts
+    │   │   ├── schemas/
+    │   │   │   └── checkout.ts  [M] ← src/app/[locale]/(shop)/_lib/schemas/checkout.ts
+    │   │   └── services/
+    │   │       └── checkout.ts  [M] ← src/app/[locale]/(shop)/_lib/api/checkout.ts
+    │   ├── home/
+    │   │   ├── components/
+    │   │   │   ├── CountdownTimer.test.tsx  [M] ← src/app/[locale]/(shop)/_lib/components/home/__tests__/CountdownTimer.test.tsx
+    │   │   │   ├── CountdownTimer.tsx  [M] ← src/app/[locale]/(shop)/_lib/components/home/CountdownTimer.tsx
+    │   │   │   ├── FlashSaleBanner.tsx  [M] ← src/app/[locale]/(shop)/_lib/components/common/FlashSaleBanner.tsx
+    │   │   │   ├── hero3d/
+    │   │   │   │   ├── cssColor.ts  [M] ← src/app/[locale]/(shop)/_lib/components/home/hero3d/cssColor.ts
+    │   │   │   │   ├── dissolveShader.ts  [M] ← src/app/[locale]/(shop)/_lib/components/home/hero3d/dissolveShader.ts
+    │   │   │   │   └── HeroSlides3D.tsx  [M] ← src/app/[locale]/(shop)/_lib/components/home/hero3d/HeroSlides3D.tsx
+    │   │   │   ├── HeroBanner.tsx  [M] ← src/app/[locale]/(shop)/_lib/components/common/HeroBanner.tsx
+    │   │   │   ├── HeroCarousel.tsx  [M] ← src/app/[locale]/(shop)/_lib/components/home/HeroCarousel.tsx
+    │   │   │   ├── motion.ts  [M] ← src/app/[locale]/(shop)/_lib/components/home/motion.ts
+    │   │   │   ├── NewsletterForm.test.tsx  [M] ← src/app/[locale]/(shop)/_lib/components/home/__tests__/NewsletterForm.test.tsx
+    │   │   │   ├── NewsletterForm.tsx  [M] ← src/app/[locale]/(shop)/_lib/components/home/NewsletterForm.tsx
+    │   │   │   ├── SectionFeaturedCategories.tsx  [M] ← src/app/[locale]/(shop)/_lib/components/home/SectionFeaturedCategories.tsx
+    │   │   │   ├── SectionHero.tsx  [M] ← src/app/[locale]/(shop)/_lib/components/home/SectionHero.tsx
+    │   │   │   ├── SectionNewArrivals.tsx  [M] ← src/app/[locale]/(shop)/_lib/components/home/SectionNewArrivals.tsx
+    │   │   │   ├── SectionNewsletter.tsx  [M] ← src/app/[locale]/(shop)/_lib/components/home/SectionNewsletter.tsx
+    │   │   │   ├── SectionTestimonials.tsx  [M] ← src/app/[locale]/(shop)/_lib/components/home/SectionTestimonials.tsx
+    │   │   │   ├── SectionWhyChooseUs.tsx  [M] ← src/app/[locale]/(shop)/_lib/components/home/SectionWhyChooseUs.tsx
+    │   │   │   ├── TestimonialCard.tsx  [M] ← src/app/[locale]/(shop)/_lib/components/home/TestimonialCard.tsx
+    │   │   │   └── TrustBadgeList.tsx  [M] ← src/app/[locale]/(shop)/_lib/components/home/TrustBadgeList.tsx
+    │   │   ├── home-content.ts  [M] ← src/app/[locale]/(shop)/_lib/data/home.ts
+    │   │   ├── hooks/
+    │   │   │   ├── useHomeFlashSaleCountdown.ts  [M] ← src/app/[locale]/(shop)/_lib/hooks/home/useHomeFlashSaleCountdown.ts
+    │   │   │   └── useNewsletterForm.ts  [M] ← src/app/[locale]/(shop)/_lib/hooks/home/useNewsletterForm.ts
+    │   │   └── types/
+    │   │       └── home.ts  [M] ← src/app/[locale]/(shop)/_lib/types/home.ts
     │   ├── orders/
     │   │   ├── components/
     │   │   │   └── OrderStatusBadge.tsx  [M] ← src/app/[locale]/(shop)/_lib/components/common/OrderStatusBadge.tsx
+    │   │   ├── order-detail/
+    │   │   │   ├── components/
+    │   │   │   │   ├── OrderDetailClient.test.tsx  [M] ← src/app/[locale]/(shop)/_lib/components/orders/__tests__/OrderDetailClient.test.tsx
+    │   │   │   │   └── OrderDetailClient.tsx  [M] ← src/app/[locale]/(shop)/_lib/components/orders/OrderDetailClient.tsx
+    │   │   │   └── queries/
+    │   │   │       ├── useCancelOrder.ts  [M] ← src/app/[locale]/(shop)/_lib/hooks/orders/useCancelOrder.ts
+    │   │   │       ├── useOrder.ts  [M] ← src/app/[locale]/(shop)/_lib/hooks/orders/useOrder.ts
+    │   │   │       └── useRequestReturn.ts  [M] ← src/app/[locale]/(shop)/_lib/hooks/orders/useRequestReturn.ts
+    │   │   ├── order-list/
+    │   │   │   ├── components/
+    │   │   │   │   ├── OrdersClient.test.tsx  [M] ← src/app/[locale]/(shop)/_lib/components/orders/__tests__/OrdersClient.test.tsx
+    │   │   │   │   └── OrdersClient.tsx  [M] ← src/app/[locale]/(shop)/_lib/components/orders/OrdersClient.tsx
+    │   │   │   └── queries/
+    │   │   │       ├── useOrders.test.tsx  [M] ← src/app/[locale]/(shop)/_lib/hooks/orders/__tests__/useOrders.test.tsx
+    │   │   │       └── useOrders.ts  [M] ← src/app/[locale]/(shop)/_lib/hooks/orders/useOrders.ts
     │   │   ├── queries/
     │   │   │   └── orderKeys.ts  [M] ← src/app/[locale]/(shop)/_lib/hooks/orders/orderKeys.ts
     │   │   └── services/
     │   │       └── order.ts  [M] ← src/app/[locale]/(shop)/_lib/api/order.ts
+    │   ├── storefront-shell/
+    │   │   ├── components/
+    │   │   │   ├── DesktopMegaMenu.tsx  [M] ← src/app/[locale]/(shop)/_lib/components/navigation/DesktopMegaMenu.tsx
+    │   │   │   ├── Footer.tsx  [M] ← src/app/[locale]/(shop)/_lib/components/layout/Footer.tsx
+    │   │   │   ├── Header.tsx  [M] ← src/app/[locale]/(shop)/_lib/components/layout/Header.tsx
+    │   │   │   ├── MobileNav.tsx  [M] ← src/app/[locale]/(shop)/_lib/components/navigation/MobileNav.tsx
+    │   │   │   └── PageShell.tsx  [M] ← src/app/[locale]/(shop)/_lib/components/layout/PageShell.tsx
+    │   │   └── providers/
+    │   │       └── AppProviders.tsx  [M] ← src/app/providers.tsx
     │   └── wishlist/
+    │       ├── components/
+    │       │   ├── WishlistClient.test.tsx  [M] ← src/app/[locale]/(shop)/_lib/components/wishlist/__tests__/WishlistClient.test.tsx
+    │       │   └── WishlistClient.tsx  [M] ← src/app/[locale]/(shop)/_lib/components/wishlist/WishlistClient.tsx
     │       ├── hooks/
     │       │   ├── useMoveToCart.ts  [M] ← src/app/[locale]/(shop)/_lib/hooks/wishlist/useMoveToCart.ts
     │       │   ├── useWishlist.test.tsx  [M] ← src/app/[locale]/(shop)/_lib/hooks/__tests__/useWishlist.test.tsx
@@ -418,6 +429,8 @@ fe-ecommerce-nike-style/
     │           └── wishlist.ts  [K]
     ├── middleware.test.ts  [M] ← src/__tests__/middleware.test.ts
     ├── middleware.ts  [K]
+    ├── pwa/
+    │   └── sw.ts  [M] ← src/app/sw.ts
     ├── shared/
     │   ├── constants/
     │   │   ├── app-config.ts  [K]
@@ -496,6 +509,7 @@ fe-ecommerce-nike-style/
     │       ├── utils.test.ts  [M] ← src/shared/lib/__tests__/utils.test.ts
     │       └── utils.ts  [M] ← src/shared/lib/utils.ts
     ├── styles/
+    │   ├── globals.css  [M] ← src/app/globals.css
     │   ├── login.css  [K]
     │   ├── preset.css  [K]
     │   └── theme.css  [K]
@@ -551,7 +565,7 @@ Các file root, tài liệu, test E2E và tài nguyên hiện có giữ nguyên 
 
 ## 4. Trình tự triển khai sau review
 
-1. Thử mẫu page-first với hai trang Products, rồi áp dụng cho Catalog và Search. Bảo toàn mapper, filter URL, SSR, metadata và slug. Kiểm tra trang danh sách, chi tiết và tìm kiếm ở hai locale.
+1. Thử mẫu route-only với hai trang Products, rồi áp dụng cho Catalog và Search. Bảo toàn mapper, filter URL, SSR, metadata và slug. Kiểm tra trang danh sách, chi tiết và tìm kiếm ở hai locale.
 2. Chuyển layout, UI dùng chung và các trang auth/account. Cập nhật import, eslint, provider và test. Kiểm tra refresh đồng thời và redirect đăng nhập.
 3. Chuyển các trang cart, wishlist, checkout và orders theo cây đề xuất. Giữ hành vi mock hiện tại trong đợt di chuyển. Thực hiện cutover Tier 1 theo [plan restructure](storefront-restructure-plan.md).
 4. Đối chiếu quy tắc agent và tài liệu theo [plan clean code](storefront-clean-code-plan.md). Chạy lint, format check, typecheck, test và build sau mỗi cụm. Kiểm tra E2E ở nơi đổi luồng và xác minh không còn import đường dẫn cũ trước khi xóa.

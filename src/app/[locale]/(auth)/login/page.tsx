@@ -8,7 +8,7 @@ import { useRouter } from 'next/navigation';
 
 import { Heart, Package, ShoppingBag, X } from 'lucide-react';
 
-import { LoginForm } from '@/app/[locale]/(auth)/login/components/LoginForm';
+import { LoginForm } from '@/features/auth/login/components/LoginForm';
 import { LoadingSpinner } from '@/shared/ui/LoadingSpinner';
 import { FacebookMark, GoogleMark, TwitterMark } from '@/shared/ui/SocialMarks';
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/shared/ui/Tooltip';

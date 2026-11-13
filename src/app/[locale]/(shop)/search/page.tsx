@@ -1,5 +1,5 @@
-import { PageShell } from '@/app/[locale]/(shop)/components/PageShell';
-import { SearchClient } from '@/app/[locale]/(shop)/search/components/SearchClient';
+import { SearchClient } from '@/features/catalog/search/components/SearchClient';
+import { PageShell } from '@/features/storefront-shell/components/PageShell';
 
 interface SearchPageProps {
   readonly searchParams: Promise<{ q?: string }>;
