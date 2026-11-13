@@ -17,7 +17,7 @@ Mỗi route có `page.tsx` và các thư mục cần thiết nằm ngang hàng. 
 | `*.test.ts(x)` | Đặt cùng thư mục với file được kiểm thử. Test tích hợp đặt cạnh điểm vào của luồng. Playwright tiếp tục ở `e2e/` |
 
 - `features/` giữ phần nghiệp vụ dùng qua nhiều route. Catalog sở hữu query danh sách và bộ lọc URL chung cho Products, Danh mục và Search. Cart, Wishlist và Auth sở hữu store dùng qua nhiều màn hình.
-- `shared/ui/` chứa UI dùng xuyên nghiệp vụ. `shared/utils/` chứa hàm dùng chung. Logic riêng như `variantResolution.ts` nằm cạnh trang chi tiết.
+- `shared/ui/` chứa UI dùng xuyên nghiệp vụ. `shared/utils/` chứa hàm dùng chung. Logic chọn Biến thể dùng ở PDP và Wishlist thuộc Catalog. `variantColor.ts` nằm cạnh trang chi tiết.
 - `lib/api/` giữ HTTP client, endpoint, OpenAPI và MSW chuyển tiếp. Dữ liệu từ backend nằm trong TanStack Query khi dùng cache client. URL sở hữu filter, sort và pagination. Zustand giữ UI state và dữ liệu local đã có trong giai đoạn chuyển tiếp.
 - Trang chi tiết tiếp tục dùng `useVariantSelection.ts`. Chỉ thêm store riêng nếu có nhiều vùng UI thực sự chia sẻ state.
 - Chuyển setup dùng chung sang `src/testing/setup.ts`. Khi triển khai, cập nhật `setupFiles`, đổi Vitest `include` từ `src/**/__tests__/**/*.{test,spec}.{ts,tsx}` thành `src/**/*.{test,spec}.{ts,tsx}`, rồi sửa coverage exclude và các quy tắc lint còn dựa vào `__tests__`. So sánh danh sách test được runner phát hiện trước và sau khi chuyển.
@@ -206,8 +206,7 @@ fe-ecommerce-nike-style/
     │   │   │   │   │   │   └── useRelatedProducts.ts  [M] ← src/app/[locale]/(shop)/_lib/hooks/products/useRelatedProducts.ts
     │   │   │   │   │   ├── variantColor.test.ts  [M] ← src/app/[locale]/(shop)/_lib/utils/__tests__/variantColor.test.ts
     │   │   │   │   │   ├── variantColor.ts  [M] ← src/app/[locale]/(shop)/_lib/utils/variantColor.ts
-    │   │   │   │   │   ├── variantResolution.test.ts  [M] ← src/app/[locale]/(shop)/_lib/utils/__tests__/variantResolution.test.ts
-    │   │   │   │   │   └── variantResolution.ts  [M] ← src/app/[locale]/(shop)/_lib/utils/variantResolution.ts
+
     │   │   │   │   ├── components/
     │   │   │   │   │   └── ProductsClient.tsx  [M] ← src/app/[locale]/(shop)/_lib/components/products/ProductsClient.tsx
     │   │   │   │   └── page.tsx  [K]
@@ -265,6 +264,8 @@ fe-ecommerce-nike-style/
     │   │   └── stores/
     │   │       └── cart.store.ts  [N] Tách phần Zustand từ useCart.ts
     │   ├── catalog/
+    │   │   ├── variantResolution.test.ts  [M] ← src/app/[locale]/(shop)/_lib/utils/__tests__/variantResolution.test.ts
+    │   │   ├── variantResolution.ts  [M] ← src/app/[locale]/(shop)/_lib/utils/variantResolution.ts
     │   │   ├── catalogUrlState.test.ts  [M] ← src/app/[locale]/(shop)/_lib/utils/__tests__/catalogUrlState.test.ts
     │   │   ├── catalogUrlState.ts  [M] ← src/app/[locale]/(shop)/_lib/utils/catalogUrlState.ts
     │   │   ├── categoryTree.ts  [M] ← src/app/[locale]/(shop)/_lib/utils/categoryTree.ts

@@ -3,7 +3,8 @@ import { act, renderHook, waitFor } from '@testing-library/react';
 import { afterAll, afterEach, beforeAll, beforeEach, describe, expect, it } from 'vitest';
 import { server } from '@/lib/api/testing/msw-server';
 
-import { clearCart, initCartFromStorage, resetCartState, useCart, useCartStore } from '@/features/cart/hooks/useCart';
+import { useCart } from '@/features/cart/hooks/useCart';
+import { clearCart, initCartFromStorage, resetCartState, useCartStore } from '@/features/cart/stores/cart.store';
 
 // p-1-0-0 (stock 14) / p-1-0-2 (stock 4) — real seeded SKUs from `src/lib/api/mocks/catalog-fixtures.ts`.
 const SKU_HIGH_STOCK = 'p-1-0-0';

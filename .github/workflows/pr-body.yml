@@ -1,0 +1,19 @@
+name: PR body
+
+on:
+  pull_request:
+    types: [opened, edited, synchronize, reopened]
+
+permissions:
+  contents: read
+
+jobs:
+  template-sections:
+    if: github.head_ref != 'dev' && github.event.pull_request.user.type != 'Bot'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Check PR body follows the template
+        env:
+          BODY: ${{ github.event.pull_request.body }}
+        run: bash scripts/check-pr-body.sh

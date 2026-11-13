@@ -8,9 +8,6 @@ import { getSkusByIds, mergeCartAfterLogin } from '@/lib/api/endpoints/cart';
 import { ensureApiMockingReady } from '@/shared/lib/api-mocking';
 import { notify } from '@/shared/lib/notification';
 
-export type { CartItem } from '@/features/cart/stores/cart.store';
-export { clearCart, getCartItems, initCartFromStorage, replaceCartItems, resetCartState, useCartStore } from '@/features/cart/stores/cart.store';
-
 /** Live-resolved line for display/totals — price/stock are never cached, always read from the SKU (glossary.md). */
 export interface CartLine extends CartItem {
   price: number;

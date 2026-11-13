@@ -4,8 +4,8 @@ import { server } from '@/lib/api/testing/msw-server';
 
 import { renderWithProviders } from '@/helpers/render';
 import { WishlistClient } from '@/app/[locale]/(shop)/wishlist/components/WishlistClient';
-import { clearCart, resetCartState, useCartStore } from '@/features/cart/hooks/useCart';
-import { resetWishlistState, useWishlistStore } from '@/features/wishlist/hooks/useWishlist';
+import { clearCart, resetCartState, useCartStore } from '@/features/cart/stores/cart.store';
+import { resetWishlistState, useWishlistStore } from '@/features/wishlist/stores/wishlist.store';
 
 // Real seeded Products from `src/lib/api/mocks/catalog-fixtures.ts`.
 const PRODUCT_WITH_VARIANT_SLUG = 'running-shoe-alpha'; // p-1 — has Color x Size

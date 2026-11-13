@@ -1,4 +1,3 @@
-import type { CheckoutInput } from '@/app/[locale]/(shop)/checkout/schemas/checkout';
 import type { StorefrontOrder } from '@/lib/api/endpoints/orders';
 import { cancelOrder, createOrder, getOrder, getOrders, requestReturn } from '@/lib/api/endpoints/orders';
 
@@ -7,8 +6,7 @@ export const orderActions = {
   detail: getOrder,
   cancel: cancelOrder,
   requestReturn: requestReturn,
-  create: async (data: CheckoutInput & { items: Array<{ variantId: string; quantity: number }>; reservationId: string; requestKey: string }) =>
-    createOrder(data),
+  create: createOrder,
 };
 
 /**

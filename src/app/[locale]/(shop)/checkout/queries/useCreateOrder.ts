@@ -6,7 +6,8 @@ import { useRouter } from 'next/navigation';
 import { useQueryClient } from '@tanstack/react-query';
 
 import type { CheckoutInput } from '@/app/[locale]/(shop)/checkout/schemas/checkout';
-import { clearCart, useCart } from '@/features/cart/hooks/useCart';
+import { useCart } from '@/features/cart/hooks/useCart';
+import { clearCart } from '@/features/cart/stores/cart.store';
 import { orderKeys } from '@/features/orders/queries/orderKeys';
 import { orderActions } from '@/features/orders/services/order';
 import { useApiMutation } from '@/shared/lib/hooks/useApiMutation';

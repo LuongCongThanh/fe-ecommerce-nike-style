@@ -2,7 +2,7 @@ import { fireEvent, render, screen } from '@testing-library/react';
 import { beforeEach, describe, expect, it } from 'vitest';
 
 import { ProductCard } from '@/features/catalog/components/ProductCard';
-import { resetWishlistState } from '@/features/wishlist/hooks/useWishlist';
+import { resetWishlistState } from '@/features/wishlist/stores/wishlist.store';
 
 const baseProps = {
   id: 1,

@@ -13,16 +13,6 @@ import { getProductsByIds, mergeWishlistAfterLogin } from '@/lib/api/endpoints/w
 import type { Product } from '@/lib/schemas/catalog/catalog';
 import { ensureApiMockingReady } from '@/shared/lib/api-mocking';
 
-export type { WishlistItem } from '@/features/wishlist/stores/wishlist.store';
-export {
-  clearWishlist,
-  getWishlistItems,
-  initWishlistFromStorage,
-  replaceWishlistItems,
-  resetWishlistState,
-  useWishlistStore,
-} from '@/features/wishlist/stores/wishlist.store';
-
 /** Merges the guest wishlist into the account's wishlist after login/register — union+dedupe by Product (glossary.md — Merge Wishlist). */
 export async function mergeWishlistOnLogin(): Promise<void> {
   const guestItems = getWishlistItems();

@@ -2,7 +2,7 @@ import { describe, expect, it } from 'vitest';
 
 import type { Sku } from '@/lib/schemas/catalog/catalog';
 
-import { getVariantAxes, resolveSku } from '@/app/[locale]/(shop)/products/[slug]/variantResolution';
+import { getVariantAxes, resolveSku } from '@/features/catalog/variantResolution';
 
 const noVariantSku: Sku[] = [{ id: 'sku-1', price: 100, stock: 10, color: null, size: null }];
 

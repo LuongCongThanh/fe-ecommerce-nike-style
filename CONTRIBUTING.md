@@ -32,7 +32,7 @@ Before every commit, `.husky/pre-commit` runs `lint-staged`, `pnpm lint`, `pnpm 
 ## Pull requests
 
 - PR title also follows Conventional Commits (enforced by the `Check PR title` CI job) — under squash-merge, the PR title becomes the permanent commit message on `dev`.
-- Use `.github/PULL_REQUEST_TEMPLATE.md` — Summary, Test plan, Related issue (`Refs #N`), and the no-AI/agent-reference checklist item.
+- Use `.github/PULL_REQUEST_TEMPLATE.md` and fill in Type, Summary, Changes, Cách kiểm, Gap and Checklist. Include the related issue when available.
 - Target `dev` for regular feature/fix work. Target `main` only for a Release PR from `dev`.
 - **Merge strategy**: squash-merge for feature branches into `dev`. Regular merge (not squash) for `dev` → `main` Release PRs, so each already-squashed feature commit stays visible in `main`'s history.
 - Branch protection on `main` and `dev`: CI must pass before merging. No required reviewer approval (solo dev) — CI green is the merge gate.
