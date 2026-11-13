@@ -2,16 +2,12 @@
 
 ## Cấu trúc dự án
 
-- pnpm/Turborepo frontend monorepo cho nền tảng thương mại điện tử thời trang và giày tại Việt Nam.
-- `apps/storefront`: Next.js App Router; phục vụ khách hàng; hỗ trợ `vi` và `en`.
-- `apps/admin`: Vite + TanStack Router; phục vụ vận hành nội bộ; mount tại `/admin`.
-- `apps/cms`: Vite + TanStack Router; phục vụ quản trị nội dung; mount tại `/cms`.
-- `packages/api-sdk`: lớp truy cập network duy nhất của ứng dụng, bao gồm MSW.
-- `packages/schemas`: transport contract bằng Zod.
-- `packages/ui`, `packages/shared`, `packages/design-tokens` và các package cấu hình dùng chung.
+- Repo này là một app Next.js độc lập ở root (App Router; phục vụ khách hàng; hỗ trợ `vi` và `en`); không còn Turborepo/pnpm workspace.
+- Code ứng dụng nằm trong `src/`: `src/components/ui` (UI primitive), `src/lib/api` (client, endpoints, mock MSW), `src/lib/schemas` (Zod transport contract), `src/i18n`, `src/shared`.
+- `apps/admin`, `apps/cms`, `packages/*` là code legacy còn trên đĩa đến cleanup slice; không thuộc build/lint/typecheck ở root và root không được import từ đó.
 
 - Frontend phát triển mock-first; backend production là repository NestJS riêng.
-- Không import source backend hoặc gọi API trực tiếp ngoài `@repo/api-sdk`.
+- Không import source backend hoặc gọi API trực tiếp ngoài `src/lib/api`.
 
 ## Nguồn sự thật
 
@@ -51,7 +47,7 @@ pnpm build
 ## Ranh giới triển khai
 
 - Giữ đúng chiều phụ thuộc: route/layout của app -> feature -> UI hoặc utility dùng chung -> API SDK và schema.
-- Dùng `@/*` cho import nội bộ app và subpath công khai như `@repo/ui/button` cho package dùng chung.
+- Dùng `@/*` cho import nội bộ app, ví dụ `@/components/ui/Button`.
 - Không dùng parent-relative import xuyên module, deep import vào file private của module khác hoặc tạo barrel `index.ts` mới.
 - Dùng TanStack Query cho server state, Zustand cho shared client state, React Hook Form cho form và URL cho filter/sort/pagination có thể chia sẻ.
 - Guard xác thực phía frontend chỉ phục vụ UX; backend phải chịu trách nhiệm enforce authorization.

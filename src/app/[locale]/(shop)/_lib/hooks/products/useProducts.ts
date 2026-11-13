@@ -1,0 +1,33 @@
+'use client';
+
+import { keepPreviousData, useQuery } from '@tanstack/react-query';
+
+import { catalogKeys } from '@/app/[locale]/(shop)/_lib/hooks/products/catalogKeys';
+import type { CatalogFilters } from '@/app/[locale]/(shop)/_lib/utils/catalogUrlState';
+import { getProducts } from '@/lib/api/endpoints/catalog';
+import { ensureApiMockingReady } from '@/shared/lib/api-mocking';
+
+const PAGE_SIZE = 12;
+
+/** PLP/Category product list — backed by `packages/api-sdk` (MSW mock today, real Backend later behind the same call shape per Decision #28). */
+export function useProducts(categorySlug: string | undefined, filters: CatalogFilters, options?: { enabled?: boolean }) {
+  return useQuery({
+    queryKey: catalogKeys.products(categorySlug, filters),
+    enabled: options?.enabled ?? true,
+    // Paging or changing a filter keeps the current grid on screen while the next one loads, instead
+    // of collapsing to a spinner and back. Callers surface the in-between state via `isPlaceholderData`.
+    placeholderData: keepPreviousData,
+    queryFn: async () => {
+      await ensureApiMockingReady();
+      return getProducts({
+        page: filters.page,
+        pageSize: PAGE_SIZE,
+        sort: filters.sortBy,
+        category: categorySlug,
+        gender: filters.gender,
+        minPrice: filters.minPrice,
+        maxPrice: filters.maxPrice,
+      });
+    },
+  });
+}

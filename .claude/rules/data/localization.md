@@ -1,6 +1,6 @@
 ---
 paths:
-  - 'apps/storefront/src/**/*.{ts,tsx,json}'
+  - 'src/**/*.{ts,tsx,json}'
   - 'apps/admin/src/**/*.{ts,tsx,json}'
   - 'apps/cms/src/**/*.{ts,tsx,json}'
   - 'packages/i18n/**'
