@@ -26,11 +26,11 @@
 corepack pnpm install --frozen-lockfile
 ```
 
-| Phạm vi   | Lệnh                                                                                                      |
-| --------- | --------------------------------------------------------------------------------------------------------- |
-| Lint file | `pnpm --filter <workspace> exec eslint <file>`                                                            |
-| Test file | `pnpm --filter <workspace> exec vitest run <file>`                                                        |
-| Workspace | `pnpm --filter <workspace> lint && pnpm --filter <workspace> typecheck && pnpm --filter <workspace> test` |
+| Phạm vi   | Lệnh                                                      |
+| --------- | --------------------------------------------------------- |
+| Lint file | `pnpm exec eslint <file>`                                 |
+| Test file | `pnpm exec vitest run <file>`                             |
+| Toàn app  | `pnpm lint && pnpm typecheck && pnpm test`                |
 
 ```bash
 pnpm lint

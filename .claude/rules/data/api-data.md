@@ -1,9 +1,8 @@
 ---
 paths:
-  - 'packages/schemas/**'
-  - 'packages/api-sdk/**'
-  - 'apps/**/*.{ts,tsx}'
-  - 'packages/shared/**/*.{ts,tsx}'
+  - 'src/lib/schemas/**'
+  - 'src/lib/api/**'
+  - 'src/**/*.{ts,tsx}'
 description: Data-flow layering contract from component to Zod schema, plus TanStack Query/Zustand ownership rules.
 ---
 
@@ -15,7 +14,7 @@ description: Data-flow layering contract from component to Zod schema, plus TanS
 Presentational component
   -> feature hook / view-model hook
     -> TanStack Query hook
-      -> @repo/api-sdk endpoint
+      -> src/lib/api endpoint
         -> apiClient
           -> Zod response schema
 ```
@@ -31,8 +30,8 @@ Presentational component
 
 | Layer                       | Allowed                                                                      | Not allowed                                            |
 | --------------------------- | ---------------------------------------------------------------------------- | ------------------------------------------------------ |
-| `@repo/schemas`             | Validate the transport contract, infer the transport type                    | Call the API, hold UI state, format labels             |
-| `@repo/api-sdk/endpoints`   | URL, method, params/body, response schema                                    | Query cache, toast, router, JSX                        |
+| `src/lib/schemas`           | Validate the transport contract, infer the transport type                    | Call the API, hold UI state, format labels             |
+| `src/lib/api/endpoints`     | URL, method, params/body, response schema                                    | Query cache, toast, router, JSX                        |
 | Feature query/mutation hook | Query key, queryFn, cache policy, invalidation                               | Render markup, read the DOM, hold layout               |
 | Mapper/selector             | DTO -> domain/view model via a pure function                                 | Side effects, network calls, toast, mutating the cache |
 | View-model/controller hook  | Combine query, mutation, URL/local state into a model + intents for the view | Contain JSX or styles                                  |
@@ -72,12 +71,12 @@ Storefront:
 ## Reference implementation
 
 ```ts
-// packages/api-sdk/src/endpoints/catalog.ts
+// src/lib/api/endpoints/catalog.ts
 export function getProducts(query: ProductListRequest): Promise<ProductListResponse> {
   return apiClient.get('/api/products', query, { schema: ProductListResponseSchema });
 }
 
-// apps/admin/src/features/products/useAdminProducts.ts
+// src/features/products/useAdminProducts.ts
 export const adminProductKeys = {
   all: ['admin', 'products'] as const,
   list: (query: ProductListRequest) => [...adminProductKeys.all, 'list', query] as const,
@@ -91,7 +90,7 @@ export function useAdminProducts(query: ProductListRequest) {
   });
 }
 
-// apps/admin/src/features/products/ProductList.tsx
+// src/features/products/ProductList.tsx
 interface ProductListProps {
   readonly products: readonly Product[];
   readonly isLoading: boolean;
@@ -114,7 +113,7 @@ interface ProductListProps {
 
 ## Schema and contract
 
-- Data that crosses the network must be described and parsed with Zod in `@repo/schemas`; do not just cast with `as` in the UI.
+- Data that crosses the network must be described and parsed with Zod in `src/lib/schemas`; do not just cast with `as` in the UI.
 - Name schemas `<Domain>Schema`, request/response as `<Action>RequestSchema` and `<Action>ResponseSchema`; the inferred type drops the `Schema` suffix.
 - Clearly distinguish nullable, optional and default per the transport contract; do not convert between them ad hoc in a component.
 - Price and stock belong to the SKU in the current domain; Gender is a Product attribute/filter, not a Category.
@@ -122,7 +121,7 @@ interface ProductListProps {
 
 ## API SDK
 
-- Every application API call goes through a public subpath of `@repo/api-sdk`; components/hooks never call `fetch` or Axios directly.
+- Every application API call goes through `src/lib/api`; components/hooks never call `fetch` or Axios directly.
 - An endpoint must pass a response schema to the API client whenever there is a payload to validate.
 - Normalize errors with `ApiError`; the UI does not infer an error shape from `unknown` itself.
 - Do not put business logic or React state into the API SDK. Browser/server adapters only handle runtime/transport differences.

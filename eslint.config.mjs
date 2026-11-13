@@ -374,6 +374,9 @@ const eslintConfig = [
     files: ['src/lib/api/mocks/**/*.ts'],
     rules: {
       'import/no-cycle': 'off',
+      'import-x/no-cycle': 'off',
+      'import-x/no-relative-parent-imports': 'off',
+      'import-x/order': 'off',
       '@typescript-eslint/strict-boolean-expressions': 'off',
     },
   },

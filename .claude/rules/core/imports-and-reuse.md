@@ -1,7 +1,6 @@
 ---
 paths:
-  - 'apps/**/*.{ts,tsx}'
-  - 'packages/**/*.{ts,tsx}'
+  - 'src/**/*.{ts,tsx}'
 description: Import alias rules and the decision framework for reusing, extracting or intentionally duplicating code.
 ---
 
@@ -9,21 +8,20 @@ description: Import alias rules and the decision framework for reusing, extracti
 
 ## Canonical aliases
 
-| From         | Importing                                       | How to import                                   |
-| ------------ | ----------------------------------------------- | ----------------------------------------------- |
-| `apps/*`     | A file in the same app, different module/folder | `@/*` mapped to `./src/*`                       |
-| `apps/*`     | A workspace package                             | Public subpath `@repo/<package>/<subpath>`      |
-| `packages/*` | A file in the same module/package               | Relative `./...`                                |
-| `packages/*` | Another workspace package                       | Public subpath `@repo/<package>/<subpath>`      |
-| Anywhere     | An external dependency                          | Package name (`react`, `@tanstack/react-query`) |
+| From                   | Importing                                       | How to import                                   |
+| ---------------------- | ----------------------------------------------- | ----------------------------------------------- |
+| Anywhere under `src/`  | A file in a different module/folder             | `@/*` mapped to `./src/*`                       |
+| Anywhere under `src/`  | A file in the same module/folder                | Relative `./...`                                |
+| Anywhere               | An external dependency                          | Package name (`react`, `@tanstack/react-query`) |
+
+The storefront is a single Next.js app at the repo root; there are no workspace packages. `apps/admin`, `apps/cms` and `packages/*` are legacy code awaiting deletion: do not import from them.
 
 Example:
 
 ```ts
-import { getProducts } from '@repo/api-sdk/endpoints/catalog';
-import type { Product } from '@repo/schemas/catalog';
-import { Button } from '@repo/ui/button';
-
+import { Button } from '@/components/ui/Button';
+import { getProducts } from '@/lib/api/endpoints/catalog';
+import type { Product } from '@/lib/schemas/catalog/catalog';
 import { ROUTES } from '@/shared/constants/routes';
 
 import { ProductCard } from './ProductCard';
@@ -33,9 +31,7 @@ import { ProductCard } from './ProductCard';
 
 1. Same folder or direct submodule: use `./` to express local cohesion.
 2. Different module/folder in the same app: use `@/`; never walk up the tree with `../`.
-3. Across a package boundary: only use a subpath declared in `package.json#exports`.
-4. If a subpath does not exist yet but a module needs to be public, add an intentional export to the package manifest; do not deep-import to bypass the boundary.
-5. Packages have no `@/*` alias; never assume an app alias works inside a package.
+3. Across a layer boundary (`src/components/ui`, `src/lib/api`, `src/lib/schemas`, `src/shared`): import the module that owns the symbol; do not reach into another module's private helpers.
 
 ## Forbidden imports
 
@@ -43,22 +39,19 @@ import { ProductCard } from './ProductCard';
 // Parent-relative import
 import { x } from '../../../shared/x';
 
-// Deep import into a package's private source
-import { Button } from '@repo/ui/src/components/Button';
-
-// One app importing another app
-import { AdminShell } from '../../../admin/src/shell/AdminShell';
+// Importing legacy code that is awaiting deletion
+import { AdminShell } from '../../apps/admin/src/shell/AdminShell';
 
 // A feature importing another feature's private implementation
 import { internalMapper } from '@/features/orders/internal/mapper';
 
 // A root barrel hiding the real dependency
-import { Button, ProductSchema, getProducts } from '@repo/all';
+import { Button, ProductSchema, getProducts } from '@/all';
 ```
 
 - Do not import `routeTree.gen.ts`, other generated artifacts, or test helpers into production code.
 - Do not use aliases to hide a circular dependency or incorrect ownership.
-- Do not create new barrel `index.ts` files. A package's public API uses explicit subpath exports.
+- Do not create new barrel `index.ts` files. Import from the file that owns the symbol.
 - Use `import type` for type-only dependencies; do not turn a type import into a runtime edge.
 
 ## Import order
@@ -66,10 +59,9 @@ import { Button, ProductSchema, getProducts } from '@repo/all';
 Groups are separated by one blank line:
 
 1. Runtime/framework and external dependencies.
-2. Workspace packages `@repo/*`.
-3. App alias `@/*`.
-4. Relative `./*` within the same module.
-5. Side-effect imports last, only when truly needed.
+2. App alias `@/*`.
+3. Relative `./*` within the same module.
+4. Side-effect imports last, only when truly needed.
 
 ESLint is the final enforcer of exact ordering. Do not add comments to disable `import-x/order`, `no-cycle` or `no-relative-parent-imports` before fixing the underlying cause.
 
@@ -78,7 +70,7 @@ ESLint is the final enforcer of exact ordering. Do not add comments to disable `
 Before creating a new component, hook, schema, endpoint, formatter, constant or utility:
 
 1. Use `rg` to search by domain noun, action verb, UI label and similar type names.
-2. Check the public exports of `@repo/ui`, `@repo/shared`, `@repo/schemas`, `@repo/api-sdk`.
+2. Check `src/components/ui`, `src/shared`, `src/lib/schemas` and `src/lib/api` for an existing implementation.
 3. Check the app's shared modules and neighboring features.
 4. If an implementation with the same semantics already exists, reuse or extend its API instead of writing a copy.
 5. If two implementations with the same semantics are found within the area being changed, merge/extract the shared part in the same change when it is safe to do so.
@@ -89,17 +81,17 @@ Never copy-paste and rename variables, CSS classes or wording to create a new im
 
 | Kind of duplication                                       | Where it belongs                                         |
 | --------------------------------------------------------- | -------------------------------------------------------- |
-| UI primitive with no business logic                       | `packages/ui`                                            |
-| Component/hook/helper used by multiple apps, app-agnostic | `packages/shared`                                        |
-| Schema/transport type                                     | The matching domain in `packages/schemas`                |
-| Endpoint/API transport                                    | `packages/api-sdk`                                       |
-| Logic used by multiple features within one app            | That app's `src/shared` or `src/core`, by responsibility |
+| UI primitive with no business logic                       | `src/components/ui`                                      |
+| Component/hook/helper used by several features, no domain | `src/shared`                                             |
+| Schema/transport type                                     | The matching domain in `src/lib/schemas`                 |
+| Endpoint/API transport                                    | `src/lib/api`                                            |
+| Locale config and request setup                           | `src/i18n`                                               |
+| Logic used by multiple features                           | `src/shared` or `src/core`, by responsibility            |
 | Logic used within one Storefront route group              | That route group's `_lib`                                |
 | Logic used within one feature                             | Keep it in `features/<domain>`                           |
-| Design tokens/theme                                       | `packages/tailwind-config` or the existing token package |
+| Design tokens/theme                                       | `src/styles` (Tailwind entry CSS)                        |
 
-- Move an abstraction to the smallest common scope that contains every consumer; do not jump straight to a cross-app package if it is only used in one app today.
-- When making a package module public, add an explicit `package.json#exports` entry and a boundary test for it.
+- Move an abstraction to the smallest common scope that contains every consumer; do not jump straight to `src/shared` if it is only used in one feature today.
 - Reuse the contract/behavior, not by letting a consumer import a private file.
 
 ## When to extract
@@ -115,7 +107,7 @@ Examples that should be extracted:
 
 - Two places that format VND with the same rule.
 - Two mutations that repeat the same logic turning `ApiError` into one message type.
-- Two apps using the same accessible empty/error state.
+- Two features using the same accessible empty/error state.
 - Two endpoints redeclaring the same response schema.
 - Two components with the same markup, interaction and variants, differing only in data/label passed via props.
 
@@ -139,8 +131,8 @@ When intentionally keeping a duplicate:
 
 - Do not create catch-all `utils.ts`, `helpers.ts`, `common.ts` or `shared.ts`.
 - Do not create a generic component with many boolean props just to merge two UIs with different semantics.
-- Do not create a service/repository wrapper that forwards 1:1 to `@repo/api-sdk` without adding a valuable boundary.
-- Do not put one domain's business logic into `packages/ui` or a generic shared hook.
+- Do not create a service/repository wrapper that forwards 1:1 to `src/lib/api` without adding a valuable boundary.
+- Do not put one domain's business logic into `src/components/ui` or a generic shared hook.
 - Do not break the dependency direction to achieve "DRY". A small, independent duplication is better than an abstraction that creates incorrect domain coupling.
 
 ## Rules for fixing duplicated code

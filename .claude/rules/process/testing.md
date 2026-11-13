@@ -1,7 +1,6 @@
 ---
 paths:
-  - 'apps/**/*.{ts,tsx}'
-  - 'packages/**/*.{ts,tsx}'
+  - 'src/**/*.{ts,tsx}'
   - '**/*.test.{ts,tsx}'
   - '**/*.spec.{ts,tsx}'
 description: Full testing strategy — layer selection, naming, Vitest/RTL/MSW/Playwright specifics, anti-flake rules.
@@ -162,12 +161,11 @@ description: Full testing strategy — layer selection, naming, Vitest/RTL/MSW/P
 - Run the directly affected test file(s) first:
 
 ```bash
-pnpm --filter <workspace> exec vitest run <path/to/test>
-pnpm --filter storefront exec playwright test <path/to/spec> --project=chromium
+pnpm exec vitest run <path/to/test>
+pnpm exec playwright test <path/to/spec> --project=chromium
 ```
 
-- After the focused test, run that workspace's lint, typecheck and test.
-- Run `pnpm lint`, `pnpm format:check`, `pnpm typecheck` and `pnpm test` at the root before declaring a cross-workspace change complete.
+- After the focused test, run `pnpm lint`, `pnpm format:check`, `pnpm typecheck` and `pnpm test` before declaring the change complete.
 - Run `pnpm build` when framework, routing, config, dependencies, or the production bundle changed.
 - Run the full `pnpm test:e2e` when an important browser flow, routing, auth, storage, or E2E infrastructure changed.
 - State clearly which checks were skipped and why; never describe an unrun check as passing.
