@@ -45,7 +45,7 @@ function createBaseConfig(options = {}) {
     {
       // Tests remain linted, but do not require TypeScript program analysis.
       ...tseslint.configs.disableTypeChecked,
-      files: ['**/*.{test,spec}.{js,jsx,ts,tsx}', '**/__tests__/**/*.{js,jsx,ts,tsx}'],
+      files: ['**/*.{test,spec}.{js,jsx,ts,tsx}', 'src/testing/**'],
       rules: {
         ...tseslint.configs.disableTypeChecked.rules,
         '@typescript-eslint/consistent-type-imports': 'off',

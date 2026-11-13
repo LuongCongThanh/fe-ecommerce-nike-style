@@ -1,11 +1,11 @@
 import { setRequestLocale } from 'next-intl/server';
 
-import { SectionFeaturedCategories } from '@/app/[locale]/(shop)/_lib/components/home/SectionFeaturedCategories';
-import { SectionHero } from '@/app/[locale]/(shop)/_lib/components/home/SectionHero';
-import { SectionNewArrivals } from '@/app/[locale]/(shop)/_lib/components/home/SectionNewArrivals';
-import { SectionNewsletter } from '@/app/[locale]/(shop)/_lib/components/home/SectionNewsletter';
-import { SectionTestimonials } from '@/app/[locale]/(shop)/_lib/components/home/SectionTestimonials';
-import { SectionWhyChooseUs } from '@/app/[locale]/(shop)/_lib/components/home/SectionWhyChooseUs';
+import { SectionFeaturedCategories } from '@/app/[locale]/(shop)/home/components/SectionFeaturedCategories';
+import { SectionHero } from '@/app/[locale]/(shop)/home/components/SectionHero';
+import { SectionNewArrivals } from '@/app/[locale]/(shop)/home/components/SectionNewArrivals';
+import { SectionNewsletter } from '@/app/[locale]/(shop)/home/components/SectionNewsletter';
+import { SectionTestimonials } from '@/app/[locale]/(shop)/home/components/SectionTestimonials';
+import { SectionWhyChooseUs } from '@/app/[locale]/(shop)/home/components/SectionWhyChooseUs';
 import { isMockContentEnabled } from '@/shared/lib/mock-content';
 
 export default async function HomePage({ params }: { readonly params: Promise<{ locale: string }> }) {

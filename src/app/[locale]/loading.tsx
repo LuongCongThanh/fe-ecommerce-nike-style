@@ -1,4 +1,4 @@
-import { PageLoader } from '@/shared/components/PageLoader';
+import { PageLoader } from '@/shared/ui/PageLoader';
 
 // Next.js tự động hiển thị file này trong khi route đang load (Suspense boundary).
 // Bao phủ toàn bộ [locale]/ — bao gồm (shop), (auth), (admin).

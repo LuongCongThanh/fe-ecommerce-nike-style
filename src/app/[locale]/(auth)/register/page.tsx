@@ -1,7 +1,7 @@
 // Hallmark redesign · design-system: design.md · scope: app page (functional, no enrichment)
 import { setRequestLocale } from 'next-intl/server';
 
-import { RegisterForm } from '@/app/[locale]/(auth)/_lib/components/RegisterForm';
+import { RegisterForm } from '@/app/[locale]/(auth)/register/components/RegisterForm';
 
 interface RegisterPageProps {
   readonly params: Promise<{ locale: string }>;

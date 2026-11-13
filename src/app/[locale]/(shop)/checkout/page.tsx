@@ -8,10 +8,10 @@ import { ChevronLeft } from 'lucide-react';
 import { useTranslations } from 'next-intl';
 import { FormProvider } from 'react-hook-form';
 
-import { CheckoutClient } from '@/app/[locale]/(shop)/_lib/components/checkout/CheckoutClient';
-import { OrderSummary } from '@/app/[locale]/(shop)/_lib/components/checkout/OrderSummary';
-import { PageShell } from '@/app/[locale]/(shop)/_lib/components/layout/PageShell';
-import { useCheckoutForm } from '@/app/[locale]/(shop)/_lib/hooks/checkout/useCheckoutForm';
+import { CheckoutClient } from '@/app/[locale]/(shop)/checkout/components/CheckoutClient';
+import { OrderSummary } from '@/app/[locale]/(shop)/checkout/components/OrderSummary';
+import { useCheckoutForm } from '@/app/[locale]/(shop)/checkout/hooks/useCheckoutForm';
+import { PageShell } from '@/app/[locale]/(shop)/components/PageShell';
 
 export default function CheckoutPage({ params }: { readonly params: Promise<{ locale: string }> }) {
   const { locale } = use(params);

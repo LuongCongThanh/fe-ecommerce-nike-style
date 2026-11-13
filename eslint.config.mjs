@@ -36,9 +36,6 @@ const eslintConfig = [
       '.claude/**',
       '.agent/**',
       '.agents/**',
-      // Legacy workspaces kept on disk until the cleanup slice — not part of the root app.
-      'apps/**',
-      'packages/**',
     ],
   },
 
@@ -56,7 +53,7 @@ const eslintConfig = [
         {
           type: 'app-feature',
           // capture[0] = locale segment, capture[1] = route group name e.g. (shop), (auth)
-          pattern: 'src/app/*/(*)/_lib/**',
+          pattern: 'src/app/*/(*)/**',
           capture: ['_locale', 'group'],
         },
         {
@@ -65,7 +62,7 @@ const eslintConfig = [
         },
         {
           type: 'core-session',
-          pattern: 'src/core/session/**',
+          pattern: 'src/features/auth/session/**',
         },
       ],
       'boundaries/ignore': ['**/*.test.*', '**/*.spec.*', '**/*.d.ts', '.next/**'],
@@ -383,7 +380,7 @@ const eslintConfig = [
   },
 
   {
-    files: ['**/*.{test,spec}.{ts,tsx,js,jsx}', '**/__tests__/**/*.{ts,tsx,js,jsx}'],
+    files: ['**/*.{test,spec}.{ts,tsx,js,jsx}', 'src/testing/**'],
     plugins: { vitest: vitestPlugin },
     languageOptions: {
       ...disableTypeChecked.languageOptions,

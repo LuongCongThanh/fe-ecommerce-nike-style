@@ -1,0 +1,93 @@
+'use client';
+
+import Image from 'next/image';
+import Link from 'next/link';
+
+import { Heart, ShoppingCart, Trash2 } from 'lucide-react';
+import { useTranslations } from 'next-intl';
+
+import { getProductPriceRange } from '@/features/catalog/priceRange';
+import { useMoveToCart } from '@/features/wishlist/hooks/useMoveToCart';
+import { useWishlist } from '@/features/wishlist/hooks/useWishlist';
+import { Button } from '@/shared/ui/Button';
+import { QueryState } from '@/shared/ui/QueryState';
+import { formatCurrency } from '@/shared/utils/utils';
+
+interface WishlistClientProps {
+  readonly locale: string;
+}
+
+export function WishlistClient({ locale }: WishlistClientProps) {
+  const t = useTranslations('common');
+  const tWishlist = useTranslations('wishlist');
+  const { products, isLoading, isError, removeFromWishlist } = useWishlist();
+  const { moveToCart } = useMoveToCart(locale);
+
+  if (products.length === 0 && !isLoading && !isError) {
+    return (
+      <div className="flex min-h-[60vh] flex-col items-center justify-center gap-6 text-center">
+        <div className="bg-muted flex size-20 items-center justify-center rounded-full">
+          <Heart className="text-muted-foreground size-10" />
+        </div>
+        <div>
+          <h2 className="text-xl font-bold">Danh sách yêu thích đang trống</h2>
+          <p className="text-muted-foreground mt-2 text-sm">Bấm biểu tượng trái tim trên sản phẩm để lưu vào đây.</p>
+        </div>
+        <Button asChild size="lg">
+          <Link href={`/${locale}/products`}>Khám phá sản phẩm</Link>
+        </Button>
+      </div>
+    );
+  }
+
+  return (
+    <QueryState
+      isLoading={isLoading}
+      error={isError ? new Error(tWishlist('loadError')) : null}
+      loadingLabel={t('loading')}
+      errorTitle={tWishlist('loadError')}
+      errorFallbackDescription={t('errorDescription')}
+      retryLabel={t('retry')}
+    >
+      <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
+        {products.map((product) => {
+          const { min, isRange } = getProductPriceRange(product);
+          return (
+            <div key={product.id} className="bg-card flex flex-col gap-3 overflow-hidden rounded-xl border p-4">
+              <Link href={`/${locale}/products/${product.slug}`} className="bg-muted relative block aspect-square overflow-hidden rounded-lg">
+                <Image src={product.images[0] ?? '/placeholder-product.png'} alt={product.name} fill className="object-cover" sizes="33vw" />
+              </Link>
+              <p className="line-clamp-2 text-sm font-medium">{product.name}</p>
+              <p className="text-brand-600 text-lg font-bold tabular-nums">
+                {isRange ? <span className="text-muted-foreground mr-1 text-xs font-normal">Từ</span> : null}
+                {formatCurrency(min)}
+              </p>
+              <div className="mt-auto flex gap-2">
+                <Button
+                  variant="default"
+                  className="h-10 flex-1"
+                  onClick={() => {
+                    moveToCart(product);
+                  }}
+                >
+                  <ShoppingCart className="size-4" data-icon="inline-start" />
+                  Thêm vào giỏ
+                </Button>
+                <Button
+                  variant="outline"
+                  size="icon"
+                  aria-label="Xoá khỏi yêu thích"
+                  onClick={() => {
+                    removeFromWishlist(product.id);
+                  }}
+                >
+                  <Trash2 className="size-4" />
+                </Button>
+              </div>
+            </div>
+          );
+        })}
+      </div>
+    </QueryState>
+  );
+}

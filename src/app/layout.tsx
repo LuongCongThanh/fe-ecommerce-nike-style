@@ -4,7 +4,7 @@ import type { Metadata, Viewport } from 'next';
 import { getLocale } from 'next-intl/server';
 
 import { Providers } from '@/app/providers';
-import { cn } from '@/shared/lib/utils';
+import { cn } from '@/shared/utils/utils';
 
 import '@/app/globals.css';
 

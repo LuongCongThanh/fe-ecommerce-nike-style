@@ -1,4 +1,4 @@
-/* Scan only src/ — the legacy apps/ and packages/ trees stay on disk but are not part of this app. */
+/* Tailwind scans the storefront source tree. */
 @import 'tailwindcss' source('../');
 @import './theme.css';
 

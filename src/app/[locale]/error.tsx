@@ -4,8 +4,8 @@ import { useEffect } from 'react';
 
 import { useTranslations } from 'next-intl';
 
-import { ErrorState } from '@/shared/components/ErrorState';
 import { captureError } from '@/shared/lib/monitoring/sentry';
+import { ErrorState } from '@/shared/ui/ErrorState';
 
 interface GlobalErrorProps {
   readonly error: Error & { digest?: string };

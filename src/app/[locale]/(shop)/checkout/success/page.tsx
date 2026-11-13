@@ -3,10 +3,10 @@ import Link from 'next/link';
 
 import { CheckCircle } from 'lucide-react';
 
-import { getOrderOrNull } from '@/app/[locale]/(shop)/_lib/api/order';
-import { Button } from '@/components/ui/Button';
-import { Separator } from '@/components/ui/Separator';
-import { formatCurrency } from '@/shared/lib/utils';
+import { getOrderOrNull } from '@/features/orders/services/order';
+import { Button } from '@/shared/ui/Button';
+import { Separator } from '@/shared/ui/Separator';
+import { formatCurrency } from '@/shared/utils/utils';
 
 // Depends on the request's auth cookies to fetch a real order — see `account/orders/page.tsx` for why
 // this can't be statically generated.

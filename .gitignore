@@ -26,8 +26,6 @@ public/swe-worker*
 build
 dist
 
-# turbo
-.turbo
 
 # generated tool output
 graphify-out/

@@ -9,7 +9,7 @@ import { AppProgressBar } from 'next-nprogress-bar';
 import { ThemeProvider } from 'next-themes';
 import { Toaster } from 'sonner';
 
-import { AuthRuntimeProvider } from '@/core/session/AuthRuntimeProvider';
+import { AuthRuntimeProvider } from '@/features/auth/session/AuthRuntimeProvider';
 import { makeQueryClient } from '@/shared/lib/query-client';
 
 const progressBarOptions = { showSpinner: false };
