@@ -57,8 +57,8 @@ export const homeHeroData: HomeHero = {
 
 /**
  * Placeholder copy, not real customer submissions — no verified testimonial source exists yet.
- * `home/page.tsx` only renders `SectionTestimonials` outside production; do not wire this into a
- * production surface until it is backed by real reviews or explicitly labelled as demo content.
+ * Do not render this on any customer-facing surface until it is backed by real reviews or
+ * explicitly labelled as demo content.
  */
 export const homeTestimonialsData: HomeTestimonial[] = [
   {

@@ -1,7 +1,7 @@
 // Hallmark redesign · design-system: design.md · scope: app page (functional, no enrichment)
 'use client';
 
-import { useLocale } from 'next-intl';
+import { useLocale, useTranslations } from 'next-intl';
 
 import type { Gender } from '@/features/catalog/catalogUrlState';
 import { CategoryNav } from '@/features/catalog/components/CategoryNav';
@@ -13,13 +13,6 @@ import { Input } from '@/shared/ui/Input';
 import { Select, SelectContent, SelectGroup, SelectItem, SelectTrigger, SelectValue } from '@/shared/ui/Select';
 import { cn } from '@/shared/utils/utils';
 
-const GENDER_LABELS: Record<Gender, string> = {
-  men: 'Nam',
-  women: 'Nữ',
-  kids: 'Trẻ em',
-  unisex: 'Unisex',
-};
-
 interface FilterSidebarProps {
   /** Highlights the current node in the Category tree — only set on `/categories/[slug]`. */
   readonly activeCategorySlug?: string;
@@ -27,36 +20,39 @@ interface FilterSidebarProps {
 
 export function FilterSidebar({ activeCategorySlug }: FilterSidebarProps = {}): React.JSX.Element {
   const locale = useLocale();
+  const t = useTranslations('product');
   const { data: categories } = useCategoryTree();
   const { sizes, colors } = useCatalogOptions();
   const { filters, options, applyFilter, toggleOption, submitPriceRange, clearFilters, isPending } = useCatalogFilterControls();
 
   return (
-    // Translucent material rather than an opaque slab: content reads *through* the floating filter
-    // panel as it scrolls under, and reduced-transparency users get the solid card back (§12/§14).
-    <aside className="bg-card supports-[backdrop-filter]:bg-card/80 space-y-8 rounded-xl border p-5 backdrop-blur-xl backdrop-saturate-150 motion-reduce:backdrop-blur-none">
+    <aside className="space-y-7 px-4 py-6 sm:px-6 lg:px-5">
+      <div className="flex items-baseline justify-between">
+        <h2 className="font-display text-xl font-semibold tracking-tight">{t('filterTitle')}</h2>
+        <span className="text-muted-foreground text-xs tracking-[0.14em] uppercase">{t('curate')}</span>
+      </div>
       {categories !== undefined && categories.tree.length > 0 ? (
         <CategoryNav categories={categories.tree} locale={locale} activeSlug={activeCategorySlug} />
       ) : null}
 
       {/* Gender */}
       <div className="space-y-3 border-t pt-6 first:border-t-0 first:pt-0">
-        <h3 className="text-muted-foreground text-sm font-bold tracking-wider uppercase">Giới tính</h3>
+        <h3 className="text-muted-foreground text-[11px] font-bold tracking-[0.16em] uppercase">{t('gender')}</h3>
         <Select
           value={filters.gender ?? 'all'}
           onValueChange={(val) => {
             applyFilter('gender', val === 'all' ? undefined : val);
           }}
         >
-          <SelectTrigger className="w-full" aria-label="Giới tính">
-            <SelectValue placeholder="Tất cả" />
+          <SelectTrigger className="w-full" aria-label={t('gender')}>
+            <SelectValue placeholder={t('allGenders')} />
           </SelectTrigger>
           <SelectContent>
             <SelectGroup>
-              <SelectItem value="all">Tất cả</SelectItem>
-              {Object.entries(GENDER_LABELS).map(([value, label]) => (
+              <SelectItem value="all">{t('allGenders')}</SelectItem>
+              {(['men', 'women', 'kids', 'unisex'] as const satisfies readonly Gender[]).map((value) => (
                 <SelectItem key={value} value={value}>
-                  {label}
+                  {t(`genderOptions.${value}`)}
                 </SelectItem>
               ))}
             </SelectGroup>
@@ -67,7 +63,7 @@ export function FilterSidebar({ activeCategorySlug }: FilterSidebarProps = {}): 
       {/* Size — several may be picked; a Product matches when one active Variant has any of them. */}
       {sizes.length > 0 ? (
         <div className="space-y-3 border-t pt-6">
-          <h3 className="text-muted-foreground text-sm font-bold tracking-wider uppercase">Kích thước</h3>
+          <h3 className="text-muted-foreground text-[11px] font-bold tracking-[0.16em] uppercase">{t('size')}</h3>
           <div className="flex flex-wrap gap-2">
             {sizes.map((size) => {
               const isOn = options.size.includes(size.code);
@@ -96,7 +92,7 @@ export function FilterSidebar({ activeCategorySlug }: FilterSidebarProps = {}): 
       {/* Color */}
       {colors.length > 0 ? (
         <div className="space-y-3 border-t pt-6">
-          <h3 className="text-muted-foreground text-sm font-bold tracking-wider uppercase">Màu sắc</h3>
+          <h3 className="text-muted-foreground text-[11px] font-bold tracking-[0.16em] uppercase">{t('color')}</h3>
           <div className="flex flex-wrap gap-2">
             {colors.map((color) => {
               const isOn = options.color.includes(color.code);
@@ -126,21 +122,21 @@ export function FilterSidebar({ activeCategorySlug }: FilterSidebarProps = {}): 
 
       {/* Sorting */}
       <div className="space-y-3 border-t pt-6">
-        <h3 className="text-muted-foreground text-sm font-bold tracking-wider uppercase">Sắp xếp theo</h3>
+        <h3 className="text-muted-foreground text-[11px] font-bold tracking-[0.16em] uppercase">{t('sortBy')}</h3>
         <Select
           value={filters.sortBy}
           onValueChange={(val) => {
             applyFilter('sortBy', val);
           }}
         >
-          <SelectTrigger className="w-full" aria-label="Sắp xếp theo">
-            <SelectValue placeholder="Chọn kiểu sắp xếp" />
+          <SelectTrigger className="w-full" aria-label={t('sortBy')}>
+            <SelectValue placeholder={t('sortNewest')} />
           </SelectTrigger>
           <SelectContent>
             <SelectGroup>
-              <SelectItem value="newest">Mới nhất</SelectItem>
-              <SelectItem value="price_asc">Giá tăng dần</SelectItem>
-              <SelectItem value="price_desc">Giá giảm dần</SelectItem>
+              <SelectItem value="newest">{t('sortNewest')}</SelectItem>
+              <SelectItem value="price_asc">{t('sortPriceAscending')}</SelectItem>
+              <SelectItem value="price_desc">{t('sortPriceDescending')}</SelectItem>
             </SelectGroup>
           </SelectContent>
         </Select>
@@ -148,18 +144,32 @@ export function FilterSidebar({ activeCategorySlug }: FilterSidebarProps = {}): 
 
       {/* Price Filter */}
       <div className="space-y-3 border-t pt-6">
-        <h3 className="text-muted-foreground text-sm font-bold tracking-wider uppercase">Khoảng giá (VNĐ)</h3>
+        <h3 className="text-muted-foreground text-[11px] font-bold tracking-[0.16em] uppercase">{t('priceRange')}</h3>
         <form onSubmit={submitPriceRange} className="space-y-3">
           <div className="flex items-center gap-2">
-            <Input name="minPrice" type="number" placeholder="Từ" defaultValue={filters.minPrice ?? ''} className="h-11" aria-label="Giá từ" />
+            <Input
+              name="minPrice"
+              type="number"
+              placeholder={t('minPrice')}
+              defaultValue={filters.minPrice ?? ''}
+              className="h-11"
+              aria-label={t('minPrice')}
+            />
             <span className="text-muted-foreground">-</span>
-            <Input name="maxPrice" type="number" placeholder="Đến" defaultValue={filters.maxPrice ?? ''} className="h-11" aria-label="Giá đến" />
+            <Input
+              name="maxPrice"
+              type="number"
+              placeholder={t('maxPrice')}
+              defaultValue={filters.maxPrice ?? ''}
+              className="h-11"
+              aria-label={t('maxPrice')}
+            />
           </div>
           <Button type="submit" size="md" className="w-full" disabled={isPending} aria-busy={isPending}>
-            {isPending ? 'Đang áp dụng...' : 'Áp dụng'}
+            {isPending ? t('applyingFilters') : t('applyFilters')}
           </Button>
           <span role="status" aria-live="polite" className="sr-only">
-            {isPending ? 'Đang áp dụng bộ lọc...' : ''}
+            {isPending ? t('applyingFiltersStatus') : ''}
           </span>
         </form>
       </div>
@@ -168,11 +178,11 @@ export function FilterSidebar({ activeCategorySlug }: FilterSidebarProps = {}): 
       <Button
         variant="ghost"
         size="sm"
-        className="text-muted-foreground hover:text-foreground w-full border-t pt-6"
+        className="text-muted-foreground hover:text-foreground w-full border-t pt-5"
         disabled={isPending}
         onClick={clearFilters}
       >
-        Xóa tất cả bộ lọc
+        {t('clearFilters')}
       </Button>
     </aside>
   );
