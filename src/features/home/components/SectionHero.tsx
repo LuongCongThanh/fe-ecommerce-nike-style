@@ -30,11 +30,8 @@ export function SectionHero(): React.JSX.Element {
   const childTransition = prefersReducedMotion ? { duration: 0 } : { duration: 0.3, ease: EASE_OUT };
 
   return (
-    <section className="bg-background relative isolate overflow-hidden border-b">
-      <div aria-hidden="true" className="bg-accent-200/50 absolute -top-32 -left-32 size-96 rounded-full blur-3xl" />
-      <div aria-hidden="true" className="bg-secondary-200/40 absolute right-0 bottom-0 size-80 rounded-full blur-3xl" />
-
-      <div className="relative container mx-auto grid min-h-[calc(100dvh-7rem)] items-center gap-10 py-10 lg:grid-cols-[0.9fr_1.1fr] lg:gap-16">
+    <section className="bg-surface-inverse text-surface-inverse-foreground relative isolate overflow-hidden border-b border-white/10">
+      <div className="relative mx-auto grid min-h-[calc(100dvh-4rem)] max-w-7xl items-end gap-10 px-4 py-8 sm:px-6 lg:grid-cols-[0.82fr_1.18fr] lg:items-center lg:gap-16 lg:px-8 lg:py-12">
         <motion.div
           initial="hidden"
           animate="show"
@@ -44,31 +41,27 @@ export function SectionHero(): React.JSX.Element {
           <motion.span
             variants={variants}
             transition={childTransition}
-            className="border-border bg-background/80 text-muted-foreground inline-flex items-center gap-2 rounded-full border px-3 py-1.5 text-xs font-semibold tracking-[0.16em] uppercase shadow-sm backdrop-blur"
+            className="inline-flex items-center gap-2 border-b border-white/25 pb-2 text-xs font-semibold tracking-[0.18em] text-white/70 uppercase"
           >
             <span className="bg-brand-500 size-1.5 rounded-full" />
             {t('badge')}
           </motion.span>
 
-          <h1 className="font-display text-foreground leading-0.94 mt-6 max-w-2xl text-5xl font-black tracking-[-0.055em] sm:text-6xl lg:text-6xl xl:text-7xl">
+          <h1 className="font-display leading-0.92 mt-6 max-w-xl text-5xl font-black tracking-[-0.06em] text-balance sm:text-6xl lg:text-7xl xl:text-8xl">
             <motion.span variants={variants} transition={childTransition} className="block">
               {t('titleLineOne')}
             </motion.span>
-            <motion.span variants={variants} transition={childTransition} className="text-brand-600 block">
+            <motion.span variants={variants} transition={childTransition} className="block text-white/55">
               {t('titleLineTwo')}
             </motion.span>
           </h1>
 
-          <motion.p
-            variants={variants}
-            transition={childTransition}
-            className="text-muted-foreground mt-6 max-w-lg text-base leading-relaxed sm:text-lg"
-          >
+          <motion.p variants={variants} transition={childTransition} className="mt-6 max-w-md text-base leading-relaxed text-white/65 sm:text-lg">
             {t('subtitle')}
           </motion.p>
 
           <motion.div variants={variants} transition={childTransition} className="mt-8 flex flex-wrap items-center gap-3">
-            <Button asChild size="lg" className="h-12 rounded-full px-7 text-sm font-semibold shadow-lg shadow-neutral-950/10">
+            <Button asChild size="lg" className="bg-background text-foreground hover:bg-background/85 h-12 rounded-none px-7 text-sm font-semibold">
               <Link href={`/${locale}/products`}>
                 {t('cta')}
                 <ArrowUpRight className="size-4" />
@@ -76,8 +69,8 @@ export function SectionHero(): React.JSX.Element {
             </Button>
           </motion.div>
 
-          <motion.div variants={variants} transition={childTransition} className="border-border mt-8 border-t pt-5">
-            <TrustBadgeList items={t.raw('trustItems') as string[]} tone="light" />
+          <motion.div variants={variants} transition={childTransition} className="mt-10 border-t border-white/15 pt-5">
+            <TrustBadgeList items={t.raw('trustItems') as string[]} />
           </motion.div>
         </motion.div>
 
@@ -85,6 +78,7 @@ export function SectionHero(): React.JSX.Element {
           initial={prefersReducedMotion ? false : { opacity: 0, transform: 'translateY(16px)' }}
           animate={{ opacity: 1, transform: 'translateY(0px)' }}
           transition={prefersReducedMotion ? { duration: 0 } : { duration: 0.3, ease: EASE_OUT, delay: 0.15 }}
+          className="lg:pb-1"
         >
           <HeroCarousel />
         </motion.div>

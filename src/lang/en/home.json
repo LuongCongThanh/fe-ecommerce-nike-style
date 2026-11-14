@@ -14,10 +14,10 @@
     "goToSlide": "Go to slide {number}",
     "slides": {
       "watch": {
-        "alt": "Lyra Chronos smartwatch in a minimal product display",
-        "eyebrow": "Featured pick",
-        "title": "Lyra Chronos",
-        "ctaLabel": "Explore accessories"
+        "alt": "New shirts and fashion pieces from the current collection",
+        "eyebrow": "New collection",
+        "title": "The season's defining pieces",
+        "ctaLabel": "Explore new arrivals"
       },
       "shoes": {
         "alt": "A collection of leather shoes, sneakers, and boots on a bright backdrop",
@@ -37,7 +37,9 @@
     "title": "Shop by style",
     "subtitle": "Start with the categories our customers love most.",
     "viewAll": "View all",
-    "countLabel": "products"
+    "countLabel": "products",
+    "emptyTitle": "Categories are being updated",
+    "emptyDescription": "Explore the full collection while we finish curating featured categories."
   },
   "flashSale": {
     "eyebrow": "Good prices, live now",
@@ -52,9 +54,19 @@
   "newArrivals": {
     "title": "Just landed",
     "subtitle": "Fresh pieces for the season ahead.",
-    "viewAll": "Discover more"
+    "viewAll": "Discover more",
+    "emptyTitle": "No new arrivals yet",
+    "emptyDescription": "Explore the full collection to find a piece that fits."
+  },
+  "editorial": {
+    "eyebrow": "The everyday rhythm",
+    "title": "The building blocks of a day in motion.",
+    "description": "Considered pieces with easy proportions and materials that move naturally with the pace of your day.",
+    "cta": "Explore trousers & layers",
+    "imageAlt": "Curated clothing in a minimal fashion setting"
   },
   "benefits": {
+    "eyebrow": "Shop with confidence",
     "sectionTitle": "Why choose us",
     "shipping": {
       "title": "Free delivery",

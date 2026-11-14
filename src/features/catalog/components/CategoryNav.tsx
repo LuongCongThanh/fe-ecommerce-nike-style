@@ -1,6 +1,8 @@
 // Hallmark redesign · design-system: design.md · scope: app page (functional, no enrichment)
 import Link from 'next/link';
 
+import { useTranslations } from 'next-intl';
+
 import type { CategoryNode } from '@/lib/api/models/catalog';
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from '@/shared/ui/Accordion';
 import { cn } from '@/shared/utils/utils';
@@ -17,12 +19,13 @@ interface CategoryNavProps {
  * contains `activeSlug` opens by default so a child page does not hide its own siblings.
  */
 export function CategoryNav({ categories, locale, activeSlug }: CategoryNavProps): React.JSX.Element {
+  const t = useTranslations('product');
   const topLevel = categories;
   const defaultOpen = topLevel.filter((top) => top.slug === activeSlug || top.children.some((c) => c.slug === activeSlug)).map((top) => top.id);
 
   return (
-    <nav aria-label="Product categories" className="space-y-3">
-      <h3 className="text-muted-foreground text-sm font-bold tracking-wider uppercase">Danh mục</h3>
+    <nav aria-label={t('categories')} className="space-y-3">
+      <h3 className="text-muted-foreground text-[11px] font-bold tracking-[0.16em] uppercase">{t('categories')}</h3>
       <Accordion type="multiple" defaultValue={defaultOpen}>
         {topLevel.map((top) => {
           const children = top.children;
@@ -65,7 +68,7 @@ export function CategoryNav({ categories, locale, activeSlug }: CategoryNavProps
                     ))}
                   </ul>
                 ) : (
-                  <p className="text-muted-foreground ml-3 pl-3 text-sm">Chưa có danh mục con</p>
+                  <p className="text-muted-foreground ml-3 pl-3 text-sm">{t('noSubcategories')}</p>
                 )}
               </AccordionContent>
             </AccordionItem>

@@ -16,7 +16,7 @@ const AUTOPLAY_DELAY_MS = 6500;
 const SWIPE_THRESHOLD_PX = 50;
 
 const HERO_SLIDES = [
-  { id: 'watch', image: '/images/hero-placeholder.jpg', href: '/products?category=accessories' },
+  { id: 'watch', image: '/images/categories/ao.jpg', href: '/products?category=shirts' },
   { id: 'shoes', image: '/images/categories/giay.jpg', href: '/products?category=shoes' },
   { id: 'bags', image: '/images/categories/tui.jpg', href: '/products?category=bags' },
 ] as const;
@@ -117,10 +117,10 @@ export function HeroCarousel(): React.JSX.Element {
       onBlurCapture={(event) => {
         if (!event.currentTarget.contains(event.relatedTarget)) setIsPaused(false);
       }}
-      className="relative mx-auto w-full max-w-xl"
+      className="relative mx-auto w-full max-w-2xl"
     >
-      <div className="bg-surface-inverse relative aspect-square overflow-hidden rounded-4xl p-3 shadow-2xl shadow-neutral-950/20">
-        <div className="relative size-full overflow-hidden rounded-[1.35rem]">
+      <div className="relative aspect-[4/5] overflow-hidden border border-white/20 bg-neutral-900 shadow-2xl shadow-black/30 sm:aspect-[5/4]">
+        <div className="relative size-full overflow-hidden">
           {is3DEnabled ? (
             <div className="absolute inset-0" style={{ opacity: hasHandedOver ? 1 : 0 }}>
               <HeroSlides3D
@@ -162,19 +162,20 @@ export function HeroCarousel(): React.JSX.Element {
                   setSlideSources((current) => (current.length > 0 ? current : deriveSlideSources(event.currentTarget.currentSrc)));
                 }}
               />
-              <div className="absolute inset-x-0 bottom-0 h-2/5 bg-linear-to-t from-black/80 via-black/25 to-transparent" />
-              <div className="absolute inset-x-5 bottom-5 flex items-end justify-between gap-4 text-white">
-                <div>
-                  <p className="text-xs font-semibold tracking-[0.16em] text-white/65 uppercase">{t(`slides.${activeSlide.id}.eyebrow`)}</p>
-                  <p className="mt-1 text-xl font-bold sm:text-2xl">{t(`slides.${activeSlide.id}.title`)}</p>
+              <div className="absolute inset-x-0 bottom-0 bg-black/60 p-5 text-white sm:px-7 sm:py-6">
+                <div className="flex items-end justify-between gap-4">
+                  <div>
+                    <p className="text-xs font-semibold tracking-[0.16em] text-white/65 uppercase">{t(`slides.${activeSlide.id}.eyebrow`)}</p>
+                    <p className="mt-1 text-xl font-bold sm:text-2xl">{t(`slides.${activeSlide.id}.title`)}</p>
+                  </div>
+                  <Link
+                    href={`/${locale}${activeSlide.href}`}
+                    aria-label={t(`slides.${activeSlide.id}.ctaLabel`)}
+                    className="flex size-11 shrink-0 items-center justify-center border border-white/25 bg-white/10 transition-colors hover:bg-white hover:text-neutral-950 focus-visible:ring-2 focus-visible:ring-white focus-visible:outline-none"
+                  >
+                    <ArrowUpRight className="size-5" />
+                  </Link>
                 </div>
-                <Link
-                  href={`/${locale}${activeSlide.href}`}
-                  aria-label={t(`slides.${activeSlide.id}.ctaLabel`)}
-                  className="flex size-11 shrink-0 items-center justify-center rounded-full border border-white/25 bg-white/15 backdrop-blur-md transition-colors hover:bg-white hover:text-neutral-950 focus-visible:ring-2 focus-visible:ring-white focus-visible:outline-none"
-                >
-                  <ArrowUpRight className="size-5" />
-                </Link>
               </div>
             </motion.div>
           </AnimatePresence>
@@ -186,7 +187,7 @@ export function HeroCarousel(): React.JSX.Element {
           type="button"
           aria-label={t('previousSlide')}
           onClick={showPrevious}
-          className="pointer-events-auto flex size-10 items-center justify-center rounded-full border border-white/20 bg-black/25 text-white backdrop-blur-md transition-colors hover:bg-black/50 focus-visible:ring-2 focus-visible:ring-white focus-visible:outline-none"
+          className="pointer-events-auto flex size-10 items-center justify-center border border-white/30 bg-black/50 text-white transition-colors hover:bg-black/75 focus-visible:ring-2 focus-visible:ring-white focus-visible:outline-none"
         >
           <ChevronLeft className="size-5" />
         </button>
@@ -194,7 +195,7 @@ export function HeroCarousel(): React.JSX.Element {
           type="button"
           aria-label={t('nextSlide')}
           onClick={showNext}
-          className="pointer-events-auto flex size-10 items-center justify-center rounded-full border border-white/20 bg-black/25 text-white backdrop-blur-md transition-colors hover:bg-black/50 focus-visible:ring-2 focus-visible:ring-white focus-visible:outline-none"
+          className="pointer-events-auto flex size-10 items-center justify-center border border-white/30 bg-black/50 text-white transition-colors hover:bg-black/75 focus-visible:ring-2 focus-visible:ring-white focus-visible:outline-none"
         >
           <ChevronRight className="size-5" />
         </button>
@@ -212,8 +213,8 @@ export function HeroCarousel(): React.JSX.Element {
             }}
             className={
               index === activeIndex
-                ? 'bg-foreground h-2 w-8 rounded-full transition-[width,background-color]'
-                : 'bg-foreground/20 hover:bg-foreground/40 size-2 rounded-full transition-[width,background-color]'
+                ? 'bg-background h-1 w-9 transition-[width,background-color]'
+                : 'bg-background/35 hover:bg-background/65 size-1 transition-[width,background-color]'
             }
           />
         ))}
