@@ -35,6 +35,8 @@ graphify-out/
 *.pem
 .skills/*
 .claude/skills/*
+!.claude/skills/plan-task
+!.claude/skills/fashion-storefront-ui-director
 .agent/
 
 # debug
