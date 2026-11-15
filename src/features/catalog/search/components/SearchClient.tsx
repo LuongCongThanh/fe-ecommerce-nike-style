@@ -44,7 +44,16 @@ export function SearchClient(): React.JSX.Element {
 
           <CatalogProductGrid products={data.data} />
 
-          {data.meta.totalPages > 1 && <Pagination currentPage={data.meta.page} totalPages={data.meta.totalPages} onPageChange={onPageChange} />}
+          {data.meta.totalPages > 1 && (
+            <Pagination
+              currentPage={data.meta.page}
+              totalPages={data.meta.totalPages}
+              onPageChange={onPageChange}
+              previousLabel={tProduct('previousPage')}
+              nextLabel={tProduct('nextPage')}
+              navigationLabel={tProduct('pagination')}
+            />
+          )}
         </div>
       )}
     </QueryState>

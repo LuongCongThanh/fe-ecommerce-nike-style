@@ -41,5 +41,6 @@
   "noProducts": "Chưa có sản phẩm phù hợp",
   "noProductsDescription": "Hãy xóa một bộ lọc hoặc mở rộng lựa chọn của bạn.",
   "previousPage": "Trang trước",
-  "nextPage": "Trang sau"
+  "nextPage": "Trang sau",
+  "pagination": "Phân trang"
 }

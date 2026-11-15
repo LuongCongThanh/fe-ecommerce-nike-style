@@ -25,7 +25,7 @@ export function SectionEditorialCollection(): React.JSX.Element {
             <p className="text-muted-foreground mt-5 max-w-md text-base leading-relaxed">{t('description')}</p>
           </div>
           <Link
-            href={`/${locale}/products?category=pants`}
+            href={`/${locale}/products?category=bottoms`}
             className="text-foreground border-foreground hover:text-secondary-600 focus-visible:ring-ring mt-10 inline-flex w-fit items-center gap-2 border-b pb-2 text-sm font-semibold transition-colors focus-visible:ring-2 focus-visible:outline-none"
           >
             {t('cta')}

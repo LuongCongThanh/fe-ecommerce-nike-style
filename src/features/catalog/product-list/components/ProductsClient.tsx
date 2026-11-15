@@ -87,6 +87,7 @@ export default function ProductsClient(): React.JSX.Element {
                 onPageChange={onPageChange}
                 previousLabel={tProduct('previousPage')}
                 nextLabel={tProduct('nextPage')}
+                navigationLabel={tProduct('pagination')}
               />
             )}
           </>

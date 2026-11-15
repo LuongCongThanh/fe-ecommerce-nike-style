@@ -8,23 +8,25 @@ interface PaginationProps {
   readonly currentPage: number;
   readonly totalPages: number;
   readonly onPageChange: (page: number) => void;
-  readonly previousLabel?: string;
-  readonly nextLabel?: string;
+  readonly previousLabel: string;
+  readonly nextLabel: string;
+  readonly navigationLabel: string;
 }
 
 export function Pagination({
   currentPage,
   totalPages,
   onPageChange,
-  previousLabel = 'Trang trước',
-  nextLabel = 'Trang sau',
+  previousLabel,
+  nextLabel,
+  navigationLabel,
 }: PaginationProps): React.JSX.Element | null {
   if (totalPages <= 1) return null;
 
   const pages = Array.from({ length: totalPages }, (_, i) => i + 1);
 
   return (
-    <nav className="mt-14 flex items-center justify-center gap-2" aria-label="Pagination">
+    <nav className="mt-14 flex items-center justify-center gap-2" aria-label={navigationLabel}>
       <Button
         variant="outline"
         size="icon"

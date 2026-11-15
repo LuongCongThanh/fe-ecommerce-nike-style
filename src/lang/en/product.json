@@ -41,5 +41,6 @@
   "noProducts": "Nothing fits this edit",
   "noProductsDescription": "Try clearing a filter or broadening your selection.",
   "previousPage": "Previous page",
-  "nextPage": "Next page"
+  "nextPage": "Next page",
+  "pagination": "Pagination"
 }
