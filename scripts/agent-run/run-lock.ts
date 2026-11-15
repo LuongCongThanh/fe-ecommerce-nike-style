@@ -51,3 +51,9 @@ export function acquireRunLock(repoRoot: string, proc: { pid: number; isAlive: (
   }
   throw new Error(`could not acquire ${file}`);
 }
+
+/** Remove the lock if this pid owns it (signal handlers, where runAgent's own release cannot run). */
+export function releaseRunLock(repoRoot: string, pid: number): void {
+  const file = join(repoRoot, RUN_LOCK);
+  if (readLock(file)?.pid === pid) rmSync(file, { force: true });
+}

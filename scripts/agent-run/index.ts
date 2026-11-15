@@ -15,8 +15,9 @@ import { guardConfigSchema } from '../../.claude/hooks/lib/guard';
 import { realClaude } from './claude';
 import { DEFAULTS, type Config, type Deps } from './deps';
 import { realDevServer } from './dev-server';
-import { realRunner } from './exec';
+import { realRunner, terminateTrackedGroups } from './exec';
 import { runAgent } from './run';
+import { releaseRunLock } from './run-lock';
 import { defaultWorktreesDir } from './worktree';
 
 function parseArgs(argv: string[]): Map<string, string> {
@@ -69,6 +70,22 @@ async function main(): Promise<number> {
     devServer: realDevServer,
     processes: { pid: process.pid, isAlive: isProcessAlive },
   };
+  // Children run detached (own process group), so Ctrl-C would not reach them: stop them here, free the lock, exit.
+  let stopping = false;
+  for (const [signal, code] of [
+    ['SIGINT', 130],
+    ['SIGTERM', 143],
+  ] as const) {
+    process.on(signal, () => {
+      if (stopping) return;
+      stopping = true;
+      deps.log(`${signal}: stopping child processes`);
+      void terminateTrackedGroups().finally(() => {
+        releaseRunLock(repoRoot, process.pid);
+        process.exit(code);
+      });
+    });
+  }
   const outcome = await runAgent(deps, cfg);
   return outcome.kind === 'pr' ? 0 : 1; // stopped or locked: exit 1 (the reason is in the log / inbox)
 }

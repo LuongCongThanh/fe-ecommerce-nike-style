@@ -122,6 +122,8 @@ Hook `PreToolUse` `.claude/hooks/agent-guard.ts` (chạy bằng `tsx`, đăng k�
 - **Số lượt (D15):** cộng `num_turns` mọi lần gọi trong một lần chạy, phần còn lại truyền làm `--max-turns`; lần chạy tiếp được 40 lượt mới. Retro (5 lượt) và agent viết PR body (6 lượt) có hạn mức riêng, không tính vào 40.
 - **Kiểm tra UI (D30):** chỉ là bước tối thiểu (một lần gọi `claude` với các skill `mobile-native`, `break-ui`, `impeccable`); cần Playwright MCP trong `.mcp.json` (chưa có trong repo). Chỉnh ở bước chạy thử 5 task.
 
+**Ctrl-C / SIGTERM:** tiến trình con (claude, pnpm, next) chạy trong nhóm tiến trình riêng; `agent-run` theo dõi các nhóm đang chạy, khi nhận SIGINT/SIGTERM thì gửi SIGTERM, 3 giây sau SIGKILL nhóm nào còn sống, xóa `run.lock`, thoát với mã 130/143. Worktree và `state.json` giữ nguyên nên chạy lại là chạy tiếp.
+
 **Dừng khẩn:** `touch .agent-stop` ở root checkout chính (hook và script kiểm tra giữa mọi bước; tình huống 10). Xóa file rồi chạy lại để tiếp tục; task về `ready-for-agent`, lần tiếp không tính là "chạy tiếp".
 
 **Khi script dừng (D22):** một dòng mới ở cuối `AGENT-INBOX.md` (giờ, task, số tình huống, việc cần làm) và thông báo `notify-send`. Worktree luôn được giữ. Trạng thái spec: `needs-info` (tình huống 5, 6, 9, 14, 15), `blocked` (3, 4, 7, 8, 11, 12, 13), `ready-for-agent` (10), không đổi (1, 2).

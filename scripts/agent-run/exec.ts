@@ -30,6 +30,47 @@ function killTree(child: ChildProcess): void {
   }
 }
 
+/** Process groups of the commands currently running through `realRunner` (pid === pgid, spawned detached). */
+const liveGroups = new Set<number>();
+
+export const trackedGroups = (): number[] => [...liveGroups];
+
+export interface TerminateOptions {
+  /** How long a group gets after SIGTERM before SIGKILL */
+  graceMs?: number;
+  /** Signal sender; `-pid` targets the group. Injected in tests. */
+  kill?: (target: number, signal: NodeJS.Signals) => void;
+  /** Does the group still exist? Injected in tests. */
+  isAlive?: (pgid: number) => boolean;
+}
+
+function groupAlive(pgid: number): boolean {
+  try {
+    process.kill(-pgid, 0);
+    return true;
+  } catch {
+    // ESRCH: no process left in the group
+    return false;
+  }
+}
+
+/** Ctrl-C / SIGTERM path: SIGTERM every tracked group, wait `graceMs`, SIGKILL the ones still alive. */
+export async function terminateTrackedGroups(options: TerminateOptions = {}): Promise<void> {
+  const { graceMs = 3000, kill = (target, signal) => process.kill(target, signal), isAlive = groupAlive } = options;
+  const groups = trackedGroups();
+  const send = (pgid: number, signal: NodeJS.Signals) => {
+    try {
+      kill(-pgid, signal);
+    } catch {
+      // the group exited between listing and signalling
+    }
+  };
+  for (const pgid of groups) send(pgid, 'SIGTERM');
+  const deadline = Date.now() + graceMs;
+  while (Date.now() < deadline && groups.some(isAlive)) await new Promise((r) => setTimeout(r, 25));
+  for (const pgid of groups.filter(isAlive)) send(pgid, 'SIGKILL');
+}
+
 export const realRunner: Runner = (cmd, args, opts) =>
   new Promise((resolve) => {
     // detached = own process group, so a timeout can kill grandchildren (pnpm -> next, claude -> tools) too.
@@ -39,6 +80,8 @@ export const realRunner: Runner = (cmd, args, opts) =>
       stdio: [opts.input === undefined ? 'ignore' : 'pipe', 'pipe', 'pipe'],
       detached: true,
     });
+    const pgid = child.pid;
+    if (pgid !== undefined) liveGroups.add(pgid);
     if (opts.input !== undefined) {
       child.stdin?.on('error', () => undefined); // EPIPE when the child exits before reading: not an error for us
       child.stdin?.end(opts.input);
@@ -58,10 +101,12 @@ export const realRunner: Runner = (cmd, args, opts) =>
     child.stdout?.on('data', (d: string) => (stdout += d));
     child.stderr?.on('data', (d: string) => (stderr += d));
     child.on('error', (error) => {
+      if (pgid !== undefined) liveGroups.delete(pgid);
       if (timer) clearTimeout(timer);
       resolve({ code: 127, stdout, stderr: `${stderr}${error.message}\n` });
     });
     child.on('close', (code) => {
+      if (pgid !== undefined) liveGroups.delete(pgid);
       if (timer) clearTimeout(timer);
       resolve({ code: timedOut ? 124 : (code ?? 1), stdout, stderr: timedOut ? `${stderr}timed out after ${opts.timeoutMs}ms\n` : stderr });
     });
