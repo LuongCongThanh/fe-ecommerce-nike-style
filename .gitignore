@@ -60,3 +60,7 @@ public/sw.js
 
 # TanStack Router plugin scratch cache (hash-named, regenerated on every build)
 .tanstack/
+
+# agent system: emergency stop + per-worktree run state
+.agent-stop
+.agent-run/
