@@ -8,7 +8,8 @@ description: Git and Pull Request governance — permissions, branch/commit nami
 
 ## Permission to act
 
-- Never create/switch a branch, commit, amend, rebase, merge, push, open a PR, or change a GitHub Issue unless the user explicitly requested that specific action.
+- Never create/switch a branch, commit, amend, rebase, merge, push, open a PR, or change a task's `status` unless the user explicitly requested that specific action.
+- Exception (`agent-run`): running the `agent-run` script counts as the user explicitly requesting a branch, commits, a push of that task's branch, and a PR into `dev`. The script performs these git operations, not the agent, and only for the task's own branch. It never merges, never touches `main`/`dev`, and never force-pushes.
 - Read-only commands like `git status`, `git diff`, `git log`, `git show`, `git branch --show-current` are fine for understanding repository state.
 - Do not infer that "task done" means "commit" or "push".
 - Before any Git mutation, read `git status --short` and confirm the current branch.
@@ -27,13 +28,13 @@ description: Git and Pull Request governance — permissions, branch/commit nami
 ```text
 main  <- release PR from dev
 dev   <- integration/default branch
-<type>/<issue-number>-<slug> <- feature/fix/docs branch from dev
+<type>/<NN>-<slug> <- feature/fix/docs branch from dev (NN = task number)
 ```
 
 - Regular branches are created from `dev`, not from `main`.
-- Branch names use lowercase kebab-case: `feat/42-product-filter`, `fix/57-cart-quantity`, `docs/12-agent-conventions`.
+- Branch names use lowercase kebab-case `<type>/<NN>-<slug>` (or `<type>/<slug>` without a task number); the slug must say clearly what the feature is: `feat/42-product-filter`, `fix/57-cart-quantity`, `docs/agent-task-workflow`.
 - `<type>` must match the main intent and a Conventional Commit type: `feat`, `fix`, `chore`, `refactor`, `docs`, `test`, `ci`, `perf`, `style`, `build`, `revert`.
-- One branch addresses one focused issue/slice. Do not bundle in unrelated refactoring or cleanup.
+- One branch addresses one focused task/slice. Do not bundle in unrelated refactoring or cleanup.
 - Never push directly to `main` or `dev` unless the user explicitly says so and repository policy allows it.
 - No force-push. Never use `--force`; `--force-with-lease` also needs an explicit request since it still rewrites remote history.
 
@@ -101,21 +102,19 @@ Do not treat a hook failure as something to bypass; fix the underlying lint/type
 
 - Feature/fix PRs target `dev`; only a release PR from `dev` targets `main`.
 - The PR title follows Conventional Commits and reflects the main change.
-- Use `.github/PULL_REQUEST_TEMPLATE.md`; fill in Summary, Test plan, and Related issue.
-- Link the issue with `Refs #N`; use `Closes #N` only when the merge should genuinely auto-close the issue per the workflow.
+- Use `.github/PULL_REQUEST_TEMPLATE.md`; fill in every template section.
+- Name the task folder (`docs/plan/tasks/<NN>-<name>`) in the PR body; set the task's `pr` frontmatter once the PR exists. There are no GitHub Issues to link or close.
 - The PR description states the behavior, key decisions/constraints, how it was tested, screenshots for UI changes, and risks/migration if any.
 - The PR title/body must never contain the name of an AI tool, model, agent or assistant, and must never carry AI attribution in any form; CI checks against a list of common names.
-- Issue comments, PR comments, review comments, review summaries, release notes and GitHub discussions must also never mention an agent/assistant or describe content as AI-generated. Describe only the technical change, the decisions, the test evidence, and the actual person responsible.
+- PR comments, review comments, review summaries, release notes and GitHub discussions must also never mention an agent/assistant or describe content as AI-generated. Describe only the technical change, the decisions, the test evidence, and the actual person responsible.
 - A PR must be small, focused and reviewable. If a diff bundles several independent concerns, split it into separate branches/PRs before opening.
 - Never self-merge. Only merge when the user asks, CI is green, and the target/strategy is correct.
 
-## Issue and traceability
+## Task and traceability
 
-- The issue/PRD is the source of the delivery scope. Do not silently expand the acceptance criteria.
-- Branch, commit, and PR should share the same issue/domain vocabulary where possible.
-- Triage uses one matching label: `needs-triage`, `needs-info`, `ready-for-agent`, `ready-for-human`, `wontfix`.
-- The type label must match the kind of change (`type:feat`, `type:fix`, `type:docs`, ...).
-- Do not change labels, close/reopen an issue, or edit a milestone unless asked.
+- The task `spec.md` (`docs/plan/tasks/<NN>-<name>/spec.md`) is the source of the delivery scope. Do not silently expand the acceptance criteria.
+- Branch, commit, and PR should share the same task/domain vocabulary where possible.
+- Task state is the frontmatter `status` (see `docs/plan/README.md`). Humans set `todo`, `ready-for-agent`, `done`; the `agent-run` script sets the rest. Do not edit `status` unless asked.
 
 ## Safe recovery
 
