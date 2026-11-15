@@ -4,37 +4,27 @@ How the engineering skills should consume this repo's domain documentation when 
 
 ## Before exploring, read these
 
-- **`CONTEXT-MAP.md`** at the repo root, if it exists: it points at one `CONTEXT.md` per context. Read each one relevant to the topic.
-- **`docs/adr/`** at the repo root: system-wide decisions. Already has at least one ADR (`0001-tailadmin-reuse-no-attribution.md`).
-- Context-scoped ADRs under `apps/<app>/docs/adr/` (e.g. `apps/storefront/docs/adr/` already has three) — read the ones that touch the area you're about to work in.
+- **`GLOSSARY.md`** at the repo root, if it exists. Read it for the topic at hand.
+- **`docs/adr/`**: read ADRs that touch the area you're about to work in. Current ADRs: `0001-single-repo-khong-monorepo.md`, `0001-tailadmin-reuse-no-attribution.md`, `0002-headless-cms-thay-vi-tu-xay.md`, `0003-mock-first-cho-module-chua-co-backend.md`.
 
 If any of these files don't exist, **proceed silently**. Don't flag their absence; don't suggest creating them upfront. The `/domain-modeling` skill (reached via `/grill-with-docs` and `/improve-codebase-architecture`) creates them lazily when terms or decisions actually get resolved.
 
 ## File structure
 
-This repo is a pnpm/Turborepo monorepo (`apps/*` + `packages/*`), so it uses the **multi-context** layout — contexts are the three apps, since each is its own bounded domain context and `apps/storefront/docs/adr/` already exists as a context-scoped ADR directory:
+Single-context repo: the storefront is the only app, at the repo root. There is no `GLOSSARY-MAP.md`, no `apps/*` and no per-context ADR folders.
 
 ```
 /
-├── CONTEXT-MAP.md
-├── docs/adr/                          ← system-wide decisions
-└── apps/
-    ├── storefront/
-    │   ├── CONTEXT.md
-    │   └── docs/adr/                  ← storefront-specific decisions (3 ADRs already)
-    ├── admin/
-    │   ├── CONTEXT.md
-    │   └── docs/adr/                  ← admin-specific decisions
-    └── cms/
-        ├── CONTEXT.md
-        └── docs/adr/                  ← cms-specific decisions
+├── GLOSSARY.md        (created lazily)
+├── docs/adr/
+└── src/
 ```
 
-`packages/*` (`api-sdk`, `schemas`, `shared`, `ui`, ...) are shared infrastructure/contract layers, not their own bounded domain contexts — domain vocabulary that lives there (e.g. `Product`, `Order`, `Staff` in `packages/schemas`) is considered part of whichever app context uses it, and cross-cutting decisions about it belong in the root `docs/adr/`, not a per-package ADR directory.
+The shared vocabulary reference for the three-repo setup (storefront, backend, CMS) lives outside this repo; do not recreate it here.
 
 ## Use the glossary's vocabulary
 
-When your output names a domain concept (in an issue title, a refactor proposal, a hypothesis, a test name), use the term as defined in the relevant `CONTEXT.md`. Don't drift to synonyms the glossary explicitly avoids.
+When your output names a domain concept (in a task title, a refactor proposal, a hypothesis, a test name), use the term as defined in `GLOSSARY.md`. Don't drift to synonyms the glossary explicitly avoids.
 
 If the concept you need isn't in the glossary yet, that's a signal: either you're inventing language the project doesn't use (reconsider) or there's a real gap (note it for `/domain-modeling`).
 
@@ -42,4 +32,4 @@ If the concept you need isn't in the glossary yet, that's a signal: either you'r
 
 If your output contradicts an existing ADR, surface it explicitly rather than silently overriding:
 
-> _Contradicts ADR-0001 (`apps/storefront/docs/adr/0001-single-repo-khong-monorepo.md`), but worth reopening because…_
+> _Contradicts ADR 0003 (mock-first for modules without a backend), but worth reopening because…_
