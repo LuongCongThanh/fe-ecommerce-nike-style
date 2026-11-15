@@ -27,6 +27,7 @@ pr: # số PR khi đã mở, ví dụ #86
 kind: ui # ui | logic | refactor | docs
 approved: false # người đã duyệt spec/plan
 retro-turns: # số lượt retro đã dùng, script điền
+allow-test-changes: # true = task refactor được sửa/xóa test cũ (D38), mặc định không
 ---
 ```
 
@@ -101,6 +102,11 @@ Hook `PreToolUse` `.claude/hooks/agent-guard.ts` (chạy bằng `tsx`, đăng k�
 `report.md`: D12 (implementer viết trước khi trả `ok`) và bảng deny list (implementer ghi ở bước retro) được gộp: `implement` và `retro` đều được ghi `{taskDir}/report.md`. Hiện `docs/plan/tasks/**` không nằm trong `denyPaths` nên ngoại lệ này chỉ là lớp phòng thủ.
 
 **Đếm lần bị chặn:** mỗi lần chặn khi `AGENT_RUN=1` được ghi vào `<worktree>/.agent-run/state.json` dưới `blocks: [{tool, target, at, kind}]` (`target` = đường dẫn tương đối với file, nguyên chuỗi lệnh với Bash; `kind` = `deny-path`, `ask-path`, `command`, `secret`, ...). Module dùng chung `scripts/agent-run/state.ts` (`readState`, `updateState`, `recordBlock`, `countBlocks`, `findRepeatedBlock`) được `agent-run` (bước 7) dùng lại để phát hiện tình huống 9 (cùng tool + cùng target 3 lần) và giữ các trường khác của state (giữ nguyên khóa lạ). `agent-run` nên chạy thử hook (preflight: một lệnh bị chặn phải trả exit 2) trước khi giao việc, vì nếu `node_modules/.bin/tsx` thiếu thì hook lỗi không phải exit 2 và Claude Code coi là không chặn.
+
+## Gate và Stop hook (D19, D35, D38)
+
+- `pnpm verify-gates [--worktree <dir>] [--task-dir <dir> | --kind <kind>] [--with-build]` chạy `lint`, `typecheck`, `test`, `format:check` và in một JSON (`gates[]` có `status` + `log` đã cắt, `failureType`, `bundle`). Exit 0 xanh, 1 `gate_failed` (agent sửa được), 2 `bundle_regression` (không cho agent sửa, hỏi người), 64 lỗi dùng/nội bộ. Với `kind: ui` còn đo First Load JS: baseline lưu ở `<repo chính>/.agent-run/baseline/<sha-dev>.json` (tự build từ `dev` lần đầu), route tăng quá 10% thì đỏ, route mới chỉ báo. Next chỉ ghi `route-bundle-stats.json` khi build bằng Turbopack, nên gate chạy `pnpm exec next build` (không phải `pnpm build --webpack`) cho cả baseline lẫn bản mới; con số tuyệt đối khác bundle webpack thật, nhưng so sánh cùng điều kiện.
+- Stop hook `.claude/hooks/implementer-stop.ts` đăng ký trong `.claude/settings.json` (hook khai báo trong frontmatter của `implementer.md` không chạy dưới `claude -p --agent`). Chỉ hoạt động khi `AGENT_RUN=1` và `AGENT_PHASE=implement`. Đỏ thì exit 2 và tăng `fixAttempts` trong `state.json`; `fixAttempts >= 3` thì cho dừng, script `agent-run` đánh dấu blocked.
 
 ## Bảng task
 
