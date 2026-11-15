@@ -14,10 +14,10 @@
     "goToSlide": "Đi đến slide {number}",
     "slides": {
       "watch": {
-        "alt": "Đồng hồ thông minh Lyra Chronos trong không gian trưng bày tối giản",
-        "eyebrow": "Lựa chọn nổi bật",
-        "title": "Lyra Chronos",
-        "ctaLabel": "Khám phá phụ kiện"
+        "alt": "Áo sơ mi và trang phục mới trong bộ sưu tập thời trang",
+        "eyebrow": "Bộ sưu tập mới",
+        "title": "Điểm nhấn cho mùa này",
+        "ctaLabel": "Khám phá trang phục mới"
       },
       "shoes": {
         "alt": "Bộ sưu tập giày da, sneaker và boots trên nền sáng",
@@ -37,7 +37,9 @@
     "title": "Mua sắm theo phong cách",
     "subtitle": "Bắt đầu từ những danh mục được yêu thích nhất.",
     "viewAll": "Xem tất cả",
-    "countLabel": "sản phẩm"
+    "countLabel": "sản phẩm",
+    "emptyTitle": "Danh mục đang được cập nhật",
+    "emptyDescription": "Hãy khám phá toàn bộ sản phẩm trong khi chúng tôi hoàn thiện các danh mục nổi bật."
   },
   "flashSale": {
     "eyebrow": "Giá tốt đang diễn ra",
@@ -52,9 +54,19 @@
   "newArrivals": {
     "title": "Vừa cập bến",
     "subtitle": "Những thiết kế mới cho tủ đồ mùa này.",
-    "viewAll": "Khám phá thêm"
+    "viewAll": "Khám phá thêm",
+    "emptyTitle": "Chưa có sản phẩm mới",
+    "emptyDescription": "Hãy xem toàn bộ bộ sưu tập để tìm thiết kế phù hợp."
+  },
+  "editorial": {
+    "eyebrow": "Nhịp điệu thường ngày",
+    "title": "Những lớp nền cho một ngày nhiều chuyển động.",
+    "description": "Chọn các thiết kế dễ kết hợp, có tỷ lệ vừa vặn và chất liệu phù hợp để đồng hành cùng nhịp sống của bạn.",
+    "cta": "Khám phá quần & trang phục",
+    "imageAlt": "Trang phục được chọn lọc trong không gian thời trang tối giản"
   },
   "benefits": {
+    "eyebrow": "Mua sắm vững tâm",
     "sectionTitle": "Vì sao chọn chúng tôi",
     "shipping": {
       "title": "Miễn phí vận chuyển",

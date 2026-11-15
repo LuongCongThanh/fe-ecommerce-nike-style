@@ -3,6 +3,8 @@
 
 import { usePathname, useRouter, useSearchParams } from 'next/navigation';
 
+import { useTranslations } from 'next-intl';
+
 import { CatalogProductGrid } from '@/features/catalog/components/CatalogProductGrid';
 import { useCatalogListing } from '@/features/catalog/hooks/useCatalogListing';
 import { Button } from '@/shared/ui/Button';
@@ -13,6 +15,7 @@ interface CategoryClientProps {
 }
 
 export function CategoryClient({ categorySlug }: CategoryClientProps): React.JSX.Element {
+  const tProduct = useTranslations('product');
   const { data, isLoading, isError, onPageChange } = useCatalogListing(categorySlug);
   const router = useRouter();
   const pathname = usePathname();
@@ -58,7 +61,16 @@ export function CategoryClient({ categorySlug }: CategoryClientProps): React.JSX
   return (
     <div className="space-y-8">
       <CatalogProductGrid products={data.data} />
-      {data.meta.totalPages > 1 && <Pagination currentPage={data.meta.page} totalPages={data.meta.totalPages} onPageChange={onPageChange} />}
+      {data.meta.totalPages > 1 && (
+        <Pagination
+          currentPage={data.meta.page}
+          totalPages={data.meta.totalPages}
+          onPageChange={onPageChange}
+          previousLabel={tProduct('previousPage')}
+          nextLabel={tProduct('nextPage')}
+          navigationLabel={tProduct('pagination')}
+        />
+      )}
     </div>
   );
 }

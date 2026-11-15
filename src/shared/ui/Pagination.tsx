@@ -8,19 +8,29 @@ interface PaginationProps {
   readonly currentPage: number;
   readonly totalPages: number;
   readonly onPageChange: (page: number) => void;
+  readonly previousLabel: string;
+  readonly nextLabel: string;
+  readonly navigationLabel: string;
 }
 
-export function Pagination({ currentPage, totalPages, onPageChange }: PaginationProps): React.JSX.Element | null {
+export function Pagination({
+  currentPage,
+  totalPages,
+  onPageChange,
+  previousLabel,
+  nextLabel,
+  navigationLabel,
+}: PaginationProps): React.JSX.Element | null {
   if (totalPages <= 1) return null;
 
   const pages = Array.from({ length: totalPages }, (_, i) => i + 1);
 
   return (
-    <div className="mt-12 flex items-center justify-center gap-2">
+    <nav className="mt-14 flex items-center justify-center gap-2" aria-label={navigationLabel}>
       <Button
         variant="outline"
         size="icon"
-        aria-label="Trang trước"
+        aria-label={previousLabel}
         onClick={() => {
           onPageChange(currentPage - 1);
         }}
@@ -46,7 +56,7 @@ export function Pagination({ currentPage, totalPages, onPageChange }: Pagination
       <Button
         variant="outline"
         size="icon"
-        aria-label="Trang sau"
+        aria-label={nextLabel}
         onClick={() => {
           onPageChange(currentPage + 1);
         }}
@@ -54,6 +64,6 @@ export function Pagination({ currentPage, totalPages, onPageChange }: Pagination
       >
         <ChevronRight className="size-4" />
       </Button>
-    </div>
+    </nav>
   );
 }

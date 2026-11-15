@@ -6,6 +6,7 @@ import Link from 'next/link';
 
 import { motion } from 'framer-motion';
 import { Heart, Star } from 'lucide-react';
+import { useTranslations } from 'next-intl';
 
 import { resolveDiscount } from '@/features/catalog/discount';
 import { useIsWishlisted } from '@/features/wishlist/hooks/useWishlist';
@@ -68,6 +69,7 @@ export function ProductCard({
   isPriceRange = false,
   showWishlist = true,
 }: ProductCardProps): React.JSX.Element {
+  const t = useTranslations('product');
   const { hasDiscount, finalPrice: displayPrice } = resolveDiscount(price, salePrice);
   const coverImage = images[0] ?? '/images/products/placeholder.jpg';
   const resolvedBadgeLabels = { ...DEFAULT_BADGE_LABELS, ...badgeLabels };
@@ -112,10 +114,10 @@ export function ProductCard({
             {/* Price */}
             <div className="flex flex-wrap items-baseline gap-2">
               <span className="text-brand-600 text-lg font-bold tabular-nums">
-                {isPriceRange ? <span className="text-muted-foreground mr-1 text-xs font-normal normal-case">Từ</span> : null}
-                {formatCurrency(displayPrice)}
+                {isPriceRange ? <span className="text-muted-foreground mr-1 text-xs font-normal normal-case">{t('fromPrice')}</span> : null}
+                {formatCurrency(displayPrice, locale)}
               </span>
-              {hasDiscount ? <span className="text-muted-foreground text-xs tabular-nums line-through">{formatCurrency(price)}</span> : null}
+              {hasDiscount ? <span className="text-muted-foreground text-xs tabular-nums line-through">{formatCurrency(price, locale)}</span> : null}
             </div>
 
             {rating != null ? (
@@ -135,7 +137,7 @@ export function ProductCard({
       {showWishlist ? (
         <motion.button
           type="button"
-          aria-label={isWishlisted ? 'Bỏ khỏi yêu thích' : 'Thêm vào yêu thích'}
+          aria-label={isWishlisted ? t('removeFromWishlist') : t('addToWishlist')}
           aria-pressed={isWishlisted}
           onClick={() => {
             toggleWishlist();

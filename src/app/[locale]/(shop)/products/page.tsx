@@ -14,13 +14,12 @@ export default async function ProductsPage({ params }: ProductsPageProps) {
   setRequestLocale(locale);
 
   return (
-    <PageShell.Browse>
-      {/* Apple Design pass · the filters stay with the reader instead of scrolling away (§12). */}
-      <div className="flex flex-col gap-8 lg:flex-row lg:items-start lg:gap-10">
-        <div className="w-full lg:sticky lg:top-24 lg:max-h-[calc(100vh-7rem)] lg:w-64 lg:shrink-0 lg:overflow-y-auto lg:overscroll-contain">
+    <PageShell.Browse className="py-6 md:py-10">
+      <div className="border-border/80 flex flex-col border-y lg:grid lg:grid-cols-[17rem_minmax(0,1fr)] lg:items-start">
+        <div className="border-border/80 w-full border-b lg:sticky lg:top-20 lg:max-h-[calc(100vh-5rem)] lg:overflow-y-auto lg:overscroll-contain lg:border-r lg:border-b-0">
           <FilterSidebar />
         </div>
-        <div className="min-w-0 flex-1">
+        <div className="min-w-0 px-0 py-7 lg:px-8 lg:py-10">
           <ProductsClient />
         </div>
       </div>

@@ -3,7 +3,7 @@
 'use client';
 
 import { motion, useReducedMotion } from 'framer-motion';
-import { useLocale } from 'next-intl';
+import { useLocale, useTranslations } from 'next-intl';
 
 import { ProductCard } from '@/features/catalog/components/ProductCard';
 import type { ProductSummary } from '@/lib/api/models/catalog';
@@ -24,19 +24,21 @@ const STAGGER_STEP_SECONDS = 0.035;
 /** PLP, Category, Search and related-products grid; a card shows the lowest active Variant price. */
 export function CatalogProductGrid({ products, emptyStateAction }: CatalogProductGridProps): React.JSX.Element {
   const locale = useLocale();
+  const t = useTranslations('product');
   const prefersReducedMotion = useReducedMotion() ?? false;
 
   if (products.length === 0) {
     return (
-      <div className="flex min-h-100 flex-col items-center justify-center gap-3 rounded-xl border border-dashed py-16 text-center">
-        <p className="text-muted-foreground text-base">Không tìm thấy sản phẩm nào</p>
+      <div className="border-border flex min-h-100 flex-col items-center justify-center gap-3 border-y py-16 text-center">
+        <p className="font-display text-xl font-semibold tracking-tight">{t('noProducts')}</p>
+        <p className="text-muted-foreground max-w-sm text-sm leading-6">{t('noProductsDescription')}</p>
         {emptyStateAction}
       </div>
     );
   }
 
   return (
-    <div className="grid grid-cols-2 gap-x-4 gap-y-8 sm:grid-cols-3 lg:grid-cols-4 lg:gap-x-6">
+    <div className="grid grid-cols-2 gap-x-4 gap-y-10 sm:grid-cols-3 lg:grid-cols-4 lg:gap-x-6 lg:gap-y-12">
       {products.map((product, index) => {
         return (
           <motion.div

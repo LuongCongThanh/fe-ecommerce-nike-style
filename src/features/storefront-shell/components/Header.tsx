@@ -118,7 +118,7 @@ export function Header() {
               href={`/${locale}/products`}
               className="text-muted-foreground hover:text-foreground relative rounded-lg px-3 py-2 text-sm font-medium transition-colors"
             >
-              All Products
+              {t('allProducts')}
             </Link>
 
             <DesktopMegaMenu locale={locale} />
@@ -138,7 +138,7 @@ export function Header() {
                 onChange={(e) => {
                   search.setQuery(e.target.value);
                 }}
-                placeholder="Search products..."
+                placeholder={t('searchPlaceholder')}
                 className="h-11 w-48 rounded-lg sm:w-64"
               />
               <Button type="button" variant="ghost" size="icon" aria-label={t('closeSearch')} onClick={search.close} className={ICON_BUTTON_3D}>
@@ -160,32 +160,32 @@ export function Header() {
           {isLoggedIn ? (
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
-                <Button variant="ghost" size="icon" aria-label="Account" className={ICON_BUTTON_3D}>
+                <Button variant="ghost" size="icon" aria-label={t('account')} className={ICON_BUTTON_3D}>
                   <User className="size-5" />
                 </Button>
               </DropdownMenuTrigger>
               <DropdownMenuContent align="end">
                 <DropdownMenuItem asChild>
                   <Link href={`/${locale}/account/profile`}>
-                    <User /> Account
+                    <User /> {t('account')}
                   </Link>
                 </DropdownMenuItem>
                 <DropdownMenuSeparator />
                 <DropdownMenuItem variant="destructive" onClick={logout}>
-                  <LogOut /> Logout
+                  <LogOut /> {t('logout')}
                 </DropdownMenuItem>
               </DropdownMenuContent>
             </DropdownMenu>
           ) : (
-            <Button variant="ghost" size="icon" aria-label="Login" asChild className={ICON_BUTTON_3D}>
-              <Link href={`/${locale}/login`} aria-label="Login">
+            <Button variant="ghost" size="icon" aria-label={t('login')} asChild className={ICON_BUTTON_3D}>
+              <Link href={`/${locale}/login`} aria-label={t('login')}>
                 <User className="size-5" />
               </Link>
             </Button>
           )}
 
-          <Button variant="ghost" size="icon" aria-label="Wishlist" className={cn('relative', ICON_BUTTON_3D)} asChild>
-            <Link href={`/${locale}/wishlist`} aria-label="Wishlist">
+          <Button variant="ghost" size="icon" aria-label={t('wishlist')} className={cn('relative', ICON_BUTTON_3D)} asChild>
+            <Link href={`/${locale}/wishlist`} aria-label={t('wishlist')}>
               <Heart className="size-5" />
               {wishlistCount > 0 && (
                 <span className="bg-primary text-primary-foreground absolute -top-0.5 -right-0.5 flex size-4 items-center justify-center rounded-full text-xs font-bold">
@@ -196,7 +196,7 @@ export function Header() {
           </Button>
 
           <CartDrawer>
-            <Button variant="ghost" size="icon" aria-label="Cart" className={cn('relative', ICON_BUTTON_3D)}>
+            <Button variant="ghost" size="icon" aria-label={t('cart')} className={cn('relative', ICON_BUTTON_3D)}>
               <ShoppingCart className="size-5" />
               {itemCount > 0 && (
                 <span className="bg-primary text-primary-foreground absolute -top-0.5 -right-0.5 flex size-4 items-center justify-center rounded-full text-xs font-bold">

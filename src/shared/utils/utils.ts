@@ -11,8 +11,8 @@ function isQueryValue(value: unknown): value is string | number | boolean {
   return typeof value === 'string' || typeof value === 'number' || typeof value === 'boolean';
 }
 
-export function formatCurrency(amount: number): string {
-  return new Intl.NumberFormat('vi-VN', {
+export function formatCurrency(amount: number, locale = 'vi-VN'): string {
+  return new Intl.NumberFormat(locale, {
     style: 'currency',
     currency: 'VND',
   }).format(amount);
