@@ -25,11 +25,11 @@
 corepack pnpm install --frozen-lockfile
 ```
 
-| Phạm vi   | Lệnh                                                      |
-| --------- | --------------------------------------------------------- |
-| Lint file | `pnpm exec eslint <file>`                                 |
-| Test file | `pnpm exec vitest run <file>`                             |
-| Toàn app  | `pnpm lint && pnpm typecheck && pnpm test`                |
+| Phạm vi   | Lệnh                                       |
+| --------- | ------------------------------------------ |
+| Lint file | `pnpm exec eslint <file>`                  |
+| Test file | `pnpm exec vitest run <file>`              |
+| Toàn app  | `pnpm lint && pnpm typecheck && pnpm test` |
 
 ```bash
 pnpm lint
@@ -57,11 +57,13 @@ pnpm build
 - Xem bản đồ convention và checklist tại `docs/agents/code-conventions.md`.
 - `CLAUDE.md` import file này để Codex và Claude Code dùng chung nguồn hướng dẫn cấp repository.
 
-## Quy trình GitHub
+## Quy trình task và GitHub
 
-- Issue và PRD được quản lý trong GitHub Issues.
-- Tạo branch từ `dev` theo `<type>/<issue-number>-<slug>`; dùng Conventional Commits.
+- Task nằm trong file Markdown cục bộ `docs/plan/tasks/<NN>-<tên>/spec.md`, không dùng GitHub Issues. Định dạng, vòng đời trạng thái và người đặt từng trạng thái: `docs/plan/README.md`; cách thao tác: `docs/agents/issue-tracker.md`.
+- Chỉ nhận task có `status: ready-for-agent` và mọi `blocked-by` đã `done`. Agent không tự đổi trạng thái `todo`, `ready-for-agent`, `done`.
+- Tạo branch từ `dev` theo `<type>/<NN>-<slug>` (hoặc `<type>/<slug>`; slug nói rõ tính năng); dùng Conventional Commits.
 - Feature/fix target `dev`; `main` chỉ nhận release PR từ `dev`.
-- Triage: `needs-triage`, `needs-info`, `ready-for-agent`, `ready-for-human`, `wontfix`.
-- Không ghi tên AI tool/model/agent/assistant hoặc AI attribution trong commit, PR, review hay GitHub comment; hook và CI enforce các tên phổ biến.
-- Không push, mở PR, merge hoặc thay đổi issue nếu người dùng chưa yêu cầu rõ.
+- Không ghi tên AI tool/model/agent/assistant hoặc AI attribution trong commit, PR, review hay comment; hook và CI enforce các tên phổ biến.
+- Phiên tương tác: không tạo branch, commit, push, mở PR hoặc merge nếu người dùng chưa yêu cầu rõ.
+- Ngoại lệ: chạy `agent-run` được coi là người dùng đã yêu cầu rõ việc tạo branch, commit, push branch của task đó và mở PR vào `dev`. Chính script `agent-run` thực hiện các thao tác git này, agent không tự làm. Không bao giờ tự merge.
+- `AGENTS.md`, `CLAUDE.md`, `.claude/rules/process/git-workflow.md`, `docs/agents/issue-tracker.md` do người sửa cùng Claude trong phiên tương tác, không để agent tự sửa khi chạy `agent-run`.

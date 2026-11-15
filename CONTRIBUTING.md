@@ -14,10 +14,10 @@ Two long-lived branches:
 Feature branches:
 
 ```text
-<type>/<issue-number>-<slug>
+<type>/<NN>-<slug>
 ```
 
-Example: `feat/9-storefront-catalog-browse`. Branch off `dev`, not `main`.
+`NN` is the task number in `docs/plan/tasks/` (omit it when there is no task). Example: `feat/9-storefront-catalog-browse`. Branch off `dev`, not `main`.
 
 `<type>` matches the Conventional Commits type of the change (see below).
 
@@ -32,7 +32,7 @@ Before every commit, `.husky/pre-commit` runs `lint-staged`, `pnpm lint`, `pnpm 
 ## Pull requests
 
 - PR title also follows Conventional Commits (enforced by the `Check PR title` CI job) — under squash-merge, the PR title becomes the permanent commit message on `dev`.
-- Use `.github/PULL_REQUEST_TEMPLATE.md` and fill in Type, Summary, Changes, Cách kiểm, Gap and Checklist. Include the related issue when available.
+- Use `.github/PULL_REQUEST_TEMPLATE.md` and fill in Type, Summary, Changes, Cách kiểm, Gap and Checklist. Name the related task folder (`docs/plan/tasks/<NN>-<name>`) when there is one.
 - Target `dev` for regular feature/fix work. Target `main` only for a Release PR from `dev`.
 - **Merge strategy**: squash-merge for feature branches into `dev`. Regular merge (not squash) for `dev` → `main` Release PRs, so each already-squashed feature commit stays visible in `main`'s history.
 - Branch protection on `main` and `dev`: CI must pass before merging. No required reviewer approval (solo dev) — CI green is the merge gate.
@@ -41,12 +41,6 @@ Before every commit, `.husky/pre-commit` runs `lint-staged`, `pnpm lint`, `pnpm 
 
 `.github/workflows/ci.yml` runs Lint & format, Typecheck, and Unit tests on every PR and on push to `main`/`dev`. `pr-title-lint.yml` checks the PR title format.
 
-## Issue labels
+## Tasks
 
-Two independent label groups — apply one from each as relevant:
-
-**Triage role** (see `docs/agents/triage-labels.md`): `needs-triage`, `needs-info`, `ready-for-agent`, `ready-for-human`, `wontfix`.
-
-**Type** (mirrors the Conventional Commits type list): `type:feat`, `type:fix`, `type:chore`, `type:refactor`, `type:docs`, `type:test`, `type:ci`, `type:perf`, `type:style`, `type:build`, `type:revert`.
-
-No `priority:*` labels — issue order is already fixed by the PRD's delivery order.
+Tasks are local Markdown files (`docs/plan/tasks/<NN>-<name>/spec.md`), not GitHub Issues. State is the `status` frontmatter field; see `docs/plan/README.md` and `docs/agents/triage-labels.md`.

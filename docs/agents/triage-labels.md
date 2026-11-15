@@ -1,15 +1,21 @@
 # Triage Labels
 
-The skills speak in terms of five canonical triage roles. This file maps those roles to the actual label strings used in this repo's issue tracker.
+The skills speak in terms of five canonical triage roles. This repo has no labels: a role is a value of the `status` field in a task's `spec.md` frontmatter (see `docs/agents/issue-tracker.md`). The full status set and its lifecycle are in `docs/plan/README.md`.
 
-| Label in mattpocock/skills | Label in our tracker | Meaning                                  |
-| -------------------------- | -------------------- | ---------------------------------------- |
-| `needs-triage`             | `needs-triage`       | Maintainer needs to evaluate this issue  |
-| `needs-info`               | `needs-info`         | Waiting on reporter for more information |
-| `ready-for-agent`          | `ready-for-agent`    | Fully specified, ready for an AFK agent  |
-| `ready-for-human`          | `ready-for-human`    | Requires human implementation            |
-| `wontfix`                  | `wontfix`            | Will not be actioned                     |
+| Role in mattpocock/skills | `status` value in our tasks | Meaning                                                            |
+| ------------------------- | --------------------------- | ------------------------------------------------------------------ |
+| `needs-triage`            | `todo`                      | Human still has to evaluate and specify the task                   |
+| `needs-info`              | `needs-info`                | Waiting on a human answer (set by the script when the agent stops) |
+| `ready-for-agent`         | `ready-for-agent`           | Fully specified, every `blocked-by` is done, an agent may take it  |
+| `ready-for-human`         | `ready-for-human`           | The agent stopped after 2 resumes; a human implements it           |
+| `wontfix`                 | no status                   | Not actioned: delete the task folder and say why in the PR/commit  |
 
-When a skill mentions a role (e.g. "apply the AFK-ready triage label"), use the corresponding label string from this table.
+Statuses with no canonical role: `in-progress` (agent is running), `blocked` (waiting on a dependency or an external decision), `review` (PR open), `done` (merged).
 
-Edit the right-hand column to match whatever vocabulary you actually use.
+## Who sets what
+
+- Human: `todo`, `ready-for-agent`, `done`.
+- `agent-run` script: `in-progress`, `needs-info`, `blocked`, `ready-for-human`, `review`.
+- The agent itself never edits `status`.
+
+When a skill mentions a role (e.g. "apply the AFK-ready triage label"), set the corresponding `status` value from this table.
