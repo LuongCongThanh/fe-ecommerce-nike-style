@@ -25,8 +25,10 @@ status: todo # xem vòng đời bên dưới
 blocked-by: [] # tên thư mục task, ví dụ [03-product-card]
 pr: # số PR khi đã mở, ví dụ #86
 kind: ui # ui | logic | refactor | docs
-approved: false # người đã duyệt spec/plan
-retro-turns: # số lượt retro đã dùng, script điền
+approved: # người duyệt file/lệnh bị chặn (D43); bỏ trống hoặc false = chưa duyệt gì
+  files: [] #   ví dụ [package.json]
+  commands: [] #   ví dụ ["pnpm add zod"]
+retro-turns: # người điền khi retro hết lượt (tình huống 15): số lượt cho thêm
 allow-test-changes: # true = task refactor được sửa/xóa test cũ (D38), mặc định không
 ---
 ```
@@ -81,7 +83,7 @@ Agent không tự sửa `status`. Agent chỉ nhận task `ready-for-agent` mà 
 ## Đề xuất cho môi trường <- retro thêm: skill/agent/quy tắc cần sửa
 ```
 
-`metric.md`: bảng `| Chỉ số | Trước | Sau |` rồi mục `## Token (đo thật)` do script điền bằng `pnpm tokens` (bảng `| Loại | Messages | Input | Cache write | Cache read | Output |` với các hàng code, test, docs, other, explore/chat, TOTAL). Script `tokens` và `agent-run` chưa có ở bước này; chúng được thêm ở các bước sau của `AGENT-SYSTEM-PLAN.md`.
+`metric.md`: bảng `| Chỉ số | Trước | Sau |` rồi mục `## Token (đo thật)` do script điền bằng `pnpm tokens` (bảng `| Loại | Messages | Input | Cache write | Cache read | Output |` với các hàng code, test, docs, other, explore/chat, TOTAL). Script `pnpm tokens` điền mục này; `agent-run` gọi nó trước khi commit.
 
 ## Agent guard (D8, D17, D40, D45)
 
@@ -107,6 +109,28 @@ Hook `PreToolUse` `.claude/hooks/agent-guard.ts` (chạy bằng `tsx`, đăng k�
 
 - `pnpm verify-gates [--worktree <dir>] [--task-dir <dir> | --kind <kind>] [--with-build]` chạy `lint`, `typecheck`, `test`, `format:check` và in một JSON (`gates[]` có `status` + `log` đã cắt, `failureType`, `bundle`). Exit 0 xanh, 1 `gate_failed` (agent sửa được), 2 `bundle_regression` (không cho agent sửa, hỏi người), 64 lỗi dùng/nội bộ. Với `kind: ui` còn đo First Load JS: baseline lưu ở `<repo chính>/.agent-run/baseline/<sha-dev>.json` (tự build từ `dev` lần đầu), route tăng quá 10% thì đỏ, route mới chỉ báo. Next chỉ ghi `route-bundle-stats.json` khi build bằng Turbopack, nên gate chạy `pnpm exec next build` (không phải `pnpm build --webpack`) cho cả baseline lẫn bản mới; con số tuyệt đối khác bundle webpack thật, nhưng so sánh cùng điều kiện.
 - Stop hook `.claude/hooks/implementer-stop.ts` đăng ký trong `.claude/settings.json` (hook khai báo trong frontmatter của `implementer.md` không chạy dưới `claude -p --agent`). Chỉ hoạt động khi `AGENT_RUN=1` và `AGENT_PHASE=implement`. Đỏ thì exit 2 và tăng `fixAttempts` trong `state.json`; `fixAttempts >= 3` thì cho dừng, script `agent-run` đánh dấu blocked.
+
+## Chạy agent-run (D18, D22, D43)
+
+`pnpm agent-run [--task NN] [--worktrees <dir>]` chạy **một** task từ `ready-for-agent` tới PR vào `dev`, hoặc dừng và báo người. Chạy trong checkout chính của storefront (nơi bạn sửa spec); mã nguồn: `scripts/agent-run/` (`index.ts` là cửa vào, `run.ts` là luồng).
+
+- **Chọn task:** task `ready-for-agent` đầu tiên theo tên thư mục mà mọi `blocked-by` đã `done` (task còn bị chặn bị bỏ qua, ghi vào log). `--task NN` chỉ chạy task đó.
+- **Worktree:** `<repo>.worktrees/<NN>-<tên>` (thư mục anh em của repo, ngoài repo; đổi bằng `--worktrees <dir>` hoặc `AGENT_RUN_WORKTREES`), branch `<type>/<NN>-<tên>` từ `origin/dev` (`kind` ui/logic -> `feat`, refactor -> `refactor`, docs -> `docs`). Script chạy `corepack pnpm install --frozen-lockfile`, copy `.env.example` thành `.env.local`, chạy `verify-gates --with-build` trước khi giao việc, và thử hook guard (phải chặn được).
+- **Luồng:** planner (`plan.md`) -> implementer -> `verify-gates` (đỏ thì implementer sửa, tối đa 3 lần dùng chung với Stop hook và review) -> với `kind: ui`: bật `pnpm dev --port 3100`, kiểm tra giao diện, tắt -> reviewer (`mattpocock-skills:code-review`, mốc `dev`; blocker/major vào vòng sửa) -> retro (`/mattpocock-skills:retro` trong phiên implementer, 5 lượt) -> `pnpm tokens` -> **script commit một lần**, push, viết PR body (agent, `scripts/check-pr-body.sh` + lọc từ cấm, sửa 1 lần) và `gh pr create --base dev`. Spec đặt `status: review` và `pr: #N`. Script **không bao giờ merge**.
+- **Số lượt (D15):** cộng `num_turns` mọi lần gọi trong một lần chạy, phần còn lại truyền làm `--max-turns`; lần chạy tiếp được 40 lượt mới. Retro (5 lượt) và agent viết PR body (6 lượt) có hạn mức riêng, không tính vào 40.
+- **Kiểm tra UI (D30):** chỉ là bước tối thiểu (một lần gọi `claude` với các skill `mobile-native`, `break-ui`, `impeccable`); cần Playwright MCP trong `.mcp.json` (chưa có trong repo). Chỉnh ở bước chạy thử 5 task.
+
+**Dừng khẩn:** `touch .agent-stop` ở root checkout chính (hook và script kiểm tra giữa mọi bước; tình huống 10). Xóa file rồi chạy lại để tiếp tục; task về `ready-for-agent`, lần tiếp không tính là "chạy tiếp".
+
+**Khi script dừng (D22):** một dòng mới ở cuối `AGENT-INBOX.md` (giờ, task, số tình huống, việc cần làm) và thông báo `notify-send`. Worktree luôn được giữ. Trạng thái spec: `needs-info` (tình huống 5, 6, 9, 14, 15), `blocked` (3, 4, 7, 8, 11, 12, 13), `ready-for-agent` (10), không đổi (1, 2).
+
+**Trả lời và chạy tiếp (D43):** sửa spec trong checkout chính rồi đặt lại `ready-for-agent`; script thấy worktree + `state.json` và chạy tiếp trên worktree cũ bằng phiên mới (đọc `plan.md` và thư mục làm việc hiện tại), `resumeCount` +1, 40 lượt mới, đếm sửa và đếm bị chặn về 0.
+
+- Câu hỏi của agent (tình huống 5) nằm ở cuối spec dưới `## Câu hỏi cho người duyệt`: viết câu trả lời ngay dưới, rồi đặt lại `ready-for-agent`.
+- Duyệt file/lệnh (tình huống 6): thêm vào `approved:` như mẫu ở trên rồi đặt lại `ready-for-agent`. Script đọc danh sách **lúc khởi động** và truyền cho hook qua `AGENT_APPROVED` (không mở khóa `.env*` hay `.agent-stop`).
+- Bundle tăng quá 10% (tình huống 14): chấp nhận thì tự mở PR hoặc làm tiếp; agent không tự sửa.
+- Sau **2 lần chạy tiếp** mà vẫn dừng, script đặt `ready-for-human` (người tự làm). Tình huống 10 và 15 không tính.
+- Retro hết lượt (tình huống 15): script hỏi agent cần thêm bao nhiêu lượt và ghi vào inbox. Thêm `retro-turns: X` vào spec, đặt lại `ready-for-agent`: script `--resume` đúng phiên cũ với X lượt rồi commit và mở PR (không chạy lại plan/implement, không tính vào 2 lần chạy tiếp).
 
 ## Bảng task
 

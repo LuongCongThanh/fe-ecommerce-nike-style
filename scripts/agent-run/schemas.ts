@@ -109,3 +109,27 @@ export interface ReviewerResult {
   reason: string;
   findings: ReviewFinding[];
 }
+
+/** Retro (D26/D43): one extra resume asks how many more turns the retro needs (situation 15). */
+export const retroNeedSchema = {
+  type: 'object',
+  properties: {
+    turns_needed: { type: 'number', description: 'How many more turns the retro needs to finish' },
+    reason: { type: 'string', description: 'Why, in one or two sentences' },
+  },
+  required: ['turns_needed', 'reason'],
+  additionalProperties: false,
+} as const;
+
+export interface RetroNeedResult {
+  turns_needed: number;
+  reason: string;
+}
+
+/** PR body writer: the body only; the title is the commit subject. */
+export const prBodySchema = {
+  type: 'object',
+  properties: { body: { type: 'string', description: 'Complete PR body following .github/PULL_REQUEST_TEMPLATE.md' } },
+  required: ['body'],
+  additionalProperties: false,
+} as const;
