@@ -6,12 +6,12 @@ import { existsSync } from 'node:fs';
 import { join } from 'node:path';
 
 import type { Deps } from './deps';
-import { Stop } from './situations';
+import { SITUATION, Stop } from './situations';
 import { updateState } from './state';
 
 export async function guardPreflight(deps: Pick<Deps, 'runner'>, worktree: string, taskDir: string): Promise<void> {
   const tsx = join(worktree, 'node_modules', '.bin', 'tsx');
-  if (!existsSync(tsx)) throw new Stop(13, `Thiếu ${tsx}: hook agent-guard sẽ không chạy. Chạy corepack pnpm install trong worktree.`);
+  if (!existsSync(tsx)) throw new Stop(SITUATION.other, `Thiếu ${tsx}: hook agent-guard sẽ không chạy. Chạy corepack pnpm install trong worktree.`);
   const event = JSON.stringify({
     hook_event_name: 'PreToolUse',
     tool_name: 'Edit',
@@ -37,7 +37,7 @@ export async function guardPreflight(deps: Pick<Deps, 'runner'>, worktree: strin
   });
   if (r.code !== 2) {
     throw new Stop(
-      13,
+      SITUATION.other,
       `Preflight: hook agent-guard không chặn file bị cấm (exit ${r.code}, mong đợi 2). Không giao việc cho agent. ${r.stderr.trim().slice(0, 300)}`,
       r.stderr,
     );

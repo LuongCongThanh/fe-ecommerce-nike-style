@@ -65,6 +65,13 @@ describe('parseClaudeOutput', () => {
     expect(r.detail).toContain('ECONNRESET');
     expect(parseClaudeOutput('not json', '', 0, false).kind).toBe('crash');
   });
+  it('JSON that is not an object (null, array, number) is a crash, not a TypeError', () => {
+    for (const out of ['null', '[]', '3', '"x"']) expect(parseClaudeOutput(out, '', 0, false).kind).toBe('crash');
+  });
+  it('ignores fields with the wrong type instead of trusting them', () => {
+    const r = parseClaudeOutput(json({ subtype: 'success', is_error: false, num_turns: 'many', session_id: 7, total_cost_usd: null }), '', 0, false);
+    expect(r).toMatchObject({ kind: 'ok', numTurns: 0, sessionId: null, costUsd: 0 });
+  });
   it('result string for quota messages even when is_error is set', () => {
     const r = parseClaudeOutput(json({ subtype: 'success', is_error: true, result: 'Claude AI usage limit reached' }), '', 1, false);
     expect(r.kind).toBe('crash');

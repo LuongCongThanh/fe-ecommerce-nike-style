@@ -10,17 +10,30 @@ import { planStep } from './plan-step';
 import { guardPreflight } from './preflight';
 import { reportStop, setTaskStatus } from './report';
 import { retroStep } from './retro-step';
-import { Stop } from './situations';
+import { SITUATION, Stop, type SituationNumber } from './situations';
 import { parseFrontmatter } from './spec';
 import { parseApproved } from './spec-file';
-import { readState, updateState } from './state';
+import { isStepDone, markStepDone, readState, updateState, type StepName } from './state';
+import { acquireRunLock } from './run-lock';
+import { wantsHandoff, writeHandoff } from './handoff-step';
 import { branchFor, readTasks, selectTask, TASKS_DIR } from './tasks';
 import { syncSpec } from './finish-step';
 import { trimLog } from './exec';
 import { prepareWorktree } from './worktree';
 import type { ReviewFinding } from './schemas';
 
-export type RunOutcome = { kind: 'pr'; task: string; url: string } | { kind: 'stopped'; task: string | null; situation: number; action: string };
+export type RunOutcome =
+  | { kind: 'pr'; task: string; url: string }
+  | { kind: 'stopped'; task: string | null; situation: SituationNumber; action: string }
+  /** Another agent-run holds the one-task-at-a-time lock (D15); nothing was touched */
+  | { kind: 'locked'; pid: number; task: string | null };
+
+interface Track {
+  task: string | null;
+  worktree: string | null;
+  ctx: RunContext | null;
+  setLockTask: (task: string) => void;
+}
 
 async function preStartGates(ctx: RunContext): Promise<void> {
   if (readState(ctx.worktree).preStartGatesPassed === true) return;
@@ -28,7 +41,7 @@ async function preStartGates(ctx: RunContext): Promise<void> {
   const r = await ctx.deps.runner('pnpm', args, { cwd: ctx.worktree, timeoutMs: 40 * 60_000 });
   if (r.code !== 0) {
     throw new Stop(
-      3,
+      SITUATION.preStart,
       `Gate đỏ trước khi agent bắt đầu (dev đỏ hoặc build cần env thật): ${trimLog(`${r.stdout}\n${r.stderr}`, 600)}. Sửa dev rồi chạy lại.`,
       r.stdout,
     );
@@ -37,12 +50,12 @@ async function preStartGates(ctx: RunContext): Promise<void> {
 }
 
 /** D43 bookkeeping for a worktree that already has state.json. Returns true when only the retro is left. */
-function beginResume(ctx: RunContext): { retroOnly: boolean } {
+function beginResume(ctx: RunContext, countAsResume: boolean): { retroOnly: boolean } {
   const state = readState(ctx.worktree);
   if (state.stage === 'retro-wait') return { retroOnly: true };
-  const lastStop = state.lastStop as { situation?: number } | undefined;
+  const wasStopFile = state.lastStop?.situation === SITUATION.stopFile;
   updateState(ctx.worktree, (s) => {
-    if (lastStop?.situation !== 10) s.resumeCount = Number(s.resumeCount ?? 0) + 1;
+    if (countAsResume && !wasStopFile) s.resumeCount = (s.resumeCount ?? 0) + 1;
     s.turnsUsed = 0; // 40 fresh turns
     s.fixAttempts = 0;
     s.blocks = [];
@@ -51,19 +64,29 @@ function beginResume(ctx: RunContext): { retroOnly: boolean } {
   return { retroOnly: false };
 }
 
-async function runTask(deps: Deps, cfg: Config, track: { task: string | null; worktree: string | null }): Promise<string> {
+/** Runs `body` unless `step` is already recorded in state.json (resume), then records it. */
+async function once(ctx: RunContext, step: StepName, body: () => Promise<void>): Promise<void> {
+  if (!isStepDone(ctx.worktree, step)) {
+    await body();
+    markStepDone(ctx.worktree, step);
+  }
+  checkStopFile(ctx.cfg);
+}
+
+async function runTask(deps: Deps, cfg: Config, track: Track): Promise<string> {
   checkStopFile(cfg);
   const selection = selectTask(readTasks(cfg.repoRoot), cfg.only);
   for (const s of selection.skipped) deps.log(`situation 2: skip ${s.name}, waiting for ${s.waitingFor.join(', ')}`);
   const task = selection.task;
   if (!task)
     throw new Stop(
-      1,
+      SITUATION.noTask,
       cfg.only
         ? `Task ${cfg.only} không ở trạng thái ready-for-agent hoặc còn blocked-by.`
         : 'Không có task ready-for-agent. Đặt trạng thái cho một task trong docs/plan/tasks.',
     );
   track.task = task.name;
+  track.setLockTask(task.name);
   const approved = parseApproved(readFileSync(task.specPath, 'utf8'));
   setTaskStatus(cfg.repoRoot, task.name, 'in-progress');
 
@@ -71,48 +94,60 @@ async function runTask(deps: Deps, cfg: Config, track: { task: string | null; wo
   const prep = await prepareWorktree(deps, cfg, task, branch);
   track.worktree = prep.worktree;
   const ctx: RunContext = { deps, cfg, task, branch, worktree: prep.worktree, taskDir: join(prep.worktree, TASKS_DIR, task.name), approved };
+  track.ctx = ctx;
   syncSpec(ctx);
   await guardPreflight(deps, ctx.worktree, ctx.taskDir);
 
-  const resume = prep.fresh ? { retroOnly: false } : beginResume(ctx);
+  const resume = prep.fresh ? { retroOnly: false } : beginResume(ctx, prep.recoveredSetup !== true);
   let minor: ReviewFinding[] = [];
   let bundleNote = '';
 
   if (resume.retroOnly) {
     // D43 exception: the human granted retro-turns; resume the old session, then commit and open the PR.
     const turns = Number(parseFrontmatter(readFileSync(task.specPath, 'utf8'))['retro-turns']);
-    if (!(turns > 0)) throw new Stop(15, `Task ${task.name} đang chờ retro-turns: thêm retro-turns: X vào spec rồi đặt lại ready-for-agent.`);
+    if (!(turns > 0))
+      throw new Stop(SITUATION.retroTurns, `Task ${task.name} đang chờ retro-turns: thêm retro-turns: X vào spec rồi đặt lại ready-for-agent.`);
     const saved = readState(ctx.worktree);
-    minor = (saved.minorFindings as ReviewFinding[] | undefined) ?? [];
-    bundleNote = typeof saved.bundleNote === 'string' ? saved.bundleNote : '';
+    minor = saved.minorFindings ?? [];
+    bundleNote = saved.bundleNote ?? '';
     await retroStep(ctx, turns);
   } else {
+    // Each step is skipped when state.json already records it as done, so a resume continues where the run stopped.
     await preStartGates(ctx);
     checkStopFile(cfg);
-    await planStep(ctx);
-    checkStopFile(cfg);
-    await implementStep(ctx, !prep.fresh);
-    checkStopFile(cfg);
-    bundleNote = await verifyAndFix(ctx);
-    checkStopFile(cfg);
-    const ui = await uiCheck(ctx);
-    checkStopFile(cfg);
-    const review = await reviewStep(ctx, ui);
-    minor = review.minor;
-    bundleNote = review.bundleNote ?? bundleNote;
-    updateState(ctx.worktree, (s) => {
-      s.minorFindings = minor;
-      s.bundleNote = bundleNote;
+    await once(ctx, 'plan', () => planStep(ctx));
+    await once(ctx, 'implement', () => implementStep(ctx, !prep.fresh));
+    await once(ctx, 'gates', async () => {
+      const note = await verifyAndFix(ctx);
+      updateState(ctx.worktree, (s) => (s.bundleNote = note));
     });
-    checkStopFile(cfg);
-    await retroStep(ctx, cfg.retroTurns);
+    await once(ctx, 'review', async () => {
+      const ui = await uiCheck(ctx);
+      checkStopFile(cfg);
+      const review = await reviewStep(ctx, ui);
+      updateState(ctx.worktree, (s) => {
+        s.minorFindings = review.minor;
+        s.bundleNote = review.bundleNote ?? s.bundleNote ?? '';
+      });
+    });
+    const saved = readState(ctx.worktree);
+    minor = saved.minorFindings ?? [];
+    bundleNote = saved.bundleNote ?? '';
+    await once(ctx, 'retro', () => retroStep(ctx, cfg.retroTurns));
   }
   checkStopFile(cfg);
   return finishStep(ctx, { minor, bundleNote });
 }
 
 export async function runAgent(deps: Deps, cfg: Config): Promise<RunOutcome> {
-  const track: { task: string | null; worktree: string | null } = { task: null, worktree: null };
+  const lock = acquireRunLock(cfg.repoRoot, deps.processes, deps.now());
+  if (!lock.ok) {
+    deps.log(
+      `agent-run đang chạy (pid ${lock.pid}, task ${lock.task ?? 'chưa chọn'}): mỗi lúc chỉ chạy 1 task (D15). Đợi nó xong, hoặc xóa .agent-run/run.lock nếu tiến trình đã chết.`,
+    );
+    return { kind: 'locked', pid: lock.pid, task: lock.task };
+  }
+  const track: Track = { task: null, worktree: null, ctx: null, setLockTask: lock.setTask };
   try {
     const url = await runTask(deps, cfg, track);
     if (track.task) {
@@ -124,9 +159,15 @@ export async function runAgent(deps: Deps, cfg: Config): Promise<RunOutcome> {
     return { kind: 'pr', task: track.task ?? '', url };
   } catch (error) {
     const stop =
-      error instanceof Stop ? error : new Stop(13, `Lỗi không xử lý được: ${error instanceof Error ? error.message : String(error)}`, String(error));
+      error instanceof Stop
+        ? error
+        : new Stop(SITUATION.other, `Lỗi không xử lý được: ${error instanceof Error ? error.message : String(error)}`, String(error));
     reportStop({ repoRoot: cfg.repoRoot, taskName: track.task, worktree: track.worktree, now: deps.now(), notify: deps.notify }, stop);
     deps.log(`stop (situation ${stop.situation}): ${stop.action}${stop.detail ? `\n${stop.detail}` : ''}`);
+    // Skill table: situations 7 and 8 leave a handoff.md; best effort, after the human has been told.
+    if (track.ctx && wantsHandoff(stop.situation)) await writeHandoff(track.ctx);
     return { kind: 'stopped', task: track.task, situation: stop.situation, action: stop.action };
+  } finally {
+    lock.release();
   }
 }

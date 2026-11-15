@@ -3,7 +3,7 @@ import { existsSync, readdirSync, readFileSync } from 'node:fs';
 import { join } from 'node:path';
 
 import { parseBlockedBy } from './spec-file';
-import { parseFrontmatter, TASK_KINDS, type TaskKind } from './spec';
+import { isTaskKind, parseFrontmatter, type TaskKind } from './spec';
 
 export const TASKS_DIR = 'docs/plan/tasks';
 
@@ -31,7 +31,7 @@ export function readTasks(repoRoot: string): Task[] {
       number: /^(\d+)/.exec(name)?.[1] ?? name,
       status: fm.status ?? 'todo',
       blockedBy: parseBlockedBy(text),
-      kind: (TASK_KINDS as readonly string[]).includes(fm.kind ?? '') ? (fm.kind as TaskKind) : null,
+      kind: isTaskKind(fm.kind) ? fm.kind : null,
       specPath,
     });
   }

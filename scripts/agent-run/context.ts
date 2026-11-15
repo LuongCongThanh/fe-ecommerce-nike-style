@@ -6,7 +6,7 @@ import type { AgentPhase, ClaudeRequest, ClaudeResponse } from './claude';
 import type { Config, Deps } from './deps';
 import type { ApprovedList } from './types';
 import type { Task } from './tasks';
-import { Stop } from './situations';
+import { SITUATION, Stop } from './situations';
 import { findRepeatedBlock, readState, updateState } from './state';
 
 export interface RunContext {
@@ -25,7 +25,8 @@ export const STOP_FILE = '.agent-stop';
 
 /** Situation 10, checked between every step (D17). The file lives in the main checkout. */
 export function checkStopFile(cfg: Config): void {
-  if (existsSync(join(cfg.repoRoot, STOP_FILE))) throw new Stop(10, 'Đã thấy .agent-stop. Xóa file rồi chạy lại agent-run để chạy tiếp.');
+  if (existsSync(join(cfg.repoRoot, STOP_FILE)))
+    throw new Stop(SITUATION.stopFile, 'Đã thấy .agent-stop. Xóa file rồi chạy lại agent-run để chạy tiếp.');
 }
 
 export function agentEnv(ctx: RunContext, phase: AgentPhase): Record<string, string> {
@@ -49,13 +50,13 @@ export interface CallOptions {
 }
 
 export function turnsLeft(ctx: RunContext): number {
-  return ctx.cfg.turnBudget - Number(readState(ctx.worktree).turnsUsed ?? 0);
+  return ctx.cfg.turnBudget - (readState(ctx.worktree).turnsUsed ?? 0);
 }
 
 function budgetStop(ctx: RunContext, stage: string): Stop {
-  const used = Number(readState(ctx.worktree).turnsUsed ?? 0);
+  const used = readState(ctx.worktree).turnsUsed ?? 0;
   return new Stop(
-    8,
+    SITUATION.turnBudget,
     `Chạm ${ctx.cfg.turnBudget} lượt (đã dùng ${used}) ở bước ${stage}. Xem diff trong ${ctx.worktree}, tăng việc nhỏ lại hoặc tự làm tiếp, rồi đặt lại ready-for-agent.`,
   );
 }
@@ -67,7 +68,7 @@ function budgetStop(ctx: RunContext, stage: string): Stop {
  */
 export async function callClaude(ctx: RunContext, opts: CallOptions): Promise<ClaudeResponse> {
   checkStopFile(ctx.cfg);
-  const stage = String(readState(ctx.worktree).stage ?? opts.phase);
+  const stage = readState(ctx.worktree).stage ?? opts.phase;
   let maxTurns: number;
   if (opts.budget === 'task') {
     maxTurns = turnsLeft(ctx);
@@ -86,23 +87,23 @@ export async function callClaude(ctx: RunContext, opts: CallOptions): Promise<Cl
     extraTools: opts.extraTools,
   };
   const resp = await ctx.deps.claude(req);
-  if (opts.budget === 'task') updateState(ctx.worktree, (s) => (s.turnsUsed = Number(s.turnsUsed ?? 0) + resp.numTurns));
+  if (opts.budget === 'task') updateState(ctx.worktree, (s) => (s.turnsUsed = (s.turnsUsed ?? 0) + resp.numTurns));
   checkStopFile(ctx.cfg);
 
   const repeated = findRepeatedBlock(readState(ctx.worktree));
   if (repeated) {
     throw new Stop(
-      9,
+      SITUATION.repeatedBlock,
       `Hook chặn ${repeated.tool} -> ${repeated.target} ${repeated.count} lần. Quyết định: duyệt trong approved: của spec hoặc sửa spec/plan, rồi đặt lại ready-for-agent.`,
     );
   }
   if (resp.kind === 'crash')
     throw new Stop(
-      11,
+      SITUATION.claudeFailed,
       `claude lỗi (hạn mức, mạng hoặc crash): ${resp.detail}. Worktree giữ nguyên ở ${ctx.worktree}; kiểm tra rồi chạy lại.`,
       resp.detail,
     );
-  if (resp.kind === 'bad_output') throw new Stop(13, `claude không trả JSON đúng schema: ${resp.detail}`, resp.detail);
+  if (resp.kind === 'bad_output') throw new Stop(SITUATION.other, `claude không trả JSON đúng schema: ${resp.detail}`, resp.detail);
   if (resp.kind === 'max_turns' && opts.budget === 'task') throw budgetStop(ctx, stage);
   return resp;
 }

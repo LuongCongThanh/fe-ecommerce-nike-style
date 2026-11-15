@@ -23,26 +23,50 @@ import { homedir } from 'node:os';
 import { dirname, join, relative, resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
 
+import { z } from 'zod';
+
 type Category = 'code' | 'test' | 'docs' | 'other' | 'explore/chat';
 const CATEGORIES: Category[] = ['code', 'test', 'docs', 'other', 'explore/chat'];
 const WRITE_TOOLS = new Set(['Write', 'Edit', 'NotebookEdit']);
 const TOKEN_HEADING = '## Token (đo thật)';
 
-interface Usage {
-  input_tokens?: number;
-  output_tokens?: number;
-  cache_creation_input_tokens?: number;
-  cache_read_input_tokens?: number;
+const usageSchema = z.object({
+  input_tokens: z.number().optional(),
+  output_tokens: z.number().optional(),
+  cache_creation_input_tokens: z.number().optional(),
+  cache_read_input_tokens: z.number().optional(),
+});
+type Usage = z.infer<typeof usageSchema>;
+
+/** One transcript line; `content` stays `unknown` because only tool_use blocks are read, by `writtenPaths`. */
+const lineSchema = z.object({
+  type: z.string().optional(),
+  timestamp: z.string().optional(),
+  message: z.object({ id: z.string().optional(), usage: usageSchema.optional(), content: z.unknown().optional() }).optional(),
+});
+type Line = z.infer<typeof lineSchema>;
+
+/** Files written (Write/Edit/NotebookEdit tool_use blocks) in a message's content. */
+function writtenPaths(content: unknown): string[] {
+  if (!Array.isArray(content)) return [];
+  const paths: string[] = [];
+  for (const block of content) {
+    if (typeof block !== 'object' || block === null) continue;
+    if (!('type' in block) || block.type !== 'tool_use' || !('name' in block) || typeof block.name !== 'string') continue;
+    if (!WRITE_TOOLS.has(block.name) || !('input' in block) || typeof block.input !== 'object' || block.input === null) continue;
+    if ('file_path' in block.input && typeof block.input.file_path === 'string' && block.input.file_path) paths.push(block.input.file_path);
+  }
+  return paths;
 }
-interface ContentBlock {
-  type: string;
-  name?: string;
-  input?: { file_path?: string };
-}
-interface Line {
-  type?: string;
-  timestamp?: string;
-  message?: { id?: string; usage?: Usage; content?: ContentBlock[] | string };
+
+/** Null for lines that are not JSON or not shaped like a transcript line (they are skipped). */
+function parseLine(raw: string): Line | null {
+  try {
+    const parsed = lineSchema.safeParse(JSON.parse(raw));
+    return parsed.success ? parsed.data : null;
+  } catch {
+    return null; // partial or corrupt line
+  }
 }
 
 export interface Row {
@@ -85,7 +109,7 @@ export function parseArgs(argv: string[]): Options {
     ['--out', 'out'],
   ]);
   for (let i = 0; i < argv.length; i++) {
-    const arg = argv[i] as string;
+    const arg = argv[i] ?? '';
     const key = valueFlags.get(arg);
     if (arg === '--md') options.asMarkdown = true;
     else if (key) {
@@ -113,7 +137,9 @@ function resolveSession(dir: string, id: string): string {
   const matches = sessions.filter((s) => s.id.startsWith(id));
   if (matches.length === 0) throw new Error(`Không tìm thấy session "${id}" trong ${dir}.`);
   if (matches.length > 1) throw new Error(`"${id}" khớp nhiều session: ${matches.map((m) => m.id).join(', ')}.`);
-  return (matches[0] as { id: string }).id;
+  const [only] = matches;
+  if (!only) throw new Error(`Không tìm thấy session "${id}" trong ${dir}.`);
+  return only.id;
 }
 
 function sessionFiles(dir: string, id: string): string[] {
@@ -134,25 +160,15 @@ function collectMessages(files: string[], since?: string, until?: string) {
   for (const file of files) {
     for (const raw of readFileSync(file, 'utf8').split('\n')) {
       if (!raw.trim()) continue;
-      let line: Line;
-      try {
-        line = JSON.parse(raw) as Line;
-      } catch {
-        continue;
-      }
+      const line = parseLine(raw);
+      if (!line) continue;
       const msg = line.message;
       if (line.type !== 'assistant' || !msg?.id || !msg.usage) continue;
       if (since && (line.timestamp ?? '') < since) continue;
       if (until && (line.timestamp ?? '') > until) continue;
       const entry = messages.get(msg.id) ?? { usage: msg.usage, files: [] };
       entry.usage = msg.usage;
-      if (Array.isArray(msg.content)) {
-        for (const block of msg.content) {
-          if (block.type === 'tool_use' && WRITE_TOOLS.has(block.name ?? '') && block.input?.file_path) {
-            entry.files.push(block.input.file_path);
-          }
-        }
-      }
+      entry.files.push(...writtenPaths(msg.content));
       messages.set(msg.id, entry);
     }
   }
@@ -185,14 +201,20 @@ export function measure({ baseDir, root, ids, since, until }: MeasureInput): { s
     since,
     until,
   );
-  const buckets = new Map<string, Row>(CATEGORIES.map((c) => [c, emptyRow(c)]));
+  const buckets: Record<Category, Row> = {
+    code: emptyRow('code'),
+    test: emptyRow('test'),
+    docs: emptyRow('docs'),
+    other: emptyRow('other'),
+    'explore/chat': emptyRow('explore/chat'),
+  };
   const total = emptyRow('TOTAL');
   for (const { usage, files } of messages.values()) {
     const categories: Category[] = files.length ? [...new Set(files.map((f) => classify(f, root)))] : ['explore/chat'];
-    for (const c of categories) addUsage(buckets.get(c) as Row, usage, 1 / categories.length);
+    for (const c of categories) addUsage(buckets[c], usage, 1 / categories.length);
     addUsage(total, usage, 1);
   }
-  const rows = [...buckets.values(), total].map((r) => ({
+  const rows = [...CATEGORIES.map((c) => buckets[c]), total].map((r) => ({
     name: r.name,
     messages: Math.round(r.messages),
     input: Math.round(r.input),
@@ -251,8 +273,8 @@ function main(): void {
       writeMetric(resolve(opts.out), renderMarkdown(rows), summary);
       console.log(`Đã ghi ${opts.out}`);
     }
-  } catch (e) {
-    console.error((e as Error).message);
+  } catch (error) {
+    console.error(error instanceof Error ? error.message : String(error));
     process.exit(1);
   }
 }

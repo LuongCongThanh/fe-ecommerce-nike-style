@@ -7,9 +7,10 @@ import type { ClaudeRequest, ClaudeResponse } from './claude';
 import type { Config, Deps } from './deps';
 import { fakeRunner, on, type FakeRunner, type Handler } from './testkit';
 
-export type Role = 'planner' | 'implementer' | 'reviewer' | 'retro' | 'retro-need' | 'pr-body' | 'ui';
+export type Role = 'planner' | 'implementer' | 'reviewer' | 'retro' | 'retro-need' | 'pr-body' | 'ui' | 'handoff';
 
 export function roleOf(req: ClaudeRequest): Role {
+  if (req.prompt.startsWith('/mattpocock-skills:handoff')) return 'handoff';
   if (req.agent === 'planner') return 'planner';
   if (req.agent === 'implementer') return 'implementer';
   if (req.agent === 'reviewer') return 'reviewer';
@@ -46,6 +47,8 @@ export interface World {
   script: Partial<Record<Role, (req: ClaudeRequest, n: number) => ClaudeResponse | void | Promise<ClaudeResponse | void>>>;
   wt: (task: string) => string;
   devServer: { started: number[]; stopped: number; busy: boolean };
+  /** Fake process table: `pid` is ours, `alive` are the other pids that answer a liveness probe */
+  proc: { pid: number; alive: Set<number> };
 }
 
 export function makeWorld(opts: { tasks?: Record<string, string>; handlers?: Handler[] } = {}): World {
@@ -81,6 +84,7 @@ export function makeWorld(opts: { tasks?: Record<string, string>; handlers?: Han
   const notices: string[] = [];
   const logs: string[] = [];
   const devServer = { started: [] as number[], stopped: 0, busy: false };
+  const proc = { pid: 31337, alive: new Set<number>() };
 
   const defaults: Record<Role, (req: ClaudeRequest) => ClaudeResponse> = {
     planner: (req) => {
@@ -93,6 +97,7 @@ export function makeWorld(opts: { tasks?: Record<string, string>; handlers?: Han
     'retro-need': () => reply({ turns_needed: 4, reason: 'more to review' }),
     'pr-body': () => reply({ body: 'body' }),
     ui: () => reply({ result: 'ok', reason: 'fine', findings: [] }),
+    handoff: () => reply(undefined, { result: '# Handoff\n' }),
   };
 
   const deps: Deps = {
@@ -107,6 +112,7 @@ export function makeWorld(opts: { tasks?: Record<string, string>; handlers?: Han
     notify: (t, b) => notices.push(`${t}: ${b}`),
     now: () => new Date(2026, 10, 16, 9, 30),
     log: (l) => logs.push(l),
+    processes: { pid: proc.pid, isAlive: (pid) => proc.alive.has(pid) },
     devServer: {
       start: (_cwd, port) => {
         devServer.started.push(port);
@@ -117,5 +123,5 @@ export function makeWorld(opts: { tasks?: Record<string, string>; handlers?: Han
     },
   };
   const cfg: Config = { repoRoot: repo, worktreesDir: worktrees, turnBudget: 40, retroTurns: 5, maxFixes: 3, prBodyTurns: 6, devPort: 3100 };
-  return { deps, cfg, repo, worktrees, runner, claudeCalls, notices, logs, script, wt, devServer };
+  return { deps, cfg, repo, worktrees, runner, claudeCalls, notices, logs, script, wt, devServer, proc };
 }

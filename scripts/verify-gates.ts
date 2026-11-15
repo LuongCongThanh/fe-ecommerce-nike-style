@@ -18,11 +18,15 @@ import { copyFileSync, existsSync, mkdirSync, readFileSync, writeFileSync } from
 import { dirname, join, resolve } from 'node:path';
 
 import { realRunner, trimLog, type Runner } from './agent-run/exec';
-import { readSpecInfo, TASK_KINDS, type TaskKind } from './agent-run/spec';
+import { z } from 'zod';
+
+import { checkTestPresence } from '../.claude/hooks/lib/implementer-stop';
+
+import { isTaskKind, readSpecInfo, type TaskKind } from './agent-run/spec';
 
 export const STATS_FILE = '.next/diagnostics/route-bundle-stats.json';
 export const BUNDLE_THRESHOLD = 0.1;
-const BUNDLE_BUILD: [string, string[]] = ['pnpm', ['exec', 'next', 'build']];
+const BUNDLE_BUILD = { command: 'pnpm', args: ['exec', 'next', 'build'] } as const;
 
 export interface RouteStat {
   route: string;
@@ -67,18 +71,24 @@ export interface Baseline {
   routes: RouteStat[];
 }
 
+const routeStatsSchema = z.array(z.object({ route: z.string(), firstLoadUncompressedJsBytes: z.number() }));
+const baselineSchema = z.object({ sha: z.string(), routes: routeStatsSchema });
+
 /** Rows of Next's route-bundle-stats.json: `[{route, firstLoadUncompressedJsBytes, firstLoadChunkPaths}]`. */
 export function parseRouteStats(json: string): RouteStat[] {
-  const bad = (): never => {
-    throw new Error('unexpected route-bundle-stats.json shape (expected [{route, firstLoadUncompressedJsBytes}])');
-  };
-  const data: unknown = JSON.parse(json);
-  if (!Array.isArray(data)) return bad();
-  return data.map((row: unknown) => {
-    const r = row as Partial<RouteStat> | null;
-    if (!r || typeof r.route !== 'string' || typeof r.firstLoadUncompressedJsBytes !== 'number') return bad();
-    return { route: r.route, firstLoadUncompressedJsBytes: r.firstLoadUncompressedJsBytes };
-  });
+  const result = routeStatsSchema.safeParse(JSON.parse(json));
+  if (!result.success) throw new Error('unexpected route-bundle-stats.json shape (expected [{route, firstLoadUncompressedJsBytes}])');
+  return result.data;
+}
+
+/** A stored baseline `{sha, routes}`; null when the file is corrupt or has another shape (it is then rebuilt). */
+export function parseBaseline(json: string): Baseline | null {
+  try {
+    const result = baselineSchema.safeParse(JSON.parse(json));
+    return result.success ? result.data : null;
+  } catch {
+    return null; // not JSON
+  }
 }
 
 export function compareBundles(baseline: RouteStat[], current: RouteStat[], threshold = BUNDLE_THRESHOLD): Omit<BundleReport, 'baselineSha'> {
@@ -109,6 +119,8 @@ export interface RunGatesOptions {
   maxLogChars?: number;
   /** Required for kind ui: baseline First Load JS of the dev commit this branch is based on. */
   baseline?: () => Promise<Baseline>;
+  /** Problems with the D38 test rule for this branch (reuses the Stop hook logic); any problem is a red gate. */
+  testPresence?: () => Promise<string[]>;
 }
 
 export async function runGates(opts: RunGatesOptions): Promise<VerifyReport> {
@@ -142,6 +154,16 @@ export async function runGates(opts: RunGatesOptions): Promise<VerifyReport> {
     );
   }
 
+  if (opts.testPresence) {
+    const check = opts.testPresence;
+    gates.push(
+      await timed('test-presence', async () => {
+        const problems = await check();
+        return { ok: problems.length === 0, log: problems.join('\n') };
+      }),
+    );
+  }
+
   const base: VerifyReport = { ok: true, worktree, kind, failureType: null, gates };
   let regressed = false;
   if (kind === 'ui') {
@@ -151,7 +173,7 @@ export async function runGates(opts: RunGatesOptions): Promise<VerifyReport> {
       let bundle: BundleReport | undefined;
       const gate = await timed('bundle', async () => {
         if (!opts.baseline) throw new Error('kind ui needs a baseline provider');
-        const built = await runner(BUNDLE_BUILD[0], BUNDLE_BUILD[1], { cwd: worktree });
+        const built = await runner(BUNDLE_BUILD.command, [...BUNDLE_BUILD.args], { cwd: worktree });
         if (built.code !== 0) return { ok: false, log: `next build failed\n${built.stderr}\n${built.stdout}` };
         const statsPath = join(worktree, STATS_FILE);
         if (!existsSync(statsPath)) return { ok: false, log: `route-bundle-stats.json not found at ${STATS_FILE}` };
@@ -203,7 +225,7 @@ export async function buildBaseline(opts: BuildBaselineOptions): Promise<RouteSt
     if (existsSync(env)) copyFileSync(env, join(dir, '.env.local'));
     const installed = await runner('pnpm', ['install', '--frozen-lockfile'], { cwd: dir });
     if (installed.code !== 0) return fail('install', installed);
-    const built = await runner(BUNDLE_BUILD[0], BUNDLE_BUILD[1], { cwd: dir });
+    const built = await runner(BUNDLE_BUILD.command, [...BUNDLE_BUILD.args], { cwd: dir });
     if (built.code !== 0) return fail('build', built);
     const routes = parseRouteStats(readFileSync(join(dir, STATS_FILE), 'utf8'));
     mkdirSync(dirname(opts.baselineFile), { recursive: true });
@@ -223,7 +245,8 @@ export function fileBaseline(opts: { worktree: string; repoRoot: string; baselin
   return async () => {
     const sha = git(opts.worktree, 'merge-base', 'HEAD', 'origin/dev');
     const file = join(opts.baselineDir, `${sha}.json`);
-    if (existsSync(file)) return JSON.parse(readFileSync(file, 'utf8')) as Baseline;
+    const stored = existsSync(file) ? parseBaseline(readFileSync(file, 'utf8')) : null;
+    if (stored) return stored;
     const routes = await buildBaseline({
       repoRoot: opts.repoRoot,
       sha,
@@ -238,7 +261,7 @@ export function fileBaseline(opts: { worktree: string; repoRoot: string; baselin
 function parseArgs(argv: string[]): Map<string, string> {
   const out = new Map<string, string>();
   for (let i = 0; i < argv.length; i++) {
-    const a = argv[i] as string;
+    const a = argv[i] ?? '';
     if (!a.startsWith('--')) continue;
     const next = argv[i + 1];
     if (next === undefined || next.startsWith('--')) out.set(a.slice(2), 'true');
@@ -257,11 +280,11 @@ async function main(): Promise<number> {
   const kindArg = args.get('kind');
   let kind: TaskKind | null = taskDir ? readSpecInfo(taskDir).kind : null;
   if (kindArg) {
-    if (!(TASK_KINDS as readonly string[]).includes(kindArg)) {
+    if (!isTaskKind(kindArg)) {
       process.stderr.write(`verify-gates: unknown --kind ${kindArg}\n`);
       return 64;
     }
-    kind = kindArg as TaskKind;
+    kind = kindArg;
   }
   const common = resolve(worktree, git(worktree, 'rev-parse', '--git-common-dir'));
   const repoRoot = resolve(args.get('repo-root') ?? dirname(common));
@@ -273,6 +296,7 @@ async function main(): Promise<number> {
     withBuild: args.has('with-build'),
     maxLogChars: args.has('max-log-chars') ? Number(args.get('max-log-chars')) : undefined,
     baseline: fileBaseline({ worktree, repoRoot, baselineDir, runner: realRunner }),
+    testPresence: taskDir ? () => checkTestPresence({ root: worktree, taskDir: resolve(taskDir), runner: realRunner }) : undefined,
   });
   process.stdout.write(`${JSON.stringify(report, null, 2)}\n`);
   return exitCodeFor(report);

@@ -86,6 +86,22 @@ describe('prepareWorktree (D9, D44, situation 4)', () => {
     const f = fakeRunner(noBranch, addWorktree, on('corepack pnpm install', { code: 1, stderr: 'ERR_PNPM' }));
     await expect(prepareWorktree({ runner: f.runner } as never, cfg(base), task, 'feat/x')).rejects.toMatchObject({ situation: 3 });
   });
+  it('writes state.json before the install, so a failed install resumes instead of hitting situation 4', async () => {
+    const base = tmp();
+    const first = fakeRunner(noBranch, addWorktree, on('corepack pnpm install', { code: 1, stderr: 'ERR_PNPM' }));
+    await expect(prepareWorktree({ runner: first.runner } as never, cfg(base), task, 'feat/x')).rejects.toMatchObject({ situation: 3 });
+    const wt = join(base, '03-product-card');
+    expect(hasState(wt)).toBe(true);
+    expect(readState(wt).installPending).toBe(true);
+
+    const second = fakeRunner(noBranch);
+    const r = await prepareWorktree({ runner: second.runner } as never, cfg(base), task, 'feat/x');
+    expect(r).toMatchObject({ worktree: wt, fresh: false, recoveredSetup: true });
+    expect(second.calls).toContain('corepack pnpm install --frozen-lockfile'); // the install is retried
+    expect(second.calls.some((c) => c.startsWith('git worktree add'))).toBe(false);
+    expect(readState(wt).installPending).toBe(false);
+    expect(readFileSync(join(wt, '.env.local'), 'utf8')).toBe('A=1\n');
+  });
   it('fetch failure -> situation 11 (network)', async () => {
     const base = tmp();
     const f = fakeRunner(noBranch, on('git fetch', { code: 128, stderr: 'could not resolve host' }));

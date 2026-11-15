@@ -4,8 +4,9 @@ import { join } from 'node:path';
 
 import { describe, expect, it } from 'vitest';
 
+import { RUN_LOCK } from './run-lock';
 import { runAgent } from './run';
-import { readState, recordBlock, updateState } from './state';
+import { isStepDone, readState, recordBlock, updateState } from './state';
 import { on } from './testkit';
 import { makeWorld, PR_URL, reply, TASK_SPEC, type World } from './world';
 
@@ -475,5 +476,169 @@ describe('resume (D43)', () => {
     rmSync(join(w.repo, '.agent-stop'));
     expect((await runAgent(w.deps, w.cfg)).kind).toBe('pr');
     expect(readState(w.wt('01-demo')).resumeCount).toBe(0);
+  });
+});
+
+const reready = (w: World, status = 'blocked') => {
+  const f = join(w.repo, 'docs/plan/tasks/01-demo/spec.md');
+  writeFileSync(f, readFileSync(f, 'utf8').replace(`status: ${status}`, 'status: ready-for-agent'));
+};
+
+describe('one task at a time (D15)', () => {
+  const lockFile = (w: World) => join(w.repo, RUN_LOCK);
+  const writeLock = (w: World, pid: number) => {
+    mkdirSync(join(w.repo, '.agent-run'), { recursive: true });
+    writeFileSync(lockFile(w), JSON.stringify({ pid, task: '02-other', startedAt: '2026-11-16T09:00:00.000Z' }));
+  };
+
+  it('a second invocation while another live run holds the lock exits with a clear message and touches nothing', async () => {
+    const w = makeWorld();
+    writeLock(w, 4242);
+    w.proc.alive.add(4242);
+    const out = await runAgent(w.deps, w.cfg);
+    expect(out).toEqual({ kind: 'locked', pid: 4242, task: '02-other' });
+    expect(w.logs.join('\n')).toMatch(/đang chạy.*4242.*02-other/);
+    expect(w.runner.calls).toEqual([]);
+    expect(spec(w)).toContain('status: ready-for-agent');
+    expect(inbox(w)).not.toContain('| 01-demo');
+    expect(w.notices).toEqual([]);
+  });
+  it('a lock whose process is dead is stale: the run goes ahead', async () => {
+    const w = makeWorld();
+    writeLock(w, 4242); // not in w.proc.alive
+    expect((await runAgent(w.deps, w.cfg)).kind).toBe('pr');
+  });
+  it('holds the lock (own pid + task) during the run and releases it afterwards, also after a stop', async () => {
+    const w = makeWorld();
+    let during: unknown;
+    w.script.implementer = () => {
+      during = JSON.parse(readFileSync(lockFile(w), 'utf8'));
+    };
+    await runAgent(w.deps, w.cfg);
+    expect(during).toMatchObject({ pid: w.proc.pid, task: '01-demo' });
+    expect(existsSync(lockFile(w))).toBe(false);
+    const stopped = makeWorld();
+    stopped.script.implementer = () => reply({ result: 'blocked', reason: 'x' });
+    await runAgent(stopped.deps, stopped.cfg);
+    expect(existsSync(lockFile(stopped))).toBe(false);
+  });
+});
+
+describe('handoff on situations 7 and 8 (skill table)', () => {
+  const handoffCalls = (w: World) => w.claudeCalls.filter((c) => c.role === 'handoff');
+  it('7: resumes the implementer session with a small uncounted budget and writes handoff.md into the task dir', async () => {
+    const w = makeWorld({ handlers: [gatesRed(99)] });
+    w.script.handoff = () => reply(undefined, { result: '# Handoff\nnext: fix lint' });
+    const out = await runAgent(w.deps, w.cfg);
+    expect(out).toMatchObject({ kind: 'stopped', situation: 7 });
+    const [call] = handoffCalls(w);
+    expect(call?.req).toMatchObject({ resume: 'impl-1', maxTurns: 3 });
+    expect(call?.req.prompt).toContain('/mattpocock-skills:handoff');
+    expect(readFileSync(join(w.wt('01-demo'), 'docs/plan/tasks/01-demo/handoff.md'), 'utf8')).toContain('next: fix lint');
+    const state = readState(w.wt('01-demo'));
+    expect(state.turnsUsed).toBe(3 + 3 + 3 * 3); // planner + implementer + 3 fixes; the handoff is not counted
+  });
+  it('8: also hands off when the turn budget is hit after an implementer session exists', async () => {
+    const w = makeWorld();
+    w.script.reviewer = () => reply({ result: 'blocked', reason: 'changes_requested', findings: [{ severity: 'major', message: 'x' }] });
+    w.script.implementer = (_req, n) => (n === 2 ? reply(undefined, { kind: 'max_turns', numTurns: 50, sessionId: 'impl-1' }) : undefined);
+    expect(await runAgent(w.deps, w.cfg)).toMatchObject({ situation: 8 });
+    expect(handoffCalls(w)).toHaveLength(1);
+  });
+  it('a failing handoff call does not mask the original stop', async () => {
+    const w = makeWorld({ handlers: [gatesRed(99)] });
+    w.script.handoff = () => {
+      throw new Error('handoff exploded');
+    };
+    const out = await runAgent(w.deps, w.cfg);
+    expect(out).toMatchObject({ kind: 'stopped', situation: 7 });
+    expect(spec(w)).toContain('status: blocked');
+    expect(w.logs.join('\n')).toContain('handoff exploded');
+  });
+  it('no handoff for other situations, and none without an implementer session', async () => {
+    const w = makeWorld();
+    w.script.implementer = () => reply({ result: 'blocked', reason: 'needs_approval' });
+    await runAgent(w.deps, w.cfg);
+    expect(handoffCalls(w)).toHaveLength(0);
+    const w2 = makeWorld();
+    w2.script.planner = (req) => {
+      writeFileSync(join(req.env.AGENT_TASK_DIR as string, 'plan.md'), '# plan');
+      return reply({ result: 'ok', reason: 'p' }, { numTurns: 39 });
+    };
+    expect(await runAgent(w2.deps, w2.cfg)).toMatchObject({ situation: 8 });
+    expect(handoffCalls(w2)).toHaveLength(0);
+  });
+});
+
+describe('retro details (D26, D30)', () => {
+  it('13: no recorded implementer session -> stop instead of silently skipping the retro', async () => {
+    const w = makeWorld();
+    w.script.implementer = () => reply({ result: 'ok', reason: 'done', commit_message: 'feat: x' }, { sessionId: null });
+    const out = await runAgent(w.deps, w.cfg);
+    expect(out).toMatchObject({ kind: 'stopped', situation: 13 });
+    expect(out.kind === 'stopped' && out.action).toMatch(/session/i);
+    expect(w.runner.calls.some((c) => c.startsWith('git commit'))).toBe(false);
+  });
+  it('ui task: the retro prompt also runs learn-taste; logic task: it does not', async () => {
+    const ui = makeWorld({ tasks: { '01-demo': TASK_SPEC('').replace('kind: logic', 'kind: ui') } });
+    await runAgent(ui.deps, ui.cfg);
+    expect(ui.claudeCalls.find((c) => c.role === 'retro')?.req.prompt).toContain('learn-taste');
+    const logic = makeWorld();
+    await runAgent(logic.deps, logic.cfg);
+    expect(logic.claudeCalls.find((c) => c.role === 'retro')?.req.prompt).not.toContain('learn-taste');
+  });
+});
+
+describe('test-presence rule re-checked by the script (D38/D19)', () => {
+  it('verify-gates after the implementer gets --task-dir (the pre-start run does not)', async () => {
+    const w = makeWorld();
+    await runAgent(w.deps, w.cfg);
+    const gateCalls = w.runner.calls.filter((c) => c.includes('verify-gates'));
+    expect(gateCalls[0]).not.toContain('--task-dir');
+    expect(gateCalls[1]).toContain(`--task-dir ${join(w.wt('01-demo'), 'docs/plan/tasks/01-demo')}`);
+  });
+});
+
+describe('resume from the right point (completed steps)', () => {
+  it('records completed steps in state.json as the run advances', async () => {
+    const w = makeWorld();
+    await runAgent(w.deps, w.cfg);
+    expect(readState(w.wt('01-demo')).completedSteps).toEqual(['plan', 'implement', 'gates', 'review', 'retro', 'committed', 'pushed']);
+  });
+  it('a crash in retro (11) resumes at retro only: no re-plan, re-implement, gates or review', async () => {
+    const w = makeWorld();
+    w.script.retro = (_r, n) => (n === 1 ? reply(undefined, { kind: 'crash', detail: 'network' }) : undefined);
+    expect(await runAgent(w.deps, w.cfg)).toMatchObject({ situation: 11 });
+    reready(w);
+    const before = w.claudeCalls.length;
+    const gatesBefore = w.runner.calls.filter((c) => c.includes('verify-gates')).length;
+    expect((await runAgent(w.deps, w.cfg)).kind).toBe('pr');
+    expect(w.claudeCalls.slice(before).map((c) => c.role)).toEqual(['retro', 'pr-body']);
+    expect(w.runner.calls.filter((c) => c.includes('verify-gates')).length).toBe(gatesBefore);
+  });
+  it('after a push failure (12) the commit exists: resume goes straight to push and PR', async () => {
+    let pushes = 0;
+    const w = makeWorld({ handlers: [on('git push', () => (++pushes === 1 ? { code: 1, stderr: 'rejected' } : {}))] });
+    expect(await runAgent(w.deps, w.cfg)).toMatchObject({ situation: 12 });
+    reready(w);
+    const before = w.claudeCalls.length;
+    const out = await runAgent(w.deps, w.cfg);
+    expect(out).toEqual({ kind: 'pr', task: '01-demo', url: PR_URL });
+    expect(w.runner.calls.filter((c) => c.startsWith('git commit'))).toHaveLength(1);
+    expect(w.runner.calls.filter((c) => c.startsWith('git push'))).toHaveLength(2);
+    expect(w.claudeCalls.slice(before)).toEqual([]); // the PR body from the first run is reused
+  });
+  it('a stop on a gate after implement resumes at gates (implement is not repeated)', async () => {
+    const w = makeWorld({ handlers: [gatesRed(99)] });
+    expect(await runAgent(w.deps, w.cfg)).toMatchObject({ situation: 7 });
+    expect(isStepDone(w.wt('01-demo'), 'implement')).toBe(true);
+    expect(isStepDone(w.wt('01-demo'), 'gates')).toBe(false);
+  });
+  it('an implementer question during a fix makes the next run implement again (the answer must be read)', async () => {
+    const w = makeWorld({ handlers: [gatesRed(1)] });
+    w.script.implementer = (_req, n) => (n === 2 ? reply({ result: 'need_info', reason: 'which rounding?' }) : undefined);
+    expect(await runAgent(w.deps, w.cfg)).toMatchObject({ situation: 5 });
+    expect(isStepDone(w.wt('01-demo'), 'implement')).toBe(false);
+    expect(isStepDone(w.wt('01-demo'), 'plan')).toBe(true);
   });
 });

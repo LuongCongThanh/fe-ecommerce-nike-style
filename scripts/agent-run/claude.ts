@@ -48,7 +48,8 @@ export function allowedToolsFor(phase: AgentPhase, allowCommands: string[]): str
       return [...READ_TOOLS, 'Write', 'Skill', 'Agent'];
     case 'review':
       return [...READ_TOOLS, 'Skill', 'Agent', 'Bash(git diff *)', 'Bash(git log *)'];
-    default:
+    case 'implement':
+    case 'retro':
       return [...READ_TOOLS, 'Edit', 'Write', 'Skill', 'Agent', ...allowCommands.map((c) => `Bash(${c})`)];
   }
 }
@@ -73,14 +74,33 @@ interface RawResult {
   total_cost_usd?: number;
 }
 
+const isRecord = (v: unknown): v is Record<string, unknown> => typeof v === 'object' && v !== null && !Array.isArray(v);
+
+/** Keep only the fields we read, each with its expected type; anything else reads as absent. `null` = not an object. */
+function toRawResult(value: unknown): RawResult | null {
+  if (!isRecord(value)) return null;
+  const raw: RawResult = {};
+  if (typeof value.subtype === 'string') raw.subtype = value.subtype;
+  if (typeof value.is_error === 'boolean') raw.is_error = value.is_error;
+  if (typeof value.num_turns === 'number') raw.num_turns = value.num_turns;
+  if (typeof value.session_id === 'string') raw.session_id = value.session_id;
+  if (typeof value.result === 'string' || value.result === null) raw.result = value.result;
+  if ('structured_output' in value) raw.structured_output = value.structured_output;
+  if (Array.isArray(value.errors)) raw.errors = value.errors.filter((e): e is string => typeof e === 'string');
+  if (typeof value.total_cost_usd === 'number') raw.total_cost_usd = value.total_cost_usd;
+  return raw;
+}
+
 export function parseClaudeOutput(stdout: string, stderr: string, code: number, expectSchema: boolean): ClaudeResponse {
   const empty = { sessionId: null, numTurns: 0, costUsd: 0, structured: undefined, result: null };
-  let raw: RawResult;
+  let parsed: unknown;
   try {
-    raw = JSON.parse(stdout) as RawResult;
+    parsed = JSON.parse(stdout);
   } catch {
-    return { ...empty, kind: 'crash', detail: trimLog(`exit ${code}; stderr: ${stderr}\nstdout: ${stdout}`, 1500) };
+    parsed = undefined; // not JSON at all: reported as a crash below
   }
+  const raw = toRawResult(parsed);
+  if (!raw) return { ...empty, kind: 'crash', detail: trimLog(`exit ${code}; stderr: ${stderr}\nstdout: ${stdout}`, 1500) };
   const base = {
     sessionId: raw.session_id ?? null,
     numTurns: raw.num_turns ?? 0,

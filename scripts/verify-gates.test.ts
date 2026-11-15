@@ -6,7 +6,7 @@ import { dirname, join } from 'node:path';
 import { afterEach, beforeEach, describe, expect, it } from 'vitest';
 
 import type { Runner } from './agent-run/exec';
-import { buildBaseline, compareBundles, exitCodeFor, parseRouteStats, runGates, STATS_FILE, type RouteStat } from './verify-gates';
+import { buildBaseline, compareBundles, exitCodeFor, parseBaseline, parseRouteStats, runGates, STATS_FILE, type RouteStat } from './verify-gates';
 
 let wt: string;
 beforeEach(() => {
@@ -40,6 +40,16 @@ describe('parseRouteStats', () => {
   it('rejects other shapes', () => {
     expect(() => parseRouteStats('{"a":1}')).toThrow(/route-bundle-stats/);
     expect(() => parseRouteStats('[{"route":"/a"}]')).toThrow(/route-bundle-stats/);
+    expect(() => parseRouteStats('[null]')).toThrow(/route-bundle-stats/);
+  });
+});
+
+describe('parseBaseline', () => {
+  it('reads {sha, routes}; anything else is null so the baseline is rebuilt', () => {
+    expect(parseBaseline(JSON.stringify({ sha: 'abc', routes: [stat('/a', 1)] }))).toEqual({ sha: 'abc', routes: [stat('/a', 1)] });
+    for (const bad of ['{nope', 'null', '[]', '{"sha":1,"routes":[]}', '{"sha":"a","routes":[{"route":"/a"}]}']) {
+      expect(parseBaseline(bad)).toBeNull();
+    }
   });
 });
 
@@ -53,6 +63,27 @@ describe('compareBundles (D35)', () => {
   });
   it('exactly +10% passes; shrinking passes', () => {
     expect(compareBundles(base, [stat('/a', 1100), stat('/b', 10)]).regressions).toEqual([]);
+  });
+});
+
+describe('runGates test-presence gate (D38 re-checked by the script)', () => {
+  it('a problem is a red gate (gate_failed, exit 1) carrying the problem text', async () => {
+    const { runner } = fakeRunner();
+    const report = await runGates({ worktree: wt, kind: 'logic', runner, testPresence: async () => ['kind logic: add a test'] });
+    const gate = report.gates.find((g) => g.name === 'test-presence');
+    expect(gate).toMatchObject({ status: 'fail' });
+    expect(gate?.log).toContain('add a test');
+    expect(report.failureType).toBe('gate_failed');
+    expect(exitCodeFor(report)).toBe(1);
+  });
+  it('no problem -> passes; no provider -> gate absent', async () => {
+    const { runner } = fakeRunner();
+    expect(
+      (await runGates({ worktree: wt, kind: 'logic', runner, testPresence: async () => [] })).gates.find((g) => g.name === 'test-presence'),
+    ).toMatchObject({
+      status: 'pass',
+    });
+    expect((await runGates({ worktree: wt, kind: 'logic', runner })).gates.some((g) => g.name === 'test-presence')).toBe(false);
   });
 });
 

@@ -4,7 +4,7 @@
  * once it reached MAX_FIX_ATTEMPTS the stop is allowed and the agent-run script marks the task blocked.
  */
 import { trimLog, type Runner } from '../../../scripts/agent-run/exec';
-import { readSpecInfo } from '../../../scripts/agent-run/spec';
+import { readSpecInfo, type SpecInfo } from '../../../scripts/agent-run/spec';
 import { readState, updateState } from '../../../scripts/agent-run/state';
 
 export const MAX_FIX_ATTEMPTS = 3;
@@ -36,7 +36,7 @@ export function parseNameStatus(out: string): FileChange[] {
 const isTest = (p: string) => /\.test\.tsx?$/.test(p);
 const isSource = (p: string) => /\.(ts|tsx)$/.test(p) && /^(src|scripts|\.claude\/hooks)\//.test(p);
 
-async function changedFiles(root: string, runner: Runner): Promise<FileChange[]> {
+export async function changedFiles(root: string, runner: Runner): Promise<FileChange[]> {
   let base = 'HEAD';
   for (const ref of ['origin/dev', 'dev']) {
     const r = await runner('git', ['merge-base', 'HEAD', ref], { cwd: root });
@@ -50,6 +50,27 @@ async function changedFiles(root: string, runner: Runner): Promise<FileChange[]>
   const changes = parseNameStatus(diff.stdout);
   for (const p of untracked.stdout.split('\n').filter(Boolean)) changes.push({ status: 'A', path: p });
   return changes;
+}
+
+/** The D38 test rule by kind: logic/ui need a new or modified test, refactor must leave existing tests alone. */
+export function testRuleProblems(changes: FileChange[], spec: SpecInfo): string[] {
+  const problems: string[] = [];
+  const tests = changes.filter((c) => isTest(c.path));
+  if ((spec.kind === 'logic' || spec.kind === 'ui') && !tests.some((c) => c.status === 'A' || c.status === 'M')) {
+    problems.push(`kind ${spec.kind}: the diff must add or modify a *.test.ts(x) file. Write the test first (tdd skill).`);
+  }
+  if (spec.kind === 'refactor' && !spec.allowTestChanges) {
+    const touched = tests.filter((c) => c.status !== 'A').map((c) => `${c.status} ${c.path}`);
+    if (touched.length > 0) {
+      problems.push(`kind refactor: existing tests must stay untouched (the spec does not set allow-test-changes). Revert: ${touched.join(', ')}`);
+    }
+  }
+  return problems;
+}
+
+/** The test rule evaluated on the current branch diff; used by verify-gates after the implementer finished. */
+export async function checkTestPresence(ctx: { root: string; taskDir: string; runner: Runner }): Promise<string[]> {
+  return testRuleProblems(await changedFiles(ctx.root, ctx.runner), readSpecInfo(ctx.taskDir));
 }
 
 export async function evaluateStop(ctx: StopContext): Promise<StopDecision> {
@@ -70,16 +91,7 @@ export async function evaluateStop(ctx: StopContext): Promise<StopDecision> {
     if (r.code !== 0) problems.push(`Tests related to your changes failed:\n${trimLog(`${r.stdout}\n${r.stderr}`)}`);
   }
 
-  const tests = changes.filter((c) => isTest(c.path));
-  if ((spec.kind === 'logic' || spec.kind === 'ui') && !tests.some((c) => c.status === 'A' || c.status === 'M')) {
-    problems.push(`kind ${spec.kind}: the diff must add or modify a *.test.ts(x) file. Write the test first (tdd skill).`);
-  }
-  if (spec.kind === 'refactor' && !spec.allowTestChanges) {
-    const touched = tests.filter((c) => c.status !== 'A').map((c) => `${c.status} ${c.path}`);
-    if (touched.length > 0) {
-      problems.push(`kind refactor: existing tests must stay untouched (the spec does not set allow-test-changes). Revert: ${touched.join(', ')}`);
-    }
-  }
+  problems.push(...testRuleProblems(changes, spec));
 
   if (problems.length === 0) return { allow: true };
   const state = updateState(root, (s) => {

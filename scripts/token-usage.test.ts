@@ -147,3 +147,27 @@ describe('renderMarkdown + upsertTokenSection', () => {
     rmSync(d, { recursive: true, force: true });
   });
 });
+
+describe('measure with malformed transcript lines', () => {
+  it('skips lines that are valid JSON but not objects, or have odd shapes', () => {
+    const base = mkdtempSync(join(tmpdir(), 'tok-bad-'));
+    try {
+      const dir = join(base, encodeProjectDir(ROOT));
+      mkdirSync(dir, { recursive: true });
+      const lines = [
+        'null',
+        '42',
+        '"s"',
+        '[1]',
+        JSON.stringify({ type: 'assistant', message: null }),
+        JSON.stringify({ type: 'assistant', message: { id: 'z', usage: 'x' } }),
+        assistant('m1', { output_tokens: 7 }),
+      ];
+      writeFileSync(join(dir, 's1.jsonl'), `${lines.join('\n')}\n`);
+      const { rows } = measure({ baseDir: base, root: ROOT, ids: ['s1'] });
+      expect(rows.find((r) => r.name === 'TOTAL')).toMatchObject({ messages: 1, output: 7 });
+    } finally {
+      rmSync(base, { recursive: true, force: true });
+    }
+  });
+});

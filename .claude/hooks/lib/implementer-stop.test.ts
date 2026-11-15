@@ -8,7 +8,7 @@ import { afterEach, beforeEach, describe, expect, it } from 'vitest';
 import type { Runner } from '../../../scripts/agent-run/exec';
 import { readState, updateState } from '../../../scripts/agent-run/state';
 
-import { evaluateStop, MAX_FIX_ATTEMPTS, parseNameStatus } from './implementer-stop';
+import { checkTestPresence, evaluateStop, MAX_FIX_ATTEMPTS, parseNameStatus } from './implementer-stop';
 
 let root: string;
 let taskDir: string;
@@ -169,5 +169,20 @@ describe('evaluateStop checks', () => {
     };
     await evaluateStop({ root, env: env(), runner });
     expect(calls).toContain('git diff --name-status --no-renames HEAD');
+  });
+});
+
+describe('checkTestPresence (the D38 test rule, reusable outside the Stop hook)', () => {
+  const check = async (f: Fake) => checkTestPresence({ root, taskDir, runner: fake(f).runner });
+  it('logic without a new/modified test -> one problem; with one -> none', async () => {
+    spec('logic');
+    expect(await check({ nameStatus: 'M\tsrc/a.ts\n' })).toHaveLength(1);
+    expect(await check({ nameStatus: 'M\tsrc/a.ts\nA\tsrc/a.test.ts\n' })).toEqual([]);
+  });
+  it('refactor: touching existing tests is a problem unless allowed; docs: never', async () => {
+    spec('refactor');
+    expect(await check({ nameStatus: 'M\tsrc/a.test.ts\n' })).toHaveLength(1);
+    spec('docs');
+    expect(await check({ nameStatus: 'M\tdocs/a.md\n' })).toEqual([]);
   });
 });
