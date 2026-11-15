@@ -8,6 +8,8 @@ export interface RunOptions {
   cwd: string;
   env?: NodeJS.ProcessEnv;
   timeoutMs?: number;
+  /** Written to the child's stdin (hooks read their JSON event from it) */
+  input?: string;
 }
 
 export interface RunResult {
@@ -20,7 +22,15 @@ export type Runner = (cmd: string, args: string[], opts: RunOptions) => Promise<
 
 export const realRunner: Runner = (cmd, args, opts) =>
   new Promise((resolve) => {
-    const child = spawn(cmd, args, { cwd: opts.cwd, env: opts.env ?? process.env, stdio: ['ignore', 'pipe', 'pipe'] });
+    const child = spawn(cmd, args, {
+      cwd: opts.cwd,
+      env: opts.env ?? process.env,
+      stdio: [opts.input === undefined ? 'ignore' : 'pipe', 'pipe', 'pipe'],
+    });
+    if (opts.input !== undefined) {
+      child.stdin?.on('error', () => undefined);
+      child.stdin?.end(opts.input);
+    }
     let stdout = '';
     let stderr = '';
     let timedOut = false;
@@ -30,8 +40,8 @@ export const realRunner: Runner = (cmd, args, opts) =>
           child.kill('SIGKILL');
         }, opts.timeoutMs)
       : undefined;
-    child.stdout.on('data', (d: Buffer) => (stdout += d.toString()));
-    child.stderr.on('data', (d: Buffer) => (stderr += d.toString()));
+    child.stdout?.on('data', (d: Buffer) => (stdout += d.toString()));
+    child.stderr?.on('data', (d: Buffer) => (stderr += d.toString()));
     child.on('error', (error) => {
       if (timer) clearTimeout(timer);
       resolve({ code: 127, stdout, stderr: `${stderr}${error.message}\n` });

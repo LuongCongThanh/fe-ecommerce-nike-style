@@ -1,0 +1,70 @@
+/**
+ * agent-run (D18): drives one task from `ready-for-agent` to a PR into `dev`, or stops and tells the human.
+ *
+ *   pnpm agent-run [--task NN] [--worktrees <dir>]
+ *
+ * `--worktrees` / AGENT_RUN_WORKTREES: parent dir of the task worktrees (default `<repo>.worktrees`, outside the repo).
+ * Exit codes: 0 PR opened, 1 stopped (see docs/plan/AGENT-INBOX.md), 64 usage error.
+ * Docs: docs/plan/README.md, section "Chạy agent-run".
+ */
+import { readFileSync } from 'node:fs';
+import { dirname, join, resolve } from 'node:path';
+
+import { realClaude } from './claude';
+import { DEFAULTS, type Config, type Deps } from './deps';
+import { realDevServer } from './dev-server';
+import { realRunner } from './exec';
+import { runAgent } from './run';
+import { defaultWorktreesDir } from './worktree';
+
+function parseArgs(argv: string[]): Map<string, string> {
+  const out = new Map<string, string>();
+  for (let i = 0; i < argv.length; i++) {
+    const a = argv[i] as string;
+    if (!a.startsWith('--')) continue;
+    const next = argv[i + 1];
+    if (next === undefined || next.startsWith('--')) out.set(a.slice(2), 'true');
+    else {
+      out.set(a.slice(2), next);
+      i++;
+    }
+  }
+  return out;
+}
+
+async function main(): Promise<number> {
+  const args = parseArgs(process.argv.slice(2));
+  const top = await realRunner('git', ['rev-parse', '--path-format=absolute', '--git-common-dir'], { cwd: process.cwd() });
+  if (top.code !== 0) {
+    process.stderr.write('agent-run: not inside a git repository\n');
+    return 64;
+  }
+  const repoRoot = dirname(top.stdout.trim());
+  const guard = JSON.parse(readFileSync(join(repoRoot, '.claude/agent-guard.json'), 'utf8')) as { allowCommands?: string[] };
+  const cfg: Config = {
+    repoRoot,
+    worktreesDir: resolve(args.get('worktrees') ?? process.env.AGENT_RUN_WORKTREES ?? defaultWorktreesDir(repoRoot)),
+    only: args.get('task'),
+    ...DEFAULTS,
+  };
+  const deps: Deps = {
+    runner: realRunner,
+    claude: realClaude(realRunner, guard.allowCommands ?? []),
+    notify: (title, body) => void realRunner('notify-send', [title, body], { cwd: repoRoot }),
+    now: () => new Date(),
+    log: (line) => process.stdout.write(`[agent-run] ${line}\n`),
+    devServer: realDevServer,
+  };
+  const outcome = await runAgent(deps, cfg);
+  return outcome.kind === 'pr' ? 0 : 1;
+}
+
+if (process.argv[1] && resolve(process.argv[1]) === resolve(import.meta.filename)) {
+  main().then(
+    (code) => process.exit(code),
+    (error: unknown) => {
+      process.stderr.write(`agent-run: ${error instanceof Error ? error.stack : String(error)}\n`);
+      process.exit(64);
+    },
+  );
+}
