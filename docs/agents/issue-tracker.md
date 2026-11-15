@@ -1,45 +1,52 @@
-# Issue tracker: GitHub
+# Issue tracker: local Markdown tasks
 
-Issues and specs for this repo live as GitHub issues. Use the `gh` CLI for all operations.
+Tasks for this repo are local Markdown files committed in the repo. There are no GitHub Issues and the `gh issue` commands are not used. GitHub is only used for pull requests and their review. Format and lifecycle are defined in `docs/plan/README.md`.
 
 ## Conventions
 
-- **Create an issue**: `gh issue create --title "..." --body "..."`. Use a heredoc for multi-line bodies.
-- **Read an issue**: `gh issue view <number> --comments`, filtering comments by `jq` and also fetching labels.
-- **List issues**: `gh issue list --state open --json number,title,body,labels,comments --jq '[.[] | {number, title, body, labels: [.labels[].name], comments: [.comments[].body]}]'` with appropriate `--label` and `--state` filters.
-- **Comment on an issue**: `gh issue comment <number> --body "..."`
-- **Apply / remove labels**: `gh issue edit <number> --add-label "..."` / `--remove-label "..."`
-- **Close**: `gh issue close <number> --comment "..."`
+- **Location**: `docs/plan/tasks/<NN>-<kebab-name>/spec.md`. `NN` is the work order; the name is short kebab-case English.
+- **Other files in the task folder**: `plan.md` (steps, branch, risks, written before code), `report.md` (written by the implementer before returning `ok`; the retro appends "Đề xuất cho môi trường"), `metric.md` (before/after numbers; the token table is filled by script).
+- **Frontmatter** of `spec.md`:
 
-Infer the repo from `git remote -v`; `gh` does this automatically when run inside a clone. `origin` points at `LuongCongThanh/fe-ecommerce-nike-style` via an SSH host alias (`github-thanh`) — `gh` resolves this the same as a plain `github.com` remote.
+  ```yaml
+  ---
+  status: ready-for-agent # todo | ready-for-agent | in-progress | needs-info | blocked | ready-for-human | review | done
+  blocked-by: [] # task folder names, e.g. [03-product-card]
+  pr: # PR number once opened, e.g. #86
+  kind: ui # ui | logic | refactor | docs
+  approved: false # human sign-off on the spec/plan
+  retro-turns: # turns used by the retro (agent-run fills it)
+  ---
+  ```
+
+- **Body headings**: `# Spec <NN>: <title>`, a `Branch:` line, `## Problem Statement`, `## Solution`, `## Acceptance criteria`.
+- **Create a task**: make the folder with the next free `NN`, write `spec.md` with `status: todo`, add a row to the table in `docs/plan/README.md`.
+- **Read a task**: read `spec.md` (and `plan.md`/`report.md` if present). A bare `#42` in a PR refers to a pull request, not a task; tasks are referenced by folder name.
+- **List tasks**: the table in `docs/plan/README.md`, or `grep -H '^status:' docs/plan/tasks/*/spec.md`.
+- **Find work for an agent**: `status: ready-for-agent` and every folder in `blocked-by` has `status: done`.
+- **Comment on a task**: append under a `## Comments` heading at the end of `spec.md`, one dated entry each. Do not rewrite earlier entries.
+- **Change state**: edit `status` in the frontmatter and update the README table row in the same commit. Who may set which value is in `docs/agents/triage-labels.md`; the `agent-run` script sets the agent-owned values.
+- **Close**: `status: done` (set by a human after the PR is merged), with `pr` filled in.
 
 ## Pull requests as a triage surface
 
-**PRs as a request surface: no.** _(Set to `yes` if this repo treats external PRs as feature requests; `/triage` reads this flag.)_
-
-When set to `yes`, PRs run through the same labels and states as issues, using the `gh pr` equivalents:
-
-- **Read a PR**: `gh pr view <number> --comments` and `gh pr diff <number>` for the diff.
-- **List external PRs for triage**: `gh pr list --state open --json number,title,body,labels,author,authorAssociation,comments` then keep only `authorAssociation` of `CONTRIBUTOR`, `FIRST_TIME_CONTRIBUTOR`, or `NONE` (drop `OWNER`/`MEMBER`/`COLLABORATOR`).
-- **Comment / label / close**: `gh pr comment`, `gh pr edit --add-label`/`--remove-label`, `gh pr close`.
-
-GitHub shares one number space across issues and PRs, so a bare `#42` may be either: resolve with `gh pr view 42` and fall back to `gh issue view 42`.
+**PRs as a request surface: no.** PRs are reviewed, not triaged into tasks.
 
 ## When a skill says "publish to the issue tracker"
 
-Create a GitHub issue.
+Create a task folder and `spec.md` as above (`status: todo`).
 
 ## When a skill says "fetch the relevant ticket"
 
-Run `gh issue view <number> --comments`.
+Read `docs/plan/tasks/<NN>-<name>/spec.md`.
 
 ## Wayfinding operations
 
-Used by `/wayfinder`. The **map** is a single issue with **child** issues as tickets.
+Used by `/wayfinder`. The **map** is a single Markdown file with **child** tasks.
 
-- **Map**: a single issue labelled `wayfinder:map`, holding the Notes / Decisions-so-far / Fog body. `gh issue create --label wayfinder:map`.
-- **Child ticket**: an issue linked to the map as a GitHub sub-issue (`gh api` on the sub-issues endpoint). Where sub-issues aren't enabled, add the child to a task list in the map body and put `Part of #<map>` at the top of the child body. Labels: `wayfinder:<type>` (`research`/`prototype`/`grilling`/`task`). Once claimed, the ticket is assigned to the driving dev.
-- **Blocking**: GitHub's **native issue dependencies**, the canonical, UI-visible representation. Add an edge with `gh api --method POST repos/<owner>/<repo>/issues/<child>/dependencies/blocked_by -F issue_id=<blocker-db-id>`, where `<blocker-db-id>` is the blocker's numeric **database id** (`gh api repos/<owner>/<repo>/issues/<n> --jq .id`, _not_ the `#number` or `node_id`). GitHub reports `issue_dependencies_summary.blocked_by` (open blockers only, the live gate). Where dependencies aren't available, fall back to a `Blocked by: #<n>, #<n>` line at the top of the child body. A ticket is unblocked when every blocker is closed.
-- **Frontier query**: list the map's open children (`gh issue list --state open`, scoped to the map's sub-issues / task list), drop any with an open blocker (`issue_dependencies_summary.blocked_by > 0`, or an open issue in the `Blocked by` line) or an assignee; first in map order wins.
-- **Claim**: `gh issue edit <n> --add-assignee @me`, the session's first write.
-- **Resolve**: `gh issue comment <n> --body "<answer>"`, then `gh issue close <n>`, then append a context pointer (gist + link) to the map's Decisions-so-far.
+- **Map**: `docs/plan/tasks/<NN>-<effort>/spec.md` with `kind: docs`, holding the Notes / Decisions-so-far / Fog body.
+- **Child ticket**: a normal task folder whose `spec.md` begins with `Part of <NN>-<effort>`. Type goes in the body as `Type: research|prototype|grilling|task`.
+- **Blocking**: the `blocked-by` frontmatter list. A ticket is unblocked when every blocker has `status: done`.
+- **Frontier query**: children of the map with `status: todo` or `ready-for-agent` and no unfinished blocker; first in map order wins.
+- **Claim**: set `status: in-progress`, the session's first write.
+- **Resolve**: append the answer under `## Comments`, set `status: done`, then add a pointer to the map's Decisions-so-far.

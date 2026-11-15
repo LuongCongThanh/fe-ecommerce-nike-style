@@ -6,11 +6,11 @@ Các convention chi tiết theo phạm vi nằm trong `.claude/rules/` và đư�
 
 ### Issue tracker
 
-GitHub Issues (`gh` CLI), repo `LuongCongThanh/fe-ecommerce-nike-style`. See `docs/agents/issue-tracker.md`.
+Local Markdown tasks in `docs/plan/tasks/<NN>-<name>/spec.md` (frontmatter `status`, `blocked-by`, `pr`, `kind`, `approved`, `retro-turns`); no GitHub Issues. See `docs/agents/issue-tracker.md` and `docs/plan/README.md`.
 
 ### Triage labels
 
-Default five canonical labels (`needs-triage`, `needs-info`, `ready-for-agent`, `ready-for-human`, `wontfix`), unchanged. See `docs/agents/triage-labels.md`.
+Roles map onto the task `status` values (`todo`, `ready-for-agent`, `in-progress`, `needs-info`, `blocked`, `ready-for-human`, `review`, `done`); no labels. See `docs/agents/triage-labels.md`.
 
 ### Domain docs
 

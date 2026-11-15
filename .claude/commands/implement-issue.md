@@ -1,12 +1,12 @@
 ---
-description: Triển khai một GitHub issue thành vertical slice có kiểm thử
+description: Triển khai một task Markdown cục bộ thành vertical slice có kiểm thử
 allowed-tools: Read, Grep, Glob, Edit, Write, Bash(git *), Bash(pnpm *)
-argument-hint: '<số issue hoặc acceptance criteria>'
+argument-hint: '<đường dẫn spec.md của task hoặc acceptance criteria>'
 ---
 
 Triển khai `$ARGUMENTS` thành một vertical slice tập trung.
 
-1. Đọc issue hoặc acceptance criteria được cung cấp, source liên quan, `AGENTS.md` và path-scoped rule áp dụng.
+1. Đọc `spec.md` của task (`docs/plan/tasks/<NN>-<name>/spec.md`) hoặc acceptance criteria được cung cấp, source liên quan, `AGENTS.md` và path-scoped rule áp dụng.
 2. Dùng checklist trong `docs/agents/code-conventions.md` để quyết định vị trí và tên của file mới trước khi tạo.
 3. Tìm component, hook, schema, endpoint, utility và constant có cùng semantics trước khi viết mới; tái sử dụng hoặc extract vào scope chung nhỏ nhất.
 4. Nếu cố ý giữ code tương tự do business rule/lifecycle khác nhau, ghi rõ axis thay đổi độc lập.
