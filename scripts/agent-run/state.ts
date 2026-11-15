@@ -6,6 +6,9 @@
 import { closeSync, existsSync, mkdirSync, openSync, readFileSync, renameSync, rmSync, statSync, writeFileSync } from 'node:fs';
 import { join } from 'node:path';
 
+import { isReviewFinding, type ReviewFinding } from './schemas';
+import { SITUATIONS, type SituationNumber } from './situations';
+
 export interface BlockRecord {
   tool: string;
   /** Relative path for file tools, full command string for Bash */
@@ -16,8 +19,39 @@ export interface BlockRecord {
   kind?: string;
 }
 
+/** Steps of one run, in order. A resumed run skips the ones recorded in `completedSteps` (D43). */
+export const STEPS = ['plan', 'implement', 'gates', 'review', 'retro', 'committed', 'pushed'] as const;
+export type StepName = (typeof STEPS)[number];
+
+export interface LastStop {
+  situation: SituationNumber;
+  at: string;
+  action: string;
+}
+
 export interface AgentRunState {
   blocks: BlockRecord[];
+  // Known fields (written by agent-run); each is validated by readState, so a wrong-typed value reads as absent.
+  stage?: string;
+  turnsUsed?: number;
+  fixAttempts?: number;
+  resumeCount?: number;
+  lastStop?: LastStop;
+  completedSteps?: StepName[];
+  implementerSession?: string;
+  commitMessage?: string;
+  commitSubject?: string;
+  prBody?: string;
+  prUrl?: string;
+  bundleNote?: string;
+  minorFindings?: ReviewFinding[];
+  preStartGatesPassed?: boolean;
+  /** Worktree created but `pnpm install` has not finished yet (set until it does) */
+  installPending?: boolean;
+  branch?: string;
+  task?: string;
+  retro?: { turnsNeeded: number; reason: string };
+  // Unknown keys written by other writers are preserved.
   [key: string]: unknown;
 }
 
@@ -36,16 +70,65 @@ export function hasState(worktreeRoot: string): boolean {
   return existsSync(statePath(worktreeRoot));
 }
 
+const isRecord = (v: unknown): v is Record<string, unknown> => typeof v === 'object' && v !== null && !Array.isArray(v);
+const isString = (v: unknown): v is string => typeof v === 'string';
+const isFiniteNumber = (v: unknown): v is number => typeof v === 'number' && Number.isFinite(v);
+
+function isBlockRecord(v: unknown): v is BlockRecord {
+  return isRecord(v) && isString(v.tool) && isString(v.target) && isString(v.at) && (v.kind === undefined || isString(v.kind));
+}
+
+function isSituationNumber(v: unknown): v is SituationNumber {
+  return typeof v === 'number' && Object.hasOwn(SITUATIONS, v);
+}
+
+function isLastStop(v: unknown): v is LastStop {
+  return isRecord(v) && isSituationNumber(v.situation) && isString(v.at) && isString(v.action);
+}
+
+const isStepName = (v: unknown): v is StepName => (STEPS as readonly unknown[]).includes(v);
+
+function isRetroInfo(v: unknown): v is { turnsNeeded: number; reason: string } {
+  return isRecord(v) && isFiniteNumber(v.turnsNeeded) && isString(v.reason);
+}
+
+/** Per known field: its guard. A value failing its guard is dropped (reads as absent), never trusted. */
+const FIELD_GUARDS: Record<string, (v: unknown) => boolean> = {
+  stage: isString,
+  turnsUsed: isFiniteNumber,
+  fixAttempts: isFiniteNumber,
+  resumeCount: isFiniteNumber,
+  lastStop: isLastStop,
+  completedSteps: (v) => Array.isArray(v) && v.every(isStepName),
+  implementerSession: isString,
+  commitMessage: isString,
+  commitSubject: isString,
+  prBody: isString,
+  prUrl: isString,
+  bundleNote: isString,
+  minorFindings: (v) => Array.isArray(v) && v.every(isReviewFinding),
+  preStartGatesPassed: (v) => typeof v === 'boolean',
+  installPending: (v) => typeof v === 'boolean',
+  branch: isString,
+  task: isString,
+  retro: isRetroInfo,
+};
+
 /** Missing or corrupt file -> fresh state (a corrupt file is never thrown on: hooks must not crash). */
 export function readState(worktreeRoot: string): AgentRunState {
   try {
     const parsed: unknown = JSON.parse(readFileSync(statePath(worktreeRoot), 'utf8'));
-    if (parsed && typeof parsed === 'object' && !Array.isArray(parsed)) {
-      const obj = parsed as Record<string, unknown>;
-      return { ...obj, blocks: Array.isArray(obj.blocks) ? (obj.blocks as BlockRecord[]) : [] };
+    if (isRecord(parsed)) {
+      const kept: Record<string, unknown> = {};
+      for (const [key, value] of Object.entries(parsed)) {
+        const guard = FIELD_GUARDS[key];
+        if (key !== 'blocks' && (!guard || guard(value))) kept[key] = value;
+      }
+      const blocks = Array.isArray(parsed.blocks) ? parsed.blocks.filter(isBlockRecord) : [];
+      return { ...kept, blocks };
     }
   } catch {
-    // fall through
+    // missing or corrupt file: fall through to a fresh state
   }
   return { blocks: [] };
 }
@@ -57,15 +140,33 @@ export function writeState(worktreeRoot: string, state: AgentRunState): void {
   renameSync(tmp, statePath(worktreeRoot));
 }
 
-const LOCK_STALE_MS = 5000;
-const LOCK_TIMEOUT_MS = 3000;
+const LOCK_STALE_MS = 30_000;
+const LOCK_TIMEOUT_MS = 10_000;
+
+export interface UpdateOptions {
+  /** How long to wait for the lock before throwing */
+  timeoutMs?: number;
+  /** A lock file older than this is taken as left behind by a dead process and removed */
+  staleMs?: number;
+}
 
 function sleepSync(ms: number): void {
   Atomics.wait(new Int32Array(new SharedArrayBuffer(4)), 0, 0, ms);
 }
 
-/** Read-modify-write under a lock file; hooks of parallel tool calls run as separate processes. */
-export function updateState(worktreeRoot: string, fn: (state: AgentRunState) => void): AgentRunState {
+function errorCode(error: unknown): string | undefined {
+  return isRecord(error) && isString(error.code) ? error.code : undefined;
+}
+
+/**
+ * Read-modify-write under a lock file; hooks of parallel tool calls run as separate processes.
+ * Only "lock already exists" (EEXIST) is retried. A lock is only removed when it is older than `staleMs`
+ * (its owner died); waiting longer than `timeoutMs` for a live lock throws instead of stealing it, so two
+ * writers can never interleave and lose an update.
+ */
+export function updateState(worktreeRoot: string, fn: (state: AgentRunState) => void, options: UpdateOptions = {}): AgentRunState {
+  const timeoutMs = options.timeoutMs ?? LOCK_TIMEOUT_MS;
+  const staleMs = options.staleMs ?? LOCK_STALE_MS;
   mkdirSync(stateDir(worktreeRoot), { recursive: true });
   const lock = `${statePath(worktreeRoot)}.lock`;
   const started = Date.now();
@@ -73,13 +174,14 @@ export function updateState(worktreeRoot: string, fn: (state: AgentRunState) => 
     try {
       closeSync(openSync(lock, 'wx'));
       break;
-    } catch {
+    } catch (error) {
+      if (errorCode(error) !== 'EEXIST') throw error;
       try {
-        if (Date.now() - statSync(lock).mtimeMs > LOCK_STALE_MS) rmSync(lock, { force: true });
+        if (Date.now() - statSync(lock).mtimeMs > staleMs) rmSync(lock, { force: true });
       } catch {
-        // lock vanished: retry
+        // the lock vanished between open and stat: just retry
       }
-      if (Date.now() - started > LOCK_TIMEOUT_MS) rmSync(lock, { force: true });
+      if (Date.now() - started > timeoutMs) throw new Error(`state lock ${lock} is held by another process (waited ${timeoutMs}ms)`);
       sleepSync(15);
     }
   }
@@ -91,6 +193,25 @@ export function updateState(worktreeRoot: string, fn: (state: AgentRunState) => 
   } finally {
     rmSync(lock, { force: true });
   }
+}
+
+export function isStepDone(worktreeRoot: string, step: StepName): boolean {
+  return readState(worktreeRoot).completedSteps?.includes(step) ?? false;
+}
+
+export function markStepDone(worktreeRoot: string, step: StepName): void {
+  updateState(worktreeRoot, (s) => {
+    const done = s.completedSteps ?? [];
+    if (!done.includes(step)) s.completedSteps = [...done, step];
+  });
+}
+
+/** Forget `step` and every later step (its work must be redone, e.g. after the implementer asked a question). */
+export function resetStepsFrom(worktreeRoot: string, step: StepName): void {
+  const cut = STEPS.indexOf(step);
+  updateState(worktreeRoot, (s) => {
+    s.completedSteps = (s.completedSteps ?? []).filter((x) => STEPS.indexOf(x) < cut);
+  });
 }
 
 export function recordBlock(worktreeRoot: string, block: Omit<BlockRecord, 'at'> & { at?: string }): AgentRunState {

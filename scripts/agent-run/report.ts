@@ -3,7 +3,7 @@ import { appendFileSync, existsSync, readFileSync, writeFileSync } from 'node:fs
 import { join } from 'node:path';
 
 import { setField } from './spec-file';
-import { SITUATIONS, type Stop, type TaskStatus } from './situations';
+import { SITUATION, SITUATIONS, type SituationNumber, type Stop, type TaskStatus } from './situations';
 import { hasState, readState, updateState } from './state';
 import { TASKS_DIR } from './tasks';
 
@@ -25,7 +25,7 @@ const stamp = (d: Date) => {
 };
 export const formatTime = stamp;
 
-export function appendInbox(repoRoot: string, when: Date, task: string | null, situation: number, action: string): void {
+export function appendInbox(repoRoot: string, when: Date, task: string | null, situation: SituationNumber, action: string): void {
   const file = join(repoRoot, INBOX_FILE);
   const prefix = existsSync(file) && !readFileSync(file, 'utf8').endsWith('\n') ? '\n' : '';
   appendFileSync(file, `${prefix}| ${stamp(when)} | ${task ?? '-'} | ${situation} | ${cell(action)} |\n`);
@@ -39,12 +39,12 @@ export interface StopContext {
   notify: (title: string, body: string) => void;
 }
 
-const EXEMPT_FROM_HUMAN_HANDOFF = new Set([10, 15]);
+const EXEMPT_FROM_HUMAN_HANDOFF = new Set<SituationNumber>([SITUATION.stopFile, SITUATION.retroTurns]);
 
 export function reportStop(ctx: StopContext, stop: Stop): void {
-  const info = SITUATIONS[stop.situation] ?? SITUATIONS[13]!;
+  const info = SITUATIONS[stop.situation];
   let status = info.status;
-  const resumes = ctx.worktree && hasState(ctx.worktree) ? Number(readState(ctx.worktree).resumeCount ?? 0) : 0;
+  const resumes = ctx.worktree && hasState(ctx.worktree) ? (readState(ctx.worktree).resumeCount ?? 0) : 0;
   if ((status === 'needs-info' || status === 'blocked') && resumes >= 2 && !EXEMPT_FROM_HUMAN_HANDOFF.has(stop.situation)) status = 'ready-for-human';
   if (ctx.taskName && status) setTaskStatus(ctx.repoRoot, ctx.taskName, status);
   if (ctx.worktree && hasState(ctx.worktree)) {

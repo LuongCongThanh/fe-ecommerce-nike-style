@@ -5,6 +5,8 @@ import { join } from 'node:path';
 export const TASK_KINDS = ['ui', 'logic', 'refactor', 'docs'] as const;
 export type TaskKind = (typeof TASK_KINDS)[number];
 
+export const isTaskKind = (value: unknown): value is TaskKind => (TASK_KINDS as readonly unknown[]).includes(value);
+
 export function parseFrontmatter(text: string): Record<string, string> {
   const match = /^---\r?\n([\s\S]*?)\r?\n---/.exec(text);
   const out: Record<string, string> = {};
@@ -25,9 +27,9 @@ export interface SpecInfo {
 export function readSpecInfo(taskDir: string): SpecInfo {
   try {
     const fm = parseFrontmatter(readFileSync(join(taskDir, 'spec.md'), 'utf8'));
-    const kind = (TASK_KINDS as readonly string[]).includes(fm.kind ?? '') ? (fm.kind as TaskKind) : null;
+    const kind = isTaskKind(fm.kind) ? fm.kind : null;
     return { kind, allowTestChanges: fm['allow-test-changes'] === 'true' };
   } catch {
-    return { kind: null, allowTestChanges: false };
+    return { kind: null, allowTestChanges: false }; // no readable spec.md: unknown kind, no test rule
   }
 }

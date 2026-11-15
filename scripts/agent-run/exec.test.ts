@@ -1,7 +1,9 @@
 // @vitest-environment node
 import { describe, expect, it } from 'vitest';
 
-import { realRunner, trimLog } from './exec';
+import { setTimeout as sleep } from 'node:timers/promises';
+
+import { realRunner, terminateTrackedGroups, trackedGroups, trimLog } from './exec';
 
 describe('realRunner', () => {
   it('feeds `input` to stdin (hooks read their event there)', async () => {
@@ -10,6 +12,78 @@ describe('realRunner', () => {
   });
   it('reports a missing command as exit 127', async () => {
     expect((await realRunner('definitely-not-a-command', [], { cwd: process.cwd() })).code).toBe(127);
+  });
+});
+
+describe('realRunner timeouts and decoding', () => {
+  const alive = (pid: number) => {
+    try {
+      process.kill(pid, 0);
+      return true;
+    } catch {
+      // ESRCH: no such process
+      return false;
+    }
+  };
+
+  it('kills the whole process group on timeout, not just the direct child', async () => {
+    const r = await realRunner('sh', ['-c', 'sleep 30 & echo $!; wait'], { cwd: process.cwd(), timeoutMs: 400 });
+    expect(r.code).toBe(124);
+    const grandchild = Number(r.stdout.trim());
+    expect(grandchild).toBeGreaterThan(0);
+    await sleep(100);
+    expect(alive(grandchild)).toBe(false);
+  });
+
+  it('decodes a multi-byte character split across chunks', async () => {
+    const script = 'process.stdout.write(Buffer.from([0xe2, 0x82])); setTimeout(() => process.stdout.write(Buffer.from([0xac])), 60);';
+    const r = await realRunner(process.execPath, ['-e', script], { cwd: process.cwd() });
+    expect(r.stdout).toBe('\u20ac');
+  });
+});
+
+describe('tracking live process groups (Ctrl-C must not orphan children)', () => {
+  it('tracks a running command and forgets it when it ends', async () => {
+    const running = realRunner('sleep', ['30'], { cwd: process.cwd() });
+    await sleep(100);
+    expect(trackedGroups()).toHaveLength(1);
+    await terminateTrackedGroups({ graceMs: 500 });
+    const r = await running;
+    expect(r.code).not.toBe(0);
+    expect(trackedGroups()).toEqual([]);
+  });
+
+  it('SIGTERM first, SIGKILL only for groups that survive the grace period (fake signal path)', async () => {
+    const running = realRunner('sleep', ['30'], { cwd: process.cwd() });
+    await sleep(100);
+    const [pid] = trackedGroups();
+    const sent: string[] = [];
+    await terminateTrackedGroups({
+      graceMs: 50,
+      kill: (target, signal) => {
+        sent.push(`${target === -(pid ?? 0) ? 'group' : 'other'}:${signal}`);
+        if (signal === 'SIGKILL') process.kill(target, 'SIGKILL'); // really stop it so the test ends
+      },
+      isAlive: () => true, // pretend SIGTERM was ignored
+    });
+    expect(sent).toEqual(['group:SIGTERM', 'group:SIGKILL']);
+    await running;
+  });
+
+  it('does not SIGKILL groups that exited within the grace period', async () => {
+    const running = realRunner('sleep', ['30'], { cwd: process.cwd() });
+    await sleep(100);
+    const sent: string[] = [];
+    await terminateTrackedGroups({
+      graceMs: 50,
+      kill: (target, signal) => {
+        sent.push(signal);
+        if (signal === 'SIGTERM') process.kill(target, 'SIGTERM');
+      },
+      isAlive: () => false,
+    });
+    expect(sent).toEqual(['SIGTERM']);
+    await running;
   });
 });
 

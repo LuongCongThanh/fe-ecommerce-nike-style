@@ -41,8 +41,46 @@ export function matchesGlob(path: string, patterns: readonly string[]): boolean 
   return patterns.some((p) => globToRegExp(p).test(path));
 }
 
-export function parseCommand(input: string): ParseResult {
+export interface ParseOptions {
+  /**
+   * Inspect instead of reject: command substitutions ($(..), backticks, <(..)), subshells and heredocs are
+   * parsed and their inner commands returned as extra segments. For hooks that look for forbidden commands
+   * (block-dangerous-git); agent-guard keeps the strict default because it must be able to *allow* a command.
+   */
+  lenient?: boolean;
+}
+
+/** Text between an opener (index `from` = first char after it) and its matching close; null when unterminated. */
+function readSubstitution(input: string, from: number, kind: 'paren' | 'backtick'): { inner: string; end: number } | null {
+  let depth = 1;
+  let quote: '"' | "'" | null = null;
+  for (let i = from; i < input.length; i++) {
+    const c = input.charAt(i);
+    if (c === '\\' && quote !== "'") {
+      i++;
+    } else if (quote) {
+      if (c === quote) quote = null;
+    } else if (kind === 'backtick') {
+      if (c === '`') return { inner: input.slice(from, i), end: i + 1 };
+    } else if (c === '"' || c === "'") quote = c;
+    else if (c === '(') depth++;
+    else if (c === ')' && --depth === 0) return { inner: input.slice(from, i), end: i + 1 };
+  }
+  return null;
+}
+
+export function parseCommand(input: string, options: ParseOptions = {}): ParseResult {
+  const lenient = options.lenient === true;
   const segments: Segment[] = [];
+  const nested: Segment[] = [];
+  /** Lenient mode: parse the inside of a substitution; its segments are reported next to the outer ones. */
+  const absorb = (inner: string | null): ParseResult | null => {
+    if (inner === null) return { ok: false, reason: 'unterminated command substitution' };
+    const r = parseCommand(inner, options);
+    if (!r.ok) return r;
+    nested.push(...r.segments);
+    return null;
+  };
   let words: string[] = [];
   let redirects: Redirect[] = [];
   let word = '';
@@ -92,7 +130,12 @@ export function parseCommand(input: string): ParseResult {
           break;
         }
         if (d === '`' || (d === '$' && input[i + 1] === '(')) {
-          return { ok: false, reason: 'command substitution is not allowed' };
+          if (!lenient) return { ok: false, reason: 'command substitution is not allowed' };
+          const sub = readSubstitution(input, d === '`' ? i + 1 : i + 2, d === '`' ? 'backtick' : 'paren');
+          const failed = absorb(sub?.inner ?? null);
+          if (failed) return failed;
+          i = sub?.end ?? input.length;
+          continue;
         }
         if (d === '\\' && i + 1 < input.length) {
           const e = input.charAt(i + 1);
@@ -116,9 +159,22 @@ export function parseCommand(input: string): ParseResult {
       i += 2;
       continue;
     }
-    if (c === '`') return { ok: false, reason: 'backticks are not allowed' };
-    if (c === '$' && next === '(') return { ok: false, reason: 'command substitution is not allowed' };
-    if (c === '(' || c === ')') return { ok: false, reason: 'subshells are not allowed' };
+    if (c === '`' || (c === '$' && next === '(')) {
+      if (!lenient) return { ok: false, reason: c === '`' ? 'backticks are not allowed' : 'command substitution is not allowed' };
+      const sub = readSubstitution(input, c === '`' ? i + 1 : i + 2, c === '`' ? 'backtick' : 'paren');
+      const failed = absorb(sub?.inner ?? null);
+      if (failed) return failed;
+      started = true;
+      i = sub?.end ?? input.length;
+      continue;
+    }
+    if (c === '(' || c === ')') {
+      if (!lenient) return { ok: false, reason: 'subshells are not allowed' };
+      const r = endSegment();
+      if (r) return r;
+      i++;
+      continue;
+    }
     if (c === '\n' || c === ';') {
       const r = endSegment();
       if (r) return r;
@@ -145,10 +201,16 @@ export function parseCommand(input: string): ParseResult {
       continue;
     }
     if (c === '<' || c === '>') {
-      if (c === '<' && (next === '<' || next === '(')) {
-        return { ok: false, reason: 'heredocs and process substitution are not allowed' };
+      if (next === '(') {
+        if (!lenient) return { ok: false, reason: 'heredocs and process substitution are not allowed' };
+        const sub = readSubstitution(input, i + 2, 'paren');
+        const failed = absorb(sub?.inner ?? null);
+        if (failed) return failed;
+        started = true;
+        i = sub?.end ?? input.length;
+        continue;
       }
-      if (c === '>' && next === '(') return { ok: false, reason: 'process substitution is not allowed' };
+      if (c === '<' && next === '<' && !lenient) return { ok: false, reason: 'heredocs and process substitution are not allowed' };
       // a bare fd number before the operator (2>file) is part of the operator
       if (started && pending === null && /^\d+$/.test(word)) {
         word = '';
@@ -175,7 +237,7 @@ export function parseCommand(input: string): ParseResult {
   }
   const r = endSegment();
   if (r) return r;
-  return { ok: true, segments };
+  return { ok: true, segments: [...segments, ...nested] };
 }
 
 /** Pattern `a b *`: trailing `*` = any further words (including none); otherwise exact words. */

@@ -1,11 +1,22 @@
 // @vitest-environment node
-import { existsSync, mkdtempSync, readFileSync, rmSync, writeFileSync, mkdirSync } from 'node:fs';
+import { chmodSync, existsSync, mkdtempSync, readFileSync, rmSync, writeFileSync, mkdirSync, utimesSync } from 'node:fs';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 
 import { afterEach, beforeEach, describe, expect, it } from 'vitest';
 
-import { countBlocks, findRepeatedBlock, hasState, readState, recordBlock, statePath, updateState } from './state';
+import {
+  countBlocks,
+  findRepeatedBlock,
+  hasState,
+  isStepDone,
+  markStepDone,
+  readState,
+  recordBlock,
+  resetStepsFrom,
+  statePath,
+  updateState,
+} from './state';
 
 let root: string;
 beforeEach(() => {
@@ -80,5 +91,72 @@ describe('agent-run state', () => {
     recordBlock(root, { tool: 'Edit', target: 'a' });
     expect(findRepeatedBlock(readState(root))).toEqual({ tool: 'Edit', target: 'a', count: 3 });
     expect(findRepeatedBlock(readState(root), 4)).toBeNull();
+  });
+});
+
+describe('updateState locking', () => {
+  const lockPath = () => `${statePath(root)}.lock`;
+  const holdLock = (ageMs: number) => {
+    mkdirSync(join(root, '.agent-run'), { recursive: true });
+    writeFileSync(lockPath(), '');
+    const t = new Date(Date.now() - ageMs);
+    utimesSync(lockPath(), t, t);
+  };
+
+  it('throws on timeout instead of stealing a lock that is not stale', () => {
+    holdLock(0);
+    expect(() => updateState(root, (s) => (s.turnsUsed = 1), { timeoutMs: 80, staleMs: 60_000 })).toThrow(/lock/i);
+    expect(existsSync(lockPath())).toBe(true);
+    expect(readState(root).turnsUsed).toBeUndefined();
+  });
+
+  it('steals a lock older than the stale threshold', () => {
+    holdLock(120_000);
+    updateState(root, (s) => (s.turnsUsed = 2), { timeoutMs: 500, staleMs: 60_000 });
+    expect(readState(root).turnsUsed).toBe(2);
+    expect(existsSync(lockPath())).toBe(false);
+  });
+
+  it('rethrows errors other than "lock exists" (e.g. permission denied)', () => {
+    mkdirSync(join(root, '.agent-run'));
+    chmodSync(join(root, '.agent-run'), 0o500);
+    try {
+      expect(() => updateState(root, (s) => (s.turnsUsed = 3), { timeoutMs: 80 })).toThrow(/EACCES|permission/i);
+    } finally {
+      chmodSync(join(root, '.agent-run'), 0o700);
+    }
+  });
+});
+
+describe('typed state fields', () => {
+  it('drops known fields that have the wrong type but keeps unknown keys', () => {
+    mkdirSync(join(root, '.agent-run'));
+    writeFileSync(
+      statePath(root),
+      JSON.stringify({
+        turnsUsed: 'x',
+        fixAttempts: 2,
+        lastStop: { situation: 'no' },
+        blocks: [{ tool: 1 }, { tool: 'Edit', target: 'a', at: 't' }],
+        custom: 1,
+      }),
+    );
+    const s = readState(root);
+    expect(s.turnsUsed).toBeUndefined();
+    expect(s.fixAttempts).toBe(2);
+    expect(s.lastStop).toBeUndefined();
+    expect(s.blocks).toEqual([{ tool: 'Edit', target: 'a', at: 't' }]);
+    expect(s.custom).toBe(1);
+  });
+
+  it('records completed steps once and can reset from a step on', () => {
+    markStepDone(root, 'plan');
+    markStepDone(root, 'implement');
+    markStepDone(root, 'implement');
+    expect(readState(root).completedSteps).toEqual(['plan', 'implement']);
+    expect(isStepDone(root, 'plan')).toBe(true);
+    expect(isStepDone(root, 'gates')).toBe(false);
+    resetStepsFrom(root, 'implement');
+    expect(readState(root).completedSteps).toEqual(['plan']);
   });
 });

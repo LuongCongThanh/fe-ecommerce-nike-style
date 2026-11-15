@@ -1,5 +1,6 @@
 /** Prompts handed to `claude -p`. Kept in one file so wording changes (retro D13) do not touch the flow. */
 import type { ReviewFinding } from './schemas';
+import type { TaskKind } from './spec';
 
 export const REPORT_HEADING = '## Đề xuất cho môi trường';
 
@@ -21,8 +22,16 @@ export const reviewerPrompt = (taskDir: string): string =>
 export const uiCheckPrompt = (taskDir: string, url: string): string =>
   `The dev server for this branch is running at ${url}. Using the browser tools, check the pages this task touches (see ${taskDir}/spec.md and plan.md) with the mobile-native, break-ui and impeccable (audit) skills. Report only real defects as findings (severity blocker/major only when the acceptance criteria or usability on mobile is broken). Do not change files. Final answer: only the JSON object (reviewer schema).`;
 
-export const retroPrompt = (taskDir: string): string =>
-  `/mattpocock-skills:retro\n\nReview THIS session (the work on task ${taskDir}); include the skills and agents used. Do not stop to present candidates interactively: append the candidate list, in severity order, as bullets under the heading "${REPORT_HEADING}" at the end of ${taskDir}/report.md (create the heading if missing). Touch no other file.`;
+export const retroPrompt = (taskDir: string, kind: TaskKind | null = null): string =>
+  `/mattpocock-skills:retro\n\nReview THIS session (the work on task ${taskDir}); include the skills and agents used. Do not stop to present candidates interactively: append the candidate list, in severity order, as bullets under the heading "${REPORT_HEADING}" at the end of ${taskDir}/report.md (create the heading if missing). Touch no other file.${
+    kind === 'ui'
+      ? ` This was a UI task: after the retro, also run the learn-taste skill on this session and append what it would record as further bullets under the same heading (it must not write anywhere else).`
+      : ''
+  }`;
+
+/** D12/skill table: after a stop in situation 7 or 8, the implementer session writes a handoff for whoever continues. */
+export const handoffPrompt = (taskDir: string): string =>
+  `/mattpocock-skills:handoff The next session continues task ${taskDir} by hand or in a fresh agent run: what is done, what still fails or is unfinished, what you tried.\n\nDo NOT write any file (writes are blocked in this phase). Reply with the complete handoff document as your final answer text; the runner saves it as handoff.md in the task directory.`;
 
 export const retroNeedPrompt = (): string =>
   'You ran out of turns before finishing the retro. Without doing more work, say how many more turns you need to finish (turns_needed) and why (reason).';

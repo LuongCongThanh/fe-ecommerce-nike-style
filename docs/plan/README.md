@@ -108,6 +108,7 @@ Hook `PreToolUse` `.claude/hooks/agent-guard.ts` (chạy bằng `tsx`, đăng k�
 ## Gate và Stop hook (D19, D35, D38)
 
 - `pnpm verify-gates [--worktree <dir>] [--task-dir <dir> | --kind <kind>] [--with-build]` chạy `lint`, `typecheck`, `test`, `format:check` và in một JSON (`gates[]` có `status` + `log` đã cắt, `failureType`, `bundle`). Exit 0 xanh, 1 `gate_failed` (agent sửa được), 2 `bundle_regression` (không cho agent sửa, hỏi người), 64 lỗi dùng/nội bộ. Với `kind: ui` còn đo First Load JS: baseline lưu ở `<repo chính>/.agent-run/baseline/<sha-dev>.json` (tự build từ `dev` lần đầu), route tăng quá 10% thì đỏ, route mới chỉ báo. Next chỉ ghi `route-bundle-stats.json` khi build bằng Turbopack, nên gate chạy `pnpm exec next build` (không phải `pnpm build --webpack`) cho cả baseline lẫn bản mới; con số tuyệt đối khác bundle webpack thật, nhưng so sánh cùng điều kiện.
+- `verify-gates --task-dir <dir>` thêm gate `test-presence`: kiểm lại quy tắc test theo `kind` của D38 (dùng chung logic với Stop hook, `checkTestPresence`). `agent-run` truyền `--task-dir` cho mọi lần chạy sau implementer, nên thiếu test thì gate đỏ, vào vòng sửa và hết 3 lần thì dừng ở tình huống 7 (không bao giờ mở PR). Lần chạy trước khi giao việc không có gate này.
 - Stop hook `.claude/hooks/implementer-stop.ts` đăng ký trong `.claude/settings.json` (hook khai báo trong frontmatter của `implementer.md` không chạy dưới `claude -p --agent`). Chỉ hoạt động khi `AGENT_RUN=1` và `AGENT_PHASE=implement`. Đỏ thì exit 2 và tăng `fixAttempts` trong `state.json`; `fixAttempts >= 3` thì cho dừng, script `agent-run` đánh dấu blocked.
 
 ## Chạy agent-run (D18, D22, D43)
@@ -116,9 +117,12 @@ Hook `PreToolUse` `.claude/hooks/agent-guard.ts` (chạy bằng `tsx`, đăng k�
 
 - **Chọn task:** task `ready-for-agent` đầu tiên theo tên thư mục mà mọi `blocked-by` đã `done` (task còn bị chặn bị bỏ qua, ghi vào log). `--task NN` chỉ chạy task đó.
 - **Worktree:** `<repo>.worktrees/<NN>-<tên>` (thư mục anh em của repo, ngoài repo; đổi bằng `--worktrees <dir>` hoặc `AGENT_RUN_WORKTREES`), branch `<type>/<NN>-<tên>` từ `origin/dev` (`kind` ui/logic -> `feat`, refactor -> `refactor`, docs -> `docs`). Script chạy `corepack pnpm install --frozen-lockfile`, copy `.env.example` thành `.env.local`, chạy `verify-gates --with-build` trước khi giao việc, và thử hook guard (phải chặn được).
+- **Một task mỗi lúc (D15):** `<repo chính>/.agent-run/run.lock` (`pid`, task, giờ bắt đầu) có trong suốt lần chạy. Lần chạy thứ hai thấy pid còn sống thì in thông báo rõ và thoát (exit 1, không đổi spec, không ghi inbox); pid đã chết thì khóa cũ bị thay.
 - **Luồng:** planner (`plan.md`) -> implementer -> `verify-gates` (đỏ thì implementer sửa, tối đa 3 lần dùng chung với Stop hook và review) -> với `kind: ui`: bật `pnpm dev --port 3100`, kiểm tra giao diện, tắt -> reviewer (`mattpocock-skills:code-review`, mốc `dev`; blocker/major vào vòng sửa) -> retro (`/mattpocock-skills:retro` trong phiên implementer, 5 lượt) -> `pnpm tokens` -> **script commit một lần**, push, viết PR body (agent, `scripts/check-pr-body.sh` + lọc từ cấm, sửa 1 lần) và `gh pr create --base dev`. Spec đặt `status: review` và `pr: #N`. Script **không bao giờ merge**.
 - **Số lượt (D15):** cộng `num_turns` mọi lần gọi trong một lần chạy, phần còn lại truyền làm `--max-turns`; lần chạy tiếp được 40 lượt mới. Retro (5 lượt) và agent viết PR body (6 lượt) có hạn mức riêng, không tính vào 40.
 - **Kiểm tra UI (D30):** chỉ là bước tối thiểu (một lần gọi `claude` với các skill `mobile-native`, `break-ui`, `impeccable`); cần Playwright MCP trong `.mcp.json` (chưa có trong repo). Chỉnh ở bước chạy thử 5 task.
+
+**Ctrl-C / SIGTERM:** tiến trình con (claude, pnpm, next) chạy trong nhóm tiến trình riêng; `agent-run` theo dõi các nhóm đang chạy, khi nhận SIGINT/SIGTERM thì gửi SIGTERM, 3 giây sau SIGKILL nhóm nào còn sống, xóa `run.lock`, thoát với mã 130/143. Worktree và `state.json` giữ nguyên nên chạy lại là chạy tiếp.
 
 **Dừng khẩn:** `touch .agent-stop` ở root checkout chính (hook và script kiểm tra giữa mọi bước; tình huống 10). Xóa file rồi chạy lại để tiếp tục; task về `ready-for-agent`, lần tiếp không tính là "chạy tiếp".
 
@@ -130,6 +134,9 @@ Hook `PreToolUse` `.claude/hooks/agent-guard.ts` (chạy bằng `tsx`, đăng k�
 - Duyệt file/lệnh (tình huống 6): thêm vào `approved:` như mẫu ở trên rồi đặt lại `ready-for-agent`. Script đọc danh sách **lúc khởi động** và truyền cho hook qua `AGENT_APPROVED` (không mở khóa `.env*` hay `.agent-stop`).
 - Bundle tăng quá 10% (tình huống 14): chấp nhận thì tự mở PR hoặc làm tiếp; agent không tự sửa.
 - Sau **2 lần chạy tiếp** mà vẫn dừng, script đặt `ready-for-human` (người tự làm). Tình huống 10 và 15 không tính.
+- **Chạy tiếp đúng chỗ dừng:** `state.json` ghi `completedSteps` (`plan`, `implement`, `gates`, `review`, `retro`, `committed`, `pushed`). Lần chạy tiếp bỏ qua các bước đã xong: sau tình huống 12 (commit đã có, PR body đã lưu) chỉ push và tạo PR; retro sập (11) thì chỉ chạy lại retro rồi commit. Implementer hỏi hoặc xin quyền (5, 6) thì bước `implement` bị xóa khỏi danh sách để lần sau nó đọc câu trả lời. Worktree vừa tạo mà `pnpm install` lỗi đã có `state.json` (đánh dấu `installPending`): chạy tiếp thì cài lại, không gặp tình huống 4 và không tính là một lần chạy tiếp.
+- **Handoff (tình huống 7 và 8):** sau khi báo người, script `--resume` phiên implementer với 3 lượt không tính vào 40 và lệnh `/mattpocock-skills:handoff`, ghi kết quả vào `<thư mục task>/handoff.md` trong worktree (xóa khi run hoàn tất). Lỗi ở bước này chỉ vào log, không đổi tình huống dừng.
+- **Retro:** không có session implementer đã ghi thì dừng ở tình huống 13 (không bỏ qua im lặng). Task `kind: ui` thì prompt retro thêm `learn-taste` (D30).
 - Retro hết lượt (tình huống 15): script hỏi agent cần thêm bao nhiêu lượt và ghi vào inbox. Thêm `retro-turns: X` vào spec, đặt lại `ready-for-agent`: script `--resume` đúng phiên cũ với X lượt rồi commit và mở PR (không chạy lại plan/implement, không tính vào 2 lần chạy tiếp).
 
 ## Bảng task

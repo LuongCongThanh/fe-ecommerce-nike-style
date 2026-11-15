@@ -17,6 +17,8 @@ export interface Deps {
   now: () => Date;
   log: (line: string) => void;
   devServer: DevServer;
+  /** Our pid and a liveness probe, for the one-run-at-a-time lock */
+  processes: { pid: number; isAlive: (pid: number) => boolean };
 }
 
 export interface Config {

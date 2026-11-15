@@ -15,8 +15,9 @@ async function main(): Promise<number> {
   try {
     let root = process.env.CLAUDE_PROJECT_DIR;
     if (!root) {
-      const input = JSON.parse(readFileSync(0, 'utf8')) as { cwd?: string };
-      root = input.cwd ?? process.cwd();
+      const input: unknown = JSON.parse(readFileSync(0, 'utf8'));
+      root =
+        (typeof input === 'object' && input !== null && 'cwd' in input && typeof input.cwd === 'string' ? input.cwd : undefined) ?? process.cwd();
     }
     const decision = await evaluateStop({ root, env: process.env, runner: realRunner });
     if (decision.allow) return 0;

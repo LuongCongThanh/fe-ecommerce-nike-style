@@ -104,6 +104,19 @@ export interface ReviewFinding {
   message: string;
 }
 
+const isRecord = (v: unknown): v is Record<string, unknown> => typeof v === 'object' && v !== null && !Array.isArray(v);
+
+/** Runtime check for one finding: the agent's JSON is only trusted after this. */
+export function isReviewFinding(value: unknown): value is ReviewFinding {
+  return (
+    isRecord(value) &&
+    (FINDING_SEVERITIES as readonly unknown[]).includes(value.severity) &&
+    typeof value.message === 'string' &&
+    (value.file === undefined || typeof value.file === 'string') &&
+    (value.axis === undefined || value.axis === 'standards' || value.axis === 'spec')
+  );
+}
+
 export interface ReviewerResult {
   result: ResultValue;
   reason: string;

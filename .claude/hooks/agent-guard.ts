@@ -13,7 +13,7 @@ import { dirname, join, resolve } from 'node:path';
 
 import { recordBlock } from '../../scripts/agent-run/state';
 
-import { decide, type Approved, type GuardConfig, type HookInput } from './lib/guard';
+import { decide, guardConfigSchema, hookInputSchema, type Approved, type HookInput } from './lib/guard';
 
 function readStdin(): string {
   return readFileSync(0, 'utf8');
@@ -25,7 +25,7 @@ export function mainRepoRoot(cwd: string): string | null {
     const out = execFileSync('git', ['rev-parse', '--git-common-dir'], { cwd, encoding: 'utf8', stdio: ['ignore', 'pipe', 'ignore'] }).trim();
     return dirname(resolve(cwd, out));
   } catch {
-    return null;
+    return null; // not a git checkout: the caller falls back to the project root
   }
 }
 
@@ -33,11 +33,12 @@ export function parseApproved(raw: string | undefined): Approved {
   const empty: Approved = { paths: [], commands: [] };
   if (!raw) return empty;
   try {
-    const v = JSON.parse(raw) as Partial<Approved>;
-    const strings = (a: unknown): string[] => (Array.isArray(a) ? a.filter((x): x is string => typeof x === 'string') : []);
-    return { paths: strings(v.paths), commands: strings(v.commands) };
+    const value: unknown = JSON.parse(raw);
+    if (typeof value !== 'object' || value === null) return empty;
+    const strings = (list: unknown): string[] => (Array.isArray(list) ? list.filter((x): x is string => typeof x === 'string') : []);
+    return { paths: strings('paths' in value ? value.paths : undefined), commands: strings('commands' in value ? value.commands : undefined) };
   } catch {
-    return empty;
+    return empty; // not JSON: nothing approved (the safe direction)
   }
 }
 
@@ -46,9 +47,9 @@ function main(): number {
   let input: HookInput | undefined;
   let root = process.env.CLAUDE_PROJECT_DIR ?? process.cwd();
   try {
-    input = JSON.parse(readStdin()) as HookInput;
+    input = hookInputSchema.parse(JSON.parse(readStdin()));
     if (!process.env.CLAUDE_PROJECT_DIR && input.cwd) root = input.cwd;
-    const config = JSON.parse(readFileSync(join(root, '.claude/agent-guard.json'), 'utf8')) as GuardConfig;
+    const config = guardConfigSchema.parse(JSON.parse(readFileSync(join(root, '.claude/agent-guard.json'), 'utf8')));
     const mainRoot = agentRun ? (mainRepoRoot(root) ?? root) : root;
     const decision = decide(input, {
       config,
