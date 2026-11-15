@@ -32,6 +32,7 @@
     ".prettierrc.mjs",
     ".prettierignore",
     "tsconfig.json",
+    "tsconfig.scripts.json",
     "vitest.config.ts",
     "playwright.config.ts",
     ".github/workflows/**",
