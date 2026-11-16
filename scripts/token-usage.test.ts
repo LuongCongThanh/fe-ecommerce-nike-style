@@ -100,6 +100,12 @@ describe('measure', () => {
     expect(() => measure({ baseDir: base, root: '/elsewhere', ids: ['latest'] })).toThrow(/transcript/);
     expect(measure({ baseDir: base, root: ROOT, ids: ['latest'] }).sessions).toHaveLength(1);
   });
+
+  it('`all` takes every session of the project dir (one task worktree = all of its calls)', () => {
+    const r = measure({ baseDir: base, root: ROOT, ids: ['all'], since: '2026-11-01T00:00' });
+    expect([...r.sessions].sort()).toEqual(['sess1', 'sess2']);
+    expect(r.rows.find((x) => x.name === 'TOTAL')).toMatchObject({ output: 171, messages: 4 });
+  });
 });
 
 describe('renderMarkdown + upsertTokenSection', () => {
