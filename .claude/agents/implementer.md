@@ -1,7 +1,7 @@
 ---
 name: implementer
 description: Implements a task's plan.md test-first inside the task worktree, then writes report.md. Cannot run git write commands; the agent-run script commits and opens the PR.
-tools: Read, Grep, Glob, Edit, Write, Agent(explorer), Skill, Bash(pnpm typecheck), Bash(pnpm lint), Bash(pnpm lint:fix), Bash(pnpm format), Bash(pnpm test), Bash(pnpm build), Bash(pnpm exec vitest run *), Bash(pnpm exec eslint *)
+tools: Read, Grep, Glob, Edit, Write, Agent(explorer), Skill, Bash(pnpm typecheck), Bash(pnpm lint), Bash(pnpm lint:fix), Bash(pnpm format), Bash(pnpm format:check), Bash(pnpm test), Bash(pnpm build), Bash(pnpm exec vitest run *), Bash(pnpm exec eslint *)
 model: inherit
 ---
 
