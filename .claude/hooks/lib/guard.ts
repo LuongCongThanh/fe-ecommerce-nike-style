@@ -6,7 +6,7 @@ import { isAbsolute, posix, relative, resolve, sep } from 'node:path';
 
 import { z } from 'zod';
 
-import { matchCommand, matchesGlob, parseCommand } from './shell';
+import { matchCommand, matchesGlob, parseCommand, type Segment } from './shell';
 
 const phaseConfigSchema = z.object({
   /** Only these paths are writable in this phase (overrides everything). `{taskDir}` is expanded. */
@@ -15,6 +15,8 @@ const phaseConfigSchema = z.object({
   writeAlso: z.array(z.string()).optional(),
   /** Replaces the top-level allowCommands in this phase. */
   allowCommands: z.array(z.string()).optional(),
+  /** Replaces the top-level readCommands in this phase (`[]` = none, e.g. the planner). */
+  readCommands: z.array(z.string()).optional(),
 });
 
 /** Shape of .claude/agent-guard.json; the file is parsed with this at every boundary that reads it. */
@@ -22,6 +24,10 @@ export const guardConfigSchema = z.object({
   stopFile: z.string(),
   secretFiles: z.object({ deny: z.array(z.string()), allow: z.array(z.string()) }),
   allowCommands: z.array(z.string()),
+  /** Read-only commands (cat, ls, git diff, ...): allowed with path checks (inside the worktree, no globs/vars). `cd <dir>` is accepted too. */
+  readCommands: z.array(z.string()).default([]),
+  /** Output filters (tail, head, grep, wc) accepted after `|` when everything before them is allowed. */
+  outputFilters: z.array(z.string()).default([]),
   denyCommandPatterns: z.array(z.string()),
   denyPaths: z.array(z.string()),
   askPaths: z.array(z.string()),
@@ -67,6 +73,9 @@ export type Decision = { allow: true } | { allow: false; kind: DenyKind; reason:
 const WRITE_TOOLS = new Set(['Edit', 'Write', 'MultiEdit', 'NotebookEdit']);
 const NEEDS_APPROVAL =
   'Do not retry or work around it. If this is required, finish what you can and return result=blocked with reason=needs_approval naming it.';
+
+const RUN_ALONE =
+  'So run the allowed command on its own (e.g. `{example}`): no extra pipes, redirects or chained commands. Do not give up on the whole task because of this denial; only the denied part would need approval.';
 
 const allow: Decision = { allow: true };
 const deny = (kind: DenyKind, target: string, reason: string): Decision => ({ allow: false, kind, target, reason });
@@ -172,30 +181,144 @@ function decideWrite(rel: string | null, raw: string, ctx: GuardContext): Decisi
   return allow;
 }
 
+const FILTER_TAIL_HEAD = [/^-n$/, /^-n\d+$/, /^-\d+$/];
+const GREP_FLAGS = /^-[ivEFwxnc]+$/;
+const GREP_NUM_FLAGS = new Set(['-A', '-B', '-C', '-m']);
+
+/** `tail|head [-n N|-nN|-N]`, `grep [flags] <pattern>` (no files, no -r/-f), `wc -l`: the output filters an agent may append to an allowed command. */
+function isOutputFilter(words: readonly string[], names: readonly string[]): boolean {
+  const [name, ...args] = words;
+  if (name === undefined || !names.includes(name)) return false;
+  if (name === 'tail' || name === 'head') {
+    if (args.length === 0) return true;
+    const [a, b] = args;
+    if (args.length === 1) return a !== undefined && FILTER_TAIL_HEAD.slice(1).some((re) => re.test(a));
+    return args.length === 2 && a === '-n' && b !== undefined && /^\d+$/.test(b);
+  }
+  if (name === 'wc') return args.length === 1 && args[0] === '-l';
+  if (name === 'grep') {
+    let patterns = 0;
+    for (let i = 0; i < args.length; i++) {
+      const a = args.at(i) ?? '';
+      if (GREP_NUM_FLAGS.has(a)) {
+        if (!/^\d+$/.test(args.at(i + 1) ?? '')) return false;
+        i++;
+      } else if (a.startsWith('-')) {
+        if (!GREP_FLAGS.test(a)) return false;
+      } else patterns++;
+    }
+    return patterns === 1;
+  }
+  return false;
+}
+
+type ReadCheck = { ok: true; cwd: string } | { ok: false; what: string };
+
+/** Path/redirect checks for a read-only command; `cwd` (relative to the worktree) follows `cd`. */
+function checkReadCommand(seg: Segment, ctx: GuardContext, cwd: string): ReadCheck {
+  const [name = '', ...rest] = seg.words;
+  const bad = (what: string): ReadCheck => ({ ok: false, what });
+  if (seg.redirects.some((r) => !r.op.startsWith('<') && r.target !== '/dev/null'))
+    return bad(`"${seg.words.join(' ')}" (read-only commands may not redirect output)`);
+  if (name === 'echo') return { ok: true, cwd };
+  const isGit = name === 'git';
+  const args = isGit ? rest.slice(1) : rest;
+  if (isGit && args.includes('--no-index')) return bad('"git --no-index"');
+  const base = resolve(ctx.projectRoot, cwd);
+  const operands: string[] = [];
+  for (const a of args) {
+    if (a.startsWith('-') && a !== '-') {
+      if (name === 'cd') return bad('"cd" with options');
+      continue;
+    }
+    if (a.includes('$') || a.startsWith('~')) return bad(`Argument "${a}" (not statically known)`);
+    if (!isGit && /[*?[]/.test(a)) return bad(`Argument "${a}" (globs are not allowed here)`);
+    if (toRelative(ctx.projectRoot, base, a) === null) return bad(`Path "${a}" (outside the worktree)`);
+    operands.push(a);
+  }
+  if (name === 'cd') {
+    const [target] = operands;
+    if (operands.length !== 1 || target === undefined) return bad('"cd" without exactly one directory');
+    return { ok: true, cwd: toRelative(ctx.projectRoot, base, target) ?? cwd };
+  }
+  return { ok: true, cwd };
+}
+
+const matchesAny = (words: readonly string[], patterns: readonly string[]) => patterns.some((p) => matchCommand(words, p));
+const isVerification = (words: readonly string[]) => words[0] !== 'echo' && words[0] !== 'cd';
+
 function decideBash(command: string, ctx: GuardContext): Decision {
   const config = ctx.config;
   const phase = ctx.phase ?? 'implement';
   const phaseConfig = config.phases[phase] ?? {};
-  const allowList = phaseConfig.allowCommands ?? config.allowCommands;
-  const notAllowed = (what: string) => deny('command', command, `${what} is not in the allowed command list for this run. ${NEEDS_APPROVAL}`);
+  const allowList = [...(phaseConfig.allowCommands ?? config.allowCommands), ...ctx.approved.commands];
+  const readList = phaseConfig.readCommands ?? config.readCommands;
+  const filterNames = config.outputFilters;
+
+  /** First allowed command on the line, shown to the agent as the thing to run on its own. */
+  const allowedExample = (segments: readonly Segment[]): string | null => {
+    for (const seg of segments) {
+      if (seg.words.length === 0) continue;
+      if (matchesAny(seg.words, allowList) || (matchesAny(seg.words, readList) && isVerification(seg.words))) return seg.words.join(' ');
+    }
+    return null;
+  };
+  const notAllowed = (what: string, segments?: readonly Segment[]): Decision => {
+    let segs = segments;
+    if (!segs) {
+      const p = parseCommand(command);
+      segs = p.ok ? p.segments : [];
+    }
+    const example = allowedExample(segs);
+    if (example)
+      return deny(
+        'command',
+        command,
+        `${what} is not allowed in this run, but the line contains an allowed command. ${RUN_ALONE.replace('{example}', example)}`,
+      );
+    return deny('command', command, `${what} is not in the allowed command list for this run. ${NEEDS_APPROVAL}`);
+  };
 
   for (const re of config.denyCommandPatterns) {
     if (new RegExp(re).test(command)) return notAllowed('This command (destructive pattern)');
   }
   const parsed = parseCommand(command);
-  if (!parsed.ok) return notAllowed(`This command (${parsed.reason})`);
+  if (!parsed.ok) {
+    return deny(
+      'command',
+      command,
+      `This command (${parsed.reason}) is not allowed. Use plain commands without substitution, heredocs or subshells, one per call or chained with && or |.`,
+    );
+  }
 
+  let prevAllowed = false;
+  let cwd = '';
   for (const seg of parsed.segments) {
     for (const r of seg.redirects) {
       if (r.target === '/dev/null') continue;
-      if (/[$*?[~]/.test(r.target)) return notAllowed(`Redirect target "${r.target}" (not statically known)`);
+      if (/[$*?[~]/.test(r.target)) return notAllowed(`Redirect target "${r.target}" (not statically known)`, parsed.segments);
       if (r.op.startsWith('<')) continue; // reads: secrets already handled
       const d = decideWrite(toRelative(ctx.projectRoot, ctx.projectRoot, r.target), r.target, ctx);
       if (!d.allow) return { ...d, target: command };
     }
     if (seg.words.length === 0) continue;
-    const ok = [...allowList, ...ctx.approved.commands].some((p) => matchCommand(seg.words, p));
-    if (!ok) return notAllowed(`"${seg.words.join(' ')}"`);
+    if (seg.piped && prevAllowed && isOutputFilter(seg.words, filterNames)) {
+      if (seg.redirects.some((r) => r.target !== '/dev/null'))
+        return notAllowed(`"${seg.words.join(' ')}" (a filter may not redirect)`, parsed.segments);
+      continue;
+    }
+    if (matchesAny(seg.words, allowList)) {
+      prevAllowed = true;
+      continue;
+    }
+    if (matchesAny(seg.words, readList)) {
+      const r = checkReadCommand(seg, ctx, cwd);
+      if (!r.ok) return notAllowed(r.what, parsed.segments);
+      cwd = r.cwd;
+      prevAllowed = true;
+      continue;
+    }
+    return notAllowed(`"${seg.words.join(' ')}"`, parsed.segments);
   }
   return allow;
 }

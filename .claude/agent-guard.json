@@ -16,6 +16,8 @@
     "pnpm exec vitest run *",
     "pnpm exec eslint *"
   ],
+  "readCommands": ["cat *", "ls *", "echo *", "cd *", "git diff *", "git log *", "git status *", "git rev-parse *", "git show *"],
+  "outputFilters": ["tail", "head", "grep", "wc"],
   "denyCommandPatterns": ["\\brm\\s+(-\\S*\\s+)*-\\S*[rR]", "\\bfind\\b.*\\s-delete\\b", "\\s--output(=|\\s|$)"],
   "denyPaths": [
     "src/lib/api/generated/**",
@@ -45,9 +47,9 @@
   ],
   "askPaths": ["package.json", "next.config.ts", "src/middleware.ts", ".gitignore"],
   "phases": {
-    "plan": { "writeOnly": ["{taskDir}/plan.md"], "allowCommands": [] },
+    "plan": { "writeOnly": ["{taskDir}/plan.md"], "allowCommands": [], "readCommands": [] },
     "implement": { "writeAlso": ["{taskDir}/report.md"] },
     "retro": { "writeAlso": ["{taskDir}/report.md"] },
-    "review": { "writeOnly": [], "allowCommands": ["git diff *", "git log *"] }
+    "review": { "writeOnly": [], "allowCommands": [] }
   }
 }

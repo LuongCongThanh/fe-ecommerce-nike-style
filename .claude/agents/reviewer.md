@@ -1,7 +1,7 @@
 ---
 name: reviewer
 description: Reviews the branch diff against dev on two axes (repo standards, task spec) using the code-review skill. Read-only; returns findings with severity.
-tools: Read, Grep, Glob, Agent, Skill, Bash(git diff *), Bash(git log *)
+tools: Read, Grep, Glob, Agent, Skill, Bash(cat *), Bash(ls *), Bash(echo *), Bash(cd *), Bash(git diff *), Bash(git log *), Bash(git status *), Bash(git rev-parse *), Bash(git show *), Bash(tail *), Bash(head *), Bash(grep *), Bash(wc *)
 model: inherit
 ---
 

@@ -13,6 +13,8 @@ export interface Redirect {
 export interface Segment {
   words: string[];
   redirects: Redirect[];
+  /** Directly preceded by a single `|` (reads the previous segment's output); false after `&&`, `||`, `;`, newline, `&`. */
+  piped: boolean;
 }
 
 export type ParseResult = { ok: true; segments: Segment[] } | { ok: false; reason: string };
@@ -86,6 +88,7 @@ export function parseCommand(input: string, options: ParseOptions = {}): ParseRe
   let word = '';
   let started = false;
   let pending: string | null = null;
+  let pipedNext = false;
 
   const endWord = (): ParseResult | null => {
     if (!started) return null;
@@ -100,7 +103,8 @@ export function parseCommand(input: string, options: ParseOptions = {}): ParseRe
   const endSegment = (): ParseResult | null => {
     endWord();
     if (pending !== null) return { ok: false, reason: 'redirection without target' };
-    if (words.length > 0 || redirects.length > 0) segments.push({ words, redirects });
+    if (words.length > 0 || redirects.length > 0) segments.push({ words, redirects, piped: pipedNext });
+    pipedNext = false;
     words = [];
     redirects = [];
     return null;
@@ -192,6 +196,7 @@ export function parseCommand(input: string, options: ParseOptions = {}): ParseRe
       }
       const r = endSegment();
       if (r) return r;
+      pipedNext = c === '|' && next !== '|' && next !== '&'; // `|&` is not treated as a plain pipe
       i += next === c ? 2 : 1; // && || (single & = background, single | = pipe)
       continue;
     }

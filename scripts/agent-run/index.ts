@@ -63,7 +63,7 @@ async function main(): Promise<number> {
   };
   const deps: Deps = {
     runner: realRunner,
-    claude: realClaude(realRunner, guard.allowCommands),
+    claude: realClaude(realRunner, guard),
     notify: (title, body) => void realRunner('notify-send', [title, body], { cwd: repoRoot }),
     now: () => new Date(),
     log: (line) => process.stdout.write(`[agent-run] ${line}\n`),

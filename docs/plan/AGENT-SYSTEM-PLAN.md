@@ -77,7 +77,7 @@ Nguồn sự thật là `fe-ecommerce-nike-style/.claude/agent-guard.json`; bả
 | Quyết định, hướng dẫn | `docs/adr/**`, `AGENTS.md`, `CLAUDE.md` | Chặn sửa |
 | Code cũ | `apps/**` | Chặn sửa |
 | Hỏi trước | `package.json` (không tự thêm dependency), `next.config.ts`, `src/middleware.ts`, `.gitignore` | Khi chạy không người: hook từ chối, agent trả `blocked` + `reason: needs_approval`, script xử lý như tình huống 6. Người duyệt qua `approved:` (D43) |
-| Lệnh cho phép (implementer) | `pnpm typecheck`, `pnpm lint`, `pnpm lint:fix`, `pnpm format`, `pnpm test`, `pnpm build`, `pnpm exec vitest run *`, `pnpm exec eslint *` | Chỉ các lệnh này |
+| Lệnh cho phép (implementer) | `pnpm typecheck`, `pnpm lint`, `pnpm lint:fix`, `pnpm format`, `pnpm format:check`, `pnpm test`, `pnpm build`, `pnpm exec vitest run *`, `pnpm exec eslint *`. Lệnh chỉ đọc (implement, review, retro; planner không có Bash): `cat`, `ls`, `echo` (không chuyển hướng), `cd <thư mục trong worktree> &&`, `git diff/log/status/rev-parse/show *`. Bộ lọc đầu ra sau `\|` khi mọi đoạn trước đó đã được phép: `tail [-n N\|-N]`, `head [-n N\|-N]`, `grep [tùy chọn] <mẫu>` (không có file), `wc -l`; cho phép `2>&1` | Chỉ các lệnh này. Đường dẫn của lệnh chỉ đọc phải nằm trong worktree, không glob/biến, và vẫn qua luật `.env*`/`.agent-stop`. Lệnh bị chặn mà có chứa lệnh được phép thì thông báo bảo chạy lệnh được phép riêng, không bảo trả `blocked` *(sửa sau thí điểm 2026-11-16)* |
 | Lệnh chặn | Mọi `pnpm` khác (`add`, `install`, `remove`, `dlx`, `exec` lệnh khác), `npx`, `node -e`, mọi lệnh `git` ghi (add/commit/push/reset…), `rm -rf` | Chặn. Chặn `rm -rf` bằng so khớp chuỗi chỉ là **lớp phụ** (dễ lách bằng `rm -r -f`, `find -delete`); rào chính là danh sách lệnh cho phép |
 
 ## Phương án để sau
