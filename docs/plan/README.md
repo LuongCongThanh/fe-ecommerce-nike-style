@@ -141,5 +141,10 @@ Hook `PreToolUse` `.claude/hooks/agent-guard.ts` (chạy bằng `tsx`, đăng k�
 
 ## Bảng task
 
-| #   | Task | Status | Blocked by | PR  |
-| --- | ---- | ------ | ---------- | --- |
+| #   | Task                                                                    | Status          | Blocked by | PR  |
+| --- | ----------------------------------------------------------------------- | --------------- | ---------- | --- |
+| 01  | [category-breadcrumb-trail](tasks/01-category-breadcrumb-trail/spec.md) | ready-for-agent | -          |     |
+| 02  | [order-date-locale](tasks/02-order-date-locale/spec.md)                 | ready-for-agent | -          |     |
+| 03  | [pagination-window](tasks/03-pagination-window/spec.md)                 | ready-for-agent | -          |     |
+| 04  | [order-status-badge-i18n](tasks/04-order-status-badge-i18n/spec.md)     | ready-for-agent | -          |     |
+| 05  | [remove-dead-app-config](tasks/05-remove-dead-app-config/spec.md)       | ready-for-agent | -          |     |
