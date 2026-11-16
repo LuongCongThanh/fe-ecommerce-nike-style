@@ -1,7 +1,7 @@
 ---
-status: ready-for-agent
+status: review
 blocked-by: []
-pr:
+pr: #96
 kind: logic
 approved:
   files: []
