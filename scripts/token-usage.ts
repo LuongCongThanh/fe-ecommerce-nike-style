@@ -12,7 +12,7 @@
  * Message ghi nhiều loại file thì chia đều token cho các loại đó.
  *
  * Usage:
- *   pnpm tokens <sessionId|prefix|latest> [...more]
+ *   pnpm tokens <sessionId|prefix|latest|all> [...more]   (all = mọi session của --project-dir)
  *     [--project-dir <worktree path>]  thư mục làm việc của session (mặc định: cwd)
  *     [--since 2026-11-07T00:00] [--until ...]
  *     [--md]                           in bảng markdown
@@ -119,7 +119,7 @@ export function parseArgs(argv: string[]): Options {
     } else if (arg.startsWith('--')) throw new Error(`Cờ không hỗ trợ: ${arg}`);
     else options.ids.push(arg);
   }
-  if (options.ids.length === 0) throw new Error('Cần ít nhất một sessionId (hoặc "latest").');
+  if (options.ids.length === 0) throw new Error('Cần ít nhất một sessionId (hoặc "latest" / "all").');
   return options;
 }
 
@@ -140,6 +140,16 @@ function resolveSession(dir: string, id: string): string {
   const [only] = matches;
   if (!only) throw new Error(`Không tìm thấy session "${id}" trong ${dir}.`);
   return only.id;
+}
+
+/** Every session in the project dir; a task worktree's dir holds only that task's calls. */
+function allSessions(dir: string): string[] {
+  if (!existsSync(dir)) throw new Error(`Không có thư mục transcript: ${dir} (kiểm tra --project-dir).`);
+  const ids = readdirSync(dir)
+    .filter((f) => f.endsWith('.jsonl'))
+    .map((f) => f.slice(0, -'.jsonl'.length));
+  if (ids.length === 0) throw new Error(`Không có session nào trong ${dir}.`);
+  return ids;
 }
 
 function sessionFiles(dir: string, id: string): string[] {
@@ -195,7 +205,7 @@ export interface MeasureInput {
 
 export function measure({ baseDir, root, ids, since, until }: MeasureInput): { sessions: string[]; rows: Row[] } {
   const dir = join(baseDir, encodeProjectDir(root));
-  const sessions = ids.map((id) => resolveSession(dir, id));
+  const sessions = ids.flatMap((id) => (id === 'all' ? allSessions(dir) : [resolveSession(dir, id)]));
   const messages = collectMessages(
     sessions.flatMap((id) => sessionFiles(dir, id)),
     since,
