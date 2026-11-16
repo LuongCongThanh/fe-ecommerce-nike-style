@@ -114,9 +114,31 @@ export function parseClaudeOutput(stdout: string, stderr: string, code: number, 
     return { ...base, kind: 'crash', detail: trimLog(detail, 1500) };
   }
   if (expectSchema && (raw.structured_output === undefined || raw.structured_output === null)) {
+    // Measured 2026-11-16: with `--agent`, the CLI leaves structured_output empty and returns the JSON as text in `result`.
+    const fromResult = objectFromText(raw.result ?? '');
+    if (fromResult) return { ...base, structured: fromResult, kind: 'ok', detail: '' };
     return { ...base, kind: 'bad_output', detail: trimLog(`no structured_output; result: ${raw.result ?? ''}`, 1500) };
   }
   return { ...base, kind: 'ok', detail: '' };
+}
+
+/** The JSON object in `text`, either the whole text or the last ```json fence; `null` when there is none. */
+function objectFromText(text: string): Record<string, unknown> | null {
+  // Odd-indexed parts of a split on ``` are fence bodies; drop an optional "json" language tag.
+  const fences = text
+    .split('```')
+    .filter((_, i) => i % 2 === 1)
+    .map((body) => body.replace(/^json\b/, '').trim());
+  const lastFenceFirst = [...fences].reverse();
+  for (const candidate of [text.trim(), ...lastFenceFirst]) {
+    try {
+      const value: unknown = JSON.parse(candidate);
+      if (isRecord(value)) return value;
+    } catch {
+      // not JSON: try the next candidate
+    }
+  }
+  return null;
 }
 
 export function realClaude(runner: Runner, allowCommands: string[], timeoutMs = 45 * 60_000): ClaudeRunner {

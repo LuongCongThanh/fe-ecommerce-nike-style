@@ -50,6 +50,22 @@ describe('parseClaudeOutput', () => {
   it('schema requested but missing -> bad_output', () => {
     expect(parseClaudeOutput(json({ subtype: 'success', is_error: false }), '', 0, true).kind).toBe('bad_output');
   });
+  it('schema requested, structured_output missing, result holds the JSON object (seen with --agent) -> ok', () => {
+    const result = '{"result":"ok","reason":"plan.md written"}';
+    const r = parseClaudeOutput(json({ subtype: 'success', is_error: false, result }), '', 0, true);
+    expect(r).toMatchObject({ kind: 'ok', structured: { result: 'ok', reason: 'plan.md written' } });
+  });
+  it('schema requested, result is JSON inside a ```json fence -> ok', () => {
+    const result = 'Done.\n```json\n{"result":"need_info","reason":"x"}\n```';
+    expect(parseClaudeOutput(json({ subtype: 'success', is_error: false, result }), '', 0, true).structured).toEqual({
+      result: 'need_info',
+      reason: 'x',
+    });
+  });
+  it('schema requested, result is prose or a JSON array -> bad_output', () => {
+    expect(parseClaudeOutput(json({ subtype: 'success', is_error: false, result: 'all done' }), '', 0, true).kind).toBe('bad_output');
+    expect(parseClaudeOutput(json({ subtype: 'success', is_error: false, result: '[1]' }), '', 0, true).kind).toBe('bad_output');
+  });
   it('error_max_turns -> max_turns (situation 8)', () => {
     const r = parseClaudeOutput(json({ subtype: 'error_max_turns', is_error: true, num_turns: 41 }), '', 1, true);
     expect(r).toMatchObject({ kind: 'max_turns', numTurns: 41 });
