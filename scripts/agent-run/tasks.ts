@@ -1,5 +1,5 @@
 /** Task discovery and selection (D11, D23; situations 1 and 2 of D21). */
-import { existsSync, readdirSync, readFileSync } from 'node:fs';
+import { existsSync, mkdirSync, readdirSync, readFileSync, renameSync, writeFileSync } from 'node:fs';
 import { join } from 'node:path';
 
 import { parseBlockedBy } from './spec-file';
@@ -17,6 +17,16 @@ export interface Task {
   specPath: string;
 }
 
+const prDir = (root: string): string => join(root, '.agent-run', 'prs');
+
+export function recordTaskPr(root: string, task: string, url: string): void {
+  const dir = prDir(root);
+  mkdirSync(dir, { recursive: true });
+  const file = join(dir, task);
+  writeFileSync(file + '.tmp', url + '\n');
+  renameSync(file + '.tmp', file);
+}
+
 export function readTasks(repoRoot: string): Task[] {
   const base = join(repoRoot, TASKS_DIR);
   if (!existsSync(base)) return [];
@@ -29,7 +39,7 @@ export function readTasks(repoRoot: string): Task[] {
     tasks.push({
       name,
       number: /^(\d+)/.exec(name)?.[1] ?? name,
-      status: fm.status ?? 'todo',
+      status: fm.status === 'ready-for-agent' && existsSync(join(prDir(repoRoot), name)) ? 'review' : (fm.status ?? 'todo'),
       blockedBy: parseBlockedBy(text),
       kind: isTaskKind(fm.kind) ? fm.kind : null,
       specPath,

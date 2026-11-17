@@ -33,6 +33,9 @@ export interface AgentRunState {
   blocks: BlockRecord[];
   // Known fields (written by agent-run); each is validated by readState, so a wrong-typed value reads as absent.
   stage?: string;
+  startedAt?: string;
+  provider?: 'claude' | 'codex';
+  codexUsage?: { input: number; cached: number; output: number };
   turnsUsed?: number;
   fixAttempts?: number;
   resumeCount?: number;
@@ -95,6 +98,9 @@ function isRetroInfo(v: unknown): v is { turnsNeeded: number; reason: string } {
 /** Per known field: its guard. A value failing its guard is dropped (reads as absent), never trusted. */
 const FIELD_GUARDS: Record<string, (v: unknown) => boolean> = {
   stage: isString,
+  startedAt: isString,
+  provider: (v) => v === 'claude' || v === 'codex',
+  codexUsage: (v) => isRecord(v) && [v.input, v.cached, v.output].every(isFiniteNumber),
   turnsUsed: isFiniteNumber,
   fixAttempts: isFiniteNumber,
   resumeCount: isFiniteNumber,

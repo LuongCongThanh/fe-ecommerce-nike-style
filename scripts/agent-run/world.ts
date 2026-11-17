@@ -53,20 +53,25 @@ export interface World {
 
 export function makeWorld(opts: { tasks?: Record<string, string>; handlers?: Handler[] } = {}): World {
   const repo = mkdtempSync(join(tmpdir(), 'run-repo-'));
-  const worktrees = mkdtempSync(join(tmpdir(), 'run-wts-'));
+  const worktrees = repo;
   const tasks = opts.tasks ?? { '01-demo': TASK_SPEC('') };
   for (const [name, text] of Object.entries(tasks)) {
     mkdirSync(join(repo, 'docs/plan/tasks', name), { recursive: true });
     writeFileSync(join(repo, 'docs/plan/tasks', name, 'spec.md'), text);
   }
-  writeFileSync(join(repo, 'docs/plan/AGENT-INBOX.md'), '| Thời gian | Task | Tình huống | Việc cần làm |\n| --- | --- | --- | --- |\n');
-  const wt = (task: string) => join(worktrees, task);
+  mkdirSync(join(repo, '.agent-run'), { recursive: true });
+  writeFileSync(join(repo, '.agent-run/AGENT-INBOX.md'), '| Thời gian | Task | Tình huống | Việc cần làm |\n| --- | --- | --- | --- |\n');
+  const wt = (_task: string) => repo;
+  let branch = 'dev';
 
   const handlers: Handler[] = [
     ...(opts.handlers ?? []),
     on('git rev-parse --verify', { code: 1 }),
-    on('git worktree add', (args) => {
-      const dir = args[args.indexOf('-b') + 2] as string;
+    on('git branch --show-current', () => ({ stdout: branch })),
+    on('git status --porcelain --untracked-files=all', { stdout: '' }),
+    on('git switch --no-overwrite-ignore -c', (args) => {
+      branch = args[args.indexOf('-c') + 1] ?? '';
+      const dir = repo;
       mkdirSync(join(dir, 'node_modules/.bin'), { recursive: true });
       mkdirSync(join(dir, 'docs/plan/tasks'), { recursive: true });
       writeFileSync(join(dir, 'node_modules/.bin/tsx'), '');
@@ -122,6 +127,6 @@ export function makeWorld(opts: { tasks?: Record<string, string>; handlers?: Han
       },
     },
   };
-  const cfg: Config = { repoRoot: repo, worktreesDir: worktrees, turnBudget: 40, retroTurns: 5, maxFixes: 3, prBodyTurns: 6, devPort: 3100 };
+  const cfg: Config = { repoRoot: repo, turnBudget: 40, retroTurns: 5, maxFixes: 3, prBodyTurns: 6, devPort: 3100 };
   return { deps, cfg, repo, worktrees, runner, claudeCalls, notices, logs, script, wt, devServer, proc };
 }

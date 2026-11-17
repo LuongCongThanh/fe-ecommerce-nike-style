@@ -53,11 +53,14 @@ pnpm build
 - Storefront hỗ trợ hai ngôn ngữ.
 - Giữ thay đổi theo vertical slice có thể kiểm thử và bổ sung test gần nhất có giá trị.
 
-- Convention chi tiết nằm trong `.claude/rules/` và được nạp theo đường dẫn.
+- Convention chi tiết dùng chung nằm trong `.claude/rules/`. Claude Code nạp theo phạm vi đường dẫn. Codex đọc các file phù hợp theo bản đồ trong `docs/agents/code-conventions.md`.
 - Xem bản đồ convention và checklist tại `docs/agents/code-conventions.md`.
 - `CLAUDE.md` import file này để Codex và Claude Code dùng chung nguồn hướng dẫn cấp repository.
 
 ## Quy trình task và GitHub
+
+- Codex và Claude Code dùng cùng spec, trạng thái, tiêu chí nghiệm thu và quy tắc Git. Với task đã đủ điều kiện, làm lần lượt: đọc spec → lập `plan.md` bằng skill `plan-task` → triển khai và ghi `report.md` → chạy kiểm tra → review theo spec và quy tắc repo.
+- Chọn một công cụ cho từng bước. Khi đổi công cụ, tiếp tục từ `spec.md`, `plan.md`, diff hiện tại và `report.md` nếu đã có. Dùng `handoff.md` nếu lần chạy trước để lại. Kiểm tra lại bước nào đã hoàn thành trước khi làm tiếp.
 
 - Task nằm trong file Markdown cục bộ `docs/plan/tasks/<NN>-<tên>/spec.md`, không dùng GitHub Issues. Định dạng, vòng đời trạng thái và người đặt từng trạng thái: `docs/plan/README.md`; cách thao tác: `docs/agents/issue-tracker.md`.
 - Chỉ nhận task có `status: ready-for-agent` và mọi `blocked-by` đã `done`. Agent không tự đổi trạng thái `todo`, `ready-for-agent`, `done`.
@@ -65,5 +68,6 @@ pnpm build
 - Feature/fix target `dev`; `main` chỉ nhận release PR từ `dev`.
 - Không ghi tên AI tool/model/agent/assistant hoặc AI attribution trong commit, PR, review hay comment; hook và CI enforce các tên phổ biến.
 - Phiên tương tác: không tạo branch, commit, push, mở PR hoặc merge nếu người dùng chưa yêu cầu rõ.
+- Thực hiện từng task theo thứ tự trong checkout hiện tại. Áp dụng cho Codex, Claude Code và `agent-run`. Không tạo thêm Git worktree, kể cả cho bước kiểm tra. Xử lý task đang dở trước khi chuyển sang task khác.
 - Ngoại lệ: chạy `agent-run` được coi là người dùng đã yêu cầu rõ việc tạo branch, commit, push branch của task đó và mở PR vào `dev`. Chính script `agent-run` thực hiện các thao tác git này, agent không tự làm. Không bao giờ tự merge.
-- `AGENTS.md`, `CLAUDE.md`, `.claude/rules/process/git-workflow.md`, `docs/agents/issue-tracker.md` do người sửa cùng Claude trong phiên tương tác, không để agent tự sửa khi chạy `agent-run`.
+- `AGENTS.md`, `CLAUDE.md`, `.claude/rules/process/git-workflow.md`, `docs/agents/issue-tracker.md` do người sửa cùng Codex hoặc Claude Code trong phiên tương tác, không để agent tự sửa khi chạy `agent-run`.

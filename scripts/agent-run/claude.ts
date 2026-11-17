@@ -31,6 +31,7 @@ export interface ClaudeResponse {
   sessionId: string | null;
   numTurns: number;
   costUsd: number;
+  usage?: { input: number; cached: number; output: number };
   structured: unknown;
   result: string | null;
   /** Human-readable cause for crash / bad_output / max_turns */
@@ -126,7 +127,7 @@ export function parseClaudeOutput(stdout: string, stderr: string, code: number, 
  * The JSON object in `text`: the whole text, else the last ```json fence, else a bare object that starts a line
  * and runs to the end (prose then JSON, seen from the reviewer). `null` when there is none.
  */
-function objectFromText(text: string): Record<string, unknown> | null {
+export function objectFromText(text: string): Record<string, unknown> | null {
   // Odd-indexed parts of a split on ``` are fence bodies; drop an optional "json" language tag.
   const fences = text
     .split('```')

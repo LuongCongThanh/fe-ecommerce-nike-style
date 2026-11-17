@@ -16,10 +16,9 @@ import { parseApproved } from './spec-file';
 import { isStepDone, markStepDone, readState, updateState, type StepName } from './state';
 import { acquireRunLock } from './run-lock';
 import { wantsHandoff, writeHandoff } from './handoff-step';
-import { branchFor, readTasks, selectTask, TASKS_DIR } from './tasks';
-import { syncSpec } from './finish-step';
+import { branchFor, readTasks, recordTaskPr, selectTask, TASKS_DIR } from './tasks';
 import { trimLog } from './exec';
-import { prepareWorktree } from './worktree';
+import { prepareCheckout } from './checkout';
 import type { ReviewFinding } from './schemas';
 
 export type RunOutcome =
@@ -75,6 +74,8 @@ async function once(ctx: RunContext, step: StepName, body: () => Promise<void>):
 
 async function runTask(deps: Deps, cfg: Config, track: Track): Promise<string> {
   checkStopFile(cfg);
+  const state = readState(cfg.repoRoot);
+  if (state.stage === 'done' && state.task && state.prUrl) recordTaskPr(cfg.repoRoot, state.task, state.prUrl);
   const selection = selectTask(readTasks(cfg.repoRoot), cfg.only);
   for (const s of selection.skipped) deps.log(`situation 2: skip ${s.name}, waiting for ${s.waitingFor.join(', ')}`);
   const task = selection.task;
@@ -87,16 +88,24 @@ async function runTask(deps: Deps, cfg: Config, track: Track): Promise<string> {
     );
   track.task = task.name;
   track.setLockTask(task.name);
-  const approved = parseApproved(readFileSync(task.specPath, 'utf8'));
-  setTaskStatus(cfg.repoRoot, task.name, 'in-progress');
-
+  const spec = readFileSync(task.specPath, 'utf8');
+  const approved = parseApproved(spec);
   const branch = branchFor(task);
-  const prep = await prepareWorktree(deps, cfg, task, branch);
+  const prep = await prepareCheckout(deps, cfg, task, branch, spec);
+  const previous = readState(prep.worktree);
+  const provider = cfg.provider ?? 'claude';
+  const previousProvider = previous.provider ?? (previous.implementerSession || previous.completedSteps?.length ? 'claude' : undefined);
+  if (previousProvider && previousProvider !== provider)
+    throw new Stop(SITUATION.workspaceBusy, `Task ${task.name} đang dùng ${previousProvider}. Chạy lại với --provider ${previousProvider}.`);
   track.worktree = prep.worktree;
   const ctx: RunContext = { deps, cfg, task, branch, worktree: prep.worktree, taskDir: join(prep.worktree, TASKS_DIR, task.name), approved };
   track.ctx = ctx;
-  syncSpec(ctx);
-  await guardPreflight(deps, ctx.worktree, ctx.taskDir);
+  setTaskStatus(cfg.repoRoot, task.name, 'in-progress');
+  if (provider === 'codex') {
+    if (!deps.codexPreflight) throw new Stop(SITUATION.other, 'Thiếu kiểm tra hook Codex.');
+    await deps.codexPreflight(ctx.worktree, ctx.taskDir);
+  } else await guardPreflight(deps, ctx.worktree, ctx.taskDir);
+  updateState(prep.worktree, (s) => (s.provider = provider));
 
   const resume = prep.fresh ? { retroOnly: false } : beginResume(ctx, prep.recoveredSetup !== true);
   let minor: ReviewFinding[] = [];
@@ -151,8 +160,8 @@ export async function runAgent(deps: Deps, cfg: Config): Promise<RunOutcome> {
   try {
     const url = await runTask(deps, cfg, track);
     if (track.task) {
-      const pr = /(\d+)$/.exec(url)?.[1];
-      setTaskStatus(cfg.repoRoot, track.task, 'review', pr ? { pr: `#${pr}` } : {});
+      recordTaskPr(cfg.repoRoot, track.task, url);
+      setTaskStatus(cfg.repoRoot, track.task, 'review');
     }
     deps.notify(`agent-run: ${track.task} xong`, `PR đã mở: ${url}`);
     deps.log(`PR: ${url}`);
@@ -162,7 +171,17 @@ export async function runAgent(deps: Deps, cfg: Config): Promise<RunOutcome> {
       error instanceof Stop
         ? error
         : new Stop(SITUATION.other, `Lỗi không xử lý được: ${error instanceof Error ? error.message : String(error)}`, String(error));
-    reportStop({ repoRoot: cfg.repoRoot, taskName: track.task, worktree: track.worktree, now: deps.now(), notify: deps.notify }, stop);
+    reportStop(
+      {
+        repoRoot: cfg.repoRoot,
+        taskName: track.task,
+        preserveStatus: !track.worktree,
+        worktree: track.worktree,
+        now: deps.now(),
+        notify: deps.notify,
+      },
+      stop,
+    );
     deps.log(`stop (situation ${stop.situation}): ${stop.action}${stop.detail ? `\n${stop.detail}` : ''}`);
     // Skill table: situations 7 and 8 leave a handoff.md; best effort, after the human has been told.
     if (track.ctx && wantsHandoff(stop.situation)) await writeHandoff(track.ctx);
