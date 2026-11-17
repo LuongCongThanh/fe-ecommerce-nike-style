@@ -1,5 +1,5 @@
 ---
-status: ready-for-agent
+status: review
 blocked-by: []
 pr:
 kind: ui
