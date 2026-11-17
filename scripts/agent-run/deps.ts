@@ -13,6 +13,7 @@ export interface Deps {
   /** git, gh, pnpm, tsx, bash: every external command except `claude` */
   runner: Runner;
   claude: ClaudeRunner;
+  codexPreflight?: (cwd: string, taskDir: string) => Promise<void>;
   notify: (title: string, body: string) => void;
   now: () => Date;
   log: (line: string) => void;
@@ -24,10 +25,9 @@ export interface Deps {
 export interface Config {
   /** Main checkout (holds docs/plan, `.agent-stop`, the inbox) */
   repoRoot: string;
-  /** Parent directory of the task worktrees (default: sibling of the repo, outside it) */
-  worktreesDir: string;
   /** Run only this task (number or directory name) */
   only?: string;
+  provider?: 'claude' | 'codex';
   /** D15: turns per task run (a resume gets a fresh budget) */
   turnBudget: number;
   retroTurns: number;

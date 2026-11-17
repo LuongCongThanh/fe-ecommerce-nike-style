@@ -1,6 +1,8 @@
 /** Metric, the single commit, push and PR (D28, D32, D39; situations 11-13). The script does git, never the agent. */
-import { mkdirSync, readFileSync, rmSync, writeFileSync } from 'node:fs';
+import { existsSync, mkdirSync, readFileSync, rmSync, writeFileSync } from 'node:fs';
 import { join } from 'node:path';
+
+import { upsertTokenSection } from '../token-usage';
 
 import { callClaude, setStage, type RunContext } from './context';
 import { trimLog } from './exec';
@@ -12,7 +14,7 @@ import { isStepDone, markStepDone, readState, updateState } from './state';
 import { HANDOFF_FILE } from './handoff-step';
 import { hasForbiddenWord, pickCommitMessage } from './text-rules';
 
-/** Main spec -> worktree copy (answers and `approved:` live in the main checkout), optionally forcing status. */
+/** Record the task status in the spec on the branch being committed. */
 export function syncSpec(ctx: RunContext, status?: string): void {
   mkdirSync(ctx.taskDir, { recursive: true });
   let text = readFileSync(ctx.task.specPath, 'utf8');
@@ -71,10 +73,21 @@ async function commitOnce(ctx: RunContext): Promise<string> {
   if (isStepDone(ctx.worktree, 'committed') && recorded !== undefined) return recorded; // resume after a push/PR failure
 
   setStage(ctx, 'committing');
-  const tokens = await runner('pnpm', ['tokens', 'all', '--project-dir', ctx.worktree, '--out', join(ctx.taskDir, 'metric.md')], {
-    cwd: ctx.worktree,
-  });
-  if (tokens.code !== 0) ctx.deps.log(`tokens failed (non fatal): ${trimLog(tokens.stderr, 300)}`);
+  const metric = join(ctx.taskDir, 'metric.md');
+  const { startedAt, codexUsage } = readState(ctx.worktree);
+  if (ctx.cfg.provider === 'codex') {
+    if (codexUsage) {
+      const { input, cached, output } = codexUsage;
+      const note = `Input: ${input} (cached: ${cached}); output: ${output}. Tổng theo lượt hoàn tất trước khi commit.`;
+      const existing = existsSync(metric) ? readFileSync(metric, 'utf8') : undefined;
+      writeFileSync(metric, upsertTokenSection(existing, '', note));
+    }
+  } else {
+    const tokenArgs = ['tokens', 'all', '--project-dir', ctx.worktree, '--out', metric];
+    if (startedAt) tokenArgs.push('--since', startedAt);
+    const tokens = await runner('pnpm', tokenArgs, { cwd: ctx.worktree });
+    if (tokens.code !== 0) ctx.deps.log(`tokens failed (non fatal): ${trimLog(tokens.stderr, 300)}`);
+  }
 
   syncSpec(ctx, 'review');
   rmSync(join(ctx.taskDir, HANDOFF_FILE), { force: true }); // written by an earlier stop; obsolete once the run completes
@@ -82,7 +95,11 @@ async function commitOnce(ctx: RunContext): Promise<string> {
   const [subject = '', ...rest] = message.split('\n');
   const bodyText = rest.join('\n').trim();
 
-  await git(['add', '-A']);
+  const currentBranch = await git(['branch', '--show-current']);
+  if (currentBranch.code !== 0 || currentBranch.stdout.trim() !== ctx.branch)
+    throw new Stop(SITUATION.workspaceBusy, `Checkout đã rời branch ${ctx.branch}. Chuyển về đúng branch trước khi commit.`);
+  const staged = await git(['add', '-A']);
+  if (staged.code !== 0) throw new Stop(SITUATION.other, `Không thể stage thay đổi của task: ${trimLog(staged.stderr, 600)}`);
   const status = await git(['status', '--porcelain']);
   if (!status.stdout.trim()) throw new Stop(SITUATION.other, 'Không có thay đổi nào để commit sau khi chạy xong. Kiểm tra worktree.');
   const commit = await git(['commit', '-m', subject, ...(bodyText ? ['-m', bodyText] : [])]);

@@ -16,7 +16,8 @@ function repo(): { root: string; spec: string; wt: string } {
   mkdirSync(join(root, 'docs/plan/tasks/03-x'), { recursive: true });
   const spec = join(root, 'docs/plan/tasks/03-x/spec.md');
   writeFileSync(spec, '---\nstatus: in-progress\n---\n# Spec\n');
-  writeFileSync(join(root, 'docs/plan/AGENT-INBOX.md'), '| Thời gian | Task | Tình huống | Việc cần làm |\n| --- | --- | --- | --- |\n');
+  mkdirSync(join(root, '.agent-run'), { recursive: true });
+  writeFileSync(join(root, '.agent-run/AGENT-INBOX.md'), '| Thời gian | Task | Tình huống | Việc cần làm |\n| --- | --- | --- | --- |\n');
   const wt = join(root, 'wt');
   mkdirSync(wt);
   return { root, spec, wt };
@@ -28,7 +29,7 @@ describe('appendInbox (D22)', () => {
   it('appends one table row, escaping pipes and newlines', () => {
     const { root } = repo();
     appendInbox(root, when, '03-x', 5, 'trả lời | câu hỏi\nở spec');
-    const text = readFileSync(join(root, 'docs/plan/AGENT-INBOX.md'), 'utf8');
+    const text = readFileSync(join(root, '.agent-run/AGENT-INBOX.md'), 'utf8');
     expect(text.trimEnd().split('\n').pop()).toBe('| 2026-11-16 10:05 | 03-x | 5 | trả lời \\| câu hỏi ở spec |');
   });
 });
@@ -42,7 +43,7 @@ describe('reportStop', () => {
     notified.length = 0;
     reportStop({ repoRoot: root, taskName: '03-x', worktree: null, now: when, notify }, new Stop(7, 'sửa gate rồi chạy lại'));
     expect(readFileSync(spec, 'utf8')).toContain('status: blocked');
-    expect(readFileSync(join(root, 'docs/plan/AGENT-INBOX.md'), 'utf8')).toContain('| 03-x | 7 | sửa gate rồi chạy lại |');
+    expect(readFileSync(join(root, '.agent-run/AGENT-INBOX.md'), 'utf8')).toContain('| 03-x | 7 | sửa gate rồi chạy lại |');
     expect(notified).toHaveLength(1);
   });
   it('situation 10: no inbox, no notification, task goes back to ready-for-agent', () => {
@@ -50,13 +51,13 @@ describe('reportStop', () => {
     notified.length = 0;
     reportStop({ repoRoot: root, taskName: '03-x', worktree: null, now: when, notify }, new Stop(10, 'xóa .agent-stop'));
     expect(readFileSync(spec, 'utf8')).toContain('status: ready-for-agent');
-    expect(readFileSync(join(root, 'docs/plan/AGENT-INBOX.md'), 'utf8')).not.toContain('03-x');
+    expect(readFileSync(join(root, '.agent-run/AGENT-INBOX.md'), 'utf8')).not.toContain('03-x');
     expect(notified).toHaveLength(0);
   });
   it('situation 1 has no task: inbox row with "-"', () => {
     const { root } = repo();
     reportStop({ repoRoot: root, taskName: null, worktree: null, now: when, notify }, new Stop(1, 'đặt một task ready-for-agent'));
-    expect(readFileSync(join(root, 'docs/plan/AGENT-INBOX.md'), 'utf8')).toContain('| - | 1 |');
+    expect(readFileSync(join(root, '.agent-run/AGENT-INBOX.md'), 'utf8')).toContain('| - | 1 |');
   });
   it('after 2 resumes a needs-info/blocked stop becomes ready-for-human (D43)', () => {
     const { root, spec, wt } = repo();

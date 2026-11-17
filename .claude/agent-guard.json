@@ -22,6 +22,8 @@
     "pnpm-lock.yaml",
     "skills-lock.json",
     ".claude/**",
+    ".codex/**",
+    ".agents/**",
     ".mcp.json",
     "scripts/**",
     "docs/plan/AGENT-INBOX.md",

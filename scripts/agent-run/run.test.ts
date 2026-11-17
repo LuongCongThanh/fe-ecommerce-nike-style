@@ -11,7 +11,7 @@ import { on } from './testkit';
 import { makeWorld, PR_URL, reply, TASK_SPEC, type World } from './world';
 
 const spec = (w: World, task = '01-demo') => readFileSync(join(w.repo, 'docs/plan/tasks', task, 'spec.md'), 'utf8');
-const inbox = (w: World) => readFileSync(join(w.repo, 'docs/plan/AGENT-INBOX.md'), 'utf8');
+const inbox = (w: World) => readFileSync(join(w.repo, '.agent-run/AGENT-INBOX.md'), 'utf8');
 const roles = (w: World) => w.claudeCalls.map((c) => c.role);
 const gatesRed = (failures: number) => {
   let n = 0;
@@ -33,7 +33,7 @@ describe('happy path (D39: script commits once, pushes, opens PR into dev, never
     const wt = w.wt('01-demo');
     const c = w.runner.calls;
     const at = (p: string) => c.findIndex((x) => x.startsWith(p));
-    expect(at('git worktree add -b feat/01-demo')).toBeGreaterThan(-1);
+    expect(at('git switch --no-overwrite-ignore -c feat/01-demo')).toBeGreaterThan(-1);
     expect(at(`pnpm tokens all --project-dir ${wt} --out ${wt}/docs/plan/tasks/01-demo/metric.md`)).toBeGreaterThan(-1);
     expect(c.filter((x) => x.startsWith('git commit'))).toEqual(['git commit -m feat(demo): add the thing']);
     expect(at('git commit')).toBeGreaterThan(at('pnpm tokens'));
@@ -41,9 +41,68 @@ describe('happy path (D39: script commits once, pushes, opens PR into dev, never
     expect(at('gh pr create --base dev --head feat/01-demo')).toBeGreaterThan(at('git push'));
     expect(c.some((x) => /\bmerge\b/.test(x) && !x.includes('merge-base'))).toBe(false);
     expect(spec(w)).toMatch(/status: review/);
-    expect(spec(w)).toMatch(/pr: #42/);
+    expect(readFileSync(join(w.repo, '.agent-run/prs/01-demo'), 'utf8')).toContain(PR_URL);
     expect(readFileSync(join(wt, 'docs/plan/tasks/01-demo/spec.md'), 'utf8')).toContain('status: review');
     expect(w.notices.some((n) => n.includes(PR_URL))).toBe(true);
+  });
+
+  it('runs the next ready task in the same workspace only after the previous PR', async () => {
+    const w = makeWorld({
+      tasks: { '01-demo': TASK_SPEC(''), '02-next': TASK_SPEC('') },
+      handlers: [on('git status --porcelain --untracked-files=all', { stdout: '' })],
+    });
+
+    expect(await runAgent(w.deps, w.cfg)).toMatchObject({ kind: 'pr', task: '01-demo' });
+    expect(await runAgent(w.deps, w.cfg)).toMatchObject({ kind: 'pr', task: '02-next' });
+
+    const calls = w.runner.calls;
+    expect(calls.some((call) => call.startsWith('git worktree'))).toBe(false);
+    expect(calls.indexOf('git switch --no-overwrite-ignore -c feat/02-next origin/dev')).toBeGreaterThan(
+      calls.findIndex((call) => call.startsWith('gh pr create')),
+    );
+    expect(w.claudeCalls.filter(({ role }) => role === 'planner').map(({ req }) => req.cwd)).toEqual([w.wt('01-demo'), w.wt('01-demo')]);
+    expect(spec(w, '02-next')).toContain('status: review');
+  });
+
+  it('keeps another task ready when the workspace is occupied by unfinished work', async () => {
+    const w = makeWorld({ tasks: { '01-demo': TASK_SPEC(''), '02-next': TASK_SPEC('') } });
+    w.script.planner = () => reply({ result: 'need_info', reason: 'Missing decision', questions: ['Which option?'] });
+
+    expect(await runAgent(w.deps, w.cfg)).toMatchObject({ kind: 'stopped', task: '01-demo', situation: 5 });
+    expect(await runAgent(w.deps, w.cfg)).toMatchObject({ kind: 'stopped', task: '02-next', situation: 16 });
+    expect(spec(w, '02-next')).toContain('status: ready-for-agent');
+    expect(roles(w)).toEqual(['planner']);
+  });
+
+  it('uses the selected Codex preflight and reuses the recorded implementer session for retro', async () => {
+    const w = makeWorld();
+    w.cfg.provider = 'codex';
+    const checked: string[] = [];
+    w.deps.codexPreflight = async (cwd) => {
+      checked.push(cwd);
+      expect(roles(w)).toEqual([]);
+    };
+    expect(await runAgent(w.deps, w.cfg)).toMatchObject({ kind: 'pr', task: '01-demo' });
+    expect(checked).toEqual([w.wt('01-demo')]);
+    expect(w.claudeCalls.find(({ role }) => role === 'retro')?.req.resume).toBe('impl-1');
+    expect(readState(w.wt('01-demo')).provider).toBe('codex');
+    expect(w.runner.calls.some((call) => call.startsWith('pnpm tokens'))).toBe(false);
+  });
+
+  it('leaves a legacy Claude task ready if someone attempts to resume it with Codex', async () => {
+    const w = makeWorld();
+    w.script.implementer = () => reply({ result: 'need_info', reason: 'Missing decision' });
+    expect(await runAgent(w.deps, w.cfg)).toMatchObject({ kind: 'stopped', situation: 5 });
+    const specPath = join(w.repo, 'docs/plan/tasks/01-demo/spec.md');
+    writeFileSync(specPath, spec(w).replace('status: needs-info', 'status: ready-for-agent'));
+    updateState(w.wt('01-demo'), (state) => {
+      delete state.provider;
+    });
+
+    w.cfg.provider = 'codex';
+    expect(await runAgent(w.deps, w.cfg)).toMatchObject({ kind: 'stopped', situation: 16 });
+    expect(spec(w)).toContain('status: ready-for-agent');
+    expect(roles(w)).toEqual(['planner', 'implementer']);
   });
 
   it('passes env contract, remaining turns and the approved list to every call (D15, D43)', async () => {
@@ -114,13 +173,13 @@ describe('before the agent starts (situations 3, 4, 13)', () => {
     expect(out).toMatchObject({ kind: 'stopped', situation: 3 });
     expect(roles(w)).toEqual(['planner', 'implementer']);
   });
-  it('4: worktree dir exists without state.json -> blocked, nothing overwritten', async () => {
-    const w = makeWorld();
-    mkdirSync(w.wt('01-demo'));
+  it('refuses a dirty checkout before switching branches or calling an agent', async () => {
+    const w = makeWorld({ handlers: [on('git status --porcelain --untracked-files=all', { stdout: ' M src/a.ts' })] });
     const out = await runAgent(w.deps, w.cfg);
-    expect(out).toMatchObject({ kind: 'stopped', situation: 4 });
-    expect(spec(w)).toContain('status: blocked');
-    expect(existsSync(join(w.wt('01-demo'), '.agent-run'))).toBe(false);
+    expect(out).toMatchObject({ kind: 'stopped', situation: 16 });
+    expect(spec(w)).toContain('status: ready-for-agent');
+    expect(roles(w)).toEqual([]);
+    expect(w.runner.calls.some((call) => call.startsWith('git switch'))).toBe(false);
   });
   it('13: the guard hook does not block -> stop before any agent call', async () => {
     const w = makeWorld({
@@ -442,7 +501,7 @@ describe('resume (D43)', () => {
     expect(calls[0]?.req.prompt).toContain('RESUMING');
     expect(calls[0]?.req.env.AGENT_APPROVED).toBe('{"paths":["package.json"],"commands":[]}');
     expect(readState(w.wt('01-demo')).resumeCount).toBe(1);
-    expect(w.runner.calls.filter((c) => c.startsWith('git worktree add'))).toHaveLength(1);
+    expect(w.runner.calls.filter((c) => c.startsWith('git switch --no-overwrite-ignore -c'))).toHaveLength(1);
   });
   it('old blocks do not re-trigger situation 9 after approval', async () => {
     const w = makeWorld();

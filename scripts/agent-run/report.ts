@@ -1,13 +1,13 @@
 /** Every stop (D18, D22, D23): status in spec.md, one inbox line, desktop notification. Main checkout only. */
-import { appendFileSync, existsSync, readFileSync, writeFileSync } from 'node:fs';
-import { join } from 'node:path';
+import { appendFileSync, existsSync, mkdirSync, readFileSync, writeFileSync } from 'node:fs';
+import { dirname, join } from 'node:path';
 
 import { setField } from './spec-file';
 import { SITUATION, SITUATIONS, type SituationNumber, type Stop, type TaskStatus } from './situations';
 import { hasState, readState, updateState } from './state';
 import { TASKS_DIR } from './tasks';
 
-export const INBOX_FILE = 'docs/plan/AGENT-INBOX.md';
+export const INBOX_FILE = '.agent-run/AGENT-INBOX.md';
 const specFile = (repoRoot: string, taskName: string) => join(repoRoot, TASKS_DIR, taskName, 'spec.md');
 
 export function setTaskStatus(repoRoot: string, taskName: string, status: TaskStatus, extra: Record<string, string> = {}): void {
@@ -27,13 +27,16 @@ export const formatTime = stamp;
 
 export function appendInbox(repoRoot: string, when: Date, task: string | null, situation: SituationNumber, action: string): void {
   const file = join(repoRoot, INBOX_FILE);
-  const prefix = existsSync(file) && !readFileSync(file, 'utf8').endsWith('\n') ? '\n' : '';
+  mkdirSync(dirname(file), { recursive: true });
+  if (!existsSync(file)) writeFileSync(file, '| Thời gian | Task | Tình huống | Việc cần làm |\n| --- | --- | --- | --- |\n');
+  const prefix = readFileSync(file, 'utf8').endsWith('\n') ? '' : '\n';
   appendFileSync(file, `${prefix}| ${stamp(when)} | ${task ?? '-'} | ${situation} | ${cell(action)} |\n`);
 }
 
 export interface StopContext {
   repoRoot: string;
   taskName: string | null;
+  preserveStatus?: boolean;
   worktree: string | null;
   now: Date;
   notify: (title: string, body: string) => void;
@@ -46,7 +49,7 @@ export function reportStop(ctx: StopContext, stop: Stop): void {
   let status = info.status;
   const resumes = ctx.worktree && hasState(ctx.worktree) ? (readState(ctx.worktree).resumeCount ?? 0) : 0;
   if ((status === 'needs-info' || status === 'blocked') && resumes >= 2 && !EXEMPT_FROM_HUMAN_HANDOFF.has(stop.situation)) status = 'ready-for-human';
-  if (ctx.taskName && status) setTaskStatus(ctx.repoRoot, ctx.taskName, status);
+  if (ctx.taskName && status && !ctx.preserveStatus) setTaskStatus(ctx.repoRoot, ctx.taskName, status);
   if (ctx.worktree && hasState(ctx.worktree)) {
     updateState(ctx.worktree, (s) => {
       s.lastStop = { situation: stop.situation, at: ctx.now.toISOString(), action: stop.action };

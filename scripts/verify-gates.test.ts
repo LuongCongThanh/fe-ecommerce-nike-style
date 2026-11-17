@@ -159,7 +159,7 @@ describe('runGates', () => {
 });
 
 describe('buildBaseline', () => {
-  it('builds a detached dev worktree, writes <sha>.json, removes the worktree', async () => {
+  it('builds exported dev sources, writes <sha>.json and removes the export', async () => {
     const repo = join(wt, 'repo');
     mkdirSync(repo);
     writeFileSync(join(repo, '.env.local'), 'X=1');
@@ -167,7 +167,6 @@ describe('buildBaseline', () => {
     const runner: Runner = async (cmd, args, o) => {
       const line = [cmd, ...args].join(' ');
       calls.push(`${o.cwd === repo ? 'repo' : 'dev'}: ${line}`);
-      if (line.startsWith('git worktree add')) mkdirSync(args[args.length - 2] as string, { recursive: true });
       if (line.includes('next build')) {
         mkdirSync(dirname(join(o.cwd, STATS_FILE)), { recursive: true });
         writeFileSync(join(o.cwd, STATS_FILE), statsJson([stat('/a', 7)]));
@@ -179,24 +178,25 @@ describe('buildBaseline', () => {
     expect(routes).toEqual([stat('/a', 7)]);
     expect(JSON.parse(readFileSync(out, 'utf8'))).toEqual({ sha: 'abc123', routes: [stat('/a', 7)] });
     expect(calls.map((c) => c.replace(wt, ''))).toEqual([
-      expect.stringMatching(/^repo: git worktree add --detach .*abc123$/),
+      expect.stringMatching(/^repo: git archive --format=tar --output .*abc123$/),
+      expect.stringMatching(/^dev: tar -xf .*dev.tar$/),
       expect.stringMatching(/^dev: pnpm install --frozen-lockfile$/),
       'dev: pnpm exec next build',
-      expect.stringMatching(/^repo: git worktree remove --force /),
     ]);
     expect(existsSync(out)).toBe(true);
   });
 
-  it('removes the worktree and throws when the build fails', async () => {
-    const calls: string[] = [];
-    const runner: Runner = async (cmd, args) => {
+  it('removes the export and throws when the build fails', async () => {
+    let source: string | undefined;
+    const runner: Runner = async (cmd, args, o) => {
       const line = [cmd, ...args].join(' ');
-      calls.push(line);
+      if (line.includes('next build')) source = o.cwd;
       return { code: line.includes('next build') ? 1 : 0, stdout: '', stderr: 'bad' };
     };
     await expect(buildBaseline({ repoRoot: wt, sha: 's', baselineFile: join(wt, 'b.json'), runner, tmpRoot: join(wt, 't') })).rejects.toThrow(
       /baseline/,
     );
-    expect(calls.at(-1)).toMatch(/^git worktree remove --force/);
+    expect(source).toBeDefined();
+    expect(existsSync(dirname(source as string))).toBe(false);
   });
 });
