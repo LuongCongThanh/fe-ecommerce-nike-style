@@ -1,7 +1,7 @@
 ---
 status: review
 blocked-by: []
-pr: #99
+pr: 99
 kind: ui
 approved:
   files: []

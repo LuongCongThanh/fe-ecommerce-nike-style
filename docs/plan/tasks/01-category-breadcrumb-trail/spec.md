@@ -1,7 +1,7 @@
 ---
 status: review
 blocked-by: []
-pr: #96
+pr: 96
 kind: logic
 approved:
   files: []
