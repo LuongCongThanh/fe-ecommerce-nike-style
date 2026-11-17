@@ -1,10 +1,9 @@
 /**
  * agent-run (D18): drives one task from `ready-for-agent` to a PR into `dev`, or stops and tells the human.
  *
- *   pnpm agent-run [--task NN] [--worktrees <dir>]
+ *   pnpm agent-run [--task NN] [--provider claude|codex]
  *
- * `--worktrees` / AGENT_RUN_WORKTREES: parent dir of the task worktrees (default `<repo>.worktrees`, outside the repo).
- * Exit codes: 0 PR opened, 1 stopped (see docs/plan/AGENT-INBOX.md), 64 usage error.
+ * Exit codes: 0 PR opened, 1 stopped (see .agent-run/AGENT-INBOX.md), 64 usage error.
  * Docs: docs/plan/README.md, section "Chạy agent-run".
  */
 import { readFileSync } from 'node:fs';
@@ -13,12 +12,12 @@ import { dirname, join, resolve } from 'node:path';
 import { guardConfigSchema } from '../../.claude/hooks/lib/guard';
 
 import { realClaude } from './claude';
+import { codexProvider } from './codex';
 import { DEFAULTS, type Config, type Deps } from './deps';
 import { realDevServer } from './dev-server';
 import { realRunner, terminateTrackedGroups } from './exec';
 import { runAgent } from './run';
 import { releaseRunLock } from './run-lock';
-import { defaultWorktreesDir } from './worktree';
 
 function parseArgs(argv: string[]): Map<string, string> {
   const out = new Map<string, string>();
@@ -48,22 +47,47 @@ function isProcessAlive(pid: number): boolean {
 
 async function main(): Promise<number> {
   const args = parseArgs(process.argv.slice(2));
+  if (args.has('worktrees') || process.env.AGENT_RUN_WORKTREES) {
+    process.stderr.write('agent-run: bỏ --worktrees hoặc AGENT_RUN_WORKTREES để dùng checkout hiện tại.\n');
+    return 64;
+  }
+  const provider = args.get('provider') ?? process.env.AGENT_RUN_PROVIDER ?? 'claude';
+  if (provider !== 'claude' && provider !== 'codex') {
+    process.stderr.write('agent-run: --provider phải là claude hoặc codex\n');
+    return 64;
+  }
   const top = await realRunner('git', ['rev-parse', '--path-format=absolute', '--git-common-dir'], { cwd: process.cwd() });
   if (top.code !== 0) {
     process.stderr.write('agent-run: not inside a git repository\n');
     return 64;
   }
   const repoRoot = dirname(top.stdout.trim());
+  const checkout = await realRunner('git', ['rev-parse', '--show-toplevel'], { cwd: process.cwd() });
+  if (checkout.code !== 0 || resolve(checkout.stdout.trim()) !== repoRoot) {
+    process.stderr.write('agent-run: chạy từ checkout chính của repository.\n');
+    return 64;
+  }
   const guard = guardConfigSchema.parse(JSON.parse(readFileSync(join(repoRoot, '.claude/agent-guard.json'), 'utf8')));
   const cfg: Config = {
     repoRoot,
-    worktreesDir: resolve(args.get('worktrees') ?? process.env.AGENT_RUN_WORKTREES ?? defaultWorktreesDir(repoRoot)),
+    provider,
     only: args.get('task'),
     ...DEFAULTS,
   };
+  const codex = provider === 'codex' ? codexProvider(realRunner, repoRoot) : undefined;
+  if (args.has('check-provider')) {
+    if (codex) await codex.preflight(repoRoot, repoRoot);
+    else {
+      const check = await realRunner('claude', ['--version'], { cwd: repoRoot });
+      if (check.code !== 0) throw new Error(check.stderr.trim());
+    }
+    process.stdout.write(`agent-run: ${provider} sẵn sàng\n`);
+    return 0;
+  }
   const deps: Deps = {
     runner: realRunner,
-    claude: realClaude(realRunner, guard),
+    claude: codex?.run ?? realClaude(realRunner, guard),
+    codexPreflight: codex?.preflight,
     notify: (title, body) => void realRunner('notify-send', [title, body], { cwd: repoRoot }),
     now: () => new Date(),
     log: (line) => process.stdout.write(`[agent-run] ${line}\n`),

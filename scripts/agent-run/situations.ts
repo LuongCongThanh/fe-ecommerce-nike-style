@@ -1,4 +1,4 @@
-/** The 15 situations of D21 plus the status each leaves the task in (D23) and whether the human is told. */
+/** The situations of D21 plus the status each leaves the task in (D23) and whether the human is told. */
 export type TaskStatus = 'todo' | 'ready-for-agent' | 'in-progress' | 'needs-info' | 'blocked' | 'ready-for-human' | 'review' | 'done';
 
 export interface SituationInfo {
@@ -25,6 +25,7 @@ export const SITUATION = {
   other: 13,
   bundleGrowth: 14,
   retroTurns: 15,
+  workspaceBusy: 16,
 } as const;
 export type SituationNumber = (typeof SITUATION)[keyof typeof SITUATION];
 
@@ -43,6 +44,7 @@ export const SITUATIONS: Record<SituationNumber, SituationInfo> = {
   12: { title: 'Push hoặc tạo PR lỗi', status: 'blocked', notifyHuman: true },
   13: { title: 'Tình huống khác', status: 'blocked', notifyHuman: true },
   14: { title: 'First Load JS tăng quá 10%', status: 'needs-info', notifyHuman: true },
+  16: { title: 'Worktree dùng chung chưa sẵn sàng cho task mới', status: null, notifyHuman: true },
   15: { title: 'Retro chạm 5 lượt chưa xong', status: 'needs-info', notifyHuman: true },
 };
 

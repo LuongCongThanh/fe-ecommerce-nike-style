@@ -5,7 +5,7 @@ description: Turn a storefront task's spec.md into plan.md (steps, branch, test 
 
 # Plan a task
 
-Input: the task directory (`AGENT_TASK_DIR`, e.g. `docs/plan/tasks/03-product-card`). Output: one file, `<task dir>/plan.md`. Write nothing else, run no Bash.
+Input: the task directory (`AGENT_TASK_DIR`, e.g. `docs/plan/tasks/03-product-card`). Output: one file, `<task dir>/plan.md`. Write nothing else. Under Claude Code automation, the planner has no Bash access. In interactive Codex, use read-only commands when needed to inspect files.
 
 ## 1. Read
 

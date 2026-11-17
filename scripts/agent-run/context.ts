@@ -87,6 +87,13 @@ export async function callClaude(ctx: RunContext, opts: CallOptions): Promise<Cl
     extraTools: opts.extraTools,
   };
   const resp = await ctx.deps.claude(req);
+  if (resp.usage) {
+    const { input, cached, output } = resp.usage;
+    updateState(ctx.worktree, (s) => {
+      const total = s.codexUsage ?? { input: 0, cached: 0, output: 0 };
+      s.codexUsage = { input: total.input + input, cached: total.cached + cached, output: total.output + output };
+    });
+  }
   if (opts.budget === 'task') updateState(ctx.worktree, (s) => (s.turnsUsed = (s.turnsUsed ?? 0) + resp.numTurns));
   checkStopFile(ctx.cfg);
 
@@ -100,10 +107,11 @@ export async function callClaude(ctx: RunContext, opts: CallOptions): Promise<Cl
   if (resp.kind === 'crash')
     throw new Stop(
       SITUATION.claudeFailed,
-      `claude lỗi (hạn mức, mạng hoặc crash): ${resp.detail}. Worktree giữ nguyên ở ${ctx.worktree}; kiểm tra rồi chạy lại.`,
+      `${ctx.cfg.provider ?? 'claude'} lỗi (hạn mức, mạng hoặc crash): ${resp.detail}. Worktree giữ nguyên ở ${ctx.worktree}; kiểm tra rồi chạy lại.`,
       resp.detail,
     );
-  if (resp.kind === 'bad_output') throw new Stop(SITUATION.other, `claude không trả JSON đúng schema: ${resp.detail}`, resp.detail);
+  if (resp.kind === 'bad_output')
+    throw new Stop(SITUATION.other, `${ctx.cfg.provider ?? 'claude'} không trả JSON đúng schema: ${resp.detail}`, resp.detail);
   if (resp.kind === 'max_turns' && opts.budget === 'task') throw budgetStop(ctx, stage);
   return resp;
 }

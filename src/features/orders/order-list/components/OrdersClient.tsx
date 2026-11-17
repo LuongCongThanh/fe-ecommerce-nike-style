@@ -6,6 +6,7 @@ import Link from 'next/link';
 import { useLocale, useTranslations } from 'next-intl';
 
 import { OrderStatusBadge } from '@/features/orders/components/OrderStatusBadge';
+import { formatOrderDate } from '@/features/orders/formatOrderDate';
 import { useOrders } from '@/features/orders/order-list/queries/useOrders';
 import { QueryState } from '@/shared/ui/QueryState';
 import { formatCurrency } from '@/shared/utils/utils';
@@ -49,7 +50,7 @@ export function OrdersClient(): React.JSX.Element {
               <div className="flex items-center justify-between gap-3">
                 <div className="min-w-0">
                   <p className="font-medium">Đơn #{order.code}</p>
-                  <p className="text-muted-foreground text-sm">{new Date(order.created_at).toLocaleDateString('vi-VN')}</p>
+                  <p className="text-muted-foreground text-sm">{formatOrderDate(order.created_at, locale)}</p>
                 </div>
                 <div className="flex shrink-0 flex-col items-end gap-1">
                   <p className="text-primary font-semibold">{formatCurrency(order.total)}</p>

@@ -14,7 +14,7 @@
  * is like for like; absolute numbers differ from the shipped webpack bundles.
  */
 import { execFileSync } from 'node:child_process';
-import { copyFileSync, existsSync, mkdirSync, readFileSync, writeFileSync } from 'node:fs';
+import { copyFileSync, existsSync, mkdirSync, mkdtempSync, readFileSync, rmSync, writeFileSync } from 'node:fs';
 import { dirname, join, resolve } from 'node:path';
 
 import { realRunner, trimLog, type Runner } from './agent-run/exec';
@@ -206,33 +206,38 @@ export interface BuildBaselineOptions {
   sha: string;
   baselineFile: string;
   runner: Runner;
-  /** Where the throwaway worktree is created. */
+  /** Parent directory for the temporary source export. */
   tmpRoot: string;
 }
 
-/** Build dev at `sha` once in a throwaway detached worktree and store its route stats (D35). */
+/** Build exported dev sources at `sha` once in a temporary directory and store its route stats (D35). */
 export async function buildBaseline(opts: BuildBaselineOptions): Promise<RouteStat[]> {
   const { repoRoot, sha, runner } = opts;
-  const dir = join(opts.tmpRoot, `baseline-${sha.slice(0, 12)}`);
   mkdirSync(opts.tmpRoot, { recursive: true });
+  const dir = mkdtempSync(join(opts.tmpRoot, 'baseline-'));
+  const archive = join(dir, 'dev.tar');
+  const source = join(dir, 'source');
+  mkdirSync(source);
   const fail = (what: string, r: { stderr: string; stdout: string }): never => {
     throw new Error(`baseline ${what} failed for ${sha}:\n${trimLog(`${r.stderr}\n${r.stdout}`)}`);
   };
-  const added = await runner('git', ['worktree', 'add', '--detach', dir, sha], { cwd: repoRoot });
-  if (added.code !== 0) return fail('worktree add', added);
   try {
+    const exported = await runner('git', ['archive', '--format=tar', '--output', archive, sha], { cwd: repoRoot });
+    if (exported.code !== 0) return fail('archive', exported);
+    const extracted = await runner('tar', ['-xf', archive], { cwd: source });
+    if (extracted.code !== 0) return fail('extract', extracted);
     const env = join(repoRoot, '.env.local');
-    if (existsSync(env)) copyFileSync(env, join(dir, '.env.local'));
-    const installed = await runner('pnpm', ['install', '--frozen-lockfile'], { cwd: dir });
+    if (existsSync(env)) copyFileSync(env, join(source, '.env.local'));
+    const installed = await runner('pnpm', ['install', '--frozen-lockfile'], { cwd: source, env: { ...process.env, HUSKY: '0' } });
     if (installed.code !== 0) return fail('install', installed);
-    const built = await runner(BUNDLE_BUILD.command, [...BUNDLE_BUILD.args], { cwd: dir });
+    const built = await runner(BUNDLE_BUILD.command, [...BUNDLE_BUILD.args], { cwd: source });
     if (built.code !== 0) return fail('build', built);
-    const routes = parseRouteStats(readFileSync(join(dir, STATS_FILE), 'utf8'));
+    const routes = parseRouteStats(readFileSync(join(source, STATS_FILE), 'utf8'));
     mkdirSync(dirname(opts.baselineFile), { recursive: true });
     writeFileSync(opts.baselineFile, `${JSON.stringify({ sha, routes }, null, 2)}\n`);
     return routes;
   } finally {
-    await runner('git', ['worktree', 'remove', '--force', dir], { cwd: repoRoot });
+    rmSync(dir, { recursive: true, force: true });
   }
 }
 

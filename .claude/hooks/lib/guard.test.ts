@@ -1,6 +1,7 @@
 // @vitest-environment node
-import { readFileSync } from 'node:fs';
-import { resolve } from 'node:path';
+import { mkdtempSync, readFileSync, rmSync, symlinkSync } from 'node:fs';
+import { tmpdir } from 'node:os';
+import { join, resolve } from 'node:path';
 
 import { describe, expect, it } from 'vitest';
 
@@ -302,6 +303,17 @@ const rows: Row[] = [
   ['cd .. out of worktree', bash('cd .. && cat x'), ctx(), 'command'],
   ['cd then relative escape', bash('cd docs && cat ../../x'), ctx(), 'command'],
   ['cd with no argument', bash('cd && cat x'), ctx(), 'command'],
+  ['read stdin inside checkout', bash('cat < spec.md'), ctx(), 'allow'],
+  ['cannot redirect input from outside checkout', bash('cat < /etc/hostname'), ctx(), 'command'],
+  ['input redirect uses the directory after cd', bash('cd src && cat < ../../private.txt'), ctx(), 'command'],
+  ['redirect writes use the directory after cd', bash('cd src && pnpm test > ../package.json'), ctx(), 'ask-path'],
+  ['cd with a fallback is ambiguous', bash('cd src || cat spec.md'), ctx(), 'command'],
+  ['cd piped into command is ambiguous', bash('cd src | cat spec.md'), ctx(), 'command'],
+  ['git cannot run an external diff helper', bash('git diff --ext-diff'), ctx(), 'command'],
+  ['quoted Git output is still a write', bash('git diff "--output=/tmp/result" HEAD HEAD'), ctx({ phase: 'review' }), 'command'],
+  ['quote splitting cannot hide a protected env file', bash("cat .e''nv.local"), ctx(), 'secret'],
+  ['quote splitting cannot hide the stop file', bash("cat .agent-''stop"), ctx(), 'stop-file'],
+  ['a grep argument cannot expand into multiple operands', bash('echo ok | grep {root,/etc/passwd}'), ctx(), 'command'],
   ['cat > file', bash('cat a.md > src/b.md'), ctx(), 'command'],
   ['echo > file', bash('echo hi > src/b.md'), ctx(), 'command'],
   ['echo >> report', bash(`echo hi >> ${TASK}/report.md`), ctx(), 'command'],
@@ -326,6 +338,19 @@ describe('decide()', () => {
     }
   });
 
+  it('denies symlinks for read paths, cd and input redirects', () => {
+    const projectRoot = mkdtempSync(join(tmpdir(), 'guard-path-'));
+    try {
+      symlinkSync('/etc', join(projectRoot, 'alias'));
+      const context = ctx({ projectRoot, phase: 'review' });
+      for (const command of ['cat alias/hostname', 'cat alias/../hostname', 'cd alias && cat hostname', 'cat < alias/hostname']) {
+        expect(decide({ ...bash(command), cwd: projectRoot }, context)).toMatchObject({ allow: false, kind: 'command' });
+      }
+    } finally {
+      rmSync(projectRoot, { recursive: true, force: true });
+    }
+  });
+
   it('tells the agent to return blocked + needs_approval for protected paths and commands', () => {
     for (const input of [file('Edit', `${ROOT}/package.json`), file('Edit', `${ROOT}/CLAUDE.md`), bash('git push')]) {
       const d = decide(input, ctx());
@@ -335,6 +360,10 @@ describe('decide()', () => {
         expect(d.reason).toContain('needs_approval');
       }
     }
+  });
+
+  it('does not tell the agent to retry an outside path', () => {
+    expect(decide(bash('cat /etc/hostname'), ctx())).toMatchObject({ allow: false, reason: expect.stringContaining('needs_approval') });
   });
 
   it('tells the agent to run the allowed command on its own when a denied command contains one', () => {

@@ -2,6 +2,7 @@
  * Pure decision logic for agent-guard (no IO). See .claude/agent-guard.json and
  * docs/plan/README.md ("Agent guard") for the contract.
  */
+import { lstatSync } from 'node:fs';
 import { isAbsolute, posix, relative, resolve, sep } from 'node:path';
 
 import { z } from 'zod';
@@ -148,7 +149,12 @@ function alwaysOn(input: HookInput, config: GuardConfig, root: string): Decision
     if (name === config.stopFile) return deny('stop-file', p, `${config.stopFile} is the emergency stop file; do not touch it.`);
   }
   const texts: string[] = [];
-  if (input.tool_name === 'Bash') texts.push(nonEmptyString(toolInput.command) ?? '');
+  if (input.tool_name === 'Bash') {
+    const command = nonEmptyString(toolInput.command) ?? '';
+    texts.push(command);
+    const parsed = parseCommand(command);
+    if (parsed.ok) for (const segment of parsed.segments) texts.push(...segment.words, ...segment.redirects.map((r) => r.target));
+  }
   if (input.tool_name === 'Glob') texts.push(nonEmptyString(toolInput.pattern) ?? '');
   if (input.tool_name === 'Grep') texts.push(nonEmptyString(toolInput.glob) ?? '');
   for (const t of texts) {
@@ -188,7 +194,7 @@ const GREP_NUM_FLAGS = new Set(['-A', '-B', '-C', '-m']);
 /** `tail|head [-n N|-nN|-N]`, `grep [flags] <pattern>` (no files, no -r/-f), `wc -l`: the output filters an agent may append to an allowed command. */
 function isOutputFilter(words: readonly string[], names: readonly string[]): boolean {
   const [name, ...args] = words;
-  if (name === undefined || !names.includes(name)) return false;
+  if (name === undefined || !names.includes(name) || args.some((arg) => /[$*`?{}\[\]~]/.test(arg))) return false;
   if (name === 'tail' || name === 'head') {
     if (args.length === 0) return true;
     const [a, b] = args;
@@ -212,6 +218,30 @@ function isOutputFilter(words: readonly string[], names: readonly string[]): boo
   return false;
 }
 
+/** Check raw components before resolving "..", which could otherwise hide an alias in a prefix. */
+function isSafeShellPath(root: string, cwd: string, operand: string): boolean {
+  const base = resolve(root, cwd);
+  if (toRelative(root, base, operand) === null) return false;
+  let path = base;
+  let components = operand;
+  if (isAbsolute(operand)) {
+    path = root;
+    if (operand === root) return true;
+    if (!operand.startsWith(root + sep)) return false;
+    components = operand.slice(root.length + 1);
+  }
+  for (const part of components.split(sep)) {
+    path = resolve(path, part);
+    if (toRelative(root, root, path) === null) return false;
+    try {
+      if (lstatSync(path).isSymbolicLink()) return false;
+    } catch (error) {
+      if (typeof error !== 'object' || !error || !('code' in error) || !['ENOENT', 'ENOTDIR'].includes(String(error.code))) throw error;
+    }
+  }
+  return true;
+}
+
 type ReadCheck = { ok: true; cwd: string } | { ok: false; what: string };
 
 /** Path/redirect checks for a read-only command; `cwd` (relative to the worktree) follows `cd`. */
@@ -220,10 +250,12 @@ function checkReadCommand(seg: Segment, ctx: GuardContext, cwd: string): ReadChe
   const bad = (what: string): ReadCheck => ({ ok: false, what });
   if (seg.redirects.some((r) => !r.op.startsWith('<') && r.target !== '/dev/null'))
     return bad(`"${seg.words.join(' ')}" (read-only commands may not redirect output)`);
+  if (name === 'cd' && seg.redirects.length) return bad('cd does not accept redirects');
   if (name === 'echo') return { ok: true, cwd };
   const isGit = name === 'git';
   const args = isGit ? rest.slice(1) : rest;
-  if (isGit && args.includes('--no-index')) return bad('"git --no-index"');
+  if (isGit && args.some((arg) => /^--(?:no-index|ext-diff|textconv)(?:=|$)/.test(arg)))
+    return bad('Git option may read external files or execute another command');
   const base = resolve(ctx.projectRoot, cwd);
   const operands: string[] = [];
   for (const a of args) {
@@ -232,8 +264,9 @@ function checkReadCommand(seg: Segment, ctx: GuardContext, cwd: string): ReadChe
       continue;
     }
     if (a.includes('$') || a.startsWith('~')) return bad(`Argument "${a}" (not statically known)`);
-    if (!isGit && /[*?[]/.test(a)) return bad(`Argument "${a}" (globs are not allowed here)`);
-    if (toRelative(ctx.projectRoot, base, a) === null) return bad(`Path "${a}" (outside the worktree)`);
+    if (/[*?{}\[\]]/.test(a)) return bad(`Argument "${a}" (globs are not allowed here)`);
+    if (toRelative(ctx.projectRoot, base, a) === null) return bad(`Path "${a}" (outside the checkout)`);
+    if (!isSafeShellPath(ctx.projectRoot, cwd, a)) return bad(`Path "${a}" uses a symbolic link`);
     operands.push(a);
   }
   if (name === 'cd') {
@@ -247,7 +280,7 @@ function checkReadCommand(seg: Segment, ctx: GuardContext, cwd: string): ReadChe
 const matchesAny = (words: readonly string[], patterns: readonly string[]) => patterns.some((p) => matchCommand(words, p));
 const isVerification = (words: readonly string[]) => words[0] !== 'echo' && words[0] !== 'cd';
 
-function decideBash(command: string, ctx: GuardContext): Decision {
+function decideBash(command: string, ctx: GuardContext, cwd: string): Decision {
   const config = ctx.config;
   const phase = ctx.phase ?? 'implement';
   const phaseConfig = config.phases[phase] ?? {};
@@ -259,7 +292,8 @@ function decideBash(command: string, ctx: GuardContext): Decision {
   const allowedExample = (segments: readonly Segment[]): string | null => {
     for (const seg of segments) {
       if (seg.words.length === 0) continue;
-      if (matchesAny(seg.words, allowList) || (matchesAny(seg.words, readList) && isVerification(seg.words))) return seg.words.join(' ');
+      const safeRead = matchesAny(seg.words, readList) && isVerification(seg.words) && checkReadCommand({ ...seg, redirects: [] }, ctx, '').ok;
+      if (matchesAny(seg.words, allowList) || safeRead) return seg.words.join(' ');
     }
     return null;
   };
@@ -291,14 +325,34 @@ function decideBash(command: string, ctx: GuardContext): Decision {
     );
   }
 
+  for (const seg of parsed.segments) {
+    for (const token of [...seg.words, ...seg.redirects.map((redirect) => redirect.target)]) {
+      if (seg.words[0] === 'git' && /^--(?:output|ext-diff|textconv|no-index)(?:=|$)/.test(token))
+        return deny('command', command, `Git option "${token}" is outside the read-only policy. ${NEEDS_APPROVAL}`);
+    }
+  }
+
+  const cd = parsed.segments.findIndex((seg) => seg.words[0] === 'cd');
+  if (
+    cd !== -1 &&
+    (cd !== 0 ||
+      parsed.segments.length < 2 ||
+      parsed.segments.slice(1).some((seg, index) => seg.words[0] === 'cd' || (!seg.andThen && (!seg.piped || index === 0))))
+  )
+    return notAllowed('Use cd as the first command, followed by && rather than a pipe or fallback', parsed.segments);
+
   let prevAllowed = false;
-  let cwd = '';
   for (const seg of parsed.segments) {
     for (const r of seg.redirects) {
       if (r.target === '/dev/null') continue;
-      if (/[$*?[~]/.test(r.target)) return notAllowed(`Redirect target "${r.target}" (not statically known)`, parsed.segments);
-      if (r.op.startsWith('<')) continue; // reads: secrets already handled
-      const d = decideWrite(toRelative(ctx.projectRoot, ctx.projectRoot, r.target), r.target, ctx);
+      if (/[$*?{}\[\]~]/.test(r.target)) return notAllowed(`Redirect target "${r.target}" (not statically known)`, parsed.segments);
+      const base = resolve(ctx.projectRoot, cwd);
+      const relativeTarget = toRelative(ctx.projectRoot, base, r.target);
+      if (relativeTarget === null && r.op.startsWith('<')) return notAllowed('Input redirect points outside the checkout', parsed.segments);
+      if (relativeTarget !== null && !isSafeShellPath(ctx.projectRoot, cwd, r.target))
+        return notAllowed('Redirect path uses a symbolic link', parsed.segments);
+      if (r.op.startsWith('<')) continue;
+      const d = decideWrite(relativeTarget, r.target, ctx);
       if (!d.allow) return { ...d, target: command };
     }
     if (seg.words.length === 0) continue;
@@ -347,7 +401,10 @@ export function decide(input: HookInput, ctx: GuardContext): Decision {
   if (tool === 'Bash') {
     const command = nonEmptyString(toolInput.command);
     if (!command) return deny('bad-input', 'Bash', 'Bash call without a command.');
-    return decideBash(command, ctx);
+    const cwd = toRelative(root, root, input.cwd ?? root);
+    if (cwd === null || !isSafeShellPath(root, '', input.cwd ?? root))
+      return deny('outside-root', command, 'Shell cwd is outside the checkout or uses a symbolic link.');
+    return decideBash(command, ctx, cwd);
   }
   return allow;
 }
