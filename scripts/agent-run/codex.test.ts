@@ -32,6 +32,7 @@ describe('Codex guard', () => {
     expect(decision('apply_patch', patch(`*** Add File: ${taskDir}/plan.md`, '+# Plan'))).toBeNull();
     expect(decision('apply_patch', patch('*** Update File: src/app/page.tsx'))).toMatch(/phase "plan"/);
     expect(decision('Bash', 'cat .env.local')).toMatch(/\.env/);
+    expect(decision('Bash', "cat .e''nv.local")).toMatch(/\.env/);
     expect(decision('Bash', 'cat AGENTS.md > plan.md')).toMatch(/read-only/);
   });
 

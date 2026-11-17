@@ -2,11 +2,12 @@
  * Pure decision logic for agent-guard (no IO). See .claude/agent-guard.json and
  * docs/plan/README.md ("Agent guard") for the contract.
  */
+import { lstatSync } from 'node:fs';
 import { isAbsolute, posix, relative, resolve, sep } from 'node:path';
 
 import { z } from 'zod';
 
-import { matchCommand, matchesGlob, parseCommand } from './shell';
+import { matchCommand, matchesGlob, parseCommand, type Segment } from './shell';
 
 const phaseConfigSchema = z.object({
   /** Only these paths are writable in this phase (overrides everything). `{taskDir}` is expanded. */
@@ -15,6 +16,8 @@ const phaseConfigSchema = z.object({
   writeAlso: z.array(z.string()).optional(),
   /** Replaces the top-level allowCommands in this phase. */
   allowCommands: z.array(z.string()).optional(),
+  /** Replaces the top-level readCommands in this phase (`[]` = none, e.g. the planner). */
+  readCommands: z.array(z.string()).optional(),
 });
 
 /** Shape of .claude/agent-guard.json; the file is parsed with this at every boundary that reads it. */
@@ -22,6 +25,10 @@ export const guardConfigSchema = z.object({
   stopFile: z.string(),
   secretFiles: z.object({ deny: z.array(z.string()), allow: z.array(z.string()) }),
   allowCommands: z.array(z.string()),
+  /** Read-only commands (cat, ls, git diff, ...): allowed with path checks (inside the worktree, no globs/vars). `cd <dir>` is accepted too. */
+  readCommands: z.array(z.string()).default([]),
+  /** Output filters (tail, head, grep, wc) accepted after `|` when everything before them is allowed. */
+  outputFilters: z.array(z.string()).default([]),
   denyCommandPatterns: z.array(z.string()),
   denyPaths: z.array(z.string()),
   askPaths: z.array(z.string()),
@@ -67,6 +74,9 @@ export type Decision = { allow: true } | { allow: false; kind: DenyKind; reason:
 const WRITE_TOOLS = new Set(['Edit', 'Write', 'MultiEdit', 'NotebookEdit']);
 const NEEDS_APPROVAL =
   'Do not retry or work around it. If this is required, finish what you can and return result=blocked with reason=needs_approval naming it.';
+
+const RUN_ALONE =
+  'So run the allowed command on its own (e.g. `{example}`): no extra pipes, redirects or chained commands. Do not give up on the whole task because of this denial; only the denied part would need approval.';
 
 const allow: Decision = { allow: true };
 const deny = (kind: DenyKind, target: string, reason: string): Decision => ({ allow: false, kind, target, reason });
@@ -139,7 +149,12 @@ function alwaysOn(input: HookInput, config: GuardConfig, root: string): Decision
     if (name === config.stopFile) return deny('stop-file', p, `${config.stopFile} is the emergency stop file; do not touch it.`);
   }
   const texts: string[] = [];
-  if (input.tool_name === 'Bash') texts.push(nonEmptyString(toolInput.command) ?? '');
+  if (input.tool_name === 'Bash') {
+    const command = nonEmptyString(toolInput.command) ?? '';
+    texts.push(command);
+    const parsed = parseCommand(command);
+    if (parsed.ok) for (const segment of parsed.segments) texts.push(...segment.words, ...segment.redirects.map((r) => r.target));
+  }
   if (input.tool_name === 'Glob') texts.push(nonEmptyString(toolInput.pattern) ?? '');
   if (input.tool_name === 'Grep') texts.push(nonEmptyString(toolInput.glob) ?? '');
   for (const t of texts) {
@@ -172,30 +187,192 @@ function decideWrite(rel: string | null, raw: string, ctx: GuardContext): Decisi
   return allow;
 }
 
-function decideBash(command: string, ctx: GuardContext): Decision {
+const FILTER_TAIL_HEAD = [/^-n$/, /^-n\d+$/, /^-\d+$/];
+const GREP_FLAGS = /^-[ivEFwxnc]+$/;
+const GREP_NUM_FLAGS = new Set(['-A', '-B', '-C', '-m']);
+
+/** `tail|head [-n N|-nN|-N]`, `grep [flags] <pattern>` (no files, no -r/-f), `wc -l`: the output filters an agent may append to an allowed command. */
+function isOutputFilter(words: readonly string[], names: readonly string[]): boolean {
+  const [name, ...args] = words;
+  if (name === undefined || !names.includes(name) || args.some((arg) => /[$*`?{}\[\]~]/.test(arg))) return false;
+  if (name === 'tail' || name === 'head') {
+    if (args.length === 0) return true;
+    const [a, b] = args;
+    if (args.length === 1) return a !== undefined && FILTER_TAIL_HEAD.slice(1).some((re) => re.test(a));
+    return args.length === 2 && a === '-n' && b !== undefined && /^\d+$/.test(b);
+  }
+  if (name === 'wc') return args.length === 1 && args[0] === '-l';
+  if (name === 'grep') {
+    let patterns = 0;
+    for (let i = 0; i < args.length; i++) {
+      const a = args.at(i) ?? '';
+      if (GREP_NUM_FLAGS.has(a)) {
+        if (!/^\d+$/.test(args.at(i + 1) ?? '')) return false;
+        i++;
+      } else if (a.startsWith('-')) {
+        if (!GREP_FLAGS.test(a)) return false;
+      } else patterns++;
+    }
+    return patterns === 1;
+  }
+  return false;
+}
+
+/** Check raw components before resolving "..", which could otherwise hide an alias in a prefix. */
+function isSafeShellPath(root: string, cwd: string, operand: string): boolean {
+  const base = resolve(root, cwd);
+  if (toRelative(root, base, operand) === null) return false;
+  let path = base;
+  let components = operand;
+  if (isAbsolute(operand)) {
+    path = root;
+    if (operand === root) return true;
+    if (!operand.startsWith(root + sep)) return false;
+    components = operand.slice(root.length + 1);
+  }
+  for (const part of components.split(sep)) {
+    path = resolve(path, part);
+    if (toRelative(root, root, path) === null) return false;
+    try {
+      if (lstatSync(path).isSymbolicLink()) return false;
+    } catch (error) {
+      if (typeof error !== 'object' || !error || !('code' in error) || !['ENOENT', 'ENOTDIR'].includes(String(error.code))) throw error;
+    }
+  }
+  return true;
+}
+
+type ReadCheck = { ok: true; cwd: string } | { ok: false; what: string };
+
+/** Path/redirect checks for a read-only command; `cwd` (relative to the worktree) follows `cd`. */
+function checkReadCommand(seg: Segment, ctx: GuardContext, cwd: string): ReadCheck {
+  const [name = '', ...rest] = seg.words;
+  const bad = (what: string): ReadCheck => ({ ok: false, what });
+  if (seg.redirects.some((r) => !r.op.startsWith('<') && r.target !== '/dev/null'))
+    return bad(`"${seg.words.join(' ')}" (read-only commands may not redirect output)`);
+  if (name === 'cd' && seg.redirects.length) return bad('cd does not accept redirects');
+  if (name === 'echo') return { ok: true, cwd };
+  const isGit = name === 'git';
+  const args = isGit ? rest.slice(1) : rest;
+  if (isGit && args.some((arg) => /^--(?:no-index|ext-diff|textconv)(?:=|$)/.test(arg)))
+    return bad('Git option may read external files or execute another command');
+  const base = resolve(ctx.projectRoot, cwd);
+  const operands: string[] = [];
+  for (const a of args) {
+    if (a.startsWith('-') && a !== '-') {
+      if (name === 'cd') return bad('"cd" with options');
+      continue;
+    }
+    if (a.includes('$') || a.startsWith('~')) return bad(`Argument "${a}" (not statically known)`);
+    if (/[*?{}\[\]]/.test(a)) return bad(`Argument "${a}" (globs are not allowed here)`);
+    if (toRelative(ctx.projectRoot, base, a) === null) return bad(`Path "${a}" (outside the checkout)`);
+    if (!isSafeShellPath(ctx.projectRoot, cwd, a)) return bad(`Path "${a}" uses a symbolic link`);
+    operands.push(a);
+  }
+  if (name === 'cd') {
+    const [target] = operands;
+    if (operands.length !== 1 || target === undefined) return bad('"cd" without exactly one directory');
+    return { ok: true, cwd: toRelative(ctx.projectRoot, base, target) ?? cwd };
+  }
+  return { ok: true, cwd };
+}
+
+const matchesAny = (words: readonly string[], patterns: readonly string[]) => patterns.some((p) => matchCommand(words, p));
+const isVerification = (words: readonly string[]) => words[0] !== 'echo' && words[0] !== 'cd';
+
+function decideBash(command: string, ctx: GuardContext, cwd: string): Decision {
   const config = ctx.config;
   const phase = ctx.phase ?? 'implement';
   const phaseConfig = config.phases[phase] ?? {};
-  const allowList = phaseConfig.allowCommands ?? config.allowCommands;
-  const notAllowed = (what: string) => deny('command', command, `${what} is not in the allowed command list for this run. ${NEEDS_APPROVAL}`);
+  const allowList = [...(phaseConfig.allowCommands ?? config.allowCommands), ...ctx.approved.commands];
+  const readList = phaseConfig.readCommands ?? config.readCommands;
+  const filterNames = config.outputFilters;
+
+  /** First allowed command on the line, shown to the agent as the thing to run on its own. */
+  const allowedExample = (segments: readonly Segment[]): string | null => {
+    for (const seg of segments) {
+      if (seg.words.length === 0) continue;
+      const safeRead = matchesAny(seg.words, readList) && isVerification(seg.words) && checkReadCommand({ ...seg, redirects: [] }, ctx, '').ok;
+      if (matchesAny(seg.words, allowList) || safeRead) return seg.words.join(' ');
+    }
+    return null;
+  };
+  const notAllowed = (what: string, segments?: readonly Segment[]): Decision => {
+    let segs = segments;
+    if (!segs) {
+      const p = parseCommand(command);
+      segs = p.ok ? p.segments : [];
+    }
+    const example = allowedExample(segs);
+    if (example)
+      return deny(
+        'command',
+        command,
+        `${what} is not allowed in this run, but the line contains an allowed command. ${RUN_ALONE.replace('{example}', example)}`,
+      );
+    return deny('command', command, `${what} is not in the allowed command list for this run. ${NEEDS_APPROVAL}`);
+  };
 
   for (const re of config.denyCommandPatterns) {
     if (new RegExp(re).test(command)) return notAllowed('This command (destructive pattern)');
   }
   const parsed = parseCommand(command);
-  if (!parsed.ok) return notAllowed(`This command (${parsed.reason})`);
+  if (!parsed.ok) {
+    return deny(
+      'command',
+      command,
+      `This command (${parsed.reason}) is not allowed. Use plain commands without substitution, heredocs or subshells, one per call or chained with && or |.`,
+    );
+  }
 
+  for (const seg of parsed.segments) {
+    for (const token of [...seg.words, ...seg.redirects.map((redirect) => redirect.target)]) {
+      if (seg.words[0] === 'git' && /^--(?:output|ext-diff|textconv|no-index)(?:=|$)/.test(token))
+        return deny('command', command, `Git option "${token}" is outside the read-only policy. ${NEEDS_APPROVAL}`);
+    }
+  }
+
+  const cd = parsed.segments.findIndex((seg) => seg.words[0] === 'cd');
+  if (
+    cd !== -1 &&
+    (cd !== 0 ||
+      parsed.segments.length < 2 ||
+      parsed.segments.slice(1).some((seg, index) => seg.words[0] === 'cd' || (!seg.andThen && (!seg.piped || index === 0))))
+  )
+    return notAllowed('Use cd as the first command, followed by && rather than a pipe or fallback', parsed.segments);
+
+  let prevAllowed = false;
   for (const seg of parsed.segments) {
     for (const r of seg.redirects) {
       if (r.target === '/dev/null') continue;
-      if (/[$*?[~]/.test(r.target)) return notAllowed(`Redirect target "${r.target}" (not statically known)`);
-      if (r.op.startsWith('<')) continue; // reads: secrets already handled
-      const d = decideWrite(toRelative(ctx.projectRoot, ctx.projectRoot, r.target), r.target, ctx);
+      if (/[$*?{}\[\]~]/.test(r.target)) return notAllowed(`Redirect target "${r.target}" (not statically known)`, parsed.segments);
+      const base = resolve(ctx.projectRoot, cwd);
+      const relativeTarget = toRelative(ctx.projectRoot, base, r.target);
+      if (relativeTarget === null && r.op.startsWith('<')) return notAllowed('Input redirect points outside the checkout', parsed.segments);
+      if (relativeTarget !== null && !isSafeShellPath(ctx.projectRoot, cwd, r.target))
+        return notAllowed('Redirect path uses a symbolic link', parsed.segments);
+      if (r.op.startsWith('<')) continue;
+      const d = decideWrite(relativeTarget, r.target, ctx);
       if (!d.allow) return { ...d, target: command };
     }
     if (seg.words.length === 0) continue;
-    const ok = [...allowList, ...ctx.approved.commands].some((p) => matchCommand(seg.words, p));
-    if (!ok) return notAllowed(`"${seg.words.join(' ')}"`);
+    if (seg.piped && prevAllowed && isOutputFilter(seg.words, filterNames)) {
+      if (seg.redirects.some((r) => r.target !== '/dev/null'))
+        return notAllowed(`"${seg.words.join(' ')}" (a filter may not redirect)`, parsed.segments);
+      continue;
+    }
+    if (matchesAny(seg.words, allowList)) {
+      prevAllowed = true;
+      continue;
+    }
+    if (matchesAny(seg.words, readList)) {
+      const r = checkReadCommand(seg, ctx, cwd);
+      if (!r.ok) return notAllowed(r.what, parsed.segments);
+      cwd = r.cwd;
+      prevAllowed = true;
+      continue;
+    }
+    return notAllowed(`"${seg.words.join(' ')}"`, parsed.segments);
   }
   return allow;
 }
@@ -224,7 +401,10 @@ export function decide(input: HookInput, ctx: GuardContext): Decision {
   if (tool === 'Bash') {
     const command = nonEmptyString(toolInput.command);
     if (!command) return deny('bad-input', 'Bash', 'Bash call without a command.');
-    return decideBash(command, ctx);
+    const cwd = toRelative(root, root, input.cwd ?? root);
+    if (cwd === null || !isSafeShellPath(root, '', input.cwd ?? root))
+      return deny('outside-root', command, 'Shell cwd is outside the checkout or uses a symbolic link.');
+    return decideBash(command, ctx, cwd);
   }
   return allow;
 }

@@ -1,6 +1,7 @@
 // @vitest-environment node
-import { readFileSync } from 'node:fs';
-import { resolve } from 'node:path';
+import { mkdtempSync, readFileSync, rmSync, symlinkSync } from 'node:fs';
+import { tmpdir } from 'node:os';
+import { join, resolve } from 'node:path';
 
 import { describe, expect, it } from 'vitest';
 
@@ -184,11 +185,7 @@ const rows: Row[] = [
     'git commit -m x',
     'git push',
     'git reset --hard',
-    'git status',
-    'ls',
-    'cat src/a.ts',
     'curl http://x',
-    'cd src && pnpm test',
     'FOO=1 pnpm test',
     'env pnpm test',
     'sudo pnpm test',
@@ -202,7 +199,7 @@ const rows: Row[] = [
   ['semicolon', bash('pnpm test; git add -A'), ctx(), 'command'],
   ['or', bash('pnpm test || git commit -m x'), ctx(), 'command'],
   ['pipe to disallowed', bash('pnpm test | tee out.txt'), ctx(), 'command'],
-  ['pipe from disallowed', bash('cat a | pnpm test'), ctx(), 'command'],
+  ['pipe from disallowed', bash('curl a | pnpm test'), ctx(), 'command'],
   ['background &', bash('pnpm test & git push'), ctx(), 'command'],
   ['newline separator', bash('pnpm test\ngit push'), ctx(), 'command'],
   ['command substitution $()', bash('pnpm exec vitest run $(git push)'), ctx(), 'command'],
@@ -237,6 +234,97 @@ const rows: Row[] = [
   ['escaped space joins a word', bash('pnpm\\ test'), ctx(), 'command'],
   ['quoted command word is unquoted for matching', bash('"pnpm" "test"'), ctx(), 'allow'],
   ['reading secrets via allowed cmd args', bash('pnpm exec eslint .env.local'), ctx(), 'secret'],
+  // --- output filters after an allowed command ---
+  ['filter tail -15', bash('pnpm typecheck 2>&1 | tail -15'), ctx(), 'allow'],
+  ['vitest with 2>&1 and tail', bash('pnpm exec vitest run src/x.test.ts 2>&1 | tail -15'), ctx(), 'allow'],
+  ['filter tail -n 20', bash('pnpm test | tail -n 20'), ctx(), 'allow'],
+  ['filter tail -n20', bash('pnpm test | tail -n20'), ctx(), 'allow'],
+  ['filter head -5', bash('pnpm lint | head -5'), ctx(), 'allow'],
+  ['filter bare tail', bash('pnpm lint | tail'), ctx(), 'allow'],
+  ['filter grep pattern', bash('pnpm test 2>&1 | grep FAIL'), ctx(), 'allow'],
+  ['filter grep -i -E pattern', bash('pnpm test | grep -iE "fail|error"'), ctx(), 'allow'],
+  ['filter wc -l', bash('pnpm lint | wc -l'), ctx(), 'allow'],
+  ['chained filters', bash('pnpm test 2>&1 | grep -v ok | tail -20'), ctx(), 'allow'],
+  ['2>&1 alone', bash('pnpm test 2>&1'), ctx(), 'allow'],
+  ['filter after cd &&', bash('cd docs && pnpm test | tail -5'), ctx(), 'allow'],
+  ['filter alone is denied', bash('tail -15'), ctx(), 'command'],
+  ['filter alone after && is denied', bash('pnpm test && tail -15'), ctx(), 'command'],
+  ['filter before an allowed command is denied', bash('tail -5 | pnpm test'), ctx(), 'command'],
+  ['unallowed command piped to filter', bash('pnpm add x | tail'), ctx(), 'command'],
+  ['rm piped to filter', bash('rm -rf x | tail'), ctx(), 'command'],
+  ['git push piped to filter', bash('git push | tail'), ctx(), 'command'],
+  ['filter after && is not a pipe', bash('pnpm test && head -3'), ctx(), 'command'],
+  ['tail with a file arg', bash('pnpm test | tail -5 src/a.ts'), ctx(), 'command'],
+  ['tail -f', bash('pnpm test | tail -f'), ctx(), 'command'],
+  ['head with weird flag', bash('pnpm test | head --lines=x'), ctx(), 'command'],
+  ['grep with a file arg', bash('pnpm test | grep FAIL src/a.ts'), ctx(), 'command'],
+  ['grep -r', bash('pnpm test | grep -r FAIL'), ctx(), 'command'],
+  ['grep -f patterns file', bash('pnpm test | grep -f pats'), ctx(), 'command'],
+  ['grep without pattern', bash('pnpm test | grep'), ctx(), 'command'],
+  ['wc -c', bash('pnpm test | wc -c'), ctx(), 'command'],
+  ['wc with a file', bash('pnpm test | wc -l a.txt'), ctx(), 'command'],
+  ['filter redirecting to a file', bash('pnpm test | tail > src/o.txt'), ctx(), 'command'],
+  ['filter then unallowed command', bash('pnpm test | tail -3 | sh'), ctx(), 'command'],
+  ['planner: no filters either', bash('pnpm test | tail'), ctx({ phase: 'plan' }), 'command'],
+  // --- read-only commands ---
+  ['cat spec and plan', bash('cat docs/plan/tasks/03-x/spec.md docs/plan/tasks/03-x/plan.md'), ctx(), 'allow'],
+  ['cat template; echo; cat', bash('cat .github/PULL_REQUEST_TEMPLATE.md; echo ----; cat docs/plan/tasks/03-x/report.md'), ctx(), 'allow'],
+  ['cd task dir && cat', bash('cd docs/plan/tasks/03-x && cat spec.md plan.md'), ctx(), 'allow'],
+  ['cd with absolute path inside worktree', bash(`cd ${ROOT}/docs && cat a.md`), ctx(), 'allow'],
+  ['ls', bash('ls -la src/components'), ctx(), 'allow'],
+  ['echo', bash('echo hello'), ctx(), 'allow'],
+  ['git rev-parse + log + diff stat', bash('git rev-parse dev && git log dev..HEAD --oneline && git diff dev...HEAD --stat'), ctx(), 'allow'],
+  ['git status', bash('git status --short'), ctx(), 'allow'],
+  ['git show', bash('git show HEAD~1 --stat'), ctx(), 'allow'],
+  ['git diff with pathspec', bash('git diff dev...HEAD -- src/a.ts'), ctx(), 'allow'],
+  ['git diff piped to head', bash('git diff dev...HEAD | head -50'), ctx(), 'allow'],
+  ['reviewer cat', bash('cat docs/plan/tasks/03-x/spec.md'), ctx({ phase: 'review' }), 'allow'],
+  ['reviewer git status', bash('git status'), ctx({ phase: 'review' }), 'allow'],
+  ['reviewer git rev-parse', bash('git rev-parse dev'), ctx({ phase: 'review' }), 'allow'],
+  ['reviewer ls', bash('ls src'), ctx({ phase: 'review' }), 'allow'],
+  ['retro cat', bash('cat docs/plan/tasks/03-x/report.md'), ctx({ phase: 'retro' }), 'allow'],
+  ['reviewer cannot run pnpm', bash('pnpm typecheck'), ctx({ phase: 'review' }), 'command'],
+  ['planner has no cat', bash('cat spec.md'), ctx({ phase: 'plan' }), 'command'],
+  ['planner has no git status', bash('git status'), ctx({ phase: 'plan' }), 'command'],
+  ['planner has no cd', bash('cd docs'), ctx({ phase: 'plan' }), 'command'],
+  ['cat .env.local stays denied', bash('cat .env.local'), ctx(), 'secret'],
+  ['cat .env in a later segment', bash('echo hi; cat .env'), ctx(), 'secret'],
+  ['cat nested .env.production', bash('cat apps/x/.env.production'), ctx(), 'secret'],
+  ['cat .env.example is fine', bash('cat .env.example'), ctx(), 'allow'],
+  ['cat .agent-stop', bash('cat .agent-stop'), ctx(), 'stop-file'],
+  ['cd then cat .env', bash('cd docs && cat ../.env.local'), ctx(), 'secret'],
+  ['cat outside worktree', bash('cat /etc/passwd'), ctx(), 'command'],
+  ['cat parent dir', bash('cat ../../other/file'), ctx(), 'command'],
+  ['cat home dir', bash('cat ~/.ssh/id_rsa'), ctx(), 'command'],
+  ['cat with variable', bash('cat $FILE'), ctx(), 'command'],
+  ['cat with glob', bash('cat .e*'), ctx(), 'command'],
+  ['ls with glob', bash('ls src/*'), ctx(), 'command'],
+  ['cd outside worktree', bash('cd /tmp && cat x'), ctx(), 'command'],
+  ['cd .. out of worktree', bash('cd .. && cat x'), ctx(), 'command'],
+  ['cd then relative escape', bash('cd docs && cat ../../x'), ctx(), 'command'],
+  ['cd with no argument', bash('cd && cat x'), ctx(), 'command'],
+  ['read stdin inside checkout', bash('cat < spec.md'), ctx(), 'allow'],
+  ['cannot redirect input from outside checkout', bash('cat < /etc/hostname'), ctx(), 'command'],
+  ['input redirect uses the directory after cd', bash('cd src && cat < ../../private.txt'), ctx(), 'command'],
+  ['redirect writes use the directory after cd', bash('cd src && pnpm test > ../package.json'), ctx(), 'ask-path'],
+  ['cd with a fallback is ambiguous', bash('cd src || cat spec.md'), ctx(), 'command'],
+  ['cd piped into command is ambiguous', bash('cd src | cat spec.md'), ctx(), 'command'],
+  ['git cannot run an external diff helper', bash('git diff --ext-diff'), ctx(), 'command'],
+  ['quoted Git output is still a write', bash('git diff "--output=/tmp/result" HEAD HEAD'), ctx({ phase: 'review' }), 'command'],
+  ['quote splitting cannot hide a protected env file', bash("cat .e''nv.local"), ctx(), 'secret'],
+  ['quote splitting cannot hide the stop file', bash("cat .agent-''stop"), ctx(), 'stop-file'],
+  ['a grep argument cannot expand into multiple operands', bash('echo ok | grep {root,/etc/passwd}'), ctx(), 'command'],
+  ['cat > file', bash('cat a.md > src/b.md'), ctx(), 'command'],
+  ['echo > file', bash('echo hi > src/b.md'), ctx(), 'command'],
+  ['echo >> report', bash(`echo hi >> ${TASK}/report.md`), ctx(), 'command'],
+  ['echo with substitution', bash('echo $(cat x)'), ctx(), 'command'],
+  ['git push stays denied', bash('git push'), ctx(), 'command'],
+  ['git commit stays denied', bash('git commit -m x'), ctx(), 'command'],
+  ['git diff --output stays denied', bash('git diff --output=x.txt'), ctx(), 'command'],
+  ['git -c config trick', bash('git -c core.pager=sh log'), ctx(), 'command'],
+  ['git diff --no-index outside', bash('git diff --no-index /etc/passwd x'), ctx(), 'command'],
+  ['git log with abs path outside', bash('git log -- /etc/passwd'), ctx(), 'command'],
+  ['git checkout stays denied', bash('git checkout dev'), ctx(), 'command'],
 ];
 
 describe('decide()', () => {
@@ -250,6 +338,19 @@ describe('decide()', () => {
     }
   });
 
+  it('denies symlinks for read paths, cd and input redirects', () => {
+    const projectRoot = mkdtempSync(join(tmpdir(), 'guard-path-'));
+    try {
+      symlinkSync('/etc', join(projectRoot, 'alias'));
+      const context = ctx({ projectRoot, phase: 'review' });
+      for (const command of ['cat alias/hostname', 'cat alias/../hostname', 'cd alias && cat hostname', 'cat < alias/hostname']) {
+        expect(decide({ ...bash(command), cwd: projectRoot }, context)).toMatchObject({ allow: false, kind: 'command' });
+      }
+    } finally {
+      rmSync(projectRoot, { recursive: true, force: true });
+    }
+  });
+
   it('tells the agent to return blocked + needs_approval for protected paths and commands', () => {
     for (const input of [file('Edit', `${ROOT}/package.json`), file('Edit', `${ROOT}/CLAUDE.md`), bash('git push')]) {
       const d = decide(input, ctx());
@@ -257,6 +358,34 @@ describe('decide()', () => {
       if (!d.allow) {
         expect(d.reason).toContain('blocked');
         expect(d.reason).toContain('needs_approval');
+      }
+    }
+  });
+
+  it('does not tell the agent to retry an outside path', () => {
+    expect(decide(bash('cat /etc/hostname'), ctx())).toMatchObject({ allow: false, reason: expect.stringContaining('needs_approval') });
+  });
+
+  it('tells the agent to run the allowed command on its own when a denied command contains one', () => {
+    for (const command of ['pnpm typecheck 2>&1 | sh', 'pnpm typecheck && git push', 'pnpm exec vitest run a.test.ts | tail -f']) {
+      const d = decide(bash(command), ctx());
+      expect(d.allow).toBe(false);
+      if (!d.allow) {
+        expect(d.reason).toContain('run the allowed command on its own');
+        expect(d.reason).not.toContain('needs_approval');
+      }
+    }
+    const d = decide(bash('pnpm typecheck && git push'), ctx());
+    expect(!d.allow && d.reason).toContain('`pnpm typecheck`');
+  });
+
+  it('keeps needs_approval for commands with nothing allowed in them', () => {
+    for (const command of ['git push', 'pnpm add x | tail', 'rm -rf x | tail', 'tail -15']) {
+      const d = decide(bash(command), ctx());
+      expect(d.allow).toBe(false);
+      if (!d.allow) {
+        expect(d.reason).toContain('needs_approval');
+        expect(d.reason).not.toContain('on its own');
       }
     }
   });

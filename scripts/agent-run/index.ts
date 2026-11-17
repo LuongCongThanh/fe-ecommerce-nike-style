@@ -86,7 +86,7 @@ async function main(): Promise<number> {
   }
   const deps: Deps = {
     runner: realRunner,
-    claude: codex?.run ?? realClaude(realRunner, guard.allowCommands),
+    claude: codex?.run ?? realClaude(realRunner, guard),
     codexPreflight: codex?.preflight,
     notify: (title, body) => void realRunner('notify-send', [title, body], { cwd: repoRoot }),
     now: () => new Date(),

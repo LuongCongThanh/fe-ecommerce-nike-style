@@ -68,7 +68,10 @@ export function checkCodexTool(input: HookInput, ctx: GuardContext, browserUrl?:
     const parsed = parseCommand(command);
     if (!parsed.ok || parsed.segments.some((segment) => segment.redirects.length > 0 || segment.words[0] === 'git'))
       return 'Shell command is outside the task policy.';
-    const checked = decide(input, ctx);
+    // Claude has its own shell read policy. Codex must not fall through to it
+    // after rejecting shell expansion, symbolic links, or unsafe read options.
+    const config = { ...ctx.config, readCommands: [], outputFilters: [] };
+    const checked = decide(input, { ...ctx, config });
     return checked.allow ? null : checked.reason;
   }
   if (browserUrl && name.startsWith('mcp__playwright__browser_') && BROWSER_TOOLS.has(name.slice('mcp__playwright__browser_'.length))) {

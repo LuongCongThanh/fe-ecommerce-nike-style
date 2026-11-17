@@ -42,25 +42,36 @@ export type ClaudeRunner = (req: ClaudeRequest) => Promise<ClaudeResponse>;
 
 const READ_TOOLS = ['Read', 'Grep', 'Glob'];
 
-/** `--allowedTools` per phase; mirrors the agent files and `allowCommands` of agent-guard.json. */
-export function allowedToolsFor(phase: AgentPhase, allowCommands: string[]): string[] {
+/** The Bash part of agent-guard.json that `--allowedTools` mirrors (the hook stays the strict gate: paths, filter arguments). */
+export interface BashAllowance {
+  allowCommands: string[];
+  readCommands: string[];
+  /** Command names (tail, head, grep, wc) the hook accepts after `|`; the CLI needs a rule per piped command too. */
+  outputFilters: string[];
+}
+
+const bash = (patterns: string[]) => patterns.map((c) => `Bash(${c})`);
+
+/** `--allowedTools` per phase; mirrors the agent files and the command lists of agent-guard.json. */
+export function allowedToolsFor(phase: AgentPhase, allowance: BashAllowance): string[] {
+  const reads = [...bash(allowance.readCommands), ...bash(allowance.outputFilters.map((f) => `${f} *`))];
   switch (phase) {
     case 'plan':
       return [...READ_TOOLS, 'Write', 'Skill', 'Agent'];
     case 'review':
-      return [...READ_TOOLS, 'Skill', 'Agent', 'Bash(git diff *)', 'Bash(git log *)'];
+      return [...READ_TOOLS, 'Skill', 'Agent', ...reads];
     case 'implement':
     case 'retro':
-      return [...READ_TOOLS, 'Edit', 'Write', 'Skill', 'Agent', ...allowCommands.map((c) => `Bash(${c})`)];
+      return [...READ_TOOLS, 'Edit', 'Write', 'Skill', 'Agent', ...bash(allowance.allowCommands), ...reads];
   }
 }
 
-export function buildClaudeArgs(req: ClaudeRequest, allowCommands: string[]): string[] {
+export function buildClaudeArgs(req: ClaudeRequest, allowance: BashAllowance): string[] {
   const args = ['-p', req.prompt, '--output-format', 'json', '--max-turns', String(req.maxTurns), '--permission-prompts', 'none'];
   if (req.agent) args.push('--agent', req.agent);
   if (req.resume) args.push('--resume', req.resume);
   if (req.schema) args.push('--json-schema', JSON.stringify(req.schema));
-  args.push('--allowedTools', [...allowedToolsFor(req.phase, allowCommands), ...(req.extraTools ?? [])].join(','));
+  args.push('--allowedTools', [...allowedToolsFor(req.phase, allowance), ...(req.extraTools ?? [])].join(','));
   return args;
 }
 
@@ -147,9 +158,9 @@ export function objectFromText(text: string): Record<string, unknown> | null {
   return null;
 }
 
-export function realClaude(runner: Runner, allowCommands: string[], timeoutMs = 45 * 60_000): ClaudeRunner {
+export function realClaude(runner: Runner, allowance: BashAllowance, timeoutMs = 45 * 60_000): ClaudeRunner {
   return async (req) => {
-    const r = await runner('claude', buildClaudeArgs(req, allowCommands), {
+    const r = await runner('claude', buildClaudeArgs(req, allowance), {
       cwd: req.cwd,
       env: { ...process.env, ...req.env },
       timeoutMs,

@@ -5,35 +5,38 @@ import { allowedToolsFor, buildClaudeArgs, parseClaudeOutput, type ClaudeRequest
 
 const base: ClaudeRequest = { cwd: '/wt', prompt: 'do it', maxTurns: 12, env: {}, phase: 'implement' };
 
+const none = { allowCommands: [], readCommands: [], outputFilters: [] };
+
 describe('buildClaudeArgs', () => {
   it('puts the prompt right after -p (variadic flags must not swallow it)', () => {
-    const a = buildClaudeArgs({ ...base, agent: 'implementer' }, ['pnpm test']);
+    const a = buildClaudeArgs({ ...base, agent: 'implementer' }, { ...none, allowCommands: ['pnpm test'] });
     expect(a.slice(0, 2)).toEqual(['-p', 'do it']);
     expect(a).toEqual(expect.arrayContaining(['--output-format', 'json', '--max-turns', '12', '--agent', 'implementer']));
     expect(a[a.indexOf('--allowedTools') + 1]).toContain('Bash(pnpm test)');
   });
   it('adds --resume and --json-schema when asked', () => {
-    const a = buildClaudeArgs({ ...base, resume: 'abc', schema: { type: 'object' } }, []);
+    const a = buildClaudeArgs({ ...base, resume: 'abc', schema: { type: 'object' } }, none);
     expect(a[a.indexOf('--resume') + 1]).toBe('abc');
     expect(a[a.indexOf('--json-schema') + 1]).toBe('{"type":"object"}');
   });
   it('never asks for permission prompts (unattended)', () => {
-    const a = buildClaudeArgs(base, []);
+    const a = buildClaudeArgs(base, none);
     expect(a[a.indexOf('--permission-prompts') + 1]).toBe('none');
   });
 });
 
 describe('allowedToolsFor', () => {
-  const guard = ['pnpm test', 'pnpm exec vitest run *'];
-  it('implementer/retro: edit tools + each allowed command', () => {
+  const guard = { allowCommands: ['pnpm test', 'pnpm exec vitest run *'], readCommands: ['cat *', 'git diff *'], outputFilters: ['tail', 'grep'] };
+  const reads = ['Bash(cat *)', 'Bash(git diff *)', 'Bash(tail *)', 'Bash(grep *)'];
+  it('implementer/retro: edit tools + each allowed command + read commands and output filters', () => {
     for (const phase of ['implement', 'retro'] as const) {
       const t = allowedToolsFor(phase, guard);
-      expect(t).toEqual(expect.arrayContaining(['Read', 'Edit', 'Write', 'Bash(pnpm test)', 'Bash(pnpm exec vitest run *)']));
+      expect(t).toEqual(expect.arrayContaining(['Read', 'Edit', 'Write', 'Bash(pnpm test)', 'Bash(pnpm exec vitest run *)', ...reads]));
     }
   });
-  it('planner: no Bash; reviewer: only git diff/log', () => {
+  it('planner: no Bash; reviewer: read commands and filters only, no pnpm', () => {
     expect(allowedToolsFor('plan', guard).some((x) => x.startsWith('Bash'))).toBe(false);
-    expect(allowedToolsFor('review', guard).filter((x) => x.startsWith('Bash'))).toEqual(['Bash(git diff *)', 'Bash(git log *)']);
+    expect(allowedToolsFor('review', guard).filter((x) => x.startsWith('Bash'))).toEqual(reads);
     expect(allowedToolsFor('review', guard)).not.toContain('Edit');
   });
 });
