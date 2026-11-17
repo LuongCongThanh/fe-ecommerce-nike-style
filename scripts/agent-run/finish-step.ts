@@ -71,7 +71,9 @@ async function commitOnce(ctx: RunContext): Promise<string> {
   if (isStepDone(ctx.worktree, 'committed') && recorded !== undefined) return recorded; // resume after a push/PR failure
 
   setStage(ctx, 'committing');
-  const tokens = await runner('pnpm', ['tokens', '--project-dir', ctx.worktree, '--out', join(ctx.taskDir, 'metric.md')], { cwd: ctx.worktree });
+  const tokens = await runner('pnpm', ['tokens', 'all', '--project-dir', ctx.worktree, '--out', join(ctx.taskDir, 'metric.md')], {
+    cwd: ctx.worktree,
+  });
   if (tokens.code !== 0) ctx.deps.log(`tokens failed (non fatal): ${trimLog(tokens.stderr, 300)}`);
 
   syncSpec(ctx, 'review');

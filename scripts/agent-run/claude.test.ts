@@ -62,6 +62,15 @@ describe('parseClaudeOutput', () => {
       reason: 'x',
     });
   });
+  it('schema requested, prose then a bare JSON object (reviewer, task 05) -> ok', () => {
+    const result =
+      'I checked the change. Writing up the result now.\n\n{"result":"ok","reason":"r","findings":[{"severity":"nit","message":"uses {braces}"}]}';
+    expect(parseClaudeOutput(json({ subtype: 'success', is_error: false, result }), '', 0, true).structured).toEqual({
+      result: 'ok',
+      reason: 'r',
+      findings: [{ severity: 'nit', message: 'uses {braces}' }],
+    });
+  });
   it('schema requested, result is prose or a JSON array -> bad_output', () => {
     expect(parseClaudeOutput(json({ subtype: 'success', is_error: false, result: 'all done' }), '', 0, true).kind).toBe('bad_output');
     expect(parseClaudeOutput(json({ subtype: 'success', is_error: false, result: '[1]' }), '', 0, true).kind).toBe('bad_output');

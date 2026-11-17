@@ -1,10 +1,13 @@
 // Hallmark redesign · design-system: design.md · scope: app page (functional, no enrichment)
 'use client';
 
+import { Fragment } from 'react';
+
 import { ChevronRight } from 'lucide-react';
 import { useTranslations } from 'next-intl';
 
 import { CategoryClient } from '@/features/catalog/category-detail/components/CategoryClient';
+import { getCategoryTrail } from '@/features/catalog/categoryTree';
 import { FilterSidebar } from '@/features/catalog/components/FilterSidebar';
 import { useCategoryTree } from '@/features/catalog/queries/useCategoryTree';
 import { PageShell } from '@/features/storefront-shell/components/PageShell';
@@ -38,9 +41,10 @@ export function CategoryPageClient({ slug }: CategoryPageClientProps): React.JSX
 }
 
 function CategoryPageContent({ slug, categories }: { readonly slug: string; readonly categories: readonly CategoryEntry[] }): React.JSX.Element {
-  const category = categories.find((c) => c.slug === slug) ?? null;
+  const trail = getCategoryTrail(categories, slug);
+  const category = trail.at(-1);
 
-  if (category === null) {
+  if (category === undefined) {
     return (
       <div className="flex min-h-100 flex-col items-center justify-center text-center">
         <h1 className="text-2xl font-bold">Không tìm thấy danh mục</h1>
@@ -49,20 +53,18 @@ function CategoryPageContent({ slug, categories }: { readonly slug: string; read
     );
   }
 
-  const parent = category.parentId !== null ? (categories.find((c) => c.id === category.parentId) ?? null) : null;
-
   return (
     <>
       <nav className="text-muted-foreground mb-8 flex items-center gap-1.5 text-sm">
         <span>Trang chủ</span>
         <ChevronRight className="size-3.5" />
         <span>Danh mục</span>
-        {parent !== null ? (
-          <>
+        {trail.slice(0, -1).map((ancestor) => (
+          <Fragment key={ancestor.id}>
             <ChevronRight className="size-3.5" />
-            <span>{parent.name}</span>
-          </>
-        ) : null}
+            <span>{ancestor.name}</span>
+          </Fragment>
+        ))}
         <ChevronRight className="size-3.5" />
         <span className="text-foreground line-clamp-1 font-medium">{category.name}</span>
       </nav>

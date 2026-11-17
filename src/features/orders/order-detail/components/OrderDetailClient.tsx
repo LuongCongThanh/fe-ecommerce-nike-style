@@ -7,6 +7,7 @@ import { ChevronLeft } from 'lucide-react';
 import { useLocale, useTranslations } from 'next-intl';
 
 import { OrderStatusBadge } from '@/features/orders/components/OrderStatusBadge';
+import { formatOrderDate } from '@/features/orders/formatOrderDate';
 import { useCancelOrder } from '@/features/orders/order-detail/queries/useCancelOrder';
 import { useOrder } from '@/features/orders/order-detail/queries/useOrder';
 import { useRequestReturn } from '@/features/orders/order-detail/queries/useRequestReturn';
@@ -61,7 +62,7 @@ export function OrderDetailClient({ id }: OrderDetailClientProps): React.JSX.Ele
             <div className="mb-6 flex items-center justify-between gap-3 border-b pb-4">
               <div className="min-w-0">
                 <h1 className="text-xl font-bold text-balance">Đơn #{order.code}</h1>
-                <p className="text-muted-foreground text-sm">{new Date(order.created_at).toLocaleString('vi-VN')}</p>
+                <p className="text-muted-foreground text-sm">{formatOrderDate(order.created_at, locale, { withTime: true })}</p>
               </div>
               <OrderStatusBadge status={order.status} />
             </div>

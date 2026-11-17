@@ -122,15 +122,20 @@ export function parseClaudeOutput(stdout: string, stderr: string, code: number, 
   return { ...base, kind: 'ok', detail: '' };
 }
 
-/** The JSON object in `text`, either the whole text or the last ```json fence; `null` when there is none. */
+/**
+ * The JSON object in `text`: the whole text, else the last ```json fence, else a bare object that starts a line
+ * and runs to the end (prose then JSON, seen from the reviewer). `null` when there is none.
+ */
 function objectFromText(text: string): Record<string, unknown> | null {
   // Odd-indexed parts of a split on ``` are fence bodies; drop an optional "json" language tag.
   const fences = text
     .split('```')
     .filter((_, i) => i % 2 === 1)
     .map((body) => body.replace(/^json\b/, '').trim());
-  const lastFenceFirst = [...fences].reverse();
-  for (const candidate of [text.trim(), ...lastFenceFirst]) {
+  const lines = text.split('\n');
+  const trailingObjects = lines.map((line, i) => (line.trimStart().startsWith('{') ? lines.slice(i).join('\n').trim() : '')).filter(Boolean);
+  const lastFirst = <T>(items: T[]): T[] => [...items].reverse();
+  for (const candidate of [text.trim(), ...lastFirst(fences), ...trailingObjects]) {
     try {
       const value: unknown = JSON.parse(candidate);
       if (isRecord(value)) return value;

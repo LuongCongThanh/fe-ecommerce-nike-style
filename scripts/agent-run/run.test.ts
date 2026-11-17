@@ -34,7 +34,7 @@ describe('happy path (D39: script commits once, pushes, opens PR into dev, never
     const c = w.runner.calls;
     const at = (p: string) => c.findIndex((x) => x.startsWith(p));
     expect(at('git worktree add -b feat/01-demo')).toBeGreaterThan(-1);
-    expect(at(`pnpm tokens --project-dir ${wt} --out ${wt}/docs/plan/tasks/01-demo/metric.md`)).toBeGreaterThan(-1);
+    expect(at(`pnpm tokens all --project-dir ${wt} --out ${wt}/docs/plan/tasks/01-demo/metric.md`)).toBeGreaterThan(-1);
     expect(c.filter((x) => x.startsWith('git commit'))).toEqual(['git commit -m feat(demo): add the thing']);
     expect(at('git commit')).toBeGreaterThan(at('pnpm tokens'));
     expect(at('git push -u origin feat/01-demo')).toBeGreaterThan(at('git commit'));
