@@ -3,6 +3,7 @@
 import { ChevronLeft, ChevronRight } from 'lucide-react';
 
 import { Button } from '@/shared/ui/Button';
+import { getPageItems } from '@/shared/utils/pagination';
 
 interface PaginationProps {
   readonly currentPage: number;
@@ -23,10 +24,10 @@ export function Pagination({
 }: PaginationProps): React.JSX.Element | null {
   if (totalPages <= 1) return null;
 
-  const pages = Array.from({ length: totalPages }, (_, i) => i + 1);
+  const items = getPageItems(currentPage, totalPages);
 
   return (
-    <nav className="mt-14 flex items-center justify-center gap-2" aria-label={navigationLabel}>
+    <nav className="mt-14 flex flex-wrap items-center justify-center gap-2" aria-label={navigationLabel}>
       <Button
         variant="outline"
         size="icon"
@@ -39,19 +40,37 @@ export function Pagination({
         <ChevronLeft className="size-4" />
       </Button>
 
-      {pages.map((page) => (
-        <Button
-          key={page}
-          variant={currentPage === page ? 'default' : 'outline'}
-          size="sm"
-          className="min-w-10"
-          onClick={() => {
-            onPageChange(page);
-          }}
-        >
-          {page}
-        </Button>
-      ))}
+      {items.map((item, index) => {
+        if (item === 'ellipsis') {
+          // Không phải phần tử tương tác nên không vào thứ tự tab; aria-hidden vì không mang thông tin.
+          const position = index === 1 ? 'start' : 'end';
+          return (
+            <span
+              key={`ellipsis-${position}`}
+              aria-hidden="true"
+              className="text-muted-foreground flex h-8 min-w-10 items-center justify-center text-sm"
+            >
+              …
+            </span>
+          );
+        }
+
+        const isCurrent = item === currentPage;
+        return (
+          <Button
+            key={item}
+            variant={isCurrent ? 'default' : 'outline'}
+            size="sm"
+            className="min-w-10"
+            aria-current={isCurrent ? 'page' : undefined}
+            onClick={() => {
+              onPageChange(item);
+            }}
+          >
+            {item}
+          </Button>
+        );
+      })}
 
       <Button
         variant="outline"
