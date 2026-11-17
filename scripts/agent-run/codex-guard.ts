@@ -10,7 +10,7 @@ const READ_OPTIONS = new Set(['-n', '-l', '-a', '-la', '-al', '-i', '-F', '-S', 
 const BROWSER_TOOLS = new Set(['navigate', 'snapshot', 'click', 'press_key', 'resize', 'console_messages', 'close']);
 const PATCH_HEADER = /^\*\*\* (?:Add File|Update File|Delete File|Move to): (.+)$/gm;
 
-function isReadOnly(command: string): boolean {
+function isReadOnly(command: string, root: string): boolean {
   const parsed = parseCommand(command);
   if (!parsed.ok || parsed.segments.length !== 1) return false;
   const [segment] = parsed.segments;
@@ -20,14 +20,23 @@ function isReadOnly(command: string): boolean {
   if (tool === 'git' && !['diff', 'log', 'status', 'show'].includes(args.shift() ?? '')) return false;
   if (!['git', 'cat', 'ls', 'rg', 'sed'].includes(tool ?? '')) return false;
   if (tool === 'sed' && (args.shift() !== '-n' || !/^\d+(?:,\d+)?p$/.test(args.shift() ?? ''))) return false;
-  return args.every((arg) => READ_OPTIONS.has(arg) || (!arg.startsWith('-') && !/(^\/|(?:^|\/)\.\.(?:\/|$)|[$*`~])/u.test(arg)));
+  return args.every((arg) => {
+    if (READ_OPTIONS.has(arg)) return true;
+    if (arg.startsWith('-') || /(^\/|(?:^|\/)\.\.(?:\/|$)|[$*`~?{}\[\]])/u.test(arg)) return false;
+    try {
+      checkedPath(root, arg);
+      return true;
+    } catch {
+      return false;
+    }
+  });
 }
 
 function checkedPath(root: string, path: string): string {
   const absolute = resolve(root, path);
   let parent = absolute;
   while (!existsSync(parent)) parent = dirname(parent);
-  if (realpathSync(parent) !== parent) throw new Error(`Patch path uses a symbolic link: ${path}`);
+  if (realpathSync(parent) !== parent) throw new Error(`Path uses a symbolic link: ${path}`);
   return absolute;
 }
 
@@ -50,7 +59,7 @@ export function checkCodexTool(input: HookInput, ctx: GuardContext, browserUrl?:
     return null;
   }
   if (name === 'Bash' && typeof command === 'string') {
-    if (isReadOnly(command)) {
+    if (isReadOnly(command, ctx.projectRoot)) {
       const checked = decide(input, { ...ctx, agentRun: false });
       return checked.allow ? null : checked.reason;
     }

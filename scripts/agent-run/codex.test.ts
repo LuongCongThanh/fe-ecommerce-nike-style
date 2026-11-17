@@ -1,6 +1,7 @@
 // @vitest-environment node
-import { readFileSync } from 'node:fs';
-import { resolve } from 'node:path';
+import { mkdtempSync, readFileSync, rmSync, symlinkSync, writeFileSync } from 'node:fs';
+import { tmpdir } from 'node:os';
+import { join, resolve } from 'node:path';
 
 import { describe, expect, it } from 'vitest';
 
@@ -32,6 +33,25 @@ describe('Codex guard', () => {
     expect(decision('apply_patch', patch('*** Update File: src/app/page.tsx'))).toMatch(/phase "plan"/);
     expect(decision('Bash', 'cat .env.local')).toMatch(/\.env/);
     expect(decision('Bash', 'cat AGENTS.md > plan.md')).toMatch(/read-only/);
+  });
+
+  it('blocks aliases and shell patterns that can resolve to paths outside the checkout', () => {
+    const scratch = mkdtempSync(join(tmpdir(), 'storefront-guard-'));
+    try {
+      const checkout = join(scratch, 'checkout');
+      const outside = join(scratch, 'outside.txt');
+      writeFileSync(outside, 'outside');
+      const projectRoot = mkdtempSync(checkout);
+      writeFileSync(join(projectRoot, 'safe.txt'), 'inside');
+      symlinkSync(outside, join(projectRoot, 'alias.txt'));
+      const ctx = { ...context, projectRoot, phase: 'review' };
+      const shell = (command: string) => checkCodexTool({ tool_name: 'Bash', tool_input: { command }, cwd: projectRoot }, ctx);
+      expect(shell('cat safe.txt')).toBeNull();
+      expect(shell('cat alias.txt')).toMatch(/read-only/);
+      expect(shell('cat alia?.txt')).toMatch(/read-only/);
+    } finally {
+      rmSync(scratch, { recursive: true, force: true });
+    }
   });
 
   it('checks all patch paths, including rename destinations, before approving a tool call', () => {
