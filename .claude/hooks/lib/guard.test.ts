@@ -149,6 +149,7 @@ const rows: Row[] = [
     'pnpm lint',
     'pnpm lint:fix',
     'pnpm format',
+    'pnpm docs:check',
     'pnpm test',
     'pnpm build',
     'pnpm exec vitest run src/a.test.ts',

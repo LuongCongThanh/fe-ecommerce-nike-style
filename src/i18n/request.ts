@@ -9,7 +9,7 @@ const modules = ['common', 'auth', 'product', 'cart', 'order', 'payment', 'home'
 // Kiểu union của tên module, dùng để type-safe khi gọi useTranslations('module')
 export type MessageModule = (typeof modules)[number];
 
-// Việc load/merge messages do `@repo/i18n` sở hữu (dùng chung với admin/cms); app chỉ khai báo
+// Việc load/merge messages do `src/i18n/create-request-config.ts` sở hữu; request khai báo
 // danh sách module và cách import file JSON của chính nó — đường dẫn động phải nằm ở đây để
 // bundler phân giải được.
 export default getRequestConfig(

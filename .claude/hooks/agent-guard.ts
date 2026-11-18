@@ -1,6 +1,6 @@
 /**
  * PreToolUse hook: enforces .claude/agent-guard.json (D8/D17/D40).
- * IO only; the decision lives in lib/guard.ts. Contract: docs/plan/README.md, "Agent guard".
+ * IO only; the decision lives in lib/guard.ts. Contract: docs/agents/runner.md, "Guard contract".
  *
  * Env: AGENT_RUN=1, AGENT_PHASE (plan|implement|retro|review), AGENT_TASK_DIR, AGENT_APPROVED
  *      ({"paths":[...],"commands":[...]}), CLAUDE_PROJECT_DIR.

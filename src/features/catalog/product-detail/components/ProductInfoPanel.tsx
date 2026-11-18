@@ -17,7 +17,7 @@ import type { ProductDetail } from '@/lib/api/models/catalog';
 import { SPRING_UI } from '@/shared/lib/motion';
 import { formatCurrency } from '@/shared/utils/utils';
 
-// Decision #59 / docs/FRONTEND-GUIDE.md §27 — three.js only ever loads for a mounted PDP, never at a
+// Decision #59 / docs/architecture.md#3d-trong-storefront — three.js only ever loads for a mounted PDP, never at a
 // higher-level route/layout, and never during SSR (WebGL has no server-side renderer).
 const ProductViewer3D = dynamic(async () => import('@/features/catalog/product-detail/components/ProductViewer3D'), {
   ssr: false,

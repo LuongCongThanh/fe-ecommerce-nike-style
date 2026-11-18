@@ -12,7 +12,7 @@ export const addressSchema = z.object({
 });
 
 export const shippingMethodSchema = z.enum(['standard', 'express']);
-/** MVP is COD-only, no payment gateway step (Decision #7 — decision-log.md) — a literal union of one so there's nothing else to select. */
+/** MVP is COD-only, no payment gateway step (historical COD-only mock decision; docs/roadmap.md) — a literal union of one so there's nothing else to select. */
 export const paymentMethodSchema = z.literal('cod');
 
 export const checkoutSchema = addressSchema.extend({

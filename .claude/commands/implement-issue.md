@@ -18,6 +18,6 @@ Triển khai `$ARGUMENTS` thành một vertical slice tập trung.
 10. Với UI có state/query/context, kiểm tra phạm vi subscription và re-render; chỉ memoize khi identity hoặc chi phí render thực sự yêu cầu.
 11. Thêm unit/integration test ở layer thấp nhất; thêm E2E khi behavior cần browser hoặc nối nhiều feature/route.
 12. Chạy focused test trước, sau đó các gate liên quan của workspace và cross-browser E2E khi cần.
-13. Tóm tắt hành vi đã đổi, file đã đổi, kết quả kiểm tra và rủi ro còn lại. Với task có thư mục `docs/plan/tasks/<NN>-*`, ghi tóm tắt đó vào `report.md` theo định dạng ở `docs/plan/README.md`.
+13. Tóm tắt hành vi đã đổi, file đã đổi, kết quả kiểm tra và rủi ro còn lại. Với task có thư mục `docs/plan/tasks/<NN>-*`, ghi tóm tắt đó vào `report.md` theo định dạng ở `docs/agents/issue-tracker.md`.
 
 Không commit, push, tạo branch hoặc PR hay thay đổi trạng thái GitHub nếu người dùng chưa yêu cầu riêng hành động bên ngoài đó.

@@ -10,11 +10,8 @@ const ORDERS_API = {
   RETURN_REQUEST: (id: string) => `${API_BASE_URL}/api/orders/${id}/return-request/`,
 } as const;
 
-// The domain type lives once in `@/lib/schemas/order` — re-exported here under the storefront's
-// existing `StorefrontOrder*` names so nothing importing from `@repo/api-sdk/endpoints/orders` has to
-// change. `getOrders`/`getOrder`/... now validate the raw response through `OrderSchema` instead of
-// blindly trusting the shape via a type assertion — the same `apiClient.get(url, params, { schema })`
-// convention `catalog.ts` already uses.
+// Order schemas own the domain type; these aliases preserve storefront endpoint names.
+// Responses are validated through OrderSchema by the API client.
 export type StorefrontOrder = Order;
 export type StorefrontOrderStatus = OrderStatus;
 export type StorefrontPaymentMethod = OrderPaymentMethod;

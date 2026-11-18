@@ -2,15 +2,19 @@
  * Implementer, gates, fix loop, UI checks and review (D19, D27, D30, D35, D38; situations 5-9, 14).
  * One shared fix counter (`fixAttempts` in state.json) covers Stop-hook blocks, red gates and review findings.
  */
+import { randomUUID } from 'node:crypto';
+import { writeFileSync } from 'node:fs';
+import { resolve } from 'node:path';
 import { z } from 'zod';
 
 import { callClaude, setStage, type RunContext } from './context';
 import { trimLog } from './exec';
 import { fixPrompt, implementerPrompt, reviewerPrompt, uiCheckPrompt } from './prompts';
 import { implementerResult, isBlocking, reviewerResult } from './results';
-import { implementerSchema, reviewerSchema, type ReviewFinding } from './schemas';
+import { implementerSchema, reviewerSchema, uiSchema, type ReviewFinding } from './schemas';
 import { SITUATION, Stop } from './situations';
 import { markStepDone, readState, resetStepsFrom, updateState } from './state';
+import { validateUiEvidence } from './ui-evidence';
 import { writeQuestions } from './plan-step';
 
 async function runImplementer(ctx: RunContext, prompt: string, resume?: string): Promise<void> {
@@ -134,15 +138,24 @@ export async function uiCheck(ctx: RunContext): Promise<ReviewFinding[]> {
       `Không khởi động được pnpm dev --port ${ctx.cfg.devPort} để kiểm tra UI: ${server.reason}. Giải phóng cổng rồi chạy lại.`,
       server.reason,
     );
+  const origin = `http://localhost:${ctx.cfg.devPort}`;
+  const artifact = resolve(ctx.taskDir, `ui-${randomUUID()}.png`);
+  const started = Date.now();
   try {
     const resp = await callClaude(ctx, {
       phase: 'review',
-      prompt: uiCheckPrompt(ctx.taskDir, `http://localhost:${ctx.cfg.devPort}`),
-      schema: reviewerSchema,
+      prompt: uiCheckPrompt(ctx.taskDir, origin, artifact),
+      schema: uiSchema,
       budget: 'task',
       extraTools: ['mcp__playwright'],
     });
-    return reviewerResult(resp.structured).findings;
+    try {
+      const findings = validateUiEvidence(resp.structured, ctx.worktree, origin, artifact, started);
+      writeFileSync(`${artifact}.json`, JSON.stringify(resp.structured, null, 2) + '\n', { flag: 'wx' });
+      return findings;
+    } catch (error) {
+      throw new Stop(SITUATION.other, `UI check failed: ${String(error)}`, String(error));
+    }
   } finally {
     await server.stop();
   }

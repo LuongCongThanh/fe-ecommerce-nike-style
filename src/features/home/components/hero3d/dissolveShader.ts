@@ -1,9 +1,9 @@
 /**
- * Noise-dissolve cross-fade between two hero slide textures (docs/FRONTEND-GUIDE.md §27).
+ * Noise-dissolve cross-fade between two hero slide textures (docs/architecture.md#3d-trong-storefront).
  *
  * One 2D simplex field drives everything: the dissolve front, the idle ripple, and the pointer
  * wake. Reusing a single noise function is why the whole effect fits in one material — see
- * `docs/FRONTEND-GUIDE.md` for why the hero deliberately avoids `@react-three/drei`.
+ * `docs/architecture.md` for why the hero deliberately avoids `@react-three/drei`.
  */
 
 /** Ashima Arts simplex noise, MIT-licensed, unchanged apart from formatting. */

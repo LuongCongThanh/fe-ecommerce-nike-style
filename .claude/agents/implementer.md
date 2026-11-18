@@ -13,7 +13,7 @@ Working method
 2. Build test-first with the `mattpocock-skills:tdd` skill (not the `agentic-awesome-skills` one). The plan lists the seams; do not ask the human to confirm them. Follow `.claude/rules/process/testing.md`.
 3. If the spec has `kind: ui`, also use the `fashion-storefront-ui-director` skill.
 4. Run the relevant gates (`pnpm typecheck`, `pnpm lint`, `pnpm test`, `pnpm build`). When a gate is red, use the `mattpocock-skills:diagnosing-bugs` skill before changing code, then fix. Use the `explorer` agent for wide searches.
-5. Before returning `ok`, write `$AGENT_TASK_DIR/report.md` in the format of `docs/plan/README.md` (Done, Deviations from spec and remaining risks, Old tests touched, Checks run, Acceptance criteria). Do not add the "Đề xuất cho môi trường" section; the retro step does.
+5. Before returning `ok`, write `$AGENT_TASK_DIR/report.md` in the format of `docs/agents/issue-tracker.md` (Done, Deviations from spec and remaining risks, Old tests touched, Checks run, Acceptance criteria). Do not add the "Đề xuất cho môi trường" section; the retro step does.
 
 Hard limits
 

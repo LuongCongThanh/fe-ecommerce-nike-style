@@ -1,5 +1,5 @@
 {
-  "$comment": "Source of truth for .claude/hooks/agent-guard.ts and scripts/agent-run. Human-readable table: AGENT-SYSTEM-PLAN.md, section 'Deny list storefront'. Contract + env vars (AGENT_RUN, AGENT_PHASE, AGENT_TASK_DIR, AGENT_APPROVED): docs/plan/README.md, section 'Agent guard'. Always on (every session): secretFiles + stopFile. Only when AGENT_RUN=1: everything else.",
+  "$comment": "Executable source of truth for guard hooks and scripts/agent-run. Human-readable contract and env vars: docs/agents/runner.md#guard-contract. Task schema: docs/agents/issue-tracker.md. Always on: secretFiles + stopFile. AGENT_RUN=1 adds automation rules.",
   "stopFile": ".agent-stop",
   "secretFiles": {
     "deny": [".env", ".env.*"],
@@ -11,6 +11,7 @@
     "pnpm lint:fix",
     "pnpm format",
     "pnpm format:check",
+    "pnpm docs:check",
     "pnpm test",
     "pnpm build",
     "pnpm exec vitest run *",

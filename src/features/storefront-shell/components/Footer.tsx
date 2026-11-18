@@ -20,7 +20,7 @@ const UTILITY_GROUPS = [
 export function Footer() {
   return (
     // Statement close instead of the generic "columns of links + tiny copyright" template
-    // (homepage-improvement-plan.md P2-1) — the brand statement leads on its own, the utility
+    // (design.md; historical footer adjustment) — the brand statement leads on its own, the utility
     // links + contact info sit in one row below a divider instead of competing as equal-weight
     // columns beside it. Same links/content as before, just re-weighted.
     <footer className="bg-surface-inverse text-surface-inverse-foreground">

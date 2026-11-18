@@ -114,7 +114,7 @@ Do not treat a hook failure as something to bypass; fix the underlying lint/type
 
 - The task `spec.md` (`docs/plan/tasks/<NN>-<name>/spec.md`) is the source of the delivery scope. Do not silently expand the acceptance criteria.
 - Branch, commit, and PR should share the same task/domain vocabulary where possible.
-- Task state is the frontmatter `status` (see `docs/plan/README.md`). Humans set `todo`, `ready-for-agent`, `done`; the `agent-run` script sets the rest. Do not edit `status` unless asked.
+- Task state is the frontmatter `status` (see `docs/agents/issue-tracker.md`). Humans set `todo`, `ready-for-agent`, `done`; the `agent-run` script sets the rest. Do not edit `status` unless asked.
 
 ## Safe recovery
 

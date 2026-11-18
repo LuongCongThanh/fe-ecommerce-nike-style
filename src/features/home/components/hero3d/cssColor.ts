@@ -3,7 +3,7 @@ import { Color, SRGBColorSpace } from 'three';
 /**
  * Resolves a design-token custom property to a `THREE.Color`.
  *
- * The tokens in `@repo/tailwind-config` are authored in `oklch()`, which `THREE.Color` cannot parse
+ * The tokens in `src/styles/theme.css` are authored in `oklch()`, which `THREE.Color` cannot parse
  * and which `getComputedStyle` hands back verbatim for custom properties. Painting the colour onto
  * a 1×1 canvas makes the browser itself do the conversion, so this keeps working for whatever
  * colour space the tokens move to next.

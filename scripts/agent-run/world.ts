@@ -101,7 +101,22 @@ export function makeWorld(opts: { tasks?: Record<string, string>; handlers?: Han
     retro: () => reply(undefined, { sessionId: 'impl-1', numTurns: 4 }),
     'retro-need': () => reply({ turns_needed: 4, reason: 'more to review' }),
     'pr-body': () => reply({ body: 'body' }),
-    ui: () => reply({ result: 'ok', reason: 'fine', findings: [] }),
+    ui: (req) => {
+      const artifact = /UI_ARTIFACT=(.+)/.exec(req.prompt)?.[1] as string;
+      writeFileSync(artifact, Buffer.from([137, 80, 78, 71, 13, 10, 26, 10]));
+      return reply({
+        result: 'ok',
+        reason: 'fine',
+        findings: [],
+        evidence: {
+          url: 'http://localhost:3100/vi',
+          viewport: { width: 390, height: 844 },
+          state: 'catalog loaded',
+          actions: ['opened catalog'],
+          artifact,
+        },
+      });
+    },
     handoff: () => reply(undefined, { result: '# Handoff\n' }),
   };
 

@@ -1,13 +1,10 @@
-import { isSkuReferencedInAnyOrder } from '@/lib/api/mocks/order-fixtures';
-import { matchesSearchQuery } from '@/lib/api/mocks/search-match';
-import type { Category, CategoryInput, Gender, Product, ProductInput } from '@/lib/schemas/catalog/catalog';
+import type { Category, Gender, Product } from '@/lib/schemas/catalog/catalog';
 
 /**
- * Mock catalog per Decision #95/#96 (decision-log.md; supersedes Decision #50's 3-top-level shape): 6
+ * Mock catalog per Decision #95/#96 (historical fixture decision; supersedes Decision #50's 3-top-level shape): 6
  * top-level Categories (`Tops`/`Bottoms`/`Shoes`/`Bags`/`Accessories`/`Sale`), each with every leaf
- * sub-category from the storefront header's `NAV_CATEGORIES` (`data/nav-categories.ts`) — full 1:1
- * slug+name parity, so every header/mega-menu link resolves on the real category page instead of
- * hitting "Category not found". Only the 6 leaves seeded before Decision #96 (`running`/`basketball`
+ * sub-category from the historical header category fixture — matching
+ * slug+name parity in the mock catalog. Current navigation reads API categories. Only the 6 leaves seeded before Decision #96 (`running`/`basketball`
  * under `shoes`, `t-shirts`/`hoodies` under `tops`, `hats` under `accessories`, and `bags` itself)
  * have actual mock Products — every other leaf added by #96 is a valid, empty Category node (no
  * fabricated Product data for sub-categories nobody asked to seed; Simplicity First). ~24 Products
@@ -396,23 +393,6 @@ export const mockProducts: Product[] = productSeeds.map((seed) => ({
   reviewCount: seed.reviewCount,
 }));
 
-/** Resolves a Category slug (top-level or leaf) to itself plus every descendant Category id — used to filter Products by a Category tree node. */
-export function resolveCategoryIds(categories: Category[], slug: string): string[] {
-  const match = categories.find((c) => c.slug === slug);
-  if (match === undefined) return [];
-
-  const ids = [match.id];
-  const children = categories.filter((c) => c.parentId === match.id);
-  for (const child of children) {
-    ids.push(...resolveCategoryIds(categories, child.slug));
-  }
-  return ids;
-}
-
-export function minSkuPrice(product: Product): number {
-  return Math.min(...product.skus.map((sku) => sku.price));
-}
-
 /** Finds a Product+SKU pair by SKU id across the whole catalog — used to resolve/snapshot at Reservation/Order-commit time (issue #16). */
 export function findProductBySkuId(skuId: string): { product: Product; sku: Product['skus'][number] } | undefined {
   for (const product of mockProducts) {
@@ -425,21 +405,12 @@ export function findProductBySkuId(skuId: string): { product: Product; sku: Prod
 /**
  * Permanently commits `quantity` of `skuId`'s stock (Reservation → committed on a successful Place
  * Order — Decision #38) — mutates the seeded SKU in place, clamped at 0 so a double-commit can't go
- * negative. There is no un-commit; CANCELLED/RETURNED release stock via a separate path (issue #17).
+ * negative. The current customer mock does not restore stock on cancellation or return.
  */
 export function commitSkuStock(skuId: string, quantity: number): void {
   const match = findProductBySkuId(skuId);
   if (match === undefined) return;
   match.sku.stock = Math.max(0, match.sku.stock - quantity);
-}
-
-/** Inverse of `commitSkuStock` — a returned Order's stock going back to `available` (issue #22's
- * Return approval). A no-op if the SKU no longer exists (deleted Product) rather than throwing, same
- * "known gap, not a crash" stance as `isSkuReferencedInAnyOrder`'s pre-`skuId` orders. */
-export function releaseSkuStock(skuId: string, quantity: number): void {
-  const match = findProductBySkuId(skuId);
-  if (match === undefined) return;
-  match.sku.stock += quantity;
 }
 
 // Snapshot taken once at module load, before any `commitSkuStock` mutation — `mockProducts[i].skus` is
@@ -455,244 +426,4 @@ export function resetMockCatalogStockForTesting(): void {
       if (initial !== undefined) sku.stock = initial;
     }
   }
-}
-
-// --- Admin CRUD (issue #19) — read/write on the same `mockProducts` array the storefront reads from,
-// so a real backend swap only has to change the transport, not the shape callers already depend on. ---
-
-export type CatalogSort = 'newest' | 'price_asc' | 'price_desc';
-
-export interface ListProductsQuery {
-  category?: string;
-  gender?: Gender;
-  search?: string;
-  minPrice?: number;
-  maxPrice?: number;
-  sort?: CatalogSort;
-  page: number;
-  pageSize: number;
-}
-
-function sortProducts(products: Product[], sort: CatalogSort): Product[] {
-  const sorted = [...products];
-  if (sort === 'price_asc') return sorted.sort((a, b) => minSkuPrice(a) - minSkuPrice(b));
-  if (sort === 'price_desc') return sorted.sort((a, b) => minSkuPrice(b) - minSkuPrice(a));
-  // 'newest' — mock has no createdAt, fall back to stable insertion order reversed.
-  return sorted.reverse();
-}
-
-/** Shared filter+sort+paginate behind both the public PLP listing and Admin's product table — one
- * place to get right, instead of two independently-hand-rolled slices of the same logic. */
-export function listProducts(query: ListProductsQuery): { data: Product[]; total: number; totalPages: number } {
-  let filtered = mockProducts.slice();
-
-  if (query.category !== undefined && query.category !== '') {
-    const categoryIds = new Set(resolveCategoryIds(mockCategories, query.category));
-    filtered = filtered.filter((p) => categoryIds.has(p.categoryId));
-  }
-  if (query.gender !== undefined) {
-    filtered = filtered.filter((p) => p.gender === query.gender);
-  }
-  if (query.search !== undefined && query.search !== '') {
-    // Accent-insensitive + slight-misspelling-tolerant (issue #11) — see search-match.ts.
-    const search = query.search;
-    filtered = filtered.filter((p) => matchesSearchQuery(p.name, search) || matchesSearchQuery(p.description, search));
-  }
-  if (query.minPrice !== undefined) {
-    filtered = filtered.filter((p) => minSkuPrice(p) >= (query.minPrice ?? 0));
-  }
-  if (query.maxPrice !== undefined) {
-    filtered = filtered.filter((p) => minSkuPrice(p) <= (query.maxPrice ?? Infinity));
-  }
-
-  filtered = sortProducts(filtered, query.sort ?? 'newest');
-
-  const total = filtered.length;
-  const totalPages = Math.max(1, Math.ceil(total / query.pageSize));
-  const start = (query.page - 1) * query.pageSize;
-  const data = filtered.slice(start, start + query.pageSize);
-
-  return { data, total, totalPages };
-}
-
-export function findProductById(id: string): Product | undefined {
-  return mockProducts.find((p) => p.id === id);
-}
-
-export function findProductBySlug(slug: string): Product | undefined {
-  return mockProducts.find((p) => p.slug === slug);
-}
-
-let nextProductId = mockProducts.length + 1;
-let nextSkuSuffix = 1;
-
-function toSku(input: ProductInput['skus'][number]): Product['skus'][number] {
-  return {
-    id: input.id ?? `sku-new-${String(nextSkuSuffix++)}`,
-    price: input.price,
-    stock: input.stock,
-    color: input.color,
-    size: input.size,
-  };
-}
-
-export function createProduct(input: ProductInput): Product {
-  const product: Product = {
-    id: `p-new-${String(nextProductId++)}`,
-    slug: input.slug,
-    name: input.name,
-    description: input.description,
-    images: input.images,
-    categoryId: input.categoryId,
-    gender: input.gender,
-    skus: input.skus.map(toSku),
-    rating: 0,
-    reviewCount: 0,
-  };
-  mockProducts.push(product);
-  return product;
-}
-
-export type ProductWriteResult = { ok: true; product: Product } | { ok: false; code: string; message: string; skuId: string };
-
-/** Rejects if the update would remove a SKU that's referenced by an Order (issue #19) — a SKU present
- * on the live Product before the update but absent from `input.skus` is being removed. */
-export function updateProduct(id: string, input: ProductInput): ProductWriteResult {
-  const product = findProductById(id);
-  if (product === undefined) {
-    return { ok: false, code: 'NOT_FOUND', message: 'Không tìm thấy sản phẩm.', skuId: '' };
-  }
-
-  const keptSkuIds = new Set(input.skus.map((s) => s.id).filter((skuId): skuId is string => skuId !== undefined));
-  const removedSkuIds = product.skus.map((s) => s.id).filter((skuId) => !keptSkuIds.has(skuId));
-  const blockedSkuId = removedSkuIds.find((skuId) => isSkuReferencedInAnyOrder(skuId));
-  if (blockedSkuId !== undefined) {
-    return { ok: false, code: 'SKU_REFERENCED_IN_ORDER', message: 'Không thể xoá biến thể đã xuất hiện trong đơn hàng.', skuId: blockedSkuId };
-  }
-
-  product.slug = input.slug;
-  product.name = input.name;
-  product.description = input.description;
-  product.images = input.images;
-  product.categoryId = input.categoryId;
-  product.gender = input.gender;
-  product.skus = input.skus.map(toSku);
-
-  return { ok: true, product };
-}
-
-export type ProductDeleteResult = { ok: true } | { ok: false; code: string; message: string };
-
-/** Refuses to hard-delete a Product with any SKU referenced by an Order (issue #19's acceptance criteria). */
-export function deleteProduct(id: string): ProductDeleteResult {
-  const product = findProductById(id);
-  if (product === undefined) {
-    return { ok: false, code: 'NOT_FOUND', message: 'Không tìm thấy sản phẩm.' };
-  }
-
-  const referenced = product.skus.some((sku) => isSkuReferencedInAnyOrder(sku.id));
-  if (referenced) {
-    return { ok: false, code: 'PRODUCT_REFERENCED_IN_ORDER', message: 'Không thể xoá sản phẩm đã xuất hiện trong đơn hàng.' };
-  }
-
-  const index = mockProducts.findIndex((p) => p.id === id);
-  mockProducts.splice(index, 1);
-  return { ok: true };
-}
-
-const initialProductSnapshot: Product[] = mockProducts.map((p) => ({ ...p, images: [...p.images], skus: p.skus.map((s) => ({ ...s })) }));
-
-/** Test-only — undoes create/update/delete on top of the stock reset, back to the module's seed state. */
-export function resetMockCatalogProductsForTesting(): void {
-  mockProducts.length = 0;
-  mockProducts.push(...initialProductSnapshot.map((p) => ({ ...p, images: [...p.images], skus: p.skus.map((s) => ({ ...s })) })));
-  nextProductId = mockProducts.length + 1;
-  nextSkuSuffix = 1;
-}
-
-// --- Admin Category CRUD (issue #20) — same in-place-mutation pattern as the Product CRUD above. ---
-
-export type CategoryWriteResult = { ok: true; category: Category } | { ok: false; code: string; message: string };
-export type CategoryDeleteResult = { ok: true } | { ok: false; code: string; message: string };
-
-export function findCategoryById(id: string): Category | undefined {
-  return mockCategories.find((c) => c.id === id);
-}
-
-/** True if `candidateId` is `ancestorId` itself or a descendant of it — used to refuse a move that would create a cycle. */
-function isSameOrDescendant(candidateId: string, ancestorId: string): boolean {
-  if (candidateId === ancestorId) return true;
-  const candidate = findCategoryById(candidateId);
-  if (candidate?.parentId == null) return false;
-  return isSameOrDescendant(candidate.parentId, ancestorId);
-}
-
-let nextCategorySuffix = 1;
-
-export function createCategory(input: CategoryInput): CategoryWriteResult {
-  if (input.parentId !== null && findCategoryById(input.parentId) === undefined) {
-    return { ok: false, code: 'PARENT_NOT_FOUND', message: 'Không tìm thấy danh mục cha.' };
-  }
-
-  const category: Category = {
-    id: `cat-new-${String(nextCategorySuffix++)}`,
-    slug: input.slug,
-    name: input.name,
-    parentId: input.parentId,
-  };
-  mockCategories.push(category);
-  return { ok: true, category };
-}
-
-/** Rejects an unknown/self/cycle-forming `parentId` (issue #20's acceptance criteria). */
-export function updateCategory(id: string, input: CategoryInput): CategoryWriteResult {
-  const category = findCategoryById(id);
-  if (category === undefined) {
-    return { ok: false, code: 'NOT_FOUND', message: 'Không tìm thấy danh mục.' };
-  }
-
-  if (input.parentId !== null) {
-    if (findCategoryById(input.parentId) === undefined) {
-      return { ok: false, code: 'PARENT_NOT_FOUND', message: 'Không tìm thấy danh mục cha.' };
-    }
-    if (isSameOrDescendant(input.parentId, id)) {
-      return { ok: false, code: 'PARENT_CYCLE', message: 'Không thể đặt danh mục cha là chính nó hoặc danh mục con của nó.' };
-    }
-  }
-
-  category.slug = input.slug;
-  category.name = input.name;
-  category.parentId = input.parentId;
-  return { ok: true, category };
-}
-
-/** Refuses to delete a Category with child Categories or Products assigned to it (issue #20's acceptance criteria). */
-export function deleteCategory(id: string): CategoryDeleteResult {
-  const category = findCategoryById(id);
-  if (category === undefined) {
-    return { ok: false, code: 'NOT_FOUND', message: 'Không tìm thấy danh mục.' };
-  }
-
-  const hasChildren = mockCategories.some((c) => c.parentId === id);
-  if (hasChildren) {
-    return { ok: false, code: 'HAS_CHILDREN', message: 'Không thể xoá danh mục còn danh mục con.' };
-  }
-
-  const hasProducts = mockProducts.some((p) => p.categoryId === id);
-  if (hasProducts) {
-    return { ok: false, code: 'HAS_PRODUCTS', message: 'Không thể xoá danh mục đang có sản phẩm.' };
-  }
-
-  const index = mockCategories.findIndex((c) => c.id === id);
-  mockCategories.splice(index, 1);
-  return { ok: true };
-}
-
-const initialCategorySnapshot: Category[] = mockCategories.map((c) => ({ ...c }));
-
-/** Test-only — undoes create/update/delete, back to the module's seed state. */
-export function resetMockCategoriesForTesting(): void {
-  mockCategories.length = 0;
-  mockCategories.push(...initialCategorySnapshot.map((c) => ({ ...c })));
-  nextCategorySuffix = 1;
 }

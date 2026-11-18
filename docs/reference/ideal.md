@@ -1,7 +1,5 @@
 # Đề xuất kiến trúc ban đầu
 
-Tài liệu lịch sử cho hai ADR về cấu trúc repository và CMS. Đề xuất ban đầu gồm ba ứng dụng Storefront, Admin và CMS trong Turborepo, cùng package chia sẻ cho UI, cấu hình và dữ liệu. CMS tự xây dự kiến quản lý landing page, blog, content block và campaign.
+Status: historical stub supporting early ADRs. The initial proposal grouped storefront/admin/CMS as three apps with shared packages in a monorepo; that tree is not current implementation.
 
-- [ADR về cấu trúc repo](../adr/0001-single-repo-khong-monorepo.md) ghi quyết định ở giai đoạn đầu.
-- [ADR về headless CMS](../adr/0002-headless-cms-thay-vi-tu-xay.md) ghi lý do chọn tích hợp CMS có sẵn.
-- [Kiến trúc API, CMS và Storefront](../plan/three-repo-restructure.md) ghi ranh giới và kế hoạch triển khai được cập nhật sau đó.
+[ADR 0001](../adr/0001-single-repo-khong-monorepo.md) records the small-team decision at the time. Today storefront is an independent root app; [architecture](../architecture.md) owns current structure, [API integration](../api-integration.md) owns cross-repo seams and [roadmap](../roadmap.md) owns pending dependencies. Git retains the original proposal.

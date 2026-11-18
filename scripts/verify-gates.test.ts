@@ -91,21 +91,29 @@ describe('runGates', () => {
   it('runs the four gates, passes, exit 0', async () => {
     const { runner, calls } = fakeRunner();
     const report = await runGates({ worktree: wt, kind: 'logic', runner });
-    expect(calls).toEqual(['pnpm lint', 'pnpm typecheck', 'pnpm test', 'pnpm format:check']);
+    expect(calls).toEqual(['pnpm lint', 'pnpm typecheck', 'pnpm test', 'pnpm format:check', 'pnpm docs:check']);
     expect(report.ok).toBe(true);
     expect(report.failureType).toBeNull();
-    expect(report.gates.map((g) => g.status)).toEqual(['pass', 'pass', 'pass', 'pass']);
+    expect(report.gates.map((g) => g.status)).toEqual(['pass', 'pass', 'pass', 'pass', 'pass']);
     expect(exitCodeFor(report)).toBe(0);
   });
 
   it('a red gate gets a trimmed log, failureType gate_failed, exit 1; other gates still run', async () => {
     const { runner, calls } = fakeRunner({ failing: ['pnpm test'] });
     const report = await runGates({ worktree: wt, kind: 'docs', runner, maxLogChars: 5 });
-    expect(calls).toHaveLength(4);
+    expect(calls).toHaveLength(5);
     const test = report.gates.find((g) => g.name === 'test');
     expect(test?.status).toBe('fail');
     expect(test?.log.length).toBeLessThan(60);
     expect(test?.log).toContain('trimmed');
+    expect(report.failureType).toBe('gate_failed');
+    expect(exitCodeFor(report)).toBe(1);
+  });
+
+  it('a docs check failure is a gate failure with exit 1', async () => {
+    const { runner } = fakeRunner({ failing: ['pnpm docs:check'] });
+    const report = await runGates({ worktree: wt, kind: 'docs', runner });
+    expect(report.gates.find((gate) => gate.name === 'docs:check')).toMatchObject({ status: 'fail' });
     expect(report.failureType).toBe('gate_failed');
     expect(exitCodeFor(report)).toBe(1);
   });

@@ -1,6 +1,6 @@
 /**
  * Pure decision logic for agent-guard (no IO). See .claude/agent-guard.json and
- * docs/plan/README.md ("Agent guard") for the contract.
+ * docs/agents/runner.md ("Guard contract") for the contract.
  */
 import { lstatSync } from 'node:fs';
 import { isAbsolute, posix, relative, resolve, sep } from 'node:path';

@@ -19,8 +19,10 @@ export const reviewerPrompt = (taskDir: string): string =>
   `Review the current branch against dev with the mattpocock-skills:code-review skill. Task directory: ${taskDir} (spec.md is the spec; the fixed point is dev). Final answer: only the JSON object.`;
 
 // --- UI checks (D30). Deliberately minimal: step 8 tunes this against a real UI task. ---
-export const uiCheckPrompt = (taskDir: string, url: string): string =>
-  `The dev server for this branch is running at ${url}. Using the browser tools, check the pages this task touches (see ${taskDir}/spec.md and plan.md) with the mobile-native, break-ui and impeccable (audit) skills. Report only real defects as findings (severity blocker/major only when the acceptance criteria or usability on mobile is broken). Do not change files. Final answer: only the JSON object (reviewer schema).`;
+export const uiCheckPrompt = (taskDir: string, url: string, artifact: string): string =>
+  `The dev server for this branch is running at ${url}. Using the browser tools, check the pages this task touches (see ${taskDir}/spec.md and plan.md) with the mobile-native, break-ui and impeccable (audit) skills. Report only real defects as findings (severity blocker/major only when the acceptance criteria or usability on mobile is broken). Capture a fresh PNG screenshot using the browser screenshot tool at this exact absolute path: ${artifact}
+UI_ARTIFACT=${artifact}
+Return the dedicated UI schema: result, reason, findings, and evidence {url (actual checked route on this devserver origin), viewport {width,height}, state (checked UI state), actions (nonempty list of checks/actions), artifact (the exact screenshot path)}. Read the screenshot and report actual checks, never infer success from empty findings. If browser tools or saving the screenshot are unavailable return blocked, even with empty findings. Only write that screenshot; do not change source files. Final answer: only the JSON object.`;
 
 export const retroPrompt = (taskDir: string, kind: TaskKind | null = null): string =>
   `/mattpocock-skills:retro\n\nReview THIS session (the work on task ${taskDir}); include the skills and agents used. Do not stop to present candidates interactively: append the candidate list, in severity order, as bullets under the heading "${REPORT_HEADING}" at the end of ${taskDir}/report.md (create the heading if missing). Touch no other file.${

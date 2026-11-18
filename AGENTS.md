@@ -12,8 +12,8 @@
 
 - `README.md`: phạm vi sản phẩm, kiến trúc, môi trường và quy ước repository.
 - `CONTRIBUTING.md`: branch, commit, pull request, hook và CI.
-- `docs/nike-ui-ux-analysis.md` và `design.md`: định hướng UI.
-- `docs/plan/storefront-restructure-plan.md`: thứ tự chuyển sang API thật và ranh giới feature.
+- `design.md`: hợp đồng visual; `docs/reference/ux-patterns.md` chỉ là tham khảo UX.
+- `docs/architecture.md`: cấu trúc hiện tại; `docs/api-integration.md`: transport/cutover; `docs/roadmap.md`: việc chưa làm.
 - `docs/adr/`: các quyết định kiến trúc đã được chấp nhận và có trên branch này.
 
 - Không dựa vào đường dẫn tài liệu trước khi xác nhận nó tồn tại trong checkout hiện tại.
@@ -34,6 +34,7 @@ corepack pnpm install --frozen-lockfile
 ```bash
 pnpm lint
 pnpm format:check
+pnpm docs:check
 pnpm typecheck
 pnpm test
 pnpm build
@@ -62,7 +63,7 @@ pnpm build
 - Codex và Claude Code dùng cùng spec, trạng thái, tiêu chí nghiệm thu và quy tắc Git. Với task đã đủ điều kiện, làm lần lượt: đọc spec → lập `plan.md` bằng skill `plan-task` → triển khai và ghi `report.md` → chạy kiểm tra → review theo spec và quy tắc repo.
 - Chọn một công cụ cho từng bước. Khi đổi công cụ, tiếp tục từ `spec.md`, `plan.md`, diff hiện tại và `report.md` nếu đã có. Dùng `handoff.md` nếu lần chạy trước để lại. Kiểm tra lại bước nào đã hoàn thành trước khi làm tiếp.
 
-- Task nằm trong file Markdown cục bộ `docs/plan/tasks/<NN>-<tên>/spec.md`, không dùng GitHub Issues. Định dạng, vòng đời trạng thái và người đặt từng trạng thái: `docs/plan/README.md`; cách thao tác: `docs/agents/issue-tracker.md`.
+- Task nằm trong file Markdown cục bộ `docs/plan/tasks/<NN>-<tên>/spec.md`, không dùng GitHub Issues. Schema, vòng đời, quyền status và ngoại lệ Wayfinder: `docs/agents/issue-tracker.md`; index điều hướng: `docs/plan/README.md`; vận hành: `docs/agents/runner.md`.
 - Chỉ nhận task có `status: ready-for-agent` và mọi `blocked-by` đã `done`. Agent không tự đổi trạng thái `todo`, `ready-for-agent`, `done`.
 - Tạo branch từ `dev` theo `<type>/<NN>-<slug>` (hoặc `<type>/<slug>`; slug nói rõ tính năng); dùng Conventional Commits.
 - Feature/fix target `dev`; `main` chỉ nhận release PR từ `dev`.
@@ -71,3 +72,5 @@ pnpm build
 - Thực hiện từng task theo thứ tự trong checkout hiện tại. Áp dụng cho Codex, Claude Code và `agent-run`. Không tạo thêm Git worktree, kể cả cho bước kiểm tra. Xử lý task đang dở trước khi chuyển sang task khác.
 - Ngoại lệ: chạy `agent-run` được coi là người dùng đã yêu cầu rõ việc tạo branch, commit, push branch của task đó và mở PR vào `dev`. Chính script `agent-run` thực hiện các thao tác git này, agent không tự làm. Không bao giờ tự merge.
 - `AGENTS.md`, `CLAUDE.md`, `.claude/rules/process/git-workflow.md`, `docs/agents/issue-tracker.md` do người sửa cùng Codex hoặc Claude Code trong phiên tương tác, không để agent tự sửa khi chạy `agent-run`.
+
+- Đọc `GLOSSARY.md` nếu có theo chủ đề và ADR liên quan trước khi đặt tên domain; báo xung đột thay vì tự đổi nghĩa. Glossary API thuộc `be-demo`; thuật ngữ kỹ thuật CMS thuộc repo `cms`. Không bắt buộc các sibling repo có mặt trong checkout frontend.

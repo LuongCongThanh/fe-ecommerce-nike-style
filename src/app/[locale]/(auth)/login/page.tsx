@@ -1,8 +1,6 @@
 'use client';
 
-// Hallmark · synced with apps/admin's Split Studio login (design.md § Variants) — same macrostructure
-// and shared login.css mechanics; storefront keeps its real register/forgot-password links (no
-// staff-only restrictions) and its own react-hook-form LoginForm for validation + submit.
+// Storefront login composes local login.css mechanics with LoginForm validation.
 import { Suspense } from 'react';
 import { useRouter } from 'next/navigation';
 
