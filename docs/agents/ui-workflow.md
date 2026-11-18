@@ -1,6 +1,6 @@
 # UI workflow và chọn skill
 
-Owner: maintainer; visual contract ở [design](../../design.md), thực thi ở `.agents/skills/fashion-storefront-ui-director/SKILL.md` (Claude entry dùng cùng nguồn). Đọc [UX reference](../reference/ux-patterns.md) khi cần lý do pattern, không coi là spec.
+Owner: maintainer; visual contract và commerce interaction checks ở [design](../../design.md), thực thi ở `.agents/skills/fashion-storefront-ui-director/SKILL.md` (Claude entry dùng cùng nguồn).
 
 Gọi `/fashion-storefront-ui-director <brief>` trong Claude hoặc `$fashion-storefront-ui-director` trong Codex; nếu skill không được harness expose thì đọc source và ghi giới hạn. Chọn ít skill phù hợp, không cài/nạp catalog toàn bộ.
 

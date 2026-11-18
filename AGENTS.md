@@ -12,7 +12,7 @@
 
 - `README.md`: phạm vi sản phẩm, kiến trúc, môi trường và quy ước repository.
 - `CONTRIBUTING.md`: branch, commit, pull request, hook và CI.
-- `design.md`: hợp đồng visual; `docs/reference/ux-patterns.md` chỉ là tham khảo UX.
+- `design.md`: hợp đồng visual và các commerce interaction checks.
 - `docs/architecture.md`: cấu trúc hiện tại; `docs/api-integration.md`: transport/cutover; `docs/roadmap.md`: việc chưa làm.
 
 - Không dựa vào đường dẫn tài liệu trước khi xác nhận nó tồn tại trong checkout hiện tại.

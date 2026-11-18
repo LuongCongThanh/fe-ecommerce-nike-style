@@ -33,10 +33,16 @@ Login dùng `src/styles/login.css` cùng implementation auth: giữ visual store
 
 Desktop có khoảng thở cho ảnh; mobile ưu tiên nội dung, target size và bàn phím. Giữ container/section rhythm được đặt tên trong theme, tránh padding đồng loạt làm mất phân cấp. Card ảnh không thay thế accessible link/control. Loading cục bộ không phủ toàn trang cho một mutation nhỏ; toast và inline feedback không lặp.
 
+## Commerce interaction checks
+
+Navigation nhóm category theo cách người mua khám phá, không theo cấu trúc database. Mega menu chỉ dùng khi hierarchy và label đủ rõ; mobile cần drill-down, back, close và touch target dễ dùng. Search giữ query, loading, empty và error rõ ràng; không giả định autocomplete khi chưa có data. Filter, sort và page nằm trong URL để chia sẻ và dùng back/forward; mobile filter có apply/reset/count và trả focus đúng chỗ.
+
+Product card ưu tiên ảnh nhất quán, tên, giá và variant; không cạnh tranh bằng badge hoặc urgency giả. Giá gạch, discount, stock, shipping, return, payment và trust claim chỉ hiển thị khi có nguồn xác thực. PDP cho biết lý do action disabled và không báo thành công trước server. Kiểm tên dài, thiếu ảnh, hết hàng, lỗi có thể xử lý, semantic control, keyboard, alt, contrast và touch target. Motion/3D chỉ nâng cấp; nội dung, CTA và hành vi mua hàng vẫn đầy đủ khi ảnh, canvas hoặc animation thất bại.
+
 ## Motion, accessibility và review
 
 Motion giải thích hierarchy/continuity hoặc phản hồi thao tác; dùng Framer Motion hiện có trước khi thêm kỹ thuật. Root MotionConfig reducedMotion=user; từng interaction vẫn cần kiểm reduced motion, focus/keyboard, semantic control, alt và contrast. Không scroll-jacking hoặc ép autoplay media.
 
 3D hiện ở Hero và PDP. [Architecture](docs/architecture.md#3d-trong-storefront) sở hữu gate, disposal, shader pitfalls và baseline LCP. Scene là enhancement pixel, DOM giữ commerce/ARIA/focus; failure không chặn mua hàng. Surface mới cần lý do và quyết định riêng; không phát tán 3D sang grid/filter/cart/auth/checkout.
 
-Khi sửa UI đọc [workflow](docs/agents/ui-workflow.md), inspect route/data/messages, xác định desktop/mobile và loading/empty/error/unavailable/reduced-motion, rồi kiểm browser với viewport/state cụ thể. UX reference là nguồn ý tưởng, không tự đổi contract đã chấp nhận.
+Khi sửa UI đọc [workflow](docs/agents/ui-workflow.md), inspect route/data/messages, xác định desktop/mobile và loading/empty/error/unavailable/reduced-motion, rồi kiểm browser với viewport/state cụ thể. Pattern mới không tự đổi contract đã chấp nhận.
