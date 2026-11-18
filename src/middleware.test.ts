@@ -2,8 +2,9 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { describe, expect, it, vi } from 'vitest';
 
+const { intlMiddleware } = vi.hoisted(() => ({ intlMiddleware: vi.fn() }));
 vi.mock('next-intl/middleware', () => ({
-  default: () => () => NextResponse.next(),
+  default: () => intlMiddleware.mockImplementation(() => NextResponse.next()),
 }));
 
 const { middleware } = await import('@/middleware');
@@ -17,6 +18,13 @@ function makeRequest(path: string, cookies: Record<string, string> = {}): NextRe
 }
 
 describe('middleware', () => {
+  it('serves the root offline fallback without a locale redirect', () => {
+    const res = middleware(makeRequest('/~offline'));
+    expect(res.status).toBe(200);
+    expect(res.headers.get('location')).toBeNull();
+    expect(intlMiddleware).not.toHaveBeenCalled();
+  });
+
   it('redirects to login when accessing a protected path without a token', () => {
     const res = middleware(makeRequest('/vi/checkout'));
     expect(res.status).toBe(307);

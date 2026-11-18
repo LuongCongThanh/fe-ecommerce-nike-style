@@ -54,3 +54,7 @@ Di chuyển source sang `features/shared` đã có trong checkout. Cutover sessi
 Trước khi xóa adapter, role cũ, mock, dependency hoặc asset, kiểm tra consumer, URL động, convention Next.js, generator và test. Giữ MSW cho các luồng chưa có API. Sau khi di chuyển, rà import cũ và chạy gate theo [workflow phát triển](../../CONTRIBUTING.md#development-workflow).
 
 Schema form thuộc feature auth/account/checkout. Catalog sở hữu badge UI; transport types và quy tắc chuyển trạng thái đơn nằm ở SDK/schema. Query gọi endpoint trực tiếp khi service chỉ đổi tên hàm; giữ service có session side effect hoặc fallback thực sự như `getOrderOrNull`.
+
+## Provider cấp app
+
+`src/app/layout.tsx` mount `AppProviders` một lần cho toàn app, gồm route `~offline`. `src/app/[locale]/layout.tsx` chỉ thiết lập locale và `NextIntlClientProvider`; không tạo QueryClient hoặc session runtime thứ hai. Middleware cho `/~offline` đi thẳng tới fallback root, không thêm tiền tố locale.

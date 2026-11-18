@@ -18,6 +18,8 @@ const AUTH_ONLY_PATTERNS = [/^\/(vi|en)\/login$/, /^\/(vi|en)\/register$/];
 
 export function middleware(request: NextRequest): ReturnType<typeof intlMiddleware> {
   const { pathname } = request.nextUrl;
+  // Serwist's fallback is a root route, outside the locale segment.
+  if (pathname === '/~offline') return NextResponse.next();
   const token = request.cookies.get('access_token');
   const isLoggedIn = token != null && token.value.length > 0;
 

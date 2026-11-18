@@ -170,4 +170,4 @@ Các hồ sơ Wayfinder dùng quy trình riêng tại [tracker](../agents/issue-
 | [Ranh giới feature và các lớp service có còn cần thiết?](tasks/10-source-boundaries/spec.md) | Task | done |
 | [Workflow runner, task tracker và CI đã nhất quán khi tiếp tục công việc chưa?](tasks/11-runner-workflow/spec.md) | Task | todo |
 | [Tài liệu nào là nguồn chuẩn và phần nào có thể gộp hoặc xóa?](tasks/12-documentation-ownership/spec.md) | Task | todo |
-| [Provider cấp app nên được mount ở layout nào?](tasks/13-provider-ownership/spec.md) | Task | todo |
+| [Provider cấp app nên được mount ở layout nào?](tasks/13-provider-ownership/spec.md) | Task | done |

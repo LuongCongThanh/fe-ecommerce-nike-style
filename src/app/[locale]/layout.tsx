@@ -3,8 +3,6 @@ import { notFound } from 'next/navigation';
 import { NextIntlClientProvider } from 'next-intl';
 import { setRequestLocale } from 'next-intl/server';
 
-import { Providers } from '@/app/_composition/AppProviders';
-
 const locales = ['vi', 'en'];
 
 export function generateStaticParams() {
@@ -24,9 +22,5 @@ export default async function LocaleLayout({
 
   setRequestLocale(locale);
 
-  return (
-    <NextIntlClientProvider>
-      <Providers>{children}</Providers>
-    </NextIntlClientProvider>
-  );
+  return <NextIntlClientProvider>{children}</NextIntlClientProvider>;
 }

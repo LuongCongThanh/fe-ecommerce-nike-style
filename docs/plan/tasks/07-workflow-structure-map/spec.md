@@ -25,6 +25,8 @@ Ngày 18/11/2026, chủ repo đồng ý bao gồm workflow phát triển và Git
 
 - [Ranh giới feature và các lớp service có còn cần thiết?](../10-source-boundaries/spec.md): bỏ alias endpoint, chuyển form/UI/composition về nơi sở hữu và giữ seam có hành vi; phát hiện câu hỏi provider mount còn mở.
 
+- [Provider cấp app nên được mount ở layout nào?](../13-provider-ownership/spec.md): root layout sở hữu một bộ provider; locale giữ bản dịch, offline root được phục vụ trực tiếp và có regression/E2E.
+
 ## Not yet specified
 
 Ảnh hưởng của việc gộp hoặc xóa tài liệu dài tới các skill và prompt nạp tài liệu; các thay đổi tiếp theo chỉ được xác định sau khi kiểm kê consumer. Cutover API và thay đổi nghiệp vụ là nỗ lực riêng.
