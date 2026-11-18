@@ -22,7 +22,7 @@ allow-test-changes: false
 
 Parser là subset frontmatter, không phải YAML tổng quát: flat key:value, blocker inline/dash list và nested approved.files/commands. `approved` là danh sách quyền file/lệnh do người cấp, không phải bool sign-off spec. Bỏ trống/false không cấp quyền. Runner đọc lúc startup và chuyển sang AGENT_APPROVED; không mở khóa secret/stop file. `retro-turns` là số lượt bổ sung người cấp khi retro hết hạn, không phải token/lượt agent đã dùng. `allow-test-changes: true` cho phép refactor sửa test cũ theo gate hiện hành.
 
-Body delivery: `# Spec NN: title`, `Branch:`, Problem Statement, Solution, Acceptance criteria. Tạo mới ở todo, thêm index; giữ status khi chỉ sửa nội dung. Đọc spec rồi plan/report/handoff và diff trước khi tiếp tục. Đọc GLOSSARY root nếu có và ADR theo chủ đề; dùng từ vựng chuẩn, báo xung đột ADR thay vì tự đổi domain.
+Body delivery: `# Spec NN: title`, `Branch:`, Problem Statement, Solution, Acceptance criteria. Tạo mới ở todo, thêm index; giữ status khi chỉ sửa nội dung. Đọc spec rồi plan/report/handoff và diff trước khi tiếp tục. Đọc GLOSSARY root nếu có và tài liệu owner theo chủ đề; dùng từ vựng chuẩn, báo xung đột thay vì tự đổi domain.
 
 Artifact: plan.md trước code (steps/seams/risks), report.md trước implementer trả ok, metric.md cho trước/sau và bảng token, handoff.md cho việc dang dở. Không xóa artifact khi còn resume/PR/blocker hoặc evidence độc nhất. Comment append dưới `## Comments` có ngày, không viết lại lịch sử. Bare `#42` trên GitHub là PR, task dùng folder name.
 

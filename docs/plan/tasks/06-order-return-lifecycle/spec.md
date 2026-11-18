@@ -44,4 +44,4 @@ Storefront hiển thị trạng thái đơn và lịch sử yêu cầu trả hà
 ## Điều kiện trước khi giao triển khai
 
 - Đối chiếu hợp đồng API với backend để xác nhận dữ liệu lịch sử yêu cầu, kết quả từ chối và tín hiệu xác nhận đã nhận đủ hàng.
-- Nếu API tương ứng chưa có, thống nhất phạm vi dùng MSW theo ADR 0003 trước khi triển khai. Task này chỉ ghi yêu cầu của storefront.
+- Nếu API tương ứng chưa có, thống nhất phạm vi dùng MSW theo [API integration](../../../api-integration.md) trước khi triển khai. Task này chỉ ghi yêu cầu của storefront.
