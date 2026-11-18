@@ -7,7 +7,7 @@ argument-hint: '[ticket path or question]'
 
 # Storefront workflow
 
-Use this skill in an interactive chat. Read `AGENTS.md` and resolve any ticket reference to its existing `spec.md` under `docs/plan/tasks/`. For tracker writes, read `docs/agents/issue-tracker.md` for schema/lifecycle/report ownership and `docs/plan/README.md` only for index navigation. For a domain discussion, read the relevant parts of `GLOSSARY.md` and `docs/adr/` when present.
+Use this skill in an interactive chat. Read `AGENTS.md` and resolve any ticket reference to its existing `spec.md` under `docs/plan/tasks/`. For tracker writes, read `docs/agents/issue-tracker.md` for schema/lifecycle/report ownership and `docs/plan/README.md` only for index navigation. For a domain discussion, read the relevant parts of `GLOSSARY.md` and the current owner document linked from `docs/README.md`.
 
 Choose the skill that answers the current request. Invoke it if the tool supports nested skill calls. In Codex, read the selected skill and any relevant companion files when a nested call is unavailable. Prefer the Matt Pocock version. In Claude Code, use `mattpocock-skills:<name>` for the published skills, including `mattpocock-skills:prototype` because the repo also has a project skill named `prototype`. Use `software-factory` directly. If a selected skill is unavailable, identify it and continue with the relevant repository guidance.
 

@@ -14,7 +14,6 @@
 - `CONTRIBUTING.md`: branch, commit, pull request, hook và CI.
 - `design.md`: hợp đồng visual; `docs/reference/ux-patterns.md` chỉ là tham khảo UX.
 - `docs/architecture.md`: cấu trúc hiện tại; `docs/api-integration.md`: transport/cutover; `docs/roadmap.md`: việc chưa làm.
-- `docs/adr/`: các quyết định kiến trúc đã được chấp nhận và có trên branch này.
 
 - Không dựa vào đường dẫn tài liệu trước khi xác nhận nó tồn tại trong checkout hiện tại.
 - Nếu tài liệu và code mâu thuẫn, báo rõ thay vì tự suy diễn yêu cầu ảnh hưởng public API hoặc domain behavior.
@@ -73,4 +72,4 @@ pnpm build
 - Ngoại lệ: chạy `agent-run` được coi là người dùng đã yêu cầu rõ việc tạo branch, commit, push branch của task đó và mở PR vào `dev`. Chính script `agent-run` thực hiện các thao tác git này, agent không tự làm. Không bao giờ tự merge.
 - `AGENTS.md`, `CLAUDE.md`, `.claude/rules/process/git-workflow.md`, `docs/agents/issue-tracker.md` do người sửa cùng Codex hoặc Claude Code trong phiên tương tác, không để agent tự sửa khi chạy `agent-run`.
 
-- Đọc `GLOSSARY.md` nếu có theo chủ đề và ADR liên quan trước khi đặt tên domain; báo xung đột thay vì tự đổi nghĩa. Glossary API thuộc `be-demo`; thuật ngữ kỹ thuật CMS thuộc repo `cms`. Không bắt buộc các sibling repo có mặt trong checkout frontend.
+- Đọc `GLOSSARY.md` nếu có theo chủ đề và tài liệu owner hiện tại trước khi đặt tên domain; báo xung đột thay vì tự đổi nghĩa. Glossary API thuộc `be-demo`; thuật ngữ kỹ thuật CMS thuộc repo `cms`. Không bắt buộc các sibling repo có mặt trong checkout frontend.

@@ -5,7 +5,7 @@
 
 ## Đã làm
 
-Thực hiện phases A–D của plan trong checkout hiện tại: sáu trang onboarding (README/index/overview/architecture/API/roadmap), design theo CSS và route thật, tracker schema/lifecycle/report tại một owner, runner manual phản ánh runtime baseline. Giữ ADR provenance, ideal/home-motion, task identity và mọi artifact hiện có; không sửa task11/14/15/map07/spec/plan task12 trong đợt nội dung.
+Thực hiện phases A–D của plan trong checkout hiện tại: sáu trang onboarding (README/index/overview/architecture/API/roadmap), design theo CSS và route thật, tracker schema/lifecycle/report tại một owner, runner manual phản ánh runtime baseline. Đợt nội dung ban đầu giữ ADR provenance, ideal/home-motion, task identity và mọi artifact hiện có; quyết định owner ngày 19/11/2026 sau đó xóa toàn bộ ADR lịch sử khỏi cây hiện tại và giữ chúng trong Git history.
 
 ## Content migration ledger
 
@@ -22,7 +22,7 @@ Thực hiện phases A–D của plan trong checkout hiện tại: sáu trang on
 | domain/triage/UI adapters                        | AGENTS/tracker cho glossary/ADR/lifecycle; ui-workflow cho invocation                                                                                                                                                                                                                                                                                         | domain/UI wrapper xóa sau consumer rewrite                                                           |
 | design                                           | root CSS/local typography/semantic tokens, current homepage/login, dark/motion/accessibility policy                                                                                                                                                                                                                                                           | Token số/cross-app package/login assertions cũ không là hiện trạng                                   |
 
-Đã xóa 10 tài liệu cũ sau chuyển nội dung/consumer. Giữ `triage-labels.md` adapter ngắn vì các engineering skills cài ngoài repo có thể còn dùng đường cố định; chỉ xóa khi xác minh external consumers đã chuyển. TailAdmin ADR giữ nguyên license/source/version/owner decision. Không tạo archive nguyên bản dài.
+Đã xóa 10 tài liệu cũ sau chuyển nội dung/consumer. Giữ `triage-labels.md` adapter ngắn vì các engineering skills cài ngoài repo có thể còn dùng đường cố định; chỉ xóa khi xác minh external consumers đã chuyển. Ngày 19/11/2026, owner yêu cầu xóa thêm cả bốn ADR lịch sử, gồm hồ sơ TailAdmin; license/source/version và quyết định cũ từ đây chỉ truy xuất qua Git history. Không tạo archive nguyên bản dài.
 
 ## Snapshot sau phases A–D
 
@@ -30,7 +30,7 @@ Thực hiện phases A–D của plan trong checkout hiện tại: sáu trang on
 
 Đã đối chiếu Git/GitHub: task01/PR96, task02/PR97, task03/PR99, task05/PR94 đã merge vào dev trong khi spec còn ready-for-agent. Giữ trạng thái/artifact chờ reconcile có chủ sở hữu. Wayfinder index giữ mọi hàng/status có sẵn. Không sửa GLOSSARY/task06 local. Đề xuất task06 phạm vi toàn đơn còn mâu thuẫn chương trình liên repo theo dòng: roadmap ghi rõ chưa thống nhất, không áp dụng như contract mới.
 
-Ngân sách số dòng là mềm; bộ docs giữ gọn thay vì thêm nội dung để đạt mức tối thiểu. Hiện 18 Markdown ngoài task trong docs (bao gồm adapter/4 ADR), thay 21 trước đợt; root instructions/design tính riêng.
+Ngân sách số dòng là mềm; bộ docs giữ gọn thay vì thêm nội dung để đạt mức tối thiểu. Sau quyết định xóa ADR, còn 14 Markdown ngoài task trong docs; root instructions/design tính riêng.
 
 ## Test cũ đã chạm
 
