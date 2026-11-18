@@ -1,6 +1,6 @@
 # Kế hoạch và task
 
-Task của storefront là file Markdown cục bộ (không dùng GitHub Issues), cùng định dạng với `be-demo`. Chỉ mục nằm ở bảng dưới; kế hoạch tổng nằm ở các file `*-plan.md` cùng thư mục. Hệ thống agent chạy task: `AGENT-SYSTEM-PLAN.md`. Hộp thư local khi script cần người nằm trong `.agent-run/AGENT-INBOX.md` ở root repo.
+Task của storefront là file Markdown cục bộ (không dùng GitHub Issues), cùng định dạng với `be-demo`. Chỉ mục nằm ở bảng dưới; kế hoạch tổng nằm ở các file `*-plan.md` cùng thư mục. Xem [kế hoạch hệ thống agent](AGENT-SYSTEM-PLAN.md) và [kế hoạch tái cấu trúc ba repo](three-repo-restructure.md). Hộp thư local khi script cần người nằm trong `.agent-run/AGENT-INBOX.md` ở root repo.
 
 ## Cấu trúc
 

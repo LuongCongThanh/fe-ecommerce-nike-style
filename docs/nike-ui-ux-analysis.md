@@ -21,7 +21,12 @@ Phân tích UI/UX của Nike Việt Nam dưới góc nhìn Senior Product Design
 
 - Nên mượn: cách kể chuyện ở hero, cách giữ menu gọn, cách ưu tiên hình ảnh sản phẩm, nhịp typography lớn, và tư duy mobile-first.
 - Không nên bê nguyên: sitemap, component list, cấu trúc thư mục, hoặc mọi quyết định kỹ thuật như thể đó là blueprint của dự án này.
-- Khi một pattern nhìn hấp dẫn nhưng làm scope phình lên, quay lại `requirements/`, `product/`, và `architecture/` trước khi nhận nó vào backlog.
+- Khi một pattern nhìn hấp dẫn nhưng làm scope phình lên, đối chiếu [kế hoạch storefront](plan/storefront-restructure-plan.md) và [design](../design.md) trước khi đưa vào backlog.
+
+## Ví dụ để dùng khi review UI
+
+- Với trang danh sách sản phẩm, bộ lọc đứng cạnh lưới trên desktop. Trên mobile, đặt nút Lọc và Sắp xếp ngay phía trên lưới hai cột để không dành chỗ cố định cho sidebar.
+- Với điều hướng, gom liên kết phụ vào menu con. Kiểm tra trên viewport hẹp xem người dùng có nhận ra ngay các nhóm hàng chính và tìm được ô tìm kiếm hay không.
 
 ## 1. Kiến trúc tổng thể của Website
 

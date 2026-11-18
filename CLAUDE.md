@@ -4,6 +4,10 @@ Các convention chi tiết theo phạm vi nằm trong `.claude/rules/` và đư�
 
 ## Agent skills
 
+### Phiên tương tác
+
+Dùng `/storefront-workflow <ticket hoặc câu hỏi>` để làm rõ nghiệp vụ, kiểm chứng giả định, viết spec, chia task hoặc đánh giá `agent-run`. Xem [cách chọn skill theo từng bước](docs/plan/AGENT-SYSTEM-PLAN.md#dùng-skill-matt-pocock-trong-storefront).
+
 ### Issue tracker
 
 Local Markdown tasks in `docs/plan/tasks/<NN>-<name>/spec.md` (frontmatter `status`, `blocked-by`, `pr`, `kind`, `approved`, `retro-turns`); no GitHub Issues. See `docs/agents/issue-tracker.md` and `docs/plan/README.md`.
