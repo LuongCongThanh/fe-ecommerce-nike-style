@@ -44,13 +44,13 @@ Before every commit, `.husky/pre-commit` runs `lint-staged`, `pnpm lint`, `pnpm 
 ## Development workflow
 
 1. Read the task spec and current diff; continue unfinished work before starting another task. Interactive maintenance explicitly requested by the maintainer may proceed in the current checkout. Task runner eligibility still follows the task lifecycle.
-2. Locate the owning module in [the structure guide](docs/plan/storefront-target-module-tree.md). Keep Next.js entry points in `app`, domain code in `features`, reusable UI in `shared`, and test support in `testing`.
+2. Locate the owning module in [the structure guide](docs/architecture.md). Keep Next.js entry points in `app`, domain code in `features`, reusable UI in `shared`, and test support in `testing`.
 3. Write or update the plan for task work. Make one coherent change; update imports, related docs and tests together when moving files.
-4. Run focused checks first, then `pnpm lint`, `pnpm format:check`, `pnpm typecheck`, `pnpm test` and `pnpm build` for source/config changes. Run affected E2E tests when browser behavior changes. For documentation-only work, check formatting and local links.
+4. Run focused checks first, then `pnpm lint`, `pnpm format:check`, `pnpm docs:check`, `pnpm typecheck`, `pnpm test` and `pnpm build` for source/config changes. Run affected E2E tests when browser behavior changes. For documentation-only work, run `pnpm docs:check`.
 5. Review the diff and record checks and limitations. Commit, push and open a PR only when requested; target `dev`. Merge only after required checks pass.
 
 Delete obsolete instructions once their replacement is linked from the documentation index. Preserve accepted decisions and useful task evidence; mark historical context explicitly. Do not remove fixtures, generated contracts or public assets solely because an import scan finds no reference.
 
 ## Tasks
 
-Tasks are local Markdown files (`docs/plan/tasks/<NN>-<name>/spec.md`), not GitHub Issues. State is the `status` frontmatter field; see `docs/plan/README.md` and `docs/agents/triage-labels.md`.
+Tasks are local Markdown files (`docs/plan/tasks/<NN>-<name>/spec.md`), not GitHub Issues. State is the `status` frontmatter field; see `docs/plan/README.md` and `docs/agents/issue-tracker.md`.

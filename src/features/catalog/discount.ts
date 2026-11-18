@@ -12,7 +12,7 @@ export interface DiscountInfo {
 /**
  * Single source of truth for "is this product discounted, and what does it cost now" — shared by
  * `PriceDisplay` and `ProductCard` so the rule can't drift between the two implementations
- * (homepage-improvement-plan.md P1-2).
+ * (design.md; historical discount-display adjustment).
  */
 export function resolveDiscount(price: number, salePrice?: number | null): DiscountInfo {
   const hasDiscount = typeof salePrice === 'number' && salePrice > 0 && salePrice < price;

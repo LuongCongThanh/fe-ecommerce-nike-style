@@ -54,6 +54,29 @@ describe('selectTask (situations 1, 2)', () => {
     expect(selectTask(readTasks(root), '02').task?.name).toBe('02-b');
     expect(selectTask(readTasks(root), '07').task).toBeNull();
   });
+  it.each([
+    'labels: [wayfinder:map]',
+    'labels:\n- wayfinder:map',
+    'labels:\n  - "wayfinder:research"',
+    'labels: [wayfinder:task]',
+    'ignored: x\n---\nType: research\n',
+  ])('excludes Wayfinder %s even when explicitly selected, retaining blocker status', (labels) => {
+    const root = repo({ '01-map': `status: ready-for-agent\n${labels}`, '02-delivery': 'status: ready-for-agent\nkind: docs' });
+    expect(selectTask(readTasks(root)).task?.name).toBe('02-delivery');
+    expect(selectTask(readTasks(root), '01').task).toBeNull();
+    expect(readTasks(root)).toHaveLength(2);
+  });
+  it('retains resolved and unresolved Wayfinder dependencies for delivery blockers', () => {
+    const root = repo({
+      '01-map': 'status: done\nlabels: [wayfinder:map]',
+      '02-decision': 'status: todo\nlabels: [wayfinder:research]',
+      '03-delivery': 'status: ready-for-agent\nblocked-by: [01-map, 02-decision]\nkind: docs',
+      '04-ready': 'status: ready-for-agent\nblocked-by: [01-map]\nkind: docs',
+    });
+    const selection = selectTask(readTasks(root));
+    expect(selection.task?.name).toBe('04-ready');
+    expect(selection.skipped).toEqual([{ name: '03-delivery', waitingFor: ['02-decision'] }]);
+  });
   it('missing tasks dir -> empty', () => {
     expect(readTasks(mkdtempSync(join(tmpdir(), 'empty-')))).toEqual([]);
   });

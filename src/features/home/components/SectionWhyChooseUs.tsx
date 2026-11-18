@@ -20,7 +20,7 @@ export function SectionWhyChooseUs(): React.JSX.Element {
             return (
               // Icon sits inline with the heading (same row) instead of stacked beside a separate
               // text block, so this reads less like the generic icon-above/beside-copy feature-tile
-              // shape (homepage-improvement-plan.md P2-2).
+              // shape (design.md; historical trust-section adjustment).
               <div key={benefit.id} className="flex flex-col gap-3">
                 <div className="flex items-center gap-2.5">
                   {Icon == null ? null : (

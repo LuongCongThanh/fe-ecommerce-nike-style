@@ -1,5 +1,5 @@
 // @vitest-environment node
-import { existsSync, mkdirSync, readFileSync, rmSync, writeFileSync } from 'node:fs';
+import { existsSync, mkdirSync, readFileSync, rmSync, symlinkSync, utimesSync, writeFileSync } from 'node:fs';
 import { join } from 'node:path';
 
 import { describe, expect, it } from 'vitest';
@@ -314,16 +314,90 @@ describe('review (D27) and UI checks (D30)', () => {
   });
   it('ui task: dev server runs on the configured port around the UI check and is stopped', async () => {
     const w = makeWorld({ tasks: { '01-demo': TASK_SPEC('').replace('kind: logic', 'kind: ui') } });
-    await runAgent(w.deps, w.cfg);
+    expect((await runAgent(w.deps, w.cfg)).kind).toBe('pr');
+    const artifact = /UI_ARTIFACT=(.+)/.exec(w.claudeCalls.find((c) => c.role === 'ui')!.req.prompt)![1]!;
+    expect(JSON.parse(readFileSync(`${artifact}.json`, 'utf8'))).toMatchObject({
+      evidence: { url: 'http://localhost:3100/vi', state: 'catalog loaded' },
+    });
     expect(w.devServer).toMatchObject({ started: [3100], stopped: 1 });
     expect(roles(w)).toEqual(['planner', 'implementer', 'ui', 'reviewer', 'retro', 'pr-body']);
   });
   it('ui check findings of severity major feed the fix loop', async () => {
     const w = makeWorld({ tasks: { '01-demo': TASK_SPEC('').replace('kind: logic', 'kind: ui') } });
-    w.script.ui = () => reply({ result: 'ok', reason: 'x', findings: [{ severity: 'major', message: 'overflow on 360px' }] });
+    w.script.ui = (req) => {
+      const artifact = /UI_ARTIFACT=(.+)/.exec(req.prompt)?.[1] as string;
+      writeFileSync(artifact, Buffer.from([137, 80, 78, 71, 13, 10, 26, 10]));
+      return reply({
+        result: 'ok',
+        reason: 'x',
+        findings: [{ severity: 'major', message: 'overflow on 360px' }],
+        evidence: {
+          url: 'http://localhost:3100/vi',
+          viewport: { width: 360, height: 800 },
+          state: 'catalog loaded',
+          actions: ['checked overflow'],
+          artifact,
+        },
+      });
+    };
     await runAgent(w.deps, w.cfg);
     expect(w.claudeCalls.find((c) => c.role === 'implementer' && c.req.resume)?.req.prompt).toContain('overflow on 360px');
   });
+  it.each(['blocked', 'need_info', 'malformed', 'wrong-url', 'missing-artifact'])(
+    'stops UI %s before review/PR and cleans up the server',
+    async (failure) => {
+      const w = makeWorld({ tasks: { '01-demo': TASK_SPEC('').replace('kind: logic', 'kind: ui') } });
+      w.script.ui = () =>
+        reply(
+          failure === 'malformed'
+            ? {}
+            : {
+                result: failure === 'need_info' ? 'need_info' : failure === 'blocked' ? 'blocked' : 'ok',
+                reason: 'browser unavailable',
+                findings: [],
+                evidence: {
+                  url: failure === 'wrong-url' ? 'https://example.com/vi' : 'http://localhost:3100/vi',
+                  viewport: { width: 390, height: 844 },
+                  state: 'loaded',
+                  actions: ['opened page'],
+                  artifact: 'missing.png',
+                },
+              },
+        );
+      expect((await runAgent(w.deps, w.cfg)).kind).toBe('stopped');
+      expect(w.devServer.stopped).toBe(1);
+      expect(roles(w)).not.toContain('reviewer');
+      expect(w.runner.calls.some((c) => c.startsWith('gh pr create'))).toBe(false);
+    },
+  );
+  it.each(['stale', 'symlink', 'wrong-path', 'wrong-origin', 'zero-viewport', 'empty-actions', 'empty-state'])(
+    'rejects UI evidence with %s even with a screenshot',
+    async (failure) => {
+      const w = makeWorld({ tasks: { '01-demo': TASK_SPEC('').replace('kind: logic', 'kind: ui') } });
+      w.script.ui = (req) => {
+        const artifact = /UI_ARTIFACT=(.+)/.exec(req.prompt)?.[1] as string;
+        const other = join(w.repo, 'other.png');
+        writeFileSync(failure === 'symlink' ? other : artifact, Buffer.from([137, 80, 78, 71, 13, 10, 26, 10]));
+        if (failure === 'symlink') symlinkSync(other, artifact);
+        if (failure === 'stale') utimesSync(artifact, new Date(0), new Date(0));
+        return reply({
+          result: 'ok',
+          reason: 'checked',
+          findings: [],
+          evidence: {
+            url: failure === 'wrong-origin' ? 'http://localhost:9999/vi' : 'http://localhost:3100/vi',
+            viewport: { width: failure === 'zero-viewport' ? 0 : 390, height: 844 },
+            state: failure === 'empty-state' ? '' : 'loaded',
+            actions: failure === 'empty-actions' ? [] : ['opened catalog'],
+            artifact: failure === 'wrong-path' ? other : artifact,
+          },
+        });
+      };
+      expect((await runAgent(w.deps, w.cfg)).kind).toBe('stopped');
+      expect(w.devServer.stopped).toBe(1);
+      expect(roles(w)).not.toContain('reviewer');
+    },
+  );
   it('logic task: no dev server', async () => {
     const w = makeWorld();
     await runAgent(w.deps, w.cfg);

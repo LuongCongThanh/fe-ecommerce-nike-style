@@ -131,6 +131,7 @@ export async function runGates(opts: RunGatesOptions): Promise<VerifyReport> {
     ['typecheck', ['typecheck']],
     ['test', ['test']],
     ['format:check', ['format:check']],
+    ['docs:check', ['docs:check']],
   ];
   if (opts.withBuild) steps.push(['build', ['build']]);
 

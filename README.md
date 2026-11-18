@@ -1,10 +1,10 @@
-# FE E-commerce Nike Style
+# ANTIGRAVITY.STORE storefront
 
-Storefront thời trang chạy bằng Next.js App Router tại root, hỗ trợ tiếng Việt và tiếng Anh. API nghiệp vụ nằm trong repo `be-demo`. Back-office nằm trong repo `cms`.
+Storefront thời trang bằng Next.js App Router, hỗ trợ tiếng Việt và tiếng Anh. Đây là app độc lập ở root; API do `be-demo` sở hữu, back-office do repo `cms` sở hữu. Catalog đọc API thật; các luồng mua hàng và tài khoản còn ở giai đoạn chuyển tiếp MSW.
 
 ## Chạy local
 
-Dùng Node.js 24 và phiên bản pnpm khai báo trong `package.json`. Khởi động `be-demo` với dữ liệu danh mục để duyệt sản phẩm.
+Dùng Node.js 24 và pnpm được pin trong `package.json`. Khởi động `be-demo` có dữ liệu catalog trước khi duyệt sản phẩm.
 
 ```bash
 corepack pnpm install --frozen-lockfile
@@ -12,35 +12,29 @@ cp .env.example .env.local
 corepack pnpm dev
 ```
 
-Mở `http://127.0.0.1:3000`. Next.js chuyển tiếp `/api/v1/*` đến `API_ORIGIN`. Catalog luôn đọc API thật. Các luồng tài khoản, giỏ hàng, checkout, wishlist và đơn hàng còn dùng dữ liệu giả khi bật `NEXT_PUBLIC_API_MOCKING` cho phát triển local.
+Mở `http://127.0.0.1:3000`. `.env.example` mô tả URL local và mock flag; `API_ORIGIN` là origin backend phía server. Không có backend thì catalog không tự chuyển sang fixture. Không commit secret hoặc `.env.local`.
 
-## Cấu trúc
+## Đọc tiếp
 
-| Đường dẫn           | Trách nhiệm                                                        |
-| ------------------- | ------------------------------------------------------------------ |
-| `src/app/[locale]/` | Entry point route và layout của App Router                         |
-| `src/features/`     | Màn hình và module nghiệp vụ                                       |
-| `src/shared/ui/`    | UI primitives và trạng thái hiển thị dùng chung                    |
-| `src/lib/api/`      | HTTP client, endpoint, hợp đồng sinh từ OpenAPI và MSW chuyển tiếp |
-| `src/lib/schemas/`  | Zod validation hiện có                                             |
-| `src/i18n/`         | Locale routing và cấu hình bản dịch                                |
-| `src/shared/`       | Utilities, hooks, UI và kiểu dữ liệu dùng chung hiện có            |
+Bộ onboarding gồm trang này và năm trang sau:
 
-Gọi API qua `src/lib/api`. Dùng TanStack Query cho server state và URL cho bộ lọc có thể chia sẻ. Thuật ngữ nghiệp vụ theo glossary của `be-demo`.
+- [Docs index](docs/README.md): tìm tài liệu theo câu hỏi và chủ sở hữu.
+- [Overview](docs/overview.md): capability hiện có, real/mock và giới hạn.
+- [Architecture](docs/architecture.md): module, data/state, locale, PWA và 3D.
+- [API integration](docs/api-integration.md): proxy, contract pin và cutover.
+- [Roadmap](docs/roadmap.md): rebuild còn mở và dependency sản phẩm.
+
+Khi đóng góp đọc [CONTRIBUTING](CONTRIBUTING.md); khi sửa visual đọc [design](design.md); công cụ bắt đầu từ [AGENTS](AGENTS.md).
 
 ## Kiểm tra
 
 ```bash
 pnpm lint
 pnpm format:check
+pnpm docs:check
 pnpm typecheck
 pnpm test
 pnpm build
 ```
 
-`pnpm gen:api` sinh `src/lib/api/generated/openapi.ts` từ tag pin trong `scripts/gen-api.mjs`. CI kiểm tra file sinh khớp với tag. `pnpm test:e2e` chạy Playwright.
-
-- [Mục lục tài liệu](docs/README.md)
-- [Kế hoạch tái cấu trúc Storefront](docs/plan/storefront-restructure-plan.md)
-- [Quy trình đóng góp](CONTRIBUTING.md)
-- [Quy ước repository](AGENTS.md)
+Chạy focused checks trước. `pnpm test:e2e` dùng Playwright cho browser flow; `pnpm gen:api` sinh type từ contract pin và cần nguồn OpenAPI. `pnpm docs:check` chạy offline để kiểm formatting, local links/anchors, consumer tài liệu đã xóa và graph task; xem phạm vi trong [runner](docs/agents/runner.md).

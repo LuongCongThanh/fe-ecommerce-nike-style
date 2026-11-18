@@ -57,7 +57,7 @@ export async function register(payload: RegisterPayload): Promise<AuthSessionRes
 
 /**
  * `refreshToken` is sent explicitly in the body rather than riding a cookie — mock-phase deviation
- * from ADR-0010, see decision-log.md Decision #90 and `src/lib/api/mocks/auth-fixtures.ts`.
+ * from ADR-0010, see docs/architecture.md, Session boundary (historical mock limitation) and `src/lib/api/mocks/auth-fixtures.ts`.
  */
 export async function refreshSession(refreshToken: string): Promise<RefreshSessionResponse> {
   return apiClient.post<RefreshSessionResponse>(

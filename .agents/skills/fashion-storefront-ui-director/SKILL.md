@@ -17,7 +17,7 @@ fast, accessible product discovery and checkout.
 
 1. Read `AGENTS.md`, `design.md`, and the relevant scoped files in
    `.claude/rules/`.
-2. Read `docs/nike-ui-ux-analysis.md` only as a pattern reference; never copy
+2. Read `docs/reference/ux-patterns.md` only as a pattern reference; never copy
    Nike's identity, copy, assets, or component hierarchy.
 3. Inspect the affected route, feature, existing tests, and locale messages
    before proposing a change. Treat existing `design.md` decisions as locked.
@@ -44,17 +44,17 @@ fast, accessible product discovery and checkout.
 Select the smallest combination that fits the work. Do not invoke every skill
 by default.
 
-| Situation | Use | Expected result |
-| --- | --- | --- |
-| New page or significant visual redesign | `ui-ux-pro-max`, `design-taste-frontend`, `hallmark` | A page direction that fits the locked system and has a distinct editorial idea. |
-| UI implementation, composition, or component choice | `emil-design-eng`, `pick-ui-library` | Reused project primitives and a maintainable React/Tailwind composition. |
-| Visual polish or pre-merge review | `impeccable`, `hallmark` | Prioritized issues, then only justified fixes. |
-| A motion request | `find-animation-opportunities`, `animation-vocabulary`, `review-animations` | Motion map containing purpose, trigger, duration, easing, reduced-motion fallback. |
-| Motion is janky or excessive | `improve-animations`, `animation-performance`, `gsap-performance` | A measured, low-cost correction; never blanket animation. |
-| Scroll choreography or coordinated transitions | `gsap-react`, `gsap-timeline`, `gsap-scrolltrigger` | Client-safe GSAP lifecycle cleanup and no scroll-jacking. |
-| Mobile commerce quality | `mobile-native`, `break-ui` | Tested narrow layout, long content, no-data, and touch states. |
-| Compare more than one visual direction before coding | `prototype` | Two or three clearly different, switchable directions—not cosmetic variants. |
-| Optional brand campaign / hero 3D | `scroll-world` or existing `@react-three/fiber` / `three` | A lazy-loaded, disposable enhancement with a static fallback. |
+| Situation                                            | Use                                                                         | Expected result                                                                    |
+| ---------------------------------------------------- | --------------------------------------------------------------------------- | ---------------------------------------------------------------------------------- |
+| New page or significant visual redesign              | `ui-ux-pro-max`, `design-taste-frontend`, `hallmark`                        | A page direction that fits the locked system and has a distinct editorial idea.    |
+| UI implementation, composition, or component choice  | `emil-design-eng`, `pick-ui-library`                                        | Reused project primitives and a maintainable React/Tailwind composition.           |
+| Visual polish or pre-merge review                    | `impeccable`, `hallmark`                                                    | Prioritized issues, then only justified fixes.                                     |
+| A motion request                                     | `find-animation-opportunities`, `animation-vocabulary`, `review-animations` | Motion map containing purpose, trigger, duration, easing, reduced-motion fallback. |
+| Motion is janky or excessive                         | `improve-animations`, `animation-performance`, `gsap-performance`           | A measured, low-cost correction; never blanket animation.                          |
+| Scroll choreography or coordinated transitions       | `gsap-react`, `gsap-timeline`, `gsap-scrolltrigger`                         | Client-safe GSAP lifecycle cleanup and no scroll-jacking.                          |
+| Mobile commerce quality                              | `mobile-native`, `break-ui`                                                 | Tested narrow layout, long content, no-data, and touch states.                     |
+| Compare more than one visual direction before coding | `prototype`                                                                 | Two or three clearly different, switchable directions—not cosmetic variants.       |
+| Optional brand campaign / hero 3D                    | `scroll-world` or existing `@react-three/fiber` / `three`                   | A lazy-loaded, disposable enhancement with a static fallback.                      |
 
 If a named skill is unavailable in the current harness, apply its documented
 principles manually and state that limitation in the handoff.
@@ -65,8 +65,8 @@ principles manually and state that limitation in the handoff.
    content/data source, responsive scope, and measurable success criteria. Ask
    one concise question only when a missing decision materially changes the UI.
 2. **Choose a direction.** For a new or redesigned page, name one concrete
-   editorial direction (for example: *quiet utility*, *sport editorial*, or
-   *warm collection journal*), plus its imagery, type hierarchy, grid, and
+   editorial direction (for example: _quiet utility_, _sport editorial_, or
+   _warm collection journal_), plus its imagery, type hierarchy, grid, and
    interaction stance. Do not change locked tokens to force a direction.
 3. **Plan states before the happy path.** Specify desktop/mobile, loading,
    empty, error, sale, unavailable, keyboard/focus, and reduced-motion behavior.
@@ -76,8 +76,7 @@ principles manually and state that limitation in the handoff.
 5. **Add motion last.** Motion must explain hierarchy, confirm an action, or
    support continuity. Use existing Framer Motion first. A GSAP or 3D addition
    requires an explicit reason the simpler option cannot achieve.
-6. **Gate 3D tightly.** 3D is allowed only for a hero or campaign story—not a
-   product grid, filters, cart, search, authentication, or checkout. Lazy-load
+6. **Gate 3D tightly.** Current 3D exists in Hero and PDP; follow `docs/architecture.md#3d-trong-storefront` for their distinct gates. New surfaces require an explicit decision; do not add 3D to product grids, filters, cart, search, authentication, or checkout. Lazy-load
    it; provide a poster/static image and ordinary CTAs; respect reduced motion;
    pause/offload when not visible; and ensure failure never blocks commerce.
 7. **Review and verify.** Run the relevant design audit, then the smallest

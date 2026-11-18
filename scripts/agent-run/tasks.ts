@@ -15,6 +15,7 @@ export interface Task {
   blockedBy: string[];
   kind: TaskKind | null;
   specPath: string;
+  wayfinder?: boolean;
 }
 
 const prDir = (root: string): string => join(root, '.agent-run', 'prs');
@@ -25,6 +26,13 @@ export function recordTaskPr(root: string, task: string, url: string): void {
   const file = join(dir, task);
   writeFileSync(file + '.tmp', url + '\n');
   renameSync(file + '.tmp', file);
+}
+
+/** Read only the labels field (inline or dash list), never remove decision records used by blockers. */
+function isWayfinder(text: string): boolean {
+  const frontmatter = /^---\r?\n([\s\S]*?)\r?\n---/.exec(text)?.[1] ?? '';
+  const labels = /^labels:[^\n]*(?:\r?\n[ \t]*-[ \t]+[^\n]*)*/m.exec(frontmatter)?.[0] ?? '';
+  return /wayfinder:/i.test(labels) || /^Type:\s*(?:research|prototype|grilling|task)\s*$/im.test(text);
 }
 
 export function readTasks(repoRoot: string): Task[] {
@@ -43,6 +51,7 @@ export function readTasks(repoRoot: string): Task[] {
       blockedBy: parseBlockedBy(text),
       kind: isTaskKind(fm.kind) ? fm.kind : null,
       specPath,
+      wayfinder: isWayfinder(text),
     });
   }
   return tasks;
@@ -58,7 +67,7 @@ export function selectTask(tasks: Task[], only?: string): Selection {
   const status = new Map(tasks.map((t) => [t.name, t.status]));
   const skipped: Selection['skipped'] = [];
   for (const t of tasks) {
-    if (t.status !== 'ready-for-agent') continue;
+    if (t.wayfinder || t.status !== 'ready-for-agent') continue;
     if (only !== undefined && t.number !== only && t.name !== only) continue;
     const waitingFor = t.blockedBy.filter((b) => status.get(b) !== 'done');
     if (waitingFor.length > 0) {

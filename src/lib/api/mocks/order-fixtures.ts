@@ -12,9 +12,8 @@
  * snapshot, not a live reference); left as a known gap rather than widening that shape for this issue.
  */
 
-import { canAdminTransition, canCancelOrder, isWithinReturnWindow } from '@/lib/api/endpoints/order-transitions';
+import { canCancelOrder, isWithinReturnWindow } from '@/lib/api/endpoints/order-transitions';
 import type { StorefrontOrder, StorefrontOrderStatus } from '@/lib/api/endpoints/orders';
-import { releaseSkuStock } from '@/lib/api/mocks/catalog-fixtures';
 
 type MockOrder = StorefrontOrder & { userId: number };
 
@@ -59,7 +58,7 @@ const seedOrders: MockOrder[] = persisted?.orders ?? [
         price: 1_200_000,
         quantity: 1,
         subtotal: 1_200_000,
-        skuId: 'p-1-0-1', // real seeded SKU (catalog-fixtures.ts) — exercises the delete-guard (issue #19)
+        skuId: 'p-1-0-1', // seeded SKU snapshot (catalog-fixtures.ts)
       },
     ],
     subtotal: 1_200_000,
@@ -125,14 +124,6 @@ export function getAccountOrder(userId: number, orderId: number): StorefrontOrde
   return toStorefrontOrder(order);
 }
 
-/** Whether any Order (any Customer, any status) has an OrderItem snapshotted from `skuId` — the check
- * behind Admin's hard-delete guard (issue #19). Orders placed before OrderItem tracked `skuId` (see
- * `order.ts`'s schema comment) can never match, which is correct: a real backend has the same
- * pre-migration gap, not a false "safe to delete". */
-export function isSkuReferencedInAnyOrder(skuId: string): boolean {
-  return Array.from(orders.values()).some((order) => order.items.some((item) => item.skuId === skuId));
-}
-
 export function addAccountOrder(userId: number, order: StorefrontOrder): void {
   orders.set(order.id, { ...order, userId });
   persist();
@@ -190,77 +181,6 @@ export function requestReturnForCustomer(userId: number, orderId: number): Order
     return { ok: false, code: 'RETURN_WINDOW_EXPIRED', message: 'Đã quá hạn 7 ngày để yêu cầu trả hàng.' };
   }
   return { ok: true, order: updateOrderStatus(userId, orderId, 'RETURN_REQUESTED') };
-}
-
-// --- Admin (issue #22) — reads/writes across every Customer's Orders, not scoped by `userId` like the
-// Customer-facing functions above (glossary.md — Order is Customer-owned for read; Admin is a
-// privileged, Staff-only exception, not a general "any Order lookup" path). ---
-
-/** Every Order, any Customer, newest first. */
-export function getAllOrders(): StorefrontOrder[] {
-  return Array.from(orders.values())
-    .sort((a, b) => b.created_at.localeCompare(a.created_at))
-    .map(toStorefrontOrder);
-}
-
-/** A single Order by id, no ownership check — Admin only. */
-export function getOrderById(orderId: number): StorefrontOrder | undefined {
-  const order = orders.get(orderId);
-  return order === undefined ? undefined : toStorefrontOrder(order);
-}
-
-function updateOrderStatusById(orderId: number, status: StorefrontOrderStatus, deliveredAt?: string): StorefrontOrder {
-  const order = orders.get(orderId);
-  if (order === undefined) throw new Error('unreachable — caller already checked existence');
-  const updated: MockOrder = {
-    ...order,
-    status,
-    updated_at: new Date().toISOString(),
-    delivered_at: deliveredAt ?? order.delivered_at,
-  };
-  orders.set(orderId, updated);
-  persist();
-  return toStorefrontOrder(updated);
-}
-
-/** Admin's status-update action — one valid forward step (or the CANCELLED branch), per `canAdminTransition` (issue #22). */
-export function updateAdminOrderStatus(orderId: number, status: StorefrontOrderStatus): OrderTransitionResult {
-  const order = orders.get(orderId);
-  if (order === undefined) {
-    return { ok: false, code: 'NOT_FOUND', message: 'Không tìm thấy đơn hàng.' };
-  }
-  if (!canAdminTransition(order.status, status)) {
-    return { ok: false, code: 'INVALID_TRANSITION', message: `Không thể chuyển trạng thái từ ${order.status} sang ${status}.` };
-  }
-  const deliveredAt = status === 'DELIVERED' ? new Date().toISOString() : undefined;
-  return { ok: true, order: updateOrderStatusById(orderId, status, deliveredAt) };
-}
-
-/** Approves a RETURN_REQUESTED Order → RETURNED, releasing every line's SKU stock back to `available` (issue #22). Lines without a snapshotted `skuId` (pre-#19 Orders) simply can't be released — same known gap as `isSkuReferencedInAnyOrder`. */
-export function approveOrderReturn(orderId: number): OrderTransitionResult {
-  const order = orders.get(orderId);
-  if (order === undefined) {
-    return { ok: false, code: 'NOT_FOUND', message: 'Không tìm thấy đơn hàng.' };
-  }
-  if (order.status !== 'RETURN_REQUESTED') {
-    return { ok: false, code: 'INVALID_TRANSITION', message: 'Chỉ có thể duyệt trả hàng cho đơn đang yêu cầu trả hàng.' };
-  }
-  for (const item of order.items) {
-    if (item.skuId !== undefined) releaseSkuStock(item.skuId, item.quantity);
-  }
-  return { ok: true, order: updateOrderStatusById(orderId, 'RETURNED') };
-}
-
-/** Rejects a RETURN_REQUESTED Order back to DELIVERED — stock is untouched (issue #22). */
-export function rejectOrderReturn(orderId: number): OrderTransitionResult {
-  const order = orders.get(orderId);
-  if (order === undefined) {
-    return { ok: false, code: 'NOT_FOUND', message: 'Không tìm thấy đơn hàng.' };
-  }
-  if (order.status !== 'RETURN_REQUESTED') {
-    return { ok: false, code: 'INVALID_TRANSITION', message: 'Chỉ có thể từ chối trả hàng cho đơn đang yêu cầu trả hàng.' };
-  }
-  return { ok: true, order: updateOrderStatusById(orderId, 'DELIVERED') };
 }
 
 /** Test-only — forces `orderId` (must already exist) into an arbitrary status/`delivered_at`, to exercise state-transition branches the seed data doesn't cover on its own. */

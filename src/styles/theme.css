@@ -39,7 +39,7 @@
   --color-accent-950: oklch(0.2 0.05 55);
 
   /* ── Neutral: xám ấm (hue ~30°) ──────────────────────────────────────── */
-  /* 50/900/950 chroma nudged to >=0.005 (homepage-improvement-plan.md P2-5) — below that floor
+  /* 50/900/950 chroma nudged to >=0.005 (design.md; historical neutral-scale adjustment) — below that floor
      the warm hue-30 tint is imperceptible and the step reads as flat black/white. Lightness
      values are unchanged. */
   --color-neutral-50: oklch(0.98 0.006 30);
@@ -79,7 +79,7 @@
 
   /* ── Type scale — real Tailwind utilities (text-body-sm, text-title-lg, …) so the documented
      scale is actually usable instead of every component reaching for raw text-2xl/text-8xl
-     sizes (homepage-improvement-plan.md P2-3). This is the source of truth for the scale —
+     sizes (design.md; historical type-scale adjustment). This is the source of truth for the scale —
      packages/design-tokens was removed (Decision #93), it never fed these values, they were
      hand-kept in sync with it. Font-weight is not baked in here — pair with a font-* utility,
      same as the rest of the scale. Adoption is incremental; existing components keep working
@@ -104,8 +104,7 @@
   --text-display-sm--line-height: 2.75rem; /* 44px */
 
   /* ── Homepage section vertical rhythm — names each section's already-intentional, distinct
-     padding pair instead of leaving it as an inline magic number (homepage-improvement-plan.md
-     P3-3). Same pixel values as before per section; this is a naming/documentation change, not
+     padding pair instead of leaving it as an inline magic number (design.md; historical section-rhythm adjustment). Same pixel values as before per section; this is a naming/documentation change, not
      a value change — the sections still differ from each other on purpose. */
   --space-section-categories: 2rem; /* py-8 = 32px */
   --space-section-categories-lg: 2.5rem; /* md:py-10 = 40px */
@@ -138,7 +137,7 @@
   --duration-normal: 200ms;
   --duration-slow: 350ms;
 
-  /* ── Z-index scale (FE-ARCHITECTURE.md §16.8) ───────────────────────── */
+  /* ── Z-index scale (design.md; local z-index tokens) ───────────────────────── */
   --z-index-base: 0;
   --z-index-sticky: 10;
   --z-index-dropdown: 20;
@@ -179,7 +178,7 @@
   --color-sidebar-ring: var(--sidebar-ring);
 
   /* ── Inverse surface — the one dark treatment shared by Hero/Newsletter/Footer ───────
-     (homepage-improvement-plan.md P2-4). Previously each section hardcoded its own
+     (design.md; historical spacing adjustment). Previously each section hardcoded its own
      bg-neutral-900/950 + text-white pairing independently; this is the single place to
      adjust "the dark section treatment" for the whole site. */
   --color-surface-inverse: var(--color-neutral-950);

@@ -1,23 +1,26 @@
 # Tài liệu storefront
 
-| Cần làm gì                                     | Tài liệu                                                                                                                                                                     |
-| ---------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| Cài đặt, chạy và kiểm tra ứng dụng             | [README](../README.md), [CONTRIBUTING](../CONTRIBUTING.md)                                                                                                                   |
-| Tìm quy ước code, vị trí module hoặc thuật ngữ | [AGENTS](../AGENTS.md), [quy ước](agents/code-conventions.md), [bản đồ thuật ngữ](plan/three-repo-restructure.md#glossary-map)                                               |
-| Làm việc với ticket hoặc chạy agent            | [Vòng đời ticket và agent-run](plan/README.md), [hệ thống agent và 39 skill](plan/AGENT-SYSTEM-PLAN.md), [tracker](agents/issue-tracker.md)                                  |
-| Tra cứu kế hoạch chuyển sang API thật          | [Kế hoạch storefront](plan/storefront-restructure-plan.md), [cấu trúc hiện tại](plan/storefront-target-module-tree.md), [kế hoạch liên repo](plan/three-repo-restructure.md) |
-| Thiết kế hoặc review UI                        | [Design](../design.md), [phân tích Nike](nike-ui-ux-analysis.md), [skill UI](SKILL-USAGE-GUIDE.md)                                                                           |
-| Sửa Hero/PDP dùng 3D                           | [Hướng dẫn kỹ thuật](FRONTEND-GUIDE.md#27-threejs-trong-storefront)                                                                                                          |
+Bắt đầu ở [README](../README.md), sau đó đọc theo câu hỏi. Hiện trạng được đối chiếu source/config ngày 18/11/2026; backlog không phải cam kết đã triển khai.
 
-## Quyết định và tài liệu tham khảo
+| Câu hỏi                               | Nguồn chuẩn                            | Khi nào đọc                           |
+| ------------------------------------- | -------------------------------------- | ------------------------------------- |
+| Sản phẩm hiện làm được gì?            | [Overview](overview.md)                | Onboarding, đánh giá real/mock        |
+| Code, state và runtime nằm ở đâu?     | [Architecture](architecture.md)        | Sửa feature, session, locale, PWA, 3D |
+| API/proxy/contract hoạt động thế nào? | [API integration](api-integration.md)  | Đổi transport hoặc chuẩn bị cutover   |
+| Còn thiếu gì?                         | [Roadmap](roadmap.md)                  | Ưu tiên rebuild hoặc sản phẩm         |
+| Làm Git/PR/release thế nào?           | [CONTRIBUTING](../CONTRIBUTING.md)     | Khi đóng góp                          |
+| Visual nào được chấp nhận?            | [Design](../design.md)                 | Thiết kế/review UI                    |
+| Code convention nào áp dụng?          | [Rule map](agents/code-conventions.md) | Trước khi sửa code                    |
+| Task/field/status nghĩa gì?           | [Tracker](agents/issue-tracker.md)     | Viết spec, plan, report               |
+| Chạy và tiếp tục tự động ra sao?      | [Runner](agents/runner.md)             | Vận hành `agent-run`                  |
+| Chọn UI skill thế nào?                | [UI workflow](agents/ui-workflow.md)   | Thực thi công việc UI                 |
 
-- [ADR](adr/) ghi lý do và bối cảnh của các quyết định kiến trúc.
-- [Hồ sơ task](plan/README.md#bảng-task), [home motion](reference/home-motion/README.md) lưu kết quả và bài học triển khai.
-- [Đề xuất kiến trúc ban đầu](reference/ideal.md) cung cấp bối cảnh cho các ADR đầu tiên.
-- [Anthropic Academy](reference/anthropic-academy-research.md) lưu nghiên cứu và giới hạn xác minh tại thời điểm khảo sát.
+## Kế hoạch và lịch sử
 
-## Workflow và bảo trì
+[Task index](plan/README.md) chỉ điều hướng; `spec.md` giữ trạng thái. [Map rebuild](plan/tasks/07-workflow-structure-map/spec.md) điều phối các quyết định, [plan task12](plan/tasks/12-documentation-ownership/plan.md) ghi phạm vi đợt docs này.
 
-- [Workflow phát triển và CI](../CONTRIBUTING.md#development-workflow).
-- [Bản đồ đồng bộ workflow, cấu trúc và tài liệu](plan/tasks/07-workflow-structure-map/spec.md).
-- Inbox runner đang hoạt động nằm ở `.agent-run/AGENT-INBOX.md` trong checkout cục bộ; không phải tài liệu được commit. Thí điểm ngày 16/11/2026 ghi nhận lỗi schema phản hồi, task chưa đủ điều kiện và hết ngân sách review; xem hồ sơ task để tra kết quả.
+[ADRs](adr/) giữ lý do và provenance; đọc nhãn lịch sử trước khi áp dụng. [UX patterns](reference/ux-patterns.md) là tham khảo, [ideal](reference/ideal.md) là stub kiến trúc ban đầu, [home motion](reference/home-motion/README.md) giữ regression checklist. Chúng không thay thế nguồn current bên trên. Không có archive nguyên bản dài: Git giữ lịch sử.
+
+## Ownership
+
+README sở hữu quickstart; overview sở hữu capability; architecture sở hữu runtime/cây hiện tại; API integration sở hữu transport/cutover; roadmap sở hữu việc chưa làm. CONTRIBUTING sở hữu Git, tracker sở hữu schema/lifecycle, runner sở hữu manual vận hành, `.claude/rules/` sở hữu convention và CSS sở hữu giá trị token. Tài liệu khác dẫn tới owner thay vì sao chép recipe.

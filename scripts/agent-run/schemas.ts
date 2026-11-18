@@ -75,6 +75,31 @@ export const reviewerSchema = {
   additionalProperties: false,
 } as const;
 
+/** Dedicated UI response; reviewer schema stays compatible with ordinary reviews. */
+export const uiSchema = {
+  ...reviewerSchema,
+  properties: {
+    ...reviewerSchema.properties,
+    evidence: {
+      type: 'object',
+      properties: {
+        url: { type: 'string' },
+        viewport: {
+          type: 'object',
+          properties: { width: { type: 'integer', minimum: 1 }, height: { type: 'integer', minimum: 1 } },
+          required: ['width', 'height'],
+          additionalProperties: false,
+        },
+        state: { type: 'string', minLength: 1 },
+        actions: { type: 'array', minItems: 1, items: { type: 'string', minLength: 1 } },
+        artifact: { type: 'string', minLength: 1 },
+      },
+      required: ['url', 'viewport', 'state', 'actions', 'artifact'],
+      additionalProperties: false,
+    },
+  },
+} as const;
+
 export const roleSchemas = {
   planner: plannerSchema,
   implementer: implementerSchema,

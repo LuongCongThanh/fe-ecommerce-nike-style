@@ -1,21 +1,7 @@
 @AGENTS.md
 
-Các convention chi tiết theo phạm vi nằm trong `.claude/rules/` và được Claude Code tự động nạp khi làm việc với file phù hợp.
+Convention theo phạm vi ở `.claude/rules/`; bản đồ chung tại [code conventions](docs/agents/code-conventions.md).
 
-## Agent skills
+Phiên tương tác dùng `/storefront-workflow <ticket hoặc câu hỏi>` để làm rõ domain, viết spec hoặc đánh giá runner. [Runner](docs/agents/runner.md#chọn-skill-và-provenance) giải thích chọn skill; [UI workflow](docs/agents/ui-workflow.md) áp dụng khi sửa visual.
 
-### Phiên tương tác
-
-Dùng `/storefront-workflow <ticket hoặc câu hỏi>` để làm rõ nghiệp vụ, kiểm chứng giả định, viết spec, chia task hoặc đánh giá `agent-run`. Xem [cách chọn skill theo từng bước](docs/plan/AGENT-SYSTEM-PLAN.md#dùng-skill-matt-pocock-trong-storefront).
-
-### Issue tracker
-
-Local Markdown tasks in `docs/plan/tasks/<NN>-<name>/spec.md` (frontmatter `status`, `blocked-by`, `pr`, `kind`, `approved`, `retro-turns`); no GitHub Issues. See `docs/agents/issue-tracker.md` and `docs/plan/README.md`.
-
-### Triage labels
-
-Roles map onto the task `status` values (`todo`, `ready-for-agent`, `in-progress`, `needs-info`, `blocked`, `ready-for-human`, `review`, `done`); no labels. See `docs/agents/triage-labels.md`.
-
-### Domain docs
-
-Single-context: the storefront is the one app at the repo root; ADRs live in root `docs/adr/`. `apps/admin` and `apps/cms` are legacy code awaiting deletion. See `docs/agents/domain.md`.
+[Tracker](docs/agents/issue-tracker.md) giữ schema/status/report và ngoại lệ Wayfinder; [index](docs/plan/README.md) chỉ điều hướng. Storefront là app duy nhất ở root, không còn apps/admin hoặc apps/cms. Đọc glossary nếu có và ADR theo chủ đề; [architecture](docs/architecture.md) giữ hiện trạng.

@@ -2,7 +2,7 @@
 @import 'tailwindcss' source('../');
 @import './theme.css';
 
-/* Container max-width per breakpoint — FE-ARCHITECTURE.md §16.4.3. admin/cms may go fluid instead of using this utility. */
+/* Container max-width per breakpoint — design.md / src/styles/preset.css. admin/cms may go fluid instead of using this utility. */
 @utility container {
   margin-inline: auto;
   max-width: 100%;
@@ -33,7 +33,7 @@
 @layer base {
   :root {
     /* background/foreground/primary/ring/card/popover chroma nudged to match the neutral-50/900
-       scale fix in theme.css (homepage-improvement-plan.md P2-5) — these were independently
+       scale fix in theme.css (design.md; historical neutral-scale adjustment) — these were independently
        hardcoded at the same values rather than referencing --color-neutral-*, so they'd have
        stayed flat otherwise. */
     --background: oklch(0.98 0.006 30);

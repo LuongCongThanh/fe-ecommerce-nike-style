@@ -1,14 +1,6 @@
-/* Hallmark · shared login/auth-page primitives — extracted from apps/admin's original split-pane
- * login redesign (see design.md § Variants) so apps/admin, apps/cms, and apps/storefront's login
- * pages share one animation/CSS vocabulary instead of three copy-pasted, slowly-drifting versions.
- *
- * Scope: every class here is prefixed `login-` and is pure mechanics (animation, layout, brand-icon
- * colour) — no app makes a colour/accent decision in this file. Each app picks its own decorative-
- * pane accent via ordinary Tailwind gradient utilities on the wrapping element (admin uses
- * `--color-brand`, a documented per-page exception; cms/storefront use `--color-secondary`, per
- * design.md's existing "trust actions lean on secondary blue" rule). Durations/easings reference
- * theme.css tokens; `prefers-reduced-motion` is already zeroed globally in preset.css `@layer base`,
- * so no extra handling is needed here. */
+/* Storefront auth-page mechanics, originally extracted from the former admin login.
+ * Classes use the login- prefix; colors and motion use the local styles/token system.
+ * Reduced motion is handled globally by preset.css. */
 
 :root {
   --color-login-facebook: oklch(0.38 0.09 262);

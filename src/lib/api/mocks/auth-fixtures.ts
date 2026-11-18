@@ -14,7 +14,7 @@
  * (`core/session/auth-store.ts`), sent explicitly in the refresh/logout request body instead of riding
  * a cookie. It never touches `localStorage`/`sessionStorage`, so it carries the same XSS-exposure
  * profile as the access token already does — not a regression, and F5 session-restore (`bootstrapAuth`)
- * simply can't be simulated cross-reload in mock mode as a result. See decision-log.md Decision #90.
+ * simply can't be simulated cross-reload in mock mode as a result. See docs/architecture.md, Session boundary (historical mock limitation).
  *
  * This backing store's own data (the mock "database") *does* persist across a full page reload, via
  * `sessionStorage` — not to be confused with the client's own auth tokens above. A real backend's

@@ -1,8 +1,6 @@
 'use client';
 
-// Hallmark · icon-prefixed fields + remember-me synced with apps/admin/apps/cms's login (design.md
-// § Variants) — same field treatment, storefront keeps its own react-hook-form/zod validation and
-// live register/forgot-password links (no staff-only restrictions here).
+// Storefront login uses icon-prefixed fields and local form validation.
 import { useState } from 'react';
 import Link from 'next/link';
 import { useRouter, useSearchParams } from 'next/navigation';

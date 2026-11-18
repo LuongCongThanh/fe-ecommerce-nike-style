@@ -3,7 +3,7 @@ import type { HomeBenefit, HomeHero, HomeTestimonial } from '@/features/home/typ
 /**
  * Deterministic, visually distinct placeholder image per seed — replaces the single shared
  * placeholder photo every homepage product/category/hero used to point at, which made every
- * card on the page look like the same product (homepage-improvement-plan.md P0-2/P1-3).
+ * card on the page look like the same product (design.md; historical card-imagery adjustment).
  * Swap for real photography when available — `placehold.co` is already an allowed
  * `next.config.ts` image remote pattern.
  */

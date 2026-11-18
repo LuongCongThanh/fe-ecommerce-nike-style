@@ -4,4 +4,4 @@ Tài liệu tham khảo [đề xuất kiến trúc ban đầu](../reference/idea
 
 ## Hiện trạng sau khi tách repository
 
-Storefront hiện là app Next.js độc lập ở root. Backend và CMS nằm trong repository riêng; route group `(admin)` và package dùng chung nêu trên là bối cảnh lịch sử. Xem [kế hoạch liên repo](../plan/three-repo-restructure.md) và [cấu trúc hiện tại](../plan/storefront-target-module-tree.md).
+Storefront hiện là app Next.js độc lập ở root. Backend và CMS nằm trong repository riêng; route group `(admin)` và package dùng chung nêu trên là bối cảnh lịch sử. Xem [kế hoạch liên repo](../api-integration.md) và [cấu trúc hiện tại](../architecture.md).

@@ -186,9 +186,9 @@ const eslintConfig = [
         {
           zones: [
             {
-              target: './src/shared/**/*',
-              from: './src/app/**/*',
-              message: 'Shared code cannot import from app features.',
+              target: ['./src/shared/**/*', './src/lib/api/**/*', './src/lib/schemas/**/*'],
+              from: ['./src/app/**/*', './src/features/**/*'],
+              message: 'Shared and API/schema code cannot depend on app or feature implementation.',
             },
             {
               target: './src/shared/constants/**/*',
@@ -365,9 +365,8 @@ const eslintConfig = [
     },
   },
 
-  // Mock-only code inlined unchanged from the former packages/api-sdk (mocks are removed once the
-  // generated OpenAPI client lands). Its fixtures import each other (catalog <-> order) and use
-  // truthiness checks the old package config allowed; not worth rewriting code that is going away.
+  // Transitional storefront mocks remain until each purchasing flow has a real API cutover.
+  // Preserve the existing fixture truthiness policy; do not infer removal from generated types.
   {
     files: ['src/lib/api/mocks/**/*.ts'],
     rules: {

@@ -9,6 +9,7 @@ Input: the task directory (`AGENT_TASK_DIR`, e.g. `docs/plan/tasks/03-product-ca
 
 ## 1. Read
 
+- `docs/agents/issue-tracker.md`: canonical field meanings/lifecycle; `docs/agents/runner.md`: automation and guard contract.
 - `spec.md`: frontmatter (`kind`, `blocked-by`, `approved`), Problem Statement, Solution, Acceptance criteria.
 - `AGENTS.md`, `docs/agents/code-conventions.md`, and the `.claude/rules/` files whose path scope matches the files you expect to touch.
 - `.claude/agent-guard.json`: `denyPaths`, `askPaths`, `allowCommands`. `approved:` in the spec frontmatter unlocks paths/commands for this run.

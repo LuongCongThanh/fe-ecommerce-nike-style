@@ -263,7 +263,7 @@ function DissolvePlane({ sources, activeIndex, tier, onReady, pointer }: Dissolv
 
 /**
  * WebGL layer that paints the hero slides while the DOM carousel keeps owning links, focus and
- * autoplay (docs/FRONTEND-GUIDE.md §27). Never import this directly — `HeroCarousel` loads it through
+ * autoplay (docs/architecture.md#3d-trong-storefront). Never import this directly — `HeroCarousel` loads it through
  * `next/dynamic({ ssr: false })` behind `useCanRender3D`.
  */
 export default function HeroSlides3D({ sources, activeIndex, tier, onReady, onContextLost }: HeroSlides3DProps): React.JSX.Element {
