@@ -42,3 +42,10 @@ Ngoài phạm vi: `Badge.tsx`, `OrdersClient`, `OrderDetailClient` (các chuỗi
 - Rủi ro thấp: đổi nguồn chuỗi, không đổi logic trạng thái hay luồng đặt/hủy đơn.
 - Nếu `src/lang/*/order.json` thiếu quyền ghi trong lượt chạy (guard), dừng và báo `needs_approval`; không tự đổi chỗ đặt khóa.
 - `README` agent nêu storefront hỗ trợ hai ngôn ngữ: task này chỉ vá một component, không tuyên bố hoàn tất i18n cho đơn hàng.
+
+
+## Comments
+
+### 18/11/2026 — Cập nhật sau rà ranh giới source
+
+shared/types/order.ts đã được gỡ vì chỉ re-export. OrderStatusBadge hiện dùng StorefrontOrderStatus trực tiếp từ lib/api/endpoints/orders; triển khai i18n trên component hiện tại, không tạo lại alias cũ.

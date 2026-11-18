@@ -6,7 +6,7 @@ import { encodeAccessToken } from '@/lib/api/mocks/auth-fixtures';
 import { resetMockOrderDbForTesting, setOrderStatusForTesting } from '@/lib/api/mocks/order-fixtures';
 import { server } from '@/lib/api/testing/msw-server';
 
-import { renderWithProviders } from '@/helpers/render';
+import { renderWithProviders } from '@/testing/render';
 import { OrderDetailClient } from '@/features/orders/order-detail/components/OrderDetailClient';
 
 // Demo account (user id 1), order 1002 is seeded PENDING (order-fixtures.ts).

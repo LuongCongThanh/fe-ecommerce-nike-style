@@ -3,7 +3,7 @@ import { http, HttpResponse } from 'msw';
 import { afterAll, afterEach, beforeAll, beforeEach, describe, expect, it, vi } from 'vitest';
 import { server } from '@/lib/api/testing/msw-server';
 
-import { renderWithProviders } from '@/helpers/render';
+import { renderWithProviders } from '@/testing/render';
 import { SearchClient } from '@/features/catalog/search/components/SearchClient';
 
 let currentSearchParams = new URLSearchParams();

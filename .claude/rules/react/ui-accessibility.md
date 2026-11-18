@@ -1,9 +1,7 @@
 ---
 paths:
-  - 'apps/**/*.tsx'
-  - 'packages/ui/**/*.tsx'
-  - 'packages/shared/**/*.tsx'
-  - '**/*.css'
+  - 'src/**/*.tsx'
+  - 'src/**/*.css'
 description: Design-token/CVA usage rules and the accessibility baseline for every screen.
 ---
 
@@ -11,9 +9,9 @@ description: Design-token/CVA usage rules and the accessibility baseline for eve
 
 ## Components and styling
 
-- Reuse a primitive from `@repo/ui` before creating a new control. `packages/ui` contains pure UI only — no business logic or API calls.
-- Keep an app/feature-specific component local until there is evidence it should be reused; do not move an abstraction to a shared package too early.
-- Use semantic tokens from `packages/tailwind-config`; do not hard-code a color when a matching token exists.
+- Reuse a primitive from `src/shared/ui` before creating a new control. Shared UI contains pure UI only — no business logic or API calls.
+- Keep an app/feature-specific component local until there is evidence it should be reused; do not move an abstraction to a shared module too early.
+- Use semantic tokens from `src/styles`; do not hard-code a color when a matching token exists.
 - Use `cn()` to combine conditional classes and CVA when a component has a public variant. Do not hand-concatenate complex class strings.
 - The primary CTA uses the `primary` token; `brand` is for price, sale, or promotion; surfaces use a semantic token instead of a default `bg-white`.
 - Every data-fetching screen must handle loading, empty, error and success. Loading must not cause a large layout shift; errors should offer a retry or next action when appropriate.

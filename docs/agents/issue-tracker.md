@@ -48,5 +48,7 @@ Used by `/wayfinder`. The **map** is a single Markdown file with **child** tasks
 - **Child ticket**: a normal task folder whose `spec.md` begins with `Part of <NN>-<effort>`. Type goes in the body as `Type: research|prototype|grilling|task`.
 - **Blocking**: the `blocked-by` frontmatter list. A ticket is unblocked when every blocker has `status: done`.
 - **Frontier query**: children of the map with `status: todo` or `ready-for-agent` and no unfinished blocker; first in map order wins.
-- **Claim**: set `status: in-progress`, the session's first write.
+- **Claim**: set `status: in-progress`, the session's first write; record `assignee` for the session. This is specific to Wayfinder, not runner implementation tasks.
 - **Resolve**: append the answer under `## Comments`, set `status: done`, then add a pointer to the map's Decisions-so-far.
+
+Wayfinder metadata uses `labels: [wayfinder:map]` or `labels: [wayfinder:task]` (or the corresponding ticket type). Keep a separate Wayfinder index in the plan README. Closing a decision records its resolution; it does not assert a PR was merged. Explicitly authorized execution can be recorded in map Notes.

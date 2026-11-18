@@ -38,3 +38,10 @@ Ngoài phạm vi: mọi file khác, kể cả `docs/plan/storefront-current-file
 
 - Rủi ro rất thấp: chỉ xóa export không có consumer; trình biên dịch sẽ báo ngay nếu sót.
 - Là task refactor nên Stop hook chỉ yêu cầu test liên quan xanh, không đòi test mới (D38).
+
+
+## Comments
+
+### 18/11/2026 — Cập nhật sau rà ranh giới source
+
+shared/types/filter.ts đã được gỡ sau khi xác nhận không còn consumer. Bằng chứng APP_CONFIG có consumer trong plan cũ không còn đúng; cần rà lại consumer và phạm vi trước triển khai. Phiên này không sửa app-config.ts hoặc trạng thái task.

@@ -10,6 +10,6 @@ paths:
 - Put business logic used across routes in `src/features`. Put generic UI in `src/shared/ui` and generic helpers in `src/shared/utils`.
 - Keep HTTP endpoints, OpenAPI and transitional MSW handlers in `src/lib/api`.
 - Use TanStack Query for server state, Zustand for shared client state, and the URL for filters, sorting and pagination.
-- Keep `*.test.ts(x)` beside the code or flow entry it exercises. Shared Vitest setup lives in `src/testing/setup.ts`; Playwright specs live in `e2e`.
+- Keep `*.test.ts(x)` beside the code or flow entry it exercises. Shared Vitest setup lives in `src/testing/setup.ts`, shared render support in `src/testing/render.tsx`; Playwright specs live in `e2e`.
 
-See [the target tree](../../../docs/plan/storefront-target-module-tree.md) for concrete paths.
+See [the current structure](../../../docs/plan/storefront-target-module-tree.md) for concrete paths.

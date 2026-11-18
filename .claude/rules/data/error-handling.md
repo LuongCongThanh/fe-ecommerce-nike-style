@@ -1,9 +1,6 @@
 ---
 paths:
-  - 'apps/**/*.{ts,tsx}'
-  - 'packages/api-sdk/**/*.{ts,tsx}'
-  - 'packages/schemas/**/*.{ts,tsx}'
-  - 'packages/shared/**/*.{ts,tsx}'
+  - 'src/**/*.{ts,tsx}'
 description: The standard error flow (HTTP to ApiError to UI) and the error-type-to-UI-response mapping.
 ---
 
@@ -20,7 +17,7 @@ HTTP non-2xx
   -> monitoring, if the error is abnormal
 ```
 
-- Only `@repo/api-sdk` turns an HTTP response into an `ApiError`; do not create a second API error class in an app.
+- Only `@/lib/api` turns an HTTP response into an `ApiError`; do not create a second API error class in an app.
 - The error body uses `ErrorEnvelopeSchema`; if the payload doesn't match the contract, return a safe `UNKNOWN_ERROR` instead of trusting response fields directly.
 - `catch` receives `unknown`. Narrow it with `instanceof ApiError`, a Zod result, or a type guard; do not cast `as Error` just to read `message`.
 - Do not swallow errors with an empty `catch {}`. If ignoring one is intentional, add a comment (Vietnamese is fine) stating why, and make sure the UI does not get stuck in a loading state.

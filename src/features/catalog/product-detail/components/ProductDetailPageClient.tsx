@@ -17,9 +17,9 @@ import { ProductInfoPanel } from '@/features/catalog/product-detail/components/P
 import { useVariantSelection } from '@/features/catalog/product-detail/hooks/useVariantSelection';
 import { useProduct } from '@/features/catalog/product-detail/queries/useProduct';
 import { useRelatedProducts } from '@/features/catalog/product-detail/queries/useRelatedProducts';
-import { PageShell } from '@/features/storefront-shell/components/PageShell';
 import type { ProductDetail } from '@/lib/api/models/catalog';
 import { SPRING_MOVE } from '@/shared/lib/motion';
+import { PageShell } from '@/shared/ui/PageShell';
 import { QueryState } from '@/shared/ui/QueryState';
 import { SectionHeading } from '@/shared/ui/SectionHeading';
 

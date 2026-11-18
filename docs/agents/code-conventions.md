@@ -18,7 +18,6 @@ Tài liệu này là bản đồ điều hướng. Convention có hiệu lực n
 | Localization                           | `.claude/rules/data/localization.md`            |
 | Unit, integration và E2E testing       | `.claude/rules/process/testing.md`              |
 | Storefront                             | `.claude/rules/apps/storefront.md`              |
-| Admin/CMS                              | `.claude/rules/apps/admin-cms.md`               |
 | Git, commit và Pull Request            | `.claude/rules/process/git-workflow.md`         |
 
 Danh sách đầy đủ kèm mô tả ngắn từng file: [`.claude/rules/README.md`](../../.claude/rules/README.md).

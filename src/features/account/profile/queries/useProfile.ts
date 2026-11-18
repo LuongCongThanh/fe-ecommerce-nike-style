@@ -2,12 +2,12 @@
 
 import { useQuery } from '@tanstack/react-query';
 
-import { profileActions } from '@/features/account/profile/services/profile';
+import { getProfile } from '@/lib/api/endpoints/profile';
 
 const profileKey = ['profile'] as const;
 
 export const useProfile = () =>
   useQuery({
     queryKey: profileKey,
-    queryFn: profileActions.get,
+    queryFn: getProfile,
   });

@@ -5,7 +5,7 @@ import { encodeAccessToken } from '@/lib/api/mocks/auth-fixtures';
 import { registerAuthRuntimeAdapter } from '@/lib/api/client/runtime';
 import { server } from '@/lib/api/testing/msw-server';
 
-import { renderWithProviders } from '@/helpers/render';
+import { renderWithProviders } from '@/testing/render';
 import { ProfileClient } from '@/features/account/profile/components/ProfileClient';
 
 // Demo account seeded in `src/lib/api/mocks/auth-fixtures.ts`.

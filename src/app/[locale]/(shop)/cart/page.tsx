@@ -2,7 +2,7 @@
 import { setRequestLocale } from 'next-intl/server';
 
 import { CartClient } from '@/features/cart/components/CartClient';
-import { PageShell } from '@/features/storefront-shell/components/PageShell';
+import { PageShell } from '@/shared/ui/PageShell';
 
 interface CartPageProps {
   readonly params: Promise<{ locale: string }>;

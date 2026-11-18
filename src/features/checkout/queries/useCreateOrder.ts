@@ -9,7 +9,7 @@ import { useCart } from '@/features/cart/hooks/useCart';
 import { clearCart } from '@/features/cart/stores/cart.store';
 import type { CheckoutInput } from '@/features/checkout/schemas/checkout';
 import { orderKeys } from '@/features/orders/queries/orderKeys';
-import { orderActions } from '@/features/orders/services/order';
+import { createOrder } from '@/lib/api/endpoints/orders';
 import { useApiMutation } from '@/shared/lib/hooks/useApiMutation';
 
 /**
@@ -31,7 +31,7 @@ export const useCreateOrder = (locale: string, reservationId: string | null) => 
       if (reservationId === null) {
         throw new Error('Chưa giữ chỗ sản phẩm — vui lòng thử lại.');
       }
-      return orderActions.create({
+      return createOrder({
         ...data,
         items: items.map((i) => ({ variantId: i.skuId, quantity: i.quantity })),
         reservationId,

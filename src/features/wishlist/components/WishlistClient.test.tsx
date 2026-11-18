@@ -2,7 +2,7 @@ import { fireEvent, screen, waitFor } from '@testing-library/react';
 import { afterAll, afterEach, beforeAll, beforeEach, describe, expect, it, vi } from 'vitest';
 import { server } from '@/lib/api/testing/msw-server';
 
-import { renderWithProviders } from '@/helpers/render';
+import { renderWithProviders } from '@/testing/render';
 import { WishlistClient } from '@/features/wishlist/components/WishlistClient';
 import { clearCart, resetCartState, useCartStore } from '@/features/cart/stores/cart.store';
 import { resetWishlistState, useWishlistStore } from '@/features/wishlist/stores/wishlist.store';

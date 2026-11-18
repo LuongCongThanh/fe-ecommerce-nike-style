@@ -1,8 +1,10 @@
 ---
-status: accepted
+status: historical
 ---
 
 # Admin visual redesign reuses TailAdmin Free markup/tokens without a THIRD-PARTY-NOTICES file
+
+> Hồ sơ lịch sử của admin trước khi tách repo. Không mô tả kiến trúc storefront hiện tại; giữ để truy xuất nguồn gốc và quyết định tại thời điểm đó.
 
 The admin app's dashboard, sidebar/header shell, and every list/form page were rebuilt following the
 layout, spacing, and colour structure of [TailAdmin Free](https://github.com/TailAdmin/free-tailwind-dashboard-template)

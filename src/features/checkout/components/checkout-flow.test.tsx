@@ -8,8 +8,8 @@ import { resetMockOrderDbForTesting } from '@/lib/api/mocks/order-fixtures';
 import { resetMockReservationsForTesting } from '@/lib/api/mocks/reservation-fixtures';
 import { server } from '@/lib/api/testing/msw-server';
 
-import { checkoutActions } from '@/features/checkout/services/checkout';
-import { orderActions } from '@/features/orders/services/order';
+import { createReservation } from '@/lib/api/endpoints/checkout';
+import { getOrders, createOrder } from '@/lib/api/endpoints/orders';
 import { ApiError } from '@/shared/lib/errors/api-error';
 
 // Real seeded SKUs from `src/lib/api/mocks/catalog-fixtures.ts`.
@@ -39,7 +39,7 @@ beforeEach(() => {
 
 describe('Reservation (FE-INT, issue #16)', () => {
   it('reserves stock and reduces what other requests see as available', async () => {
-    const reservation = await checkoutActions.reserve([{ skuId: SKU_LOW_STOCK, quantity: 3 }]);
+    const reservation = await createReservation([{ skuId: SKU_LOW_STOCK, quantity: 3 }]);
     expect(reservation.reservationId).toBeTruthy();
 
     const [resolved] = await getSkusByIds([SKU_LOW_STOCK]);
@@ -47,12 +47,12 @@ describe('Reservation (FE-INT, issue #16)', () => {
   });
 
   it('refuses a reservation that exceeds available stock', async () => {
-    await expect(checkoutActions.reserve([{ skuId: SKU_LOW_STOCK, quantity: 999 }])).rejects.toMatchObject({ status: 409 });
+    await expect(createReservation([{ skuId: SKU_LOW_STOCK, quantity: 999 }])).rejects.toMatchObject({ status: 409 });
   });
 
   it('releases stock once the reservation expires, without an explicit release call', async () => {
     vi.useFakeTimers();
-    const reservation = await checkoutActions.reserve([{ skuId: SKU_LOW_STOCK, quantity: 4 }]);
+    const reservation = await createReservation([{ skuId: SKU_LOW_STOCK, quantity: 4 }]);
     expect(reservation.reservationId).toBeTruthy();
 
     vi.advanceTimersByTime(11_000); // > RESERVATION_TTL_MS (10s)
@@ -64,9 +64,9 @@ describe('Reservation (FE-INT, issue #16)', () => {
 
 describe('Place Order — commit + snapshot (FE-INT, issue #16)', () => {
   it('commits the Reservation permanently on success and snapshots the OrderItem', async () => {
-    const reservation = await checkoutActions.reserve([{ skuId: SKU_HIGH_STOCK, quantity: 2 }]);
+    const reservation = await createReservation([{ skuId: SKU_HIGH_STOCK, quantity: 2 }]);
 
-    const order = await orderActions.create({
+    const order = await createOrder({
       ...ADDRESS,
       shippingMethod: 'standard',
       paymentMethod: 'cod',
@@ -85,11 +85,11 @@ describe('Place Order — commit + snapshot (FE-INT, issue #16)', () => {
 
   it('rejects Place Order against an expired Reservation', async () => {
     vi.useFakeTimers();
-    const reservation = await checkoutActions.reserve([{ skuId: SKU_HIGH_STOCK, quantity: 1 }]);
+    const reservation = await createReservation([{ skuId: SKU_HIGH_STOCK, quantity: 1 }]);
     vi.advanceTimersByTime(11_000);
 
     await expect(
-      orderActions.create({
+      createOrder({
         ...ADDRESS,
         shippingMethod: 'standard',
         paymentMethod: 'cod',
@@ -101,7 +101,7 @@ describe('Place Order — commit + snapshot (FE-INT, issue #16)', () => {
   });
 
   it('is idempotent: retrying the same requestKey replays the original order instead of creating a duplicate', async () => {
-    const reservation = await checkoutActions.reserve([{ skuId: SKU_HIGH_STOCK, quantity: 1 }]);
+    const reservation = await createReservation([{ skuId: SKU_HIGH_STOCK, quantity: 1 }]);
     const payload = {
       ...ADDRESS,
       shippingMethod: 'standard' as const,
@@ -111,12 +111,12 @@ describe('Place Order — commit + snapshot (FE-INT, issue #16)', () => {
       requestKey: 'req-idempotent',
     };
 
-    const first = await orderActions.create(payload);
-    const second = await orderActions.create(payload);
+    const first = await createOrder(payload);
+    const second = await createOrder(payload);
 
     expect(second.id).toBe(first.id);
 
-    const orders = await orderActions.list();
+    const orders = await getOrders();
     expect(orders.filter((o) => o.id === first.id)).toHaveLength(1);
 
     // Stock committed only once, not twice, despite two requests.
@@ -128,7 +128,7 @@ describe('Place Order — commit + snapshot (FE-INT, issue #16)', () => {
     resetAuthRuntime();
 
     await expect(
-      orderActions.create({
+      createOrder({
         ...ADDRESS,
         shippingMethod: 'standard',
         paymentMethod: 'cod',

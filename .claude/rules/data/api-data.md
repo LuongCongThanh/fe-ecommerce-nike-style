@@ -16,7 +16,7 @@ Presentational component
     -> TanStack Query hook
       -> src/lib/api endpoint
         -> apiClient
-          -> Zod response schema
+          -> pinned OpenAPI contract / transitional Zod schema
 ```
 
 - Components do not call an endpoint, `apiClient`, `fetch` or Axios directly.
@@ -39,29 +39,16 @@ Presentational component
 
 ## Structuring a feature with an API connection
 
-Admin/CMS:
-
 ```text
-features/products/
-├── ProductList.tsx             # presentational view
-├── ProductListPage.tsx         # composition/container, if needed
-├── useAdminProducts.ts         # query + query keys
-├── useProductMutations.ts      # mutations + invalidation
-├── useProductListModel.ts      # URL/local state + view model for complex screens
-├── product.mapper.ts           # DTO/domain -> view model, only when a meaningful transform exists
-├── types.ts                    # feature-local view types
-└── __tests__/
-```
-
-Storefront:
-
-```text
-(shop)/_lib/
-├── api/                        # app-local wrapper, only when it adds a real app-specific contract
-├── hooks/products/             # query/mutation/controller hooks
-├── components/products/        # view components
-├── utils/                      # pure mapper/selector/formatter
-└── types/                      # view model types private to the route group
+src/features/catalog/
+├── components/                 # Shared catalog views
+├── hooks/                      # Listing/filter orchestration
+├── queries/                    # Query keys, server cache and mutation policy
+├── schemas/                    # Feature-owned input validation
+├── product-list/components/    # List screen
+├── product-detail/             # Detail screen, variant hooks and queries
+├── catalogUrlState.ts          # Shared catalog URL rules
+└── catalogUrlState.test.ts     # Colocated behavior test
 ```
 
 - Not every file is mandatory. Create a mapper/view-model/container only when that layer has a genuine responsibility.
@@ -70,36 +57,15 @@ Storefront:
 
 ## Reference implementation
 
-```ts
-// src/lib/api/endpoints/catalog.ts
-export function getProducts(query: ProductListRequest): Promise<ProductListResponse> {
-  return apiClient.get('/api/products', query, { schema: ProductListResponseSchema });
-}
+Read the actual contracts rather than copying a synthetic endpoint example:
 
-// src/features/products/useAdminProducts.ts
-export const adminProductKeys = {
-  all: ['admin', 'products'] as const,
-  list: (query: ProductListRequest) => [...adminProductKeys.all, 'list', query] as const,
-};
+- `src/lib/api/endpoints/catalog.ts`: endpoint/transport boundary.
+- `src/features/catalog/queries/catalogKeys.ts`: shared catalog cache keys.
+- `src/features/catalog/queries/useProducts.ts`: query/cache policy.
+- `src/features/catalog/hooks/useCatalogListing.ts`: URL and listing orchestration.
+- `src/features/catalog/product-list/components/ProductsClient.tsx`: screen composition.
 
-export function useAdminProducts(query: ProductListRequest) {
-  return useQuery({
-    queryKey: adminProductKeys.list(query),
-    queryFn: () => getProducts(query),
-    select: (response) => response.data,
-  });
-}
-
-// src/features/products/ProductList.tsx
-interface ProductListProps {
-  readonly products: readonly Product[];
-  readonly isLoading: boolean;
-  readonly errorMessage: string | null;
-  readonly onRetry: () => void;
-}
-```
-
-`ProductList` does not know the endpoint, the response envelope, the query key, or the HTTP status. The container/controller hook turns technical state into props that are meaningful to the view.
+Presentational children receive normalized state and callbacks. A container may connect query/controller hooks; it does not add another transport client.
 
 ## Data transformation rules
 
@@ -113,7 +79,7 @@ interface ProductListProps {
 
 ## Schema and contract
 
-- Data that crosses the network must be described and parsed with Zod in `src/lib/schemas`; do not just cast with `as` in the UI.
+- Catalog uses generated types from the pinned OpenAPI contract and endpoint-owned mapping. Transitional endpoints keep existing Zod transport validation in `src/lib/schemas`. Do not force both representations onto one endpoint or cast unknown data in the UI.
 - Name schemas `<Domain>Schema`, request/response as `<Action>RequestSchema` and `<Action>ResponseSchema`; the inferred type drops the `Schema` suffix.
 - Clearly distinguish nullable, optional and default per the transport contract; do not convert between them ad hoc in a component.
 - Price and stock belong to the SKU in the current domain; Gender is a Product attribute/filter, not a Category.
@@ -122,7 +88,7 @@ interface ProductListProps {
 ## API SDK
 
 - Every application API call goes through `src/lib/api`; components/hooks never call `fetch` or Axios directly.
-- An endpoint must pass a response schema to the API client whenever there is a payload to validate.
+- Preserve each endpoint's accepted contract/validation strategy. Endpoints using transitional schemas pass them to the API client; contract migrations update generated types and mapping together.
 - Normalize errors with `ApiError`; the UI does not infer an error shape from `unknown` itself.
 - Do not put business logic or React state into the API SDK. Browser/server adapters only handle runtime/transport differences.
 - Mock handlers must mirror the same URL, method, status, envelope and validation as the expected real API.

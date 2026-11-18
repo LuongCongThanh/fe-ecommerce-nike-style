@@ -1,11 +1,11 @@
-import type { OrderStatus } from '@/shared/types/order';
+import type { StorefrontOrderStatus } from '@/lib/api/endpoints/orders';
 import { Badge } from '@/shared/ui/Badge';
 
 // Mỗi trạng thái trong luồng chính (PENDING→PROCESSING→PACKED→SHIPPED→DELIVERED/CANCELLED) có màu badge
 // riêng để phân biệt được ở cái nhìn đầu tiên. RETURN_REQUESTED/RETURNED chỉ nhánh sau DELIVERED nên
 // dùng lại 'outline'/'secondary' — không bao giờ hiển thị cạnh các trạng thái đang vận chuyển.
 const STATUS_MAP: Record<
-  OrderStatus,
+  StorefrontOrderStatus,
   { label: string; variant: 'default' | 'secondary' | 'destructive' | 'outline' | 'warning' | 'info' | 'success' }
 > = {
   PENDING: { label: 'Chờ xác nhận', variant: 'secondary' },
@@ -18,7 +18,7 @@ const STATUS_MAP: Record<
   RETURNED: { label: 'Đã trả hàng', variant: 'secondary' },
 };
 
-export function OrderStatusBadge({ status }: { readonly status: OrderStatus }) {
+export function OrderStatusBadge({ status }: { readonly status: StorefrontOrderStatus }) {
   const { label, variant } = STATUS_MAP[status];
   return <Badge variant={variant}>{label}</Badge>;
 }
