@@ -30,7 +30,7 @@ Thực hiện phases A–D của plan trong checkout hiện tại: sáu trang on
 
 Đã đối chiếu Git/GitHub: task01/PR96, task02/PR97, task03/PR99, task05/PR94 đã merge vào dev trong khi spec còn ready-for-agent. Giữ trạng thái/artifact chờ reconcile có chủ sở hữu. Wayfinder index giữ mọi hàng/status có sẵn. Không sửa GLOSSARY/task06 local. Đề xuất task06 phạm vi toàn đơn còn mâu thuẫn chương trình liên repo theo dòng: roadmap ghi rõ chưa thống nhất, không áp dụng như contract mới.
 
-Ngân sách số dòng là mềm; bộ docs giữ gọn thay vì thêm nội dung để đạt mức tối thiểu. Sau quyết định xóa ADR, còn 14 Markdown ngoài task trong docs; root instructions/design tính riêng.
+Ngân sách số dòng là mềm; bộ docs giữ gọn thay vì thêm nội dung để đạt mức tối thiểu. Ngày 19/11/2026, owner tiếp tục xóa cả ba file `docs/reference`: UX rules được chuyển vào `design.md`, home-motion checklist vào architecture, còn stub ideal chỉ giữ trong Git. Sau quyết định này còn 11 Markdown ngoài task trong docs; root instructions/design tính riêng.
 
 ## Test cũ đã chạm
 

@@ -73,4 +73,6 @@ Ngày 2026-08-30: production build + next start, Chromium 390×844, CPU throttle
 | Hero WebGL canvas mount      | 1524 ms |
 | Hero gate tắt/reduced motion | 1516 ms |
 
-Đây là baseline lịch sử, chưa đo lại trong đợt docs. Đo lại khi thay thời điểm mount; không dùng chênh lệch này làm chứng nhận hiệu năng hiện tại. [Home-motion](reference/home-motion/README.md) giữ provenance và checklist regression.
+Đây là baseline lịch sử, chưa đo lại trong đợt docs. Đo lại khi thay thời điểm mount; không dùng chênh lệch này làm chứng nhận hiệu năng hiện tại.
+
+Khi sửa motion trang chủ, kiểm reduced motion, lần xuất hiện đầu, trạng thái gửi newsletter và nhịp giữa chữ, ảnh, CTA và carousel. Giữ easing/duration nhất quán, transform reveal đầy đủ và crossfade không làm mất focus hoặc feedback. Mốc rà animation trước đây là commit `30961c2`; Git giữ chi tiết sáu hạng mục lịch sử.

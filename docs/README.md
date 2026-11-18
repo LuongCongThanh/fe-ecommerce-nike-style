@@ -19,7 +19,7 @@ Bắt đầu ở [README](../README.md), sau đó đọc theo câu hỏi. Hiện
 
 [Task index](plan/README.md) chỉ điều hướng; `spec.md` giữ trạng thái. [Map rebuild](plan/tasks/07-workflow-structure-map/spec.md) điều phối các quyết định, [plan task12](plan/tasks/12-documentation-ownership/plan.md) ghi phạm vi đợt docs này.
 
-[UX patterns](reference/ux-patterns.md) là tham khảo, [ideal](reference/ideal.md) là stub kiến trúc ban đầu, [home motion](reference/home-motion/README.md) giữ regression checklist. Chúng không thay thế nguồn current bên trên. Không có archive nguyên bản dài hoặc ADR lịch sử trong cây hiện tại: Git giữ lịch sử.
+Không có archive nguyên bản dài, ADR hoặc thư mục reference lịch sử trong cây hiện tại: Git giữ lịch sử. Visual/UX contract nằm ở `design.md`; runtime và regression checklist nằm ở architecture.
 
 ## Ownership
 
