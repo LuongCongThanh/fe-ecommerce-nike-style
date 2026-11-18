@@ -20,7 +20,7 @@ Single-context repo: the storefront is the only app, at the repo root. There is 
 └── src/
 ```
 
-The shared vocabulary reference for the three-repo setup (storefront, backend, CMS) lives outside this repo; do not recreate it here.
+The [glossary map for the three repositories](../plan/three-repo-restructure.md#glossary-map) identifies the vocabulary sources for storefront, API, and CMS.
 
 ## Use the glossary's vocabulary
 

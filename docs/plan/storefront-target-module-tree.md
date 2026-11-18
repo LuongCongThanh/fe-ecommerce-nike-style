@@ -1,20 +1,20 @@
 # Cây thư mục đích route-only của Storefront
 
-**Bản đề xuất để review.** Áp dụng mẫu Products cho toàn bộ App Router. [Cây hiện tại](storefront-current-file-tree.md) mô tả vai trò của từng file trước khi sắp xếp.
+**Bản đề xuất để review.** Áp dụng mẫu Products cho toàn bộ App Router. Dùng `git ls-files` từ checkout để kiểm tra các đường dẫn hiện có.
 
 ## 1. Quy ước sở hữu
 
 `app/` giữ các entry point theo quy ước Next.js. UI, hooks, queries và services riêng của từng màn hình nằm trong `features/`. Hai màn hình Sản phẩm nằm trong `features/catalog/product-list/` và `features/catalog/product-detail/`. Giữ URL, metadata, layout và hai locale.
 
-| Tên | Vai trò |
-| --- | --- |
-| `components/` | UI riêng của trang hoặc module |
-| `hooks/` | Tương tác và điều phối React |
-| `queries/` | TanStack Query keys, cấu hình, query hooks và mutation hooks. Dùng chung key khi các trang đọc cùng dữ liệu |
-| `stores/` | Zustand cho state client cần chia sẻ. Store chỉ thuộc một trang cần được giới hạn vòng đời theo trang |
-| `services/` | Điều phối dữ liệu hoặc thao tác. Các file chuyển từ `_lib/api/` là ứng viên kiểm tra để gộp nếu chỉ chuyển tiếp |
-| `schemas/`, `types/`, `constants/` | Validation, kiểu và cấu hình theo nơi sở hữu. Enum backend dùng hợp đồng OpenAPI |
-| `*.test.ts(x)` | Đặt cùng thư mục với file được kiểm thử. Test tích hợp đặt cạnh điểm vào của luồng. Playwright tiếp tục ở `e2e/` |
+| Tên                                | Vai trò                                                                                                          |
+| ---------------------------------- | ---------------------------------------------------------------------------------------------------------------- |
+| `components/`                      | UI riêng của trang hoặc module                                                                                   |
+| `hooks/`                           | Tương tác và điều phối React                                                                                     |
+| `queries/`                         | TanStack Query keys, cấu hình, query hooks và mutation hooks. Dùng chung key khi các trang đọc cùng dữ liệu      |
+| `stores/`                          | Zustand cho state client cần chia sẻ. Store chỉ thuộc một trang cần được giới hạn vòng đời theo trang            |
+| `services/`                        | Điều phối dữ liệu hoặc thao tác. Các file chuyển từ `_lib/api/` là ứng viên kiểm tra để gộp nếu chỉ chuyển tiếp  |
+| `schemas/`, `types/`, `constants/` | Validation, kiểu và cấu hình theo nơi sở hữu. Enum backend dùng hợp đồng OpenAPI                                 |
+| `*.test.ts(x)`                     | Đặt cùng thư mục với file được kiểm thử. Test tích hợp đặt cạnh điểm vào của luồng. Playwright tiếp tục ở `e2e/` |
 
 - `features/` giữ phần nghiệp vụ dùng qua nhiều route. Catalog sở hữu query danh sách và bộ lọc URL chung cho Products, Danh mục và Search. Cart, Wishlist và Auth sở hữu store dùng qua nhiều màn hình.
 - `shared/ui/` chứa UI dùng xuyên nghiệp vụ. `shared/utils/` chứa hàm dùng chung. Logic chọn Biến thể dùng ở PDP và Wishlist thuộc Catalog. `variantColor.ts` nằm cạnh trang chi tiết.
@@ -33,13 +33,7 @@ fe-ecommerce-nike-style/
 ├── docs/
 │   └── reference/
 │       └── home-motion/
-│           ├── 001-trustbadgelist-stagger.md  [M] ← src/app/[locale]/(shop)/_lib/components/home/plans/001-trustbadgelist-stagger.md
-│           ├── 002-section-entrance-reveal.md  [M] ← src/app/[locale]/(shop)/_lib/components/home/plans/002-section-entrance-reveal.md
-│           ├── 003-newsletterform-state-transition.md  [M] ← src/app/[locale]/(shop)/_lib/components/home/plans/003-newsletterform-state-transition.md
-│           ├── 004-herocarousel-entrance-sync.md  [M] ← src/app/[locale]/(shop)/_lib/components/home/plans/004-herocarousel-entrance-sync.md
-│           ├── 005-consolidate-ease-duration-literals.md  [M] ← src/app/[locale]/(shop)/_lib/components/home/plans/005-consolidate-ease-duration-literals.md
-│           ├── 006-sectionhero-transform-string.md  [M] ← src/app/[locale]/(shop)/_lib/components/home/plans/006-sectionhero-transform-string.md
-│           └── README.md  [M] ← src/app/[locale]/(shop)/_lib/components/home/plans/README.md
+│           └── README.md       [K] Hồ sơ tổng hợp các thay đổi motion
 └── src/
     ├── app/
     │   ├── [locale]/
@@ -551,21 +545,21 @@ fe-ecommerce-nike-style/
 └── playwright.config.ts
 ```
 
-Các file root, tài liệu, test E2E và tài nguyên hiện có giữ nguyên đường dẫn trừ mục `home-motion` được ghi ở cây chi tiết. Danh sách đầy đủ của nhóm này có trong [cây hiện tại](storefront-current-file-tree.md).
+Các file root, test E2E và tài nguyên giữ nguyên đường dẫn trong đợt chuyển module. Hồ sơ animation đã được tổng hợp tại [Home motion](../reference/home-motion/README.md).
 
 ## 3. Những file rời cây ở các PR tiếp theo
 
-| Cụm | Quyết định và điều kiện |
-| --- | --- |
-| `auth-cookies.ts`, `roles.ts`, test role và nhánh Admin trong middleware | Gỡ cùng nhau sau khi review redirect và xác nhận không còn consumer storefront. Vẫn giữ bảo vệ tài khoản và checkout theo hành vi hiện hành trong đợt di chuyển |
-| `public/{next,vercel,file,globe,window}.svg` | Xóa sau khi rà URL tĩnh, URL động, manifest và cấu hình deploy |
-| `*-actions.ts`, kiểu dữ liệu và schema chuyển tiếp trùng nhiệm vụ | Gộp theo deletion test sau khi đối chiếu caller và test. Form validation có thể tiếp tục dùng Zod khi transport đã chuyển sang type sinh |
-| `lib/api/{mocks,testing,adapters}`, `public/mockServiceWorker.js` và startup mock | Gỡ từng phần sau khi API tương ứng đã chuyển. Giữ mock phục vụ các luồng và test còn dùng. Giữ worker Serwist phục vụ PWA |
-| Giỏ local và checkout mô phỏng | Thay trong Tier 1 sau khi pin contract cho phiên Người mua, Giỏ hàng, Tính thử và đặt Đơn hàng. Quyết định cách xử lý dữ liệu local cũ trước cutover |
+| Cụm                                                                               | Quyết định và điều kiện                                                                                                                                         |
+| --------------------------------------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `auth-cookies.ts`, `roles.ts`, test role và nhánh Admin trong middleware          | Gỡ cùng nhau sau khi review redirect và xác nhận không còn consumer storefront. Vẫn giữ bảo vệ tài khoản và checkout theo hành vi hiện hành trong đợt di chuyển |
+| `public/{next,vercel,file,globe,window}.svg`                                      | Xóa sau khi rà URL tĩnh, URL động, manifest và cấu hình deploy                                                                                                  |
+| `*-actions.ts`, kiểu dữ liệu và schema chuyển tiếp trùng nhiệm vụ                 | Gộp theo deletion test sau khi đối chiếu caller và test. Form validation có thể tiếp tục dùng Zod khi transport đã chuyển sang type sinh                        |
+| `lib/api/{mocks,testing,adapters}`, `public/mockServiceWorker.js` và startup mock | Gỡ từng phần sau khi API tương ứng đã chuyển. Giữ mock phục vụ các luồng và test còn dùng. Giữ worker Serwist phục vụ PWA                                       |
+| Giỏ local và checkout mô phỏng                                                    | Thay trong Tier 1 sau khi pin contract cho phiên Người mua, Giỏ hàng, Tính thử và đặt Đơn hàng. Quyết định cách xử lý dữ liệu local cũ trước cutover            |
 
 ## 4. Trình tự triển khai sau review
 
 1. Thử mẫu route-only với hai trang Products, rồi áp dụng cho Catalog và Search. Bảo toàn mapper, filter URL, SSR, metadata và slug. Kiểm tra trang danh sách, chi tiết và tìm kiếm ở hai locale.
 2. Chuyển layout, UI dùng chung và các trang auth/account. Cập nhật import, eslint, provider và test. Kiểm tra refresh đồng thời và redirect đăng nhập.
 3. Chuyển các trang cart, wishlist, checkout và orders theo cây đề xuất. Giữ hành vi mock hiện tại trong đợt di chuyển. Thực hiện cutover Tier 1 theo [plan restructure](storefront-restructure-plan.md).
-4. Đối chiếu quy tắc agent và tài liệu theo [plan clean code](storefront-clean-code-plan.md). Chạy lint, format check, typecheck, test và build sau mỗi cụm. Kiểm tra E2E ở nơi đổi luồng và xác minh không còn import đường dẫn cũ trước khi xóa.
+4. Đối chiếu quy tắc agent và tài liệu theo [checklist cleanup kỹ thuật](storefront-restructure-plan.md#checklist-cleanup-kỹ-thuật). Chạy lint, format check, typecheck, test và build sau mỗi cụm. Kiểm tra E2E ở nơi đổi luồng và xác minh không còn import đường dẫn cũ trước khi xóa.
