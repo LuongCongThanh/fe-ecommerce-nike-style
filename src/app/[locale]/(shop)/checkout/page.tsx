@@ -11,7 +11,7 @@ import { FormProvider } from 'react-hook-form';
 import { CheckoutClient } from '@/features/checkout/components/CheckoutClient';
 import { OrderSummary } from '@/features/checkout/components/OrderSummary';
 import { useCheckoutForm } from '@/features/checkout/hooks/useCheckoutForm';
-import { PageShell } from '@/features/storefront-shell/components/PageShell';
+import { PageShell } from '@/shared/ui/PageShell';
 
 export default function CheckoutPage({ params }: { readonly params: Promise<{ locale: string }> }) {
   const { locale } = use(params);

@@ -7,13 +7,13 @@ import { motion, useMotionValue, useReducedMotion, useSpring, useTransform } fro
 import { Heart, LogOut, Search, ShoppingCart, User, X } from 'lucide-react';
 import { useLocale, useTranslations } from 'next-intl';
 
-import { useMergeGuestDataOnLogin } from '@/features/auth/hooks/useMergeGuestDataOnLogin';
 import { useAuth } from '@/features/auth/session/useAuth';
 import { CartDrawer } from '@/features/cart/components/CartDrawer';
 import { useCart } from '@/features/cart/hooks/useCart';
 import { useHeaderSearch } from '@/features/catalog/search/hooks/useHeaderSearch';
 import { DesktopMegaMenu } from '@/features/storefront-shell/components/DesktopMegaMenu';
 import { MobileNav } from '@/features/storefront-shell/components/MobileNav';
+import { useMergeGuestDataOnLogin } from '@/features/storefront-shell/hooks/useMergeGuestDataOnLogin';
 import { useWishlist } from '@/features/wishlist/hooks/useWishlist';
 import { Button } from '@/shared/ui/Button';
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuSeparator, DropdownMenuTrigger } from '@/shared/ui/DropdownMenu';

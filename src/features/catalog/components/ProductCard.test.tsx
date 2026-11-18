@@ -3,7 +3,7 @@ import { beforeEach, describe, expect, it } from 'vitest';
 
 import { ProductCard } from '@/features/catalog/components/ProductCard';
 import { resetWishlistState } from '@/features/wishlist/stores/wishlist.store';
-import { renderWithProviders } from '@/helpers/render';
+import { renderWithProviders } from '@/testing/render';
 
 const baseProps = {
   id: 1,

@@ -7,7 +7,6 @@ Task của storefront là file Markdown cục bộ (không dùng GitHub Issues),
 ```text
 docs/plan/
 ├── README.md        <- file này: định dạng + bảng task
-├── AGENT-INBOX.md   <- lịch sử từ phiên bản runner cũ
 └── tasks/<NN>-<tên-kebab-tiếng-Anh>/
     ├── spec.md      <- trước khi code: mục tiêu, phạm vi, AC; frontmatter
     ├── plan.md      <- trước khi code: các bước, branch, rủi ro (planner viết)
@@ -158,3 +157,17 @@ Task đã bắt đầu được tiếp tục bằng cùng công cụ để giữ
 | 03  | [pagination-window](tasks/03-pagination-window/spec.md)                 | ready-for-agent | -          |     |
 | 04  | [order-status-badge-i18n](tasks/04-order-status-badge-i18n/spec.md)     | ready-for-agent | -          |     |
 | 05  | [remove-dead-app-config](tasks/05-remove-dead-app-config/spec.md)       | ready-for-agent | -          |     |
+
+## Wayfinder: bảo trì workflow và cấu trúc
+
+Các hồ sơ Wayfinder dùng quy trình riêng tại [tracker](../agents/issue-tracker.md#wayfinding-operations); `done` là đã ghi resolution, không đồng nghĩa đã merge PR. Không đưa chúng vào hàng đợi triển khai của runner.
+
+| Hồ sơ | Loại | Trạng thái |
+| --- | --- | --- |
+| [Đồng bộ workflow, cấu trúc và tài liệu storefront](tasks/07-workflow-structure-map/spec.md) | Map | in-progress |
+| [Đồng bộ cấu trúc hiện tại và các gate kiểm tra](tasks/08-workflow-structure-cleanup/spec.md) | Task | done |
+| [Kiểm kê độ lệch convention sau khi tách repository](tasks/09-convention-audit/spec.md) | Task | done |
+| [Ranh giới feature và các lớp service có còn cần thiết?](tasks/10-source-boundaries/spec.md) | Task | done |
+| [Workflow runner, task tracker và CI đã nhất quán khi tiếp tục công việc chưa?](tasks/11-runner-workflow/spec.md) | Task | todo |
+| [Tài liệu nào là nguồn chuẩn và phần nào có thể gộp hoặc xóa?](tasks/12-documentation-ownership/spec.md) | Task | todo |
+| [Provider cấp app nên được mount ở layout nào?](tasks/13-provider-ownership/spec.md) | Task | todo |

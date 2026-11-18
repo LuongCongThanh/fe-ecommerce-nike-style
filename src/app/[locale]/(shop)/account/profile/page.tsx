@@ -1,6 +1,6 @@
 // Hallmark redesign · design-system: design.md · scope: app page (functional, no enrichment)
 import { ProfileClient } from '@/features/account/profile/components/ProfileClient';
-import { PageShell } from '@/features/storefront-shell/components/PageShell';
+import { PageShell } from '@/shared/ui/PageShell';
 
 export default function ProfilePage(): React.JSX.Element {
   return (

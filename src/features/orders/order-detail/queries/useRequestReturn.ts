@@ -3,13 +3,13 @@
 import { useQueryClient } from '@tanstack/react-query';
 
 import { orderKeys } from '@/features/orders/queries/orderKeys';
-import { orderActions } from '@/features/orders/services/order';
+import { requestReturn } from '@/lib/api/endpoints/orders';
 import { useApiMutation } from '@/shared/lib/hooks/useApiMutation';
 
 export const useRequestReturn = (id: string) => {
   const qc = useQueryClient();
   return useApiMutation({
-    mutationFn: async () => orderActions.requestReturn(id),
+    mutationFn: async () => requestReturn(id),
     successMessage: 'Đã gửi yêu cầu trả hàng',
     errorFallback: 'Gửi yêu cầu trả hàng thất bại. Vui lòng thử lại.',
     onSuccess: async () => {

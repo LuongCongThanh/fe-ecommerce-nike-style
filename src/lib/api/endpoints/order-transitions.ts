@@ -7,7 +7,7 @@
  *   PENDING/PROCESSING → CANCELLED (nhánh riêng, chỉ từ 2 trạng thái này)
  *
  * Shared by the mock server — the source of truth, `mocks/order-fixtures.ts` — and the storefront UI's
- * button gating, `shared/types/order.ts` re-exports these. The two used to re-derive the same rule
+ * button gating, views import these rules from this module. The two used to re-derive the same rule
  * independently, connected only by a "Mirrors ..." comment; a rule change (e.g. a new carve-out) had to
  * be made and tested in both places, with nothing enforcing they stayed in sync.
  */

@@ -2,7 +2,7 @@
 
 import { useQueryClient } from '@tanstack/react-query';
 
-import { profileActions } from '@/features/account/profile/services/profile';
+import { updateProfile } from '@/lib/api/endpoints/profile';
 import { useApiMutation } from '@/shared/lib/hooks/useApiMutation';
 import type { User } from '@/shared/types/user';
 
@@ -11,7 +11,7 @@ const profileKey = ['profile'] as const;
 export const useUpdateProfile = () => {
   const qc = useQueryClient();
   return useApiMutation({
-    mutationFn: async (data: Partial<User>) => profileActions.update(data),
+    mutationFn: async (data: Partial<User>) => updateProfile(data),
     successMessage: 'Cập nhật thông tin thành công',
     errorFallback: 'Cập nhật thông tin thất bại. Vui lòng thử lại.',
     onSuccess: async () => {

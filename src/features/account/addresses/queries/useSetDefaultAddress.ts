@@ -3,13 +3,13 @@
 import { useQueryClient } from '@tanstack/react-query';
 
 import { addressKeys } from '@/features/account/addresses/queries/addressKeys';
-import { addressActions } from '@/features/account/addresses/services/address';
+import { setDefaultAddress } from '@/lib/api/endpoints/address';
 import { useApiMutation } from '@/shared/lib/hooks/useApiMutation';
 
 export const useSetDefaultAddress = () => {
   const qc = useQueryClient();
   return useApiMutation({
-    mutationFn: async (id: string) => addressActions.setDefault(id),
+    mutationFn: async (id: string) => setDefaultAddress(id),
     successMessage: 'Đã đặt làm địa chỉ mặc định',
     errorFallback: 'Cập nhật thất bại. Vui lòng thử lại.',
     onSuccess: async () => {

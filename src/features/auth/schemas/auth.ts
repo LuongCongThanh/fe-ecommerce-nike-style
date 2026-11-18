@@ -1,6 +1,9 @@
 import { z } from 'zod';
 
-import { LoginSchema } from '@/shared/types/user';
+const LoginSchema = z.object({
+  email: z.email('Email không hợp lệ'),
+  password: z.string().min(8, 'Mật khẩu tối thiểu 8 ký tự'),
+});
 
 // Login form: password.min(1) intentional — shows "please enter" UX, not "8 chars min"
 export const LoginFormSchema = LoginSchema.extend({

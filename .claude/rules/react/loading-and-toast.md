@@ -1,8 +1,6 @@
 ---
 paths:
-  - 'apps/**/*.{ts,tsx}'
-  - 'packages/shared/**/*.{ts,tsx}'
-  - 'packages/ui/**/*.tsx'
+  - 'src/**/*.{ts,tsx}'
 description: Loading-state taxonomy plus toast ownership, content and dedupe rules.
 ---
 
@@ -67,7 +65,7 @@ Toast is not a substitute for loading, inline validation, a query error state, o
 
 ## Toast ownership
 
-- Use `notify` from `@repo/shared/notification`; components do not import `sonner` directly.
+- Use `notify` from `@/shared/lib/notification`; components do not import `sonner` directly.
 - One user action has exactly one toast owner. Prefer the mutation/controller hook; never fire from the API SDK, the global QueryClient, and the component at the same time.
 - Storefront mutations use `useApiMutation` where appropriate to centralize success/error toast and avoid duplicates.
 - The API SDK, schemas, mappers, and presentational components never fire a toast.

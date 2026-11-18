@@ -3,10 +3,10 @@
 import { useQuery } from '@tanstack/react-query';
 
 import { addressKeys } from '@/features/account/addresses/queries/addressKeys';
-import { addressActions } from '@/features/account/addresses/services/address';
+import { getAddresses } from '@/lib/api/endpoints/address';
 
 export const useAddresses = () =>
   useQuery({
     queryKey: addressKeys.list(),
-    queryFn: addressActions.list,
+    queryFn: getAddresses,
   });

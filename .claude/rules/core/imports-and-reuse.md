@@ -8,18 +8,18 @@ description: Import alias rules and the decision framework for reusing, extracti
 
 ## Canonical aliases
 
-| From                   | Importing                                       | How to import                                   |
-| ---------------------- | ----------------------------------------------- | ----------------------------------------------- |
-| Anywhere under `src/`  | A file in a different module/folder             | `@/*` mapped to `./src/*`                       |
-| Anywhere under `src/`  | A file in the same module/folder                | Relative `./...`                                |
-| Anywhere               | An external dependency                          | Package name (`react`, `@tanstack/react-query`) |
+| From                  | Importing                           | How to import                                   |
+| --------------------- | ----------------------------------- | ----------------------------------------------- |
+| Anywhere under `src/` | A file in a different module/folder | `@/*` mapped to `./src/*`                       |
+| Anywhere under `src/` | A file in the same module/folder    | Relative `./...`                                |
+| Anywhere              | An external dependency              | Package name (`react`, `@tanstack/react-query`) |
 
-The storefront is a single Next.js app at the repo root; there are no workspace packages. `apps/admin`, `apps/cms` and `packages/*` are legacy code awaiting deletion: do not import from them.
+The storefront is a single Next.js app at the repo root; there are no workspace packages. `apps/admin`, `apps/cms` and `packages/*` have been removed: do not import from them.
 
 Example:
 
 ```ts
-import { Button } from '@/components/ui/Button';
+import { Button } from '@/shared/ui/Button';
 import { getProducts } from '@/lib/api/endpoints/catalog';
 import type { Product } from '@/lib/schemas/catalog/catalog';
 import { ROUTES } from '@/shared/constants/routes';
@@ -79,17 +79,17 @@ Never copy-paste and rename variables, CSS classes or wording to create a new im
 
 ## Where shared code belongs
 
-| Kind of duplication                                       | Where it belongs                                         |
-| --------------------------------------------------------- | -------------------------------------------------------- |
-| UI primitive with no business logic                       | `src/shared/ui`                                      |
-| Component/hook/helper used by several features, no domain | `src/shared`                                             |
-| Schema/transport type                                     | The matching domain in `src/lib/schemas`                 |
-| Endpoint/API transport                                    | `src/lib/api`                                            |
-| Locale config and request setup                           | `src/i18n`                                               |
-| Logic used by multiple features                           | `src/shared` or `src/core`, by responsibility            |
-| Logic used by one Storefront page              | Beside its `page.tsx`                                |
-| Logic used within one feature                             | Keep it in `features/<domain>`                           |
-| Design tokens/theme                                       | `src/styles` (Tailwind entry CSS)                        |
+| Kind of duplication                                       | Where it belongs                                                   |
+| --------------------------------------------------------- | ------------------------------------------------------------------ |
+| UI primitive with no business logic                       | `src/shared/ui`                                                    |
+| Component/hook/helper used by several features, no domain | `src/shared`                                                       |
+| Schema/transport type                                     | The matching domain in `src/lib/schemas`                           |
+| Endpoint/API transport                                    | `src/lib/api`                                                      |
+| Locale config and request setup                           | `src/i18n`                                                         |
+| Logic used by multiple features                           | The owning feature for domain logic; `src/shared` for generic code |
+| Logic used by one Storefront page                         | In the owning `src/features/<domain>` module                       |
+| Logic used within one feature                             | Keep it in `features/<domain>`                                     |
+| Design tokens/theme                                       | `src/styles` (Tailwind entry CSS)                                  |
 
 - Move an abstraction to the smallest common scope that contains every consumer; do not jump straight to `src/shared` if it is only used in one feature today.
 - Reuse the contract/behavior, not by letting a consumer import a private file.

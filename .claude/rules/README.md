@@ -27,16 +27,15 @@ For the decision order between these rules, tooling config, and existing code, p
 | --------------------------------------------- | --------------------------------------------------------------- |
 | [`api-data.md`](data/api-data.md)             | Component -> hook -> API SDK -> schema layering, TanStack Query |
 | [`error-handling.md`](data/error-handling.md) | HTTP -> `ApiError` -> UI error flow and response mapping        |
-| [`localization.md`](data/localization.md)     | next-intl (Storefront) vs react-i18next (Admin/CMS), key naming |
+| [`localization.md`](data/localization.md)     | Storefront next-intl, locale parity and key naming              |
 
 ## apps/ — App-specific structure and architecture
 
 | File                                                        | Covers                                                             |
 | ----------------------------------------------------------- | ------------------------------------------------------------------ |
 | [`frontend-architecture.md`](apps/frontend-architecture.md) | Repo-wide dependency direction and state-ownership rules           |
-| [`project-structure.md`](apps/project-structure.md)         | Canonical directory trees per app/package                          |
+| [`project-structure.md`](apps/project-structure.md)         | Current storefront module ownership                                |
 | [`storefront.md`](apps/storefront.md)                       | Storefront-specific rules (Next.js App Router, locale, mock-first) |
-| [`admin-cms.md`](apps/admin-cms.md)                         | Admin/CMS-specific rules (Vite, TanStack Router, Staff session)    |
 
 ## process/ — Git and testing
 

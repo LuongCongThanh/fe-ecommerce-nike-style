@@ -3,7 +3,7 @@ import { setRequestLocale } from 'next-intl/server';
 
 import { FilterSidebar } from '@/features/catalog/components/FilterSidebar';
 import ProductsClient from '@/features/catalog/product-list/components/ProductsClient';
-import { PageShell } from '@/features/storefront-shell/components/PageShell';
+import { PageShell } from '@/shared/ui/PageShell';
 
 interface ProductsPageProps {
   readonly params: Promise<{ locale: string }>;

@@ -6,12 +6,8 @@ import { useAuth } from '@/features/auth/session/useAuth';
 import { mergeCartOnLogin } from '@/features/cart/hooks/useCart';
 import { mergeWishlistOnLogin } from '@/features/wishlist/hooks/useWishlist';
 
-/**
- * Merge cart + wishlist sau đăng nhập (Decision #36, glossary.md — Merge Wishlist) — chạy đúng 1 lần
- * khi status chuyển sang authenticated (đăng nhập/đăng ký thành công), không chạy lại mỗi lần component
- * gọi hook này re-render trong lúc đã đăng nhập. Sống ở `_lib/hooks` của shop (không phải
- * `core/session`) vì merge cart/wishlist là khái niệm của shop, còn `core/session` chỉ giữ danh tính.
- */
+/** Shop-level orchestration: merge guest cart and wishlist once when the session becomes
+ * authenticated. Keep this in the storefront shell so identity/session does not own shopping data. */
 export function useMergeGuestDataOnLogin(): void {
   const { authStatus } = useAuth();
   const wasAuthenticated = useRef(false);

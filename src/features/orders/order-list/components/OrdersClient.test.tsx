@@ -5,7 +5,7 @@ import { registerAuthRuntimeAdapter } from '@/lib/api/client/runtime';
 import { encodeAccessToken } from '@/lib/api/mocks/auth-fixtures';
 import { server } from '@/lib/api/testing/msw-server';
 
-import { renderWithProviders } from '@/helpers/render';
+import { renderWithProviders } from '@/testing/render';
 import { OrdersClient } from '@/features/orders/order-list/components/OrdersClient';
 
 const ACCOUNT_USER_ID = 1;

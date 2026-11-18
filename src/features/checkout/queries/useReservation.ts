@@ -5,7 +5,7 @@ import { useMemo } from 'react';
 import { useQuery } from '@tanstack/react-query';
 
 import type { CartLine } from '@/features/cart/hooks/useCart';
-import { checkoutActions } from '@/features/checkout/services/checkout';
+import { createReservation } from '@/lib/api/endpoints/checkout';
 import { ApiError } from '@/shared/lib/errors/api-error';
 
 interface ReservationState {
@@ -30,7 +30,7 @@ export function useReservation(items: CartLine[]): ReservationState {
 
   const { data, isPending, error } = useQuery({
     queryKey: ['reservation', itemsKey],
-    queryFn: async () => checkoutActions.reserve(items.map((i) => ({ skuId: i.skuId, quantity: i.quantity }))),
+    queryFn: async () => createReservation(items.map((i) => ({ skuId: i.skuId, quantity: i.quantity }))),
     enabled: itemsKey !== '',
     retry: false,
     staleTime: Infinity, // a new itemsKey is a new Reservation, never a refetch of this one

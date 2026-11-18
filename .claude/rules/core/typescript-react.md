@@ -29,7 +29,7 @@ description: General TypeScript/React naming, file-naming, import-order and comp
 | Store                  | `<domain>.store.ts` or the existing pattern | `cart.store.ts`        |
 | Utility/adapter/config | `camelCase.ts`                              | `catalogUrlState.ts`   |
 | Aggregate domain type  | `types.ts` in the feature, or `<domain>.ts` | `types.ts`, `order.ts` |
-| Unit/integration test  | `<subject>.test.ts(x)` under `__tests__`    | `catalog.test.ts`      |
+| Unit/integration test  | `<subject>.test.ts(x)` beside the subject   | `catalog.test.ts`      |
 | Playwright             | `<flow>.spec.ts`                            | `checkout.spec.ts`     |
 | Route folder           | `kebab-case`                                | `forgot-password/`     |
 | Dynamic route          | `[param]`                                   | `[slug]/`              |
@@ -61,7 +61,7 @@ import type { FormEvent } from 'react';
 
 import { useQuery } from '@tanstack/react-query';
 
-import { Button } from '@/components/ui/Button';
+import { Button } from '@/shared/ui/Button';
 import { getProducts } from '@/lib/api/endpoints/catalog';
 import type { Product } from '@/lib/schemas/catalog/catalog';
 import { ROUTES } from '@/shared/constants/routes';

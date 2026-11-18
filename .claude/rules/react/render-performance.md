@@ -1,11 +1,7 @@
 ---
 paths:
-  - 'apps/**/*.tsx'
-  - 'apps/**/use*.ts'
-  - 'apps/**/use*.tsx'
-  - 'packages/ui/**/*.tsx'
-  - 'packages/shared/**/*.tsx'
-  - 'packages/shared/**/use*.ts'
+  - 'src/**/*.tsx'
+  - 'src/**/use*.ts'
 description: React re-render control conventions — memoization discipline, state placement, Zustand/Context selectors.
 ---
 

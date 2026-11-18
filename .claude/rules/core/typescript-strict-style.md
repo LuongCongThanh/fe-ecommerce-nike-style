@@ -1,7 +1,7 @@
 ---
 paths:
-  - 'apps/**/*.{ts,tsx,mts,cts}'
-  - 'packages/**/*.{ts,tsx,mts,cts}'
+  - 'src/**/*.{ts,tsx,mts,cts}'
+  - 'scripts/**/*.{ts,mts,cts}'
 description: Deep strict-TypeScript type-design rules (no any, discriminated unions, nullability, Zod as source of truth).
 ---
 

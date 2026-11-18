@@ -10,8 +10,8 @@ import { CategoryClient } from '@/features/catalog/category-detail/components/Ca
 import { getCategoryTrail } from '@/features/catalog/categoryTree';
 import { FilterSidebar } from '@/features/catalog/components/FilterSidebar';
 import { useCategoryTree } from '@/features/catalog/queries/useCategoryTree';
-import { PageShell } from '@/features/storefront-shell/components/PageShell';
 import type { CategoryEntry } from '@/lib/api/models/catalog';
+import { PageShell } from '@/shared/ui/PageShell';
 import { QueryState } from '@/shared/ui/QueryState';
 
 interface CategoryPageClientProps {
