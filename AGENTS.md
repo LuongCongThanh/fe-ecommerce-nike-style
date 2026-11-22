@@ -59,6 +59,11 @@ pnpm build
 
 ## Quy trình task và GitHub
 
+- Khi dùng skill Matt Pocock để tạo spec, plan, guide, report, metric hoặc
+  handoff, bắt buộc đọc và tuân thủ
+  [shared Matt Pocock templates](../docs/mattpocock-templates/README.md).
+  Không thay đổi tên file, heading bắt buộc hoặc định dạng measurement.
+
 - Codex và Claude Code dùng cùng spec, trạng thái, tiêu chí nghiệm thu và quy tắc Git. Với task đã đủ điều kiện, làm lần lượt: đọc spec → lập `plan.md` bằng skill `plan-task` → triển khai và ghi `report.md` → chạy kiểm tra → review theo spec và quy tắc repo.
 - Chọn một công cụ cho từng bước. Khi đổi công cụ, tiếp tục từ `spec.md`, `plan.md`, diff hiện tại và `report.md` nếu đã có. Dùng `handoff.md` nếu lần chạy trước để lại. Kiểm tra lại bước nào đã hoàn thành trước khi làm tiếp.
 

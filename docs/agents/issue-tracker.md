@@ -26,6 +26,15 @@ Body delivery: `# Spec NN: title`, `Branch:`, Problem Statement, Solution, Accep
 
 Artifact: plan.md trước code (steps/seams/risks), report.md trước implementer trả ok, metric.md cho trước/sau và bảng token, handoff.md cho việc dang dở. Không xóa artifact khi còn resume/PR/blocker hoặc evidence độc nhất. Comment append dưới `## Comments` có ngày, không viết lại lịch sử. Bare `#42` trên GitHub là PR, task dùng folder name.
 
+## Shared Matt Pocock artifacts
+
+Khi dùng `grill-with-docs`, `to-spec`, `to-tickets`, `plan-task`, `implement`,
+`implement-spec`, `code-review`, `retro`, `handoff` hoặc `pr`, bắt buộc áp dụng
+cấu trúc trong [shared templates](../../../docs/mattpocock-templates/README.md).
+Các template spec, plan, guide, metric, report, retro finding và handoff là
+khâu trung tâm hóa output. Không đổi tên artifact, không thay heading bắt buộc,
+không điền kết quả chưa chạy và không tự gộp file theo ý riêng.
+
 ## Vòng đời delivery
 
 `todo → ready-for-agent → in-progress → review → done`; khi dừng có needs-info/blocked/ready-for-human.
