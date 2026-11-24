@@ -38,6 +38,9 @@ graphify-out/
 !.claude/skills/plan-task
 !.claude/skills/fashion-storefront-ui-director
 !.claude/skills/storefront-workflow
+!.claude/skills/feature
+!.claude/skills/vitest
+!.claude/skills/api-security-review
 .agent/
 
 # debug
