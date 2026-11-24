@@ -10,7 +10,7 @@ Same-origin proxy giữ cookie first-party và tránh browser gọi backend cros
 
 ## Contract pin và mapper
 
-`scripts/gen-api.mjs` pin release asset `be-demo/openapi-v0.5.0/openapi.json`; `OPENAPI_URL` có thể override URL hoặc local path để thử. `pnpm gen:api` sinh `src/lib/api/generated/openapi.ts` rồi format. Không sửa file sinh bằng tay. CI regenerate rồi kiểm diff với contract pin; cần truy cập nguồn contract.
+`scripts/gen-api.mjs` pin release asset `be-demo/openapi-v0.7.0/openapi.json`; `OPENAPI_URL` có thể override URL hoặc local path để thử. `pnpm gen:api` sinh `src/lib/api/generated/openapi.ts` rồi format. Không sửa file sinh bằng tay. CI regenerate rồi kiểm diff với contract pin; cần truy cập nguồn contract.
 
 Catalog endpoints dùng generated schemas cho products, product slug, categories, sizes và colors. Mapper chuyển DTO sang model trong `src/lib/api/models/catalog.ts`; null ảnh bị loại, description null thành chuỗi rỗng. Component dùng model, không đoán field từ contract mới hơn. Pin hiện tại không phải bằng chứng toàn bộ checkout/auth API đã tích hợp.
 
