@@ -19,6 +19,18 @@ Bảng giữ trạng thái điều hướng hiện có; đối chiếu spec/PR t
 | 04  | [order-status-badge-i18n](tasks/04-order-status-badge-i18n/spec.md)     | ready-for-agent | -          |     |
 | 05  | [remove-dead-app-config](tasks/05-remove-dead-app-config/spec.md)       | ready-for-agent | -          |     |
 | 06  | [order-return-lifecycle](tasks/06-order-return-lifecycle/spec.md)       | todo            | -          |     |
+| 22  | [env-contract](tasks/22-env-contract/spec.md)                           | todo            | -          |     |
+| 23  | [remove-sentry](tasks/23-remove-sentry/spec.md)                         | todo            | -          |     |
+| 24  | [remove-tailwind-config](tasks/24-remove-tailwind-config/spec.md)       | todo            | -          |     |
+| 25  | [git-hook-scope](tasks/25-git-hook-scope/spec.md)                       | todo            | -          |     |
+| 26  | [pin-node-version](tasks/26-pin-node-version/spec.md)                   | todo            | -          |     |
+| 27  | [eslint-single-config](tasks/27-eslint-single-config/spec.md)           | todo            | -          |     |
+| 28  | [next-config-hardening](tasks/28-next-config-hardening/spec.md)         | todo            | 22         |     |
+| 29  | [pnpm-settings-and-pinning](tasks/29-pnpm-settings-and-pinning/spec.md) | todo            | -          |     |
+| 30  | [format-scope](tasks/30-format-scope/spec.md)                           | todo            | -          |     |
+| 31  | [skills-lock-integrity](tasks/31-skills-lock-integrity/spec.md)         | todo            | -          |     |
+| 32  | [middleware-to-proxy](tasks/32-middleware-to-proxy/spec.md)             | todo            | -          |     |
+| 33  | [remove-admin-route-guard](tasks/33-remove-admin-route-guard/spec.md)   | todo            | 32         |     |
 
 ## Wayfinder: bảo trì workflow và cấu trúc
 
