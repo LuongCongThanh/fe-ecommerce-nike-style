@@ -323,6 +323,27 @@ export interface paths {
     patch?: never;
     trace?: never;
   };
+  '/api/v1/admin/products/{productId}/sale-prices': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    /** List every sale price of a product, newest start first, with its status now */
+    get: operations['AdminSalePriceController_list_v1'];
+    put?: never;
+    /**
+     * Set a sale price on one or more variants of a product (all or nothing)
+     * @description Send `price` (same amount for each variant) or `percentOff` (per variant, rounded down to the đồng).
+     */
+    post: operations['AdminSalePriceController_create_v1'];
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
   '/api/v1/admin/roles': {
     parameters: {
       query?: never;
@@ -358,6 +379,41 @@ export interface paths {
     head?: never;
     /** Edit a role's description, name or permissions (requires ADMINISTRATION_ROLE_MANAGE). Accounts holding the role must log in again: their access tokens stop working and their refresh tokens are revoked. The Admin role is read-only; system roles cannot be renamed. */
     patch: operations['AdminRoleController_updateRole_v1'];
+    trace?: never;
+  };
+  '/api/v1/admin/sale-prices/{id}': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get?: never;
+    put?: never;
+    post?: never;
+    /** Delete an upcoming sale price */
+    delete: operations['AdminSalePriceController_remove_v1'];
+    options?: never;
+    head?: never;
+    /** Change an upcoming sale price, or the end of an active one */
+    patch: operations['AdminSalePriceController_update_v1'];
+    trace?: never;
+  };
+  '/api/v1/admin/sale-prices/{id}/end': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get?: never;
+    put?: never;
+    /** End an active sale price now */
+    post: operations['AdminSalePriceController_end_v1'];
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
     trace?: never;
   };
   '/api/v1/admin/sizes': {
@@ -463,6 +519,46 @@ export interface paths {
     options?: never;
     head?: never;
     patch?: never;
+    trace?: never;
+  };
+  '/api/v1/admin/vouchers': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    /** List vouchers, newest first; search by code, filter by status now */
+    get: operations['AdminVoucherController_findAll_v1'];
+    put?: never;
+    /** Create a voucher; the code is stored upper case and never changes */
+    post: operations['AdminVoucherController_create_v1'];
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/v1/admin/vouchers/{id}': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    /** Get a voucher with its use count */
+    get: operations['AdminVoucherController_findOne_v1'];
+    put?: never;
+    post?: never;
+    /** Delete an unused voucher; a used one can only be deactivated */
+    delete: operations['AdminVoucherController_remove_v1'];
+    options?: never;
+    head?: never;
+    /**
+     * Change a voucher
+     * @description Unused: any field but the code. Used: only endsAt, totalLimit (not below usedCount), perBuyerLimit, isActive.
+     */
+    patch: operations['AdminVoucherController_update_v1'];
     trace?: never;
   };
   '/api/v1/auth/forgot-password': {
@@ -746,7 +842,7 @@ export interface paths {
     };
     /**
      * List ACTIVE products with a price range (paginated, public)
-     * @description Search by name, filter by category, size, color and price, sort by newest or price.
+     * @description Search by name; filter by category (with descendants), gender, size, color, price and onSale; sort by newest, Effective price or discount.
      */
     get: operations['ProductController_findAll_v1'];
     put?: never;
@@ -852,6 +948,18 @@ export interface components {
     };
     /** @enum {string} */
     AccountType: 'CUSTOMER' | 'STAFF' | 'ADMIN';
+    ActiveSalePriceDto: {
+      /**
+       * Format: date-time
+       * @description Exclusive end
+       */
+      endsAt: string;
+      /**
+       * @description Integer VND
+       * @example 159000
+       */
+      price: number;
+    };
     AuthUserResponseDto: {
       email: string;
       emailVerified: boolean;
@@ -1001,6 +1109,35 @@ export interface components {
        */
       permissions: components['schemas']['Permission'][];
     };
+    CreateSalePriceDto: {
+      /**
+       * Format: date-time
+       * @description Exclusive end, after startsAt
+       */
+      endsAt: string;
+      /**
+       * @description Percent off each Variant price (1–99), rounded down to the đồng
+       * @example 20
+       */
+      percentOff?: number;
+      /**
+       * @description Integer VND for every listed Variant; must be below each Variant price
+       * @example 159000
+       */
+      price?: number;
+      /**
+       * Format: date-time
+       * @description Defaults to now; may not be in the past
+       */
+      startsAt?: string;
+      /**
+       * @description Variants of this product
+       * @example [
+       *       "550e8400-e29b-41d4-a716-446655440000"
+       *     ]
+       */
+      variantIds: string[];
+    };
     CreateSizeDto: {
       /** @example M */
       code: string;
@@ -1049,6 +1186,49 @@ export interface components {
        * @example TSHIRT-BASIC-WHT-M
        */
       sku: string;
+    };
+    CreateVoucherDto: {
+      /**
+       * @description 3–32 letters, digits, - or _; stored upper case (BR-VCH-09)
+       * @example sale10
+       */
+      code: string;
+      /**
+       * Format: date-time
+       * @description Exclusive end, after startsAt
+       */
+      endsAt: string;
+      /** @default true */
+      isActive?: boolean;
+      /**
+       * @description PERCENT only; cap in VND
+       * @example 50000
+       */
+      maxDiscount?: number | null;
+      /**
+       * @description Minimum Subtotal in VND
+       * @default 0
+       * @example 300000
+       */
+      minSubtotal?: number;
+      /**
+       * @description null = unlimited
+       * @example 1
+       */
+      perBuyerLimit?: number | null;
+      /** Format: date-time */
+      startsAt: string;
+      /**
+       * @description null = unlimited
+       * @example 100
+       */
+      totalLimit?: number | null;
+      type: components['schemas']['VoucherType'];
+      /**
+       * @description PERCENT: 1–100; FIXED: integer VND > 0
+       * @example 10
+       */
+      value: number;
     };
     CustomerProfileResponseDto: {
       email: string;
@@ -1148,6 +1328,10 @@ export interface components {
       data: components['schemas']['VariantResponseDto'][];
       meta: components['schemas']['PaginationMetaDto'];
     };
+    PaginatedVoucherResponseDto: {
+      data: components['schemas']['VoucherResponseDto'][];
+      meta: components['schemas']['PaginationMetaDto'];
+    };
     PaginationMetaDto: {
       /** @example 20 */
       limit: number;
@@ -1169,6 +1353,10 @@ export interface components {
       | 'CATALOG_CATEGORY_MANAGE'
       | 'CATALOG_PRODUCT_OPTION_VIEW'
       | 'CATALOG_PRODUCT_OPTION_MANAGE'
+      | 'PRICING_SALE_PRICE_VIEW'
+      | 'PRICING_SALE_PRICE_MANAGE'
+      | 'PRICING_VOUCHER_VIEW'
+      | 'PRICING_VOUCHER_MANAGE'
       | 'ADMINISTRATION_ROLE_VIEW'
       | 'ADMINISTRATION_ROLE_MANAGE'
       | 'ADMINISTRATION_INTERNAL_ACCOUNT_VIEW'
@@ -1242,15 +1430,25 @@ export interface components {
       /** @description Card image: a primary image (any color) first, else the first image; null when none */
       imageUrl: string | null;
       /**
-       * @description Highest price among ACTIVE variants, integer VND
+       * @description Largest current discount among ACTIVE variants, whole percent rounded down; 0 when none
+       * @example 20
+       */
+      maxDiscountPercent: number;
+      /**
+       * @description Highest Effective price among ACTIVE variants, integer VND
        * @example 249000
        */
       maxPrice: number;
       /**
-       * @description Lowest price among ACTIVE variants, integer VND
-       * @example 199000
+       * @description Lowest Effective price (sale price when active) among ACTIVE variants, integer VND
+       * @example 159000
        */
       minPrice: number;
+      /**
+       * @description Lowest regular Price among ACTIVE variants; show it struck through when above minPrice
+       * @example 199000
+       */
+      minRegularPrice: number;
       name: string;
       /**
        * Format: date-time
@@ -1285,7 +1483,7 @@ export interface components {
       weightGrams: number;
     };
     /** @enum {string} */
-    ProductSort: 'newest' | 'price_asc' | 'price_desc';
+    ProductSort: 'newest' | 'price_asc' | 'price_desc' | 'discount_desc';
     /** @enum {string} */
     ProductStatus: 'DRAFT' | 'ACTIVE' | 'ARCHIVED';
     RefreshResponseDto: {
@@ -1339,6 +1537,36 @@ export interface components {
       isSystem: boolean;
       name: string;
     };
+    SalePriceResponseDto: {
+      /** Format: date-time */
+      createdAt: string;
+      /**
+       * Format: date-time
+       * @description Exclusive end
+       */
+      endsAt: string;
+      id: string;
+      /**
+       * @description Integer VND, below the Variant price
+       * @example 159000
+       */
+      price: number;
+      /**
+       * Format: date-time
+       * @description Inclusive start
+       */
+      startsAt: string;
+      /** @description At request time */
+      status: components['schemas']['SalePriceStatus'];
+      /** Format: date-time */
+      updatedAt: string;
+      variantId: string;
+    };
+    /**
+     * @description At request time
+     * @enum {string}
+     */
+    SalePriceStatus: 'UPCOMING' | 'ACTIVE' | 'ENDED';
     SizeResponseDto: {
       /** @example M */
       code: string;
@@ -1365,6 +1593,54 @@ export interface components {
       /** @description RBAC roles assigned to the account, sorted by name */
       roles: components['schemas']['RoleSummaryResponseDto'][];
       status: components['schemas']['UserStatus'];
+      /** Format: date-time */
+      updatedAt: string;
+    };
+    StorefrontProductDetailResponseDto: {
+      categoryId: string;
+      /** Format: date-time */
+      createdAt: string;
+      description: string | null;
+      gender: components['schemas']['Gender'];
+      id: string;
+      /** @description Images grouped by color via colorId, ordered by sortOrder */
+      images: components['schemas']['ImageResponseDto'][];
+      name: string;
+      /**
+       * Format: date-time
+       * @description First time the product became ACTIVE
+       */
+      publishedAt: string | null;
+      slug: string;
+      status: components['schemas']['ProductStatus'];
+      /** Format: date-time */
+      updatedAt: string;
+      /** @description ACTIVE variants only */
+      variants: components['schemas']['StorefrontVariantResponseDto'][];
+      /** @description Shipping weight in grams */
+      weightGrams: number;
+    };
+    StorefrontVariantResponseDto: {
+      color: components['schemas']['ColorSummaryDto'];
+      /** Format: date-time */
+      createdAt: string;
+      /**
+       * @description Sale price when one is active, else price; integer VND
+       * @example 159000
+       */
+      effectivePrice: number;
+      id: string;
+      /**
+       * @description Integer VND
+       * @example 199000
+       */
+      price: number;
+      productId: string;
+      /** @description Active sale price, null when none */
+      salePrice: components['schemas']['ActiveSalePriceDto'] | null;
+      size: components['schemas']['SizeSummaryDto'];
+      sku: string;
+      status: components['schemas']['VariantStatus'];
       /** Format: date-time */
       updatedAt: string;
     };
@@ -1467,6 +1743,23 @@ export interface components {
        */
       permissions?: components['schemas']['Permission'][];
     };
+    UpdateSalePriceDto: {
+      /**
+       * Format: date-time
+       * @description Exclusive end; not in the past
+       */
+      endsAt?: string;
+      /**
+       * @description Integer VND, below the Variant price (upcoming only)
+       * @example 149000
+       */
+      price?: number;
+      /**
+       * Format: date-time
+       * @description Upcoming only; may not be in the past
+       */
+      startsAt?: string;
+    };
     UpdateSizeDto: {
       /**
        * @default false
@@ -1493,6 +1786,44 @@ export interface components {
       price?: number;
       /** @example ARCHIVED */
       status?: components['schemas']['VariantStatus'];
+    };
+    UpdateVoucherDto: {
+      /**
+       * Format: date-time
+       * @description Exclusive end, after startsAt
+       */
+      endsAt?: string;
+      /** @default true */
+      isActive?: boolean;
+      /**
+       * @description PERCENT only; cap in VND
+       * @example 50000
+       */
+      maxDiscount?: number | null;
+      /**
+       * @description Minimum Subtotal in VND
+       * @default 0
+       * @example 300000
+       */
+      minSubtotal?: number;
+      /**
+       * @description null = unlimited
+       * @example 1
+       */
+      perBuyerLimit?: number | null;
+      /** Format: date-time */
+      startsAt?: string;
+      /**
+       * @description null = unlimited
+       * @example 100
+       */
+      totalLimit?: number | null;
+      type?: components['schemas']['VoucherType'];
+      /**
+       * @description PERCENT: 1–100; FIXED: integer VND > 0
+       * @example 10
+       */
+      value?: number;
     };
     /** @enum {string} */
     UserStatus: 'ACTIVE' | 'DISABLED';
@@ -1524,6 +1855,63 @@ export interface components {
       /** @example user@example.com */
       email: string;
     };
+    VoucherResponseDto: {
+      /**
+       * @description Upper case, immutable
+       * @example SALE10
+       */
+      code: string;
+      /** Format: date-time */
+      createdAt: string;
+      /**
+       * Format: date-time
+       * @description Exclusive end
+       */
+      endsAt: string;
+      id: string;
+      isActive: boolean;
+      /**
+       * @description PERCENT only; cap in VND, null = no cap
+       * @example 50000
+       */
+      maxDiscount: number | null;
+      /**
+       * @description Minimum Subtotal in VND, 0 = none
+       * @example 300000
+       */
+      minSubtotal: number;
+      /**
+       * @description Uses per Buyer (account or phone), null = unlimited
+       * @example 1
+       */
+      perBuyerLimit: number | null;
+      /** Format: date-time */
+      startsAt: string;
+      /** @description At request time */
+      status: components['schemas']['VoucherStatus'];
+      /**
+       * @description Total uses, null = unlimited
+       * @example 100
+       */
+      totalLimit: number | null;
+      type: components['schemas']['VoucherType'];
+      /** Format: date-time */
+      updatedAt: string;
+      /**
+       * @description Uses counted so far (orders arrive in slice C)
+       * @example 0
+       */
+      usedCount: number;
+      /**
+       * @description PERCENT: 1–100; FIXED: integer VND
+       * @example 10
+       */
+      value: number;
+    };
+    /** @enum {string} */
+    VoucherStatus: 'ACTIVE' | 'UPCOMING' | 'ENDED' | 'EXHAUSTED' | 'DISABLED';
+    /** @enum {string} */
+    VoucherType: 'PERCENT' | 'FIXED';
   };
   responses: never;
   parameters: never;
@@ -3194,7 +3582,7 @@ export interface operations {
           'application/json': components['schemas']['ErrorResponseDto'];
         };
       };
-      /** @description SKU already exists */
+      /** @description Price at or below a current or upcoming sale price (BR-PRC-05) */
       409: {
         headers: {
           [name: string]: unknown;
@@ -3330,6 +3718,151 @@ export interface operations {
       };
       /** @description Variant not found on this product */
       404: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['ErrorResponseDto'];
+        };
+      };
+      /** @description Rate limit exceeded — retry after the window resets */
+      429: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['ErrorResponseDto'];
+        };
+      };
+    };
+  };
+  AdminSalePriceController_list_v1: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        productId: string;
+      };
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['SalePriceResponseDto'][];
+        };
+      };
+      /** @description Invalid input (validation failed or malformed id) */
+      400: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['ErrorResponseDto'];
+        };
+      };
+      /** @description Missing, invalid, or expired access token */
+      401: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['ErrorResponseDto'];
+        };
+      };
+      /** @description Authenticated user lacks the required permission or account type */
+      403: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['ErrorResponseDto'];
+        };
+      };
+      /** @description Product not found */
+      404: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['ErrorResponseDto'];
+        };
+      };
+      /** @description Rate limit exceeded — retry after the window resets */
+      429: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['ErrorResponseDto'];
+        };
+      };
+    };
+  };
+  AdminSalePriceController_create_v1: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        productId: string;
+      };
+      cookie?: never;
+    };
+    requestBody: {
+      content: {
+        'application/json': components['schemas']['CreateSalePriceDto'];
+      };
+    };
+    responses: {
+      201: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['SalePriceResponseDto'][];
+        };
+      };
+      /** @description Invalid input (validation failed or malformed id) */
+      400: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['ErrorResponseDto'];
+        };
+      };
+      /** @description Missing, invalid, or expired access token */
+      401: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['ErrorResponseDto'];
+        };
+      };
+      /** @description Authenticated user lacks the required permission or account type */
+      403: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['ErrorResponseDto'];
+        };
+      };
+      /** @description Product or variant not found */
+      404: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['ErrorResponseDto'];
+        };
+      };
+      /** @description Overlaps another sale price */
+      409: {
         headers: {
           [name: string]: unknown;
         };
@@ -3674,6 +4207,233 @@ export interface operations {
         };
       };
       /** @description Name in use, Admin role is read-only, or system role rename */
+      409: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['ErrorResponseDto'];
+        };
+      };
+      /** @description Rate limit exceeded — retry after the window resets */
+      429: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['ErrorResponseDto'];
+        };
+      };
+    };
+  };
+  AdminSalePriceController_remove_v1: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        id: string;
+      };
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      204: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content?: never;
+      };
+      /** @description Invalid input (validation failed or malformed id) */
+      400: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['ErrorResponseDto'];
+        };
+      };
+      /** @description Missing, invalid, or expired access token */
+      401: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['ErrorResponseDto'];
+        };
+      };
+      /** @description Authenticated user lacks the required permission or account type */
+      403: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['ErrorResponseDto'];
+        };
+      };
+      /** @description Sale price not found */
+      404: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['ErrorResponseDto'];
+        };
+      };
+      /** @description Already started */
+      409: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['ErrorResponseDto'];
+        };
+      };
+      /** @description Rate limit exceeded — retry after the window resets */
+      429: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['ErrorResponseDto'];
+        };
+      };
+    };
+  };
+  AdminSalePriceController_update_v1: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        id: string;
+      };
+      cookie?: never;
+    };
+    requestBody: {
+      content: {
+        'application/json': components['schemas']['UpdateSalePriceDto'];
+      };
+    };
+    responses: {
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['SalePriceResponseDto'];
+        };
+      };
+      /** @description Invalid input (validation failed or malformed id) */
+      400: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['ErrorResponseDto'];
+        };
+      };
+      /** @description Missing, invalid, or expired access token */
+      401: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['ErrorResponseDto'];
+        };
+      };
+      /** @description Authenticated user lacks the required permission or account type */
+      403: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['ErrorResponseDto'];
+        };
+      };
+      /** @description Sale price not found */
+      404: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['ErrorResponseDto'];
+        };
+      };
+      /** @description Ended, active field locked, or overlapping */
+      409: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['ErrorResponseDto'];
+        };
+      };
+      /** @description Rate limit exceeded — retry after the window resets */
+      429: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['ErrorResponseDto'];
+        };
+      };
+    };
+  };
+  AdminSalePriceController_end_v1: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        id: string;
+      };
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['SalePriceResponseDto'];
+        };
+      };
+      /** @description Invalid input (validation failed or malformed id) */
+      400: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['ErrorResponseDto'];
+        };
+      };
+      /** @description Missing, invalid, or expired access token */
+      401: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['ErrorResponseDto'];
+        };
+      };
+      /** @description Authenticated user lacks the required permission or account type */
+      403: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['ErrorResponseDto'];
+        };
+      };
+      /** @description Sale price not found */
+      404: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['ErrorResponseDto'];
+        };
+      };
+      /** @description Not active */
       409: {
         headers: {
           [name: string]: unknown;
@@ -4253,6 +5013,353 @@ export interface operations {
       };
       /** @description Staff account not found */
       404: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['ErrorResponseDto'];
+        };
+      };
+      /** @description Rate limit exceeded — retry after the window resets */
+      429: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['ErrorResponseDto'];
+        };
+      };
+    };
+  };
+  AdminVoucherController_findAll_v1: {
+    parameters: {
+      query?: {
+        page?: number;
+        limit?: number;
+        /** @description Part of the code, case-insensitive */
+        q?: string;
+        status?: components['schemas']['VoucherStatus'];
+      };
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['PaginatedVoucherResponseDto'];
+        };
+      };
+      /** @description Invalid input (validation failed or malformed id) */
+      400: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['ErrorResponseDto'];
+        };
+      };
+      /** @description Missing, invalid, or expired access token */
+      401: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['ErrorResponseDto'];
+        };
+      };
+      /** @description Authenticated user lacks the required permission or account type */
+      403: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['ErrorResponseDto'];
+        };
+      };
+      /** @description Rate limit exceeded — retry after the window resets */
+      429: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['ErrorResponseDto'];
+        };
+      };
+    };
+  };
+  AdminVoucherController_create_v1: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    requestBody: {
+      content: {
+        'application/json': components['schemas']['CreateVoucherDto'];
+      };
+    };
+    responses: {
+      201: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['VoucherResponseDto'];
+        };
+      };
+      /** @description Invalid input (validation failed or malformed id) */
+      400: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['ErrorResponseDto'];
+        };
+      };
+      /** @description Missing, invalid, or expired access token */
+      401: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['ErrorResponseDto'];
+        };
+      };
+      /** @description Authenticated user lacks the required permission or account type */
+      403: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['ErrorResponseDto'];
+        };
+      };
+      /** @description Code already exists */
+      409: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['ErrorResponseDto'];
+        };
+      };
+      /** @description Rate limit exceeded — retry after the window resets */
+      429: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['ErrorResponseDto'];
+        };
+      };
+    };
+  };
+  AdminVoucherController_findOne_v1: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        id: string;
+      };
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['VoucherResponseDto'];
+        };
+      };
+      /** @description Invalid input (validation failed or malformed id) */
+      400: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['ErrorResponseDto'];
+        };
+      };
+      /** @description Missing, invalid, or expired access token */
+      401: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['ErrorResponseDto'];
+        };
+      };
+      /** @description Authenticated user lacks the required permission or account type */
+      403: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['ErrorResponseDto'];
+        };
+      };
+      /** @description Voucher not found */
+      404: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['ErrorResponseDto'];
+        };
+      };
+      /** @description Rate limit exceeded — retry after the window resets */
+      429: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['ErrorResponseDto'];
+        };
+      };
+    };
+  };
+  AdminVoucherController_remove_v1: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        id: string;
+      };
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      204: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content?: never;
+      };
+      /** @description Invalid input (validation failed or malformed id) */
+      400: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['ErrorResponseDto'];
+        };
+      };
+      /** @description Missing, invalid, or expired access token */
+      401: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['ErrorResponseDto'];
+        };
+      };
+      /** @description Authenticated user lacks the required permission or account type */
+      403: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['ErrorResponseDto'];
+        };
+      };
+      /** @description Voucher not found */
+      404: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['ErrorResponseDto'];
+        };
+      };
+      /** @description Already used */
+      409: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['ErrorResponseDto'];
+        };
+      };
+      /** @description Rate limit exceeded — retry after the window resets */
+      429: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['ErrorResponseDto'];
+        };
+      };
+    };
+  };
+  AdminVoucherController_update_v1: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        id: string;
+      };
+      cookie?: never;
+    };
+    requestBody: {
+      content: {
+        'application/json': components['schemas']['UpdateVoucherDto'];
+      };
+    };
+    responses: {
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['VoucherResponseDto'];
+        };
+      };
+      /** @description Invalid input (validation failed or malformed id) */
+      400: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['ErrorResponseDto'];
+        };
+      };
+      /** @description Missing, invalid, or expired access token */
+      401: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['ErrorResponseDto'];
+        };
+      };
+      /** @description Authenticated user lacks the required permission or account type */
+      403: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['ErrorResponseDto'];
+        };
+      };
+      /** @description Voucher not found */
+      404: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['ErrorResponseDto'];
+        };
+      };
+      /** @description Field locked after first use */
+      409: {
         headers: {
           [name: string]: unknown;
         };
@@ -4926,11 +6033,13 @@ export interface operations {
         color?: string[];
         /** @description Repeat the param for several; MEN and WOMEN also match UNISEX (BR-CAT-14) */
         gender?: components['schemas']['Gender'][];
-        /** @description Lowest product price (integer VND) at least this */
+        /** @description Lowest Effective product price (integer VND) at least this */
         minPrice?: number;
-        /** @description Lowest product price (integer VND) at most this */
+        /** @description Lowest Effective product price (integer VND) at most this */
         maxPrice?: number;
-        /** @description Price sorts use the lowest price among ACTIVE variants */
+        /** @description Only products with an active sale price on at least one ACTIVE variant */
+        onSale?: boolean;
+        /** @description Price sorts use the lowest Effective price (sale price when active) among ACTIVE variants; discount_desc puts the largest current discount first */
         sort?: components['schemas']['ProductSort'];
       };
       header?: never;
@@ -4983,7 +6092,7 @@ export interface operations {
           [name: string]: unknown;
         };
         content: {
-          'application/json': components['schemas']['ProductDetailResponseDto'];
+          'application/json': components['schemas']['StorefrontProductDetailResponseDto'];
         };
       };
       /** @description Product not found */
@@ -5022,7 +6131,7 @@ export interface operations {
           [name: string]: unknown;
         };
         content: {
-          'application/json': components['schemas']['ProductDetailResponseDto'];
+          'application/json': components['schemas']['StorefrontProductDetailResponseDto'];
         };
       };
       /** @description Invalid input (validation failed or malformed id) */
