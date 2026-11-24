@@ -5,25 +5,25 @@
       "source": "emilkowalski/skills",
       "sourceType": "github",
       "skillPath": "skills/animation-vocabulary/SKILL.md",
-      "computedHash": ""
+      "computedHash": "5dd4db42c01d4ce6136764f26413db747add3a72d5b457dbc47b7a103f6926d7"
     },
     "apple-design": {
       "source": "emilkowalski/skills",
       "sourceType": "github",
       "skillPath": "skills/apple-design/SKILL.md",
-      "computedHash": ""
+      "computedHash": "4603eb6f02518a78a2b5abaf77837112698c6df7cf756c80a7d4d55055a75a2c"
     },
     "emil-design-eng": {
       "source": "emilkowalski/skills",
       "sourceType": "github",
       "skillPath": "skills/emil-design-eng/SKILL.md",
-      "computedHash": ""
+      "computedHash": "f7edf26d0292bab871cccdd598a06eab51bc5a43385dd35e607cb6c60b611346"
     },
     "find-animation-opportunities": {
       "source": "emilkowalski/skills",
       "sourceType": "github",
       "skillPath": "skills/find-animation-opportunities/SKILL.md",
-      "computedHash": ""
+      "computedHash": "6217009d5bd87ed6aa025544672151c6c7d72d262c2107bac4d25cb960d79dc5"
     },
     "frontend-a11y": {
       "source": "affaan-m/ECC",
@@ -36,19 +36,19 @@
       "source": "nutlope/hallmark",
       "sourceType": "github",
       "skillPath": "skills/hallmark/SKILL.md",
-      "computedHash": ""
+      "computedHash": "7b1bbba2d2d97f8416065fe8b207edd6adcd73f45cb1b2b994e03797bd5b0a5c"
     },
     "improve-animations": {
       "source": "emilkowalski/skills",
       "sourceType": "github",
       "skillPath": "skills/improve-animations/SKILL.md",
-      "computedHash": ""
+      "computedHash": "a42be50b98eaf2455d4c1f5ff844c028194d10ec6697467bfd222955b2719f6d"
     },
     "pick-ui-library": {
       "source": "emilkowalski/skills",
       "sourceType": "github",
       "skillPath": "skills/pick-ui-library/SKILL.md",
-      "computedHash": ""
+      "computedHash": "4e9b38851492829cd82aa46b1d3e0ce47a60b01a6e67aa0766c6df4ccfb468fe"
     },
     "playwright-best-practices": {
       "source": "currents-dev/playwright-best-practices-skill",
@@ -61,13 +61,13 @@
       "source": "emilkowalski/skills",
       "sourceType": "github",
       "skillPath": "skills/prototype/SKILL.md",
-      "computedHash": ""
+      "computedHash": "d7d2c2aef5bddd068601096bd5a202c37a7befb14d457a598c779b4fde9a31e5"
     },
     "review-animations": {
       "source": "emilkowalski/skills",
       "sourceType": "github",
       "skillPath": "skills/review-animations/SKILL.md",
-      "computedHash": ""
+      "computedHash": "587677d3230d8150b905ab7cbf1342ddff570c0579fd097fd3dbe4d662a5ac81"
     },
     "tanstack-query": {
       "source": "tanstack-skills/tanstack-skills",
