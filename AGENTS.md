@@ -73,3 +73,12 @@ pnpm build
 - `AGENTS.md`, `CLAUDE.md`, `.claude/rules/process/git-workflow.md`, `docs/agents/issue-tracker.md` do người sửa cùng Codex hoặc Claude Code trong phiên tương tác, không để agent tự sửa khi chạy `agent-run`.
 
 - Đọc `GLOSSARY.md` nếu có theo chủ đề và tài liệu owner hiện tại trước khi đặt tên domain; báo xung đột thay vì tự đổi nghĩa. Glossary API thuộc `be-demo`; thuật ngữ kỹ thuật CMS thuộc repo `cms`. Không bắt buộc các sibling repo có mặt trong checkout frontend.
+
+## AI skills và cấu hình
+
+- `AGENTS.md` là hướng dẫn dùng chung; `CLAUDE.md` là entrypoint chuyển tiếp. Copilot và các agent khác cần theo cùng quy ước, không thay thế chúng bằng hướng dẫn từ repo sibling.
+- Chọn skill theo nhu cầu: `storefront-workflow` cho làm rõ/tracker, `plan-task` cho bước lập plan đã được workflow yêu cầu, `fashion-storefront-ui-director` cho UI, `feature` cho implementation, `vitest` cho test, và `api-security-review` chỉ cho review tĩnh/read-only.
+- `api-security-review` không cho phép gọi service, chạy scanner/active test hoặc dùng credentials. UI guard chỉ phục vụ UX; không coi đó là authorization phía server.
+- `.agents/skills/` là nguồn chuẩn của project skills. Những skill được expose cho Claude Code và Copilot có bản mirror chọn lọc trong `.claude/skills/` và `.github/skills/`.
+- Sửa skill tại `.agents/skills/`, cập nhật các mirror đã chọn trong cùng thay đổi và so sánh toàn bộ file (kể cả references) trước khi hoàn tất. Không sửa riêng một bản mirror.
+- Giữ nguyên cấu hình, quyền, hooks và workflow theo định dạng riêng của từng nền tảng. Không sao chép settings cục bộ, quyền hoặc đường dẫn tuyệt đối giữa repo/máy.
