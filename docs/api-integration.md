@@ -14,7 +14,9 @@ Same-origin proxy giữ cookie first-party và tránh browser gọi backend cros
 
 Catalog endpoints dùng generated schemas cho products, product slug, categories, sizes và colors. Mapper chuyển DTO sang model trong `src/lib/api/models/catalog.ts`; null ảnh bị loại, description null thành chuỗi rỗng. Component dùng model, không đoán field từ contract mới hơn. Pin hiện tại không phải bằng chứng toàn bộ checkout/auth API đã tích hợp.
 
-Khi bump: kiểm release/contract cần dùng, cập nhật pin qua skill contract-bump nếu có, gen:api, typecheck để tìm caller bị ảnh hưởng, xử lý break cơ học, dừng chốt quyết định nếu break đổi UI/domain, sau đó lint/build và focused tests. Không tự nâng pin theo tài liệu này. Git/PR vẫn theo CONTRIBUTING và quyền phiên hiện tại.
+Workflow `contract-bump.yml` (`scripts/contract-bump.sh`) mở PR `chore/contract-openapi-v*` khi be-demo phát hành tag mới: patch tự squash merge khi CI xanh; minor (breaking change) gắn nhãn `breaking-contract` và chờ người sửa caller trên chính nhánh đó. Mỗi lúc chỉ một PR như vậy. Cần secret `CONTRACT_BUMP_TOKEN` (PAT fine-grained cho repo này, Contents + Pull requests read/write); thiếu secret thì workflow bỏ qua.
+
+Khi sửa PR breaking hoặc bump tay: kiểm release/contract cần dùng, cập nhật pin, gen:api, typecheck để tìm caller bị ảnh hưởng, xử lý break cơ học, dừng chốt quyết định nếu break đổi UI/domain, sau đó lint/build và focused tests. Không tự nâng pin theo tài liệu này. Git/PR vẫn theo CONTRIBUTING và quyền phiên hiện tại.
 
 ## MSW boundary
 

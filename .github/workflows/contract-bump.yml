@@ -1,0 +1,59 @@
+name: Contract bump
+
+# Opens a PR that moves the pinned API contract when be-demo tags a new openapi-v* release
+# (scripts/contract-bump.sh). schedule and workflow_dispatch only run once this file is on the
+# default branch (main); the push trigger lets it run from dev before the next release.
+on:
+  schedule:
+    - cron: '0 1 * * *' # 08:00 Vietnam time
+  workflow_dispatch:
+  push:
+    branches: [dev]
+
+permissions:
+  contents: read
+  checks: read
+  pull-requests: read
+  issues: write # creates the breaking-contract label
+
+concurrency:
+  group: contract-bump
+  cancel-in-progress: false
+
+jobs:
+  bump:
+    runs-on: ubuntu-latest
+    timeout-minutes: 45
+    env:
+      # Fine-grained PAT for this repository only: Contents + Pull requests read/write.
+      # GITHUB_TOKEN cannot open the PR: a PR it opens does not trigger CI.
+      BUMP_TOKEN: ${{ secrets.CONTRACT_BUMP_TOKEN }}
+      # No git hooks here: the PR's own CI runs the same gates, and a breaking bump must still
+      # be committed so a person can fix the callers on the branch.
+      HUSKY: '0'
+    steps:
+      - name: Skip without CONTRACT_BUMP_TOKEN
+        if: env.BUMP_TOKEN == ''
+        run: echo "::notice::CONTRACT_BUMP_TOKEN is not set, skipping."
+
+      - uses: actions/checkout@v4
+        if: env.BUMP_TOKEN != ''
+        with:
+          ref: dev
+          token: ${{ secrets.CONTRACT_BUMP_TOKEN }}
+
+      - uses: pnpm/action-setup@v4
+        if: env.BUMP_TOKEN != ''
+
+      - uses: actions/setup-node@v4
+        if: env.BUMP_TOKEN != ''
+        with:
+          node-version: 24
+          cache: pnpm
+
+      - name: Bump the API contract
+        if: env.BUMP_TOKEN != ''
+        env:
+          GH_TOKEN: ${{ secrets.CONTRACT_BUMP_TOKEN }}
+          ACTIONS_TOKEN: ${{ github.token }}
+        run: scripts/contract-bump.sh
