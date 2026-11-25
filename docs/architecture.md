@@ -2,7 +2,7 @@
 
 Thiết kế chuyển đổi đã duyệt, chưa triển khai: [ADR 0001](adr/0001-domain-modules-and-readable-names.md) và [cây đích/lộ trình](plan/storefront-structure-migration.md). Các đường dẫn dưới đây tiếp tục mô tả source hiện hành.
 
-Owner: maintainer storefront. Đối chiếu checkout 18/11/2026; source và executable config là bằng chứng hiện trạng. [Rule map](agents/code-conventions.md) dẫn tới quy tắc chi tiết.
+Owner: maintainer storefront. Đối chiếu checkout 18/11/2026, boundary enforcement 26/11/2026; source và executable config là bằng chứng hiện trạng. [Rule map](agents/code-conventions.md) dẫn tới quy tắc chi tiết.
 
 ## Module và chiều phụ thuộc
 
@@ -23,7 +23,26 @@ Chiều phụ thuộc là app → feature → shared UI/utility → API/schema. 
 
 Route giữ composition. Component trình bày nhận view model; endpoint/query hook/controller sở hữu network, mapper và invalidation. Catalog mapper hiện nằm tại `src/lib/api/endpoints/catalog.ts`, không khẳng định mọi mapper đã chuyển vào feature. API client không import auth feature: adapter runtime tạo seam ngược có chủ ý.
 
-Một số flow cần phối hợp feature: shell đọc session/cart/wishlist; wishlist chuyển item sang cart; checkout sử dụng cart và mở order; account hiển thị order. Giữ seam/public responsibility rõ và đối chiếu `eslint.config.mjs` trước khi đổi import. Không cấm mọi cross-feature import hoặc tạo barrel mới để che private import.
+Một số flow cần phối hợp feature: shell đọc session/cart/wishlist; wishlist chuyển item sang cart; checkout sử dụng cart và mở order; account hiển thị order. Không tạo barrel mới để che private import.
+
+### Boundary được enforce trong giai đoạn chuyển cấu trúc
+
+Source vẫn ở cây cũ; rule đã nhận cả path cũ lẫn path đích của cùng logical owner (`features/<module>` ↔ `modules/<module>`, `features/storefront-shell` ↔ `layouts`, `app/_composition` ↔ `providers`, `lib/api` + `lib/schemas` ↔ `integrations/backend`). `pnpm lint` chạy hai lớp:
+
+- `eslint.boundaries.mjs` (ESLint `import/no-restricted-paths`, `boundaries/elements`): shared/integrations không import module, app, layouts hay providers; module không import app, layouts hay providers.
+- `scripts/check-module-boundaries.ts` (`pnpm lint:boundaries`): import liên module chỉ qua consumer + file + named symbol trong ma trận [public boundary](plan/tasks/18-storefront-module-boundaries/boundaries.md); chặn namespace, side-effect, dynamic import, `vi.mock` string, re-export, cycle cấp module và path nội bộ không resolve; kiểm manifest coverage cũ→mới với `vitest.config.ts`.
+
+Vi phạm đang tồn tại được snapshot từng cạnh chính xác, có lý do và đợt xóa; snapshot hết consumer làm check fail (stale), nên đợt sở hữu phải xóa nó cùng lượt:
+
+| Cạnh                                                                                  | Đợt xóa                                   |
+| ------------------------------------------------------------------------------------- | ----------------------------------------- |
+| `catalog/components/ProductCard` → wishlist `useWishlist` và cycle catalog ↔ wishlist | `38-storefront-catalog-migration`         |
+| `catalog/components/ProductCard.test` → wishlist store                                | `38-storefront-catalog-migration`         |
+| `providers/AppProviders.test` mock auth store                                         | `40-storefront-auth-account-migration`    |
+| `wishlist/components/WishlistClient.test` → cart store                                | `41-storefront-cart-wishlist-migration`   |
+| `checkout/queries/useCreateOrder` → cart store                                        | `42-storefront-orders-checkout-migration` |
+
+Test cùng owner được dùng private implementation của owner; test khác module theo cùng allowlist như production. Không thêm wildcard hay exemption cho cả modules/features/tests.
 
 ## Data và state
 

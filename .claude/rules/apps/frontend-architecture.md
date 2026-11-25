@@ -14,3 +14,6 @@ description: High-level dependency direction and state-ownership rules for the s
 - Put transport validation in `src/lib/schemas` and endpoint behavior in `src/lib/api`.
 - Client-side auth guards exist for UX only. The backend must enforce authorization.
 - Do not hand-edit `src/lib/api/generated/openapi.ts`; use `pnpm gen:api`.
+- Cross-module imports go through the public entry matrix only: one consumer, one owner file, named symbols. `pnpm lint:boundaries` (`scripts/check-module-boundaries.ts`) rejects private files, unlisted symbols, namespace/side-effect/dynamic imports, cross-module `vi.mock` strings, re-exports and module cycles; `eslint.boundaries.mjs` holds the layer zones.
+- Old and new roots of one owner share the same rule (`features/<module>` and `modules/<module>`, `features/storefront-shell` and `layouts`, `app/_composition` and `providers`). When a slice moves a file, update the checker's entries, snapshot and coverage manifest in the same change.
+- A known violation is recorded as one exact edge with a reason and the delivery slice that deletes it; never widen it to a folder or a wildcard. A snapshot without a consumer fails the check and must be removed.

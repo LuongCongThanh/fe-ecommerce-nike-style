@@ -1,5 +1,5 @@
 ---
-status: review
+status: done
 blocked-by: [21-storefront-delivery-breakdown]
 pr: #117
 kind: refactor
