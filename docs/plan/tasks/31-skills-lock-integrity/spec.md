@@ -28,6 +28,8 @@ Trong phạm vi: `skills-lock.json`.
 
 Ngoài phạm vi: đổi nội dung `.agents/skills/` hoặc các mirror; thêm hoặc bỏ skill; skill do repo tự viết; `shared/skills.txt` ở workspace.
 
+[Manifest file/consumer và quyền thích ứng test trong scope](manifest.md) ghi snapshot hiện tại. Sau blocker, dùng đường dẫn đích đã chuyển thay vì tạo lại path cũ. Snapshot không thay thế việc kiểm tra diff, PR/resume work và config hiện hành trước plan.
+
 ## Acceptance criteria
 
 - [ ] `report.md` ghi lệnh skills CLI hoặc cách tìm commit đã dùng, kèm phiên bản CLI.
@@ -43,5 +45,3 @@ Ngoài phạm vi: đổi nội dung `.agents/skills/` hoặc các mirror; thêm 
 - Giá trị thấp: hash đã bảo vệ toàn vẹn nội dung. Có thể đóng task nếu maintainer chấp nhận skill bên ngoài không pin commit.
 
 ## Comments
-
-Tham khảo [manifest phạm vi](manifest.md); rà lại snapshot khi lập plan. Manifest không cấp quyền sửa file.

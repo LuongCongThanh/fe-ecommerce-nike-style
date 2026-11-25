@@ -39,6 +39,8 @@ Trong phạm vi: `lint-staged.config.mjs`, `package.json` (scripts `format` và 
 
 Ngoài phạm vi: quy tắc định dạng trong `.prettierrc.mjs` (`printWidth`, quote), định dạng lại hàng loạt file chưa đạt (nếu nhiều thì báo và hỏi), `scripts/check-docs.ts`.
 
+[Manifest file/consumer và quyền thích ứng test trong scope](manifest.md) ghi snapshot hiện tại. Sau blocker, dùng đường dẫn đích đã chuyển thay vì tạo lại path cũ. Snapshot không thay thế việc kiểm tra diff, PR/resume work và config hiện hành trước plan.
+
 ## Acceptance criteria
 
 - [ ] `report.md` ghi danh sách file mà `format:check` kiểm, trước và sau (`prettier --list-different` hoặc `--check` kèm log).
@@ -54,5 +56,3 @@ Ngoài phạm vi: quy tắc định dạng trong `.prettierrc.mjs` (`printWidth`
 - File trong `.agents/skills/` là skill lấy từ bên ngoài. Định dạng lại chúng sẽ làm lệch so với nguồn, nên nhiều khả năng phải loại khỏi phạm vi.
 
 ## Comments
-
-Tham khảo [manifest phạm vi](manifest.md); rà lại snapshot khi lập plan. Manifest không cấp quyền sửa file.

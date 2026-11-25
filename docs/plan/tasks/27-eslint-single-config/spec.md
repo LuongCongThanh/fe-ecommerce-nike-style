@@ -46,6 +46,8 @@ Trong phạm vi: `eslint.config.mjs`, `eslint.base.mjs` (xoá), `package.json` v
 
 Ngoài phạm vi: thêm, bỏ hoặc đổi mức độ rule ngoài danh sách trên; sửa source để thoả rule mới; Prettier và lint-staged (task 30).
 
+[Manifest file/consumer và quyền thích ứng test trong scope](manifest.md) ghi snapshot hiện tại. Sau blocker, dùng đường dẫn đích đã chuyển thay vì tạo lại path cũ. Snapshot không thay thế việc kiểm tra diff, PR/resume work và config hiện hành trước plan.
+
 ## Acceptance criteria
 
 - [ ] Trước khi sửa, lưu `pnpm exec eslint --print-config <file>` cho bốn file mẫu: một `src/**/*.tsx`, một `*.test.tsx`, một `src/lib/api/mocks/**/*.ts`, `next.config.ts`. Sau khi sửa, chạy lại và đính kèm diff vào `report.md`. Mọi khác biệt về rule phải thuộc danh sách trong Solution.
@@ -62,5 +64,3 @@ Ngoài phạm vi: thêm, bỏ hoặc đổi mức độ rule ngoài danh sách t
 - `projectService` có thể đổi file nào được lint có type. Diff `--print-config` ở trên là bằng chứng không đổi hành vi.
 
 ## Comments
-
-Tham khảo [manifest phạm vi](manifest.md); rà lại snapshot khi lập plan. Manifest không cấp quyền sửa file.

@@ -43,6 +43,8 @@ Trong phạm vi: `.env.example`, `src/shared/lib/env.ts` (hoặc vị trí thay 
 
 Ngoài phạm vi: `src/lib/api/env/config.ts` và nhánh `VITE_*` legacy (chỉ đọc giá trị đã được kiểm tra, không refactor), Sentry (task 23), security headers và `images.remotePatterns`, di chuyển file theo map tái cấu trúc Storefront.
 
+[Manifest file/consumer và quyền thích ứng test trong scope](manifest.md) ghi snapshot hiện tại. Sau blocker, dùng đường dẫn đích đã chuyển thay vì tạo lại path cũ. Snapshot không thay thế việc kiểm tra diff, PR/resume work và config hiện hành trước plan.
+
 ## Acceptance criteria
 
 - [ ] Trước khi sửa, ghi vào `report.md` kết quả `grep -rhoE "process\.env\.[A-Z_]+" src next.config.ts` và consumer của `PAYMENT_CONFIG`, `PAYMENT_LABELS`, `buildMetadata`. Nếu có consumer production mới xuất hiện, dừng và hỏi.
@@ -62,5 +64,3 @@ Ngoài phạm vi: `src/lib/api/env/config.ts` và nhánh `VITE_*` legacy (chỉ 
 - `allow-test-changes: true` chỉ để sửa stub env trong `seo.test.ts`.
 
 ## Comments
-
-Tham khảo [manifest phạm vi](manifest.md); rà lại snapshot khi lập plan. Manifest không cấp quyền sửa file.

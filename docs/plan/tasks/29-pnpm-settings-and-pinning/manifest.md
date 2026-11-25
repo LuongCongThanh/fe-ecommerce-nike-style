@@ -1,15 +1,20 @@
 # Manifest phạm vi — Cấu hình và pin pnpm
 
-Snapshot tham chiếu ngày 25/11/2026, dựa trên spec hiện có. Rà lại đường dẫn, consumer và diff khi lập plan, đặc biệt sau các blocker. Danh sách này không phải approved.files và không cấp quyền sửa file; spec là nguồn chuẩn về phạm vi và điều kiện nghiệm thu.
+Snapshot tham chiếu ngày 25/11/2026. File dưới đây là source hiện tại để tìm owner/consumer; sau các blocker, dùng đường dẫn hiện hành thay vì path cũ. Đây không phải approved.files hay quyền sửa mọi file; spec là nguồn chuẩn về phạm vi và acceptance criteria. Refresh manifest khi lập plan; đổi path cơ học theo blocker không cần mở lại thiết kế. Consumer mới/khác semantics ngoài scope cần làm rõ trước khi sửa.
 
-## File và consumer cần đối chiếu
+## Source owner hiện tại
 
-`.npmrc`, `pnpm-workspace.yaml`, `package.json`, `pnpm-lock.yaml`.
+- `.npmrc`
+- `pnpm-workspace.yaml`
+- `package.json` (`dependencies`, `devDependencies`)
+- `pnpm-lock.yaml` (chỉ dòng `specifier`, qua `pnpm install`)
 
-## Kiểm tra và giới hạn
+## Test cũ được thích ứng trong scope
 
-Ghi bằng chứng cài thử trong thư mục nháp và so sánh dependency/lockfile trước sau; không đổi phiên bản resolved.
+- Không có. `allow-test-changes: false`; test hiện có chỉ chạy để kiểm, không sửa.
 
-## Giao nhau và bàn giao
+## Giao nhau với task khác
 
-Đối chiếu thay đổi Sentry và ESLint đã hoàn thành; không sửa overrides ngoài scope. Giữ status, identity và blocker hiện có; ghi phát hiện và kết quả thực tế vào report khi thực hiện.
+- Task 23: nếu 23 đã merge và gỡ `@sentry/cli`, theo `allowBuilds` hiện hành; nếu chưa, không đụng `allowBuilds`.
+- Task 27: nếu 27 merge trước, rebase và pin phần devDependency còn lại; nếu sau, 27 cần thêm dependency với phiên bản chính xác.
+- Task 26: cùng sửa `package.json`; `engines` không ảnh hưởng việc pin.

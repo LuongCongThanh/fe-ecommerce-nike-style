@@ -1,15 +1,29 @@
 # Manifest phạm vi — Phạm vi Prettier
 
-Snapshot tham chiếu ngày 25/11/2026, dựa trên spec hiện có. Rà lại đường dẫn, consumer và diff khi lập plan, đặc biệt sau các blocker. Danh sách này không phải approved.files và không cấp quyền sửa file; spec là nguồn chuẩn về phạm vi và điều kiện nghiệm thu.
+Snapshot tham chiếu ngày 25/11/2026. File dưới đây là source hiện tại để tìm owner/consumer; sau các blocker, dùng đường dẫn hiện hành thay vì path cũ. Đây không phải approved.files hay quyền sửa mọi file; spec là nguồn chuẩn về phạm vi và acceptance criteria. Refresh manifest khi lập plan; đổi path cơ học theo blocker không cần mở lại thiết kế. Consumer mới/khác semantics ngoài scope cần làm rõ trước khi sửa.
 
-## File và consumer cần đối chiếu
+## Source owner hiện tại
 
-`lint-staged.config.mjs`, `package.json`, `.prettierignore`, `CONTRIBUTING.md`, `scripts/check-docs.ts`.
+- `lint-staged.config.mjs`
+- `package.json` (scripts `format`, `format:check`)
+- `.prettierignore`
 
-## Kiểm tra và giới hạn
+## Consumer trực tiếp hiện tại ngoài owner
 
-Kiểm kê glob, danh sách file thực tế và thử Markdown/YAML theo spec; dừng khi vượt ngưỡng 20 file.
+- `.github/workflows/ci.yml` dòng 43 (`pnpm run format:check`): chỉ đối chiếu
+- `.husky/pre-commit` (`pnpm lint-staged`): chỉ đối chiếu
 
-## Giao nhau và bàn giao
+## Config/docs cần đối chiếu
 
-Docs checker chỉ đối chiếu; tránh thay đổi skill mirror hoặc định dạng hàng loạt ngoài scope. Giữ status, identity và blocker hiện có; ghi phát hiện và kết quả thực tế vào report khi thực hiện.
+- `CONTRIBUTING.md` nếu mô tả lệnh format
+- `README.md` dòng 33 và `.claude/rules/process/testing.md` dòng 167 nhắc `format:check`: chỉ đối chiếu
+- `scripts/check-docs.ts`, `.prettierrc.mjs`: ngoài phạm vi, không sửa
+
+## Test cũ được thích ứng trong scope
+
+- Không có. `allow-test-changes: false`; test hiện có chỉ chạy để kiểm, không sửa.
+
+## Giao nhau với task khác
+
+- Task 25: sau 25, pre-commit chỉ chạy `lint-staged`; hai task có thể cùng sửa `CONTRIBUTING.md`.
+- Task 27: script `format` bỏ ESLint; `lint:fix` dùng config sau task 27.

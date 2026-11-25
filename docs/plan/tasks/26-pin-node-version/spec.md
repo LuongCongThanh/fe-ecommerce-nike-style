@@ -31,6 +31,8 @@ Trong phạm vi: `.nvmrc` (mới), `package.json` (`engines`), `.github/workflow
 
 Ngoài phạm vi: nâng phiên bản Node, `.npmrc` (`engine-strict` không bật trong task này), các repo khác.
 
+[Manifest file/consumer và quyền thích ứng test trong scope](manifest.md) ghi snapshot hiện tại. Sau blocker, dùng đường dẫn đích đã chuyển thay vì tạo lại path cũ. Snapshot không thay thế việc kiểm tra diff, PR/resume work và config hiện hành trước plan.
+
 ## Acceptance criteria
 
 - [ ] `cat .nvmrc` in `24`; `mise current node` trong thư mục Storefront in một bản 24.x.
@@ -45,5 +47,3 @@ Ngoài phạm vi: nâng phiên bản Node, `.npmrc` (`engine-strict` không bậ
 - Task 22 cũng sửa `ci.yml` (khối env của job build). Hai thay đổi nằm ở dòng khác nhau; merge task nào sau thì rebase.
 
 ## Comments
-
-Tham khảo [manifest phạm vi](manifest.md); rà lại snapshot khi lập plan. Manifest không cấp quyền sửa file.
