@@ -9,10 +9,16 @@ test.describe('PDP (variant selection and unavailable purchase)', () => {
     await expect(page.locator('canvas')).toBeVisible();
 
     const purchaseButton = page.getByRole('button', { name: 'Sắp mở bán' });
+    const priceHint = page.getByText('Chọn màu và size để xem giá chính xác');
     await expect(purchaseButton).toBeDisabled();
+    await expect(priceHint).toBeVisible();
 
+    // An incomplete selection does not resolve a Variant yet.
     await page.getByRole('button', { name: 'black', exact: true }).click();
+    await expect(priceHint).toBeVisible();
+
     await page.getByRole('button', { name: '39', exact: true }).click();
+    await expect(priceHint).toBeHidden();
 
     await expect(purchaseButton).toBeDisabled();
     await expect(page.getByText('Đặt hàng trực tuyến sẽ sớm được mở.')).toBeVisible();
@@ -25,13 +31,15 @@ test.describe('PDP (variant selection and unavailable purchase)', () => {
     await expect(page.getByRole('button', { name: 'Sắp mở bán' })).toBeDisabled();
   });
 
-  test('a selected Color+Size combination is reflected without enabling purchase', async ({ page }) => {
+  test('a selected Color+Size combination resolves its Variant price without enabling purchase', async ({ page }) => {
     await page.goto('/vi/products/running-shoe-alpha');
     await page.getByRole('button', { name: 'white', exact: true }).click();
     await page.getByRole('button', { name: '42', exact: true }).click();
 
     await expect(page.getByRole('button', { name: 'white', exact: true })).toHaveAttribute('aria-pressed', 'true');
     await expect(page.getByRole('button', { name: '42', exact: true })).toHaveAttribute('aria-pressed', 'true');
+    // Fixture price for RUN-WHITE-42 (e2e/support/catalog-fixtures.ts): 1,200,000 + 3 x 10,000.
+    await expect(page.getByText(/^1\.230\.000\s₫$/).filter({ visible: true })).toBeVisible();
     await expect(page.getByRole('button', { name: 'Sắp mở bán' })).toBeDisabled();
   });
 

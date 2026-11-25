@@ -1,51 +1,25 @@
 import { defineConfig, devices } from '@playwright/test';
 
-const PORT = 3101;
-const CATALOG_PORT = 4011;
-const baseURL = `http://127.0.0.1:${PORT}`;
-const catalogOrigin = `http://127.0.0.1:${CATALOG_PORT}`;
-const isCi = Boolean(process.env.CI);
+import { appServerEnv, catalogHarnessServer, E2E_PORTS, localOrigin, sharedRunnerConfig, sharedUseOptions } from '@/../e2e/support/playwright-base';
+
+const baseURL = localOrigin(E2E_PORTS.productionApp);
 
 export default defineConfig({
+  ...sharedRunnerConfig,
   testDir: './e2e/production',
-  testMatch: '**/*.spec.ts',
-  fullyParallel: true,
-  forbidOnly: isCi,
-  retries: isCi ? 2 : 0,
-  workers: isCi ? 1 : undefined,
-  timeout: 30_000,
-  expect: {
-    timeout: 5_000,
-  },
-  reporter: isCi ? [['html', { open: 'never' }], ['github']] : [['list'], ['html', { open: 'never' }]],
   use: {
-    ...devices['Desktop Chrome'],
+    ...sharedUseOptions,
     baseURL,
     serviceWorkers: 'allow',
-    trace: 'on-first-retry',
-    screenshot: 'only-on-failure',
-    video: 'retain-on-failure',
   },
   webServer: [
+    catalogHarnessServer(E2E_PORTS.productionCatalog),
     {
-      command: 'pnpm exec tsx e2e/support/catalog-server.ts',
-      url: `${catalogOrigin}/health`,
-      reuseExistingServer: false,
-      timeout: 30_000,
-      env: { E2E_CATALOG_PORT: String(CATALOG_PORT) },
-    },
-    {
-      command: `pnpm start --port ${PORT}`,
+      command: `pnpm start --port ${String(E2E_PORTS.productionApp)}`,
       url: baseURL,
       reuseExistingServer: false,
       timeout: 120_000,
-      env: {
-        API_ORIGIN: catalogOrigin,
-        NEXT_PUBLIC_API_MOCKING: 'false',
-        NEXT_PUBLIC_API_URL: `${baseURL}/api`,
-        NEXT_PUBLIC_APP_URL: baseURL,
-        NEXT_PUBLIC_SITE_URL: baseURL,
-      },
+      env: appServerEnv(baseURL, localOrigin(E2E_PORTS.productionCatalog), false),
     },
   ],
   projects: [

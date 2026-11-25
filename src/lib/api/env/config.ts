@@ -11,8 +11,12 @@ function readEnv(viteKey: string, nextValue: string | undefined): string | undef
   return nextValue;
 }
 
-const nextApiMocking = typeof process === 'undefined' ? undefined : process.env.NEXT_PUBLIC_API_MOCKING;
-const nextSiteUrl = typeof process === 'undefined' ? undefined : process.env.NEXT_PUBLIC_SITE_URL;
+// Next.js inlines `NEXT_PUBLIC_*` into the client bundle only where the code names the variable
+// literally (`process.env.NEXT_PUBLIC_X`); a dynamic `process.env[key]` lookup stays undefined in
+// the browser. Each value is therefore read here by its literal name and passed to `readEnv`.
+const hasProcess = typeof process !== 'undefined';
+const nextApiMocking = hasProcess ? process.env.NEXT_PUBLIC_API_MOCKING : undefined;
+const nextSiteUrl = hasProcess ? process.env.NEXT_PUBLIC_SITE_URL : undefined;
 
 /** Baseline per docs/api-integration.md — reads whether the app should run against MSW mocks instead of the real backend. */
 export const IS_API_MOCKING = readEnv('VITE_API_MOCKING', nextApiMocking) === 'true';

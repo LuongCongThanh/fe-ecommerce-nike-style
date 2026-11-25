@@ -28,7 +28,8 @@ description: Full testing strategy — layer selection, naming, Vitest/RTL/MSW/P
 
 - Unit/integration tests live near the source, per the workspace pattern:
   - Put `*.test.ts(x)` beside the code or flow entry it exercises.
-  - E2E tests only live at `e2e/<flow>.spec.ts`.
+  - Dev E2E tests live at `e2e/<flow>.spec.ts`; production-build checks (`playwright.production.config.ts`) live at `e2e/production/<flow>.spec.ts`.
+  - Shared E2E support (harness, fixtures, helpers, shared Playwright settings) lives in `e2e/support/`; a unit test for a support module sits beside it as `e2e/support/<module>.test.ts`.
 - Name test files after the subject/flow, not `test1`, `misc`, `all-tests`.
 - `describe` names the unit/subject; `it`/`test` describes an observable behavior and condition: `rejects checkout when stock changed`, not `works correctly`.
 - Test names should not contain implementation detail like internal state names or private function names, except for a unit test that targets that function directly.

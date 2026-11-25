@@ -1,4 +1,4 @@
-import type { components } from '../../src/lib/api/generated/openapi';
+import type { components } from '@/lib/api/generated/openapi';
 
 type ProductListItem = components['schemas']['ProductListItemResponseDto'];
 type ProductDetail = components['schemas']['ProductDetailResponseDto'];
@@ -13,34 +13,53 @@ export interface CatalogProductFixture {
 
 const publishedAt = '2026-01-01T00:00:00.000Z';
 
-const seeds = [
-  ['p-1', 'running-shoe-alpha', 'Running Shoe Alpha', 'cat-running', 'MEN', 1_200_000, ['giay chay bo']],
-  ['p-2', 'running-shoe-bolt', 'Running Shoe Bolt', 'cat-running', 'WOMEN', 1_100_000, []],
-  ['p-3', 'running-shoe-dash-kids', 'Running Shoe Dash Kids', 'cat-running', 'KIDS', 650_000, []],
-  ['p-4', 'running-shoe-trail', 'Running Shoe Trail', 'cat-running', 'UNISEX', 1_300_000, []],
-  ['p-5', 'basketball-high-top-court', 'Basketball High-Top Court', 'cat-basketball', 'MEN', 1_800_000, []],
-  ['p-6', 'basketball-low-top-flex', 'Basketball Low-Top Flex', 'cat-basketball', 'WOMEN', 1_600_000, []],
-  ['p-7', 'basketball-hoop-kids', 'Basketball Hoop Kids', 'cat-basketball', 'KIDS', 780_000, []],
-  ['p-8', 'tee-training-core', 'Tee Training Core', 'cat-tshirts', 'MEN', 280_000, []],
-  ['p-9', 'tee-running-light', 'Tee Running Light', 'cat-tshirts', 'WOMEN', 320_000, []],
-  ['p-10', 'tee-training-kids', 'Tee Training Kids', 'cat-tshirts', 'KIDS', 180_000, []],
-  ['p-11', 'tee-basic-kids', 'Tee Basic Kids', 'cat-tshirts', 'KIDS', 150_000, []],
-  ['p-12', 'tee-unisex-oversized', 'Tee Unisex Oversized', 'cat-tshirts', 'UNISEX', 300_000, []],
-  ['p-13', 'hoodie-pullover', 'Hoodie Pullover', 'cat-hoodies', 'MEN', 650_000, []],
-  ['p-14', 'hoodie-zip-up', 'Hoodie Zip-Up', 'cat-hoodies', 'WOMEN', 700_000, []],
-  ['p-15', 'hoodie-fleece-kids', 'Hoodie Fleece Kids', 'cat-hoodies', 'KIDS', 380_000, []],
-  ['p-16', 'hoodie-essential-unisex', 'Hoodie Essential Unisex', 'cat-hoodies', 'UNISEX', 620_000, []],
-  ['p-17', 'backpack-commuter', 'Backpack Commuter', 'cat-bags', 'UNISEX', 950_000, []],
-  ['p-18', 'backpack-mini', 'Backpack Mini', 'cat-bags', 'WOMEN', 720_000, []],
-  ['p-19', 'duffel-bag-sport', 'Duffel Bag Sport', 'cat-bags', 'MEN', 880_000, []],
-  ['p-20', 'backpack-mini-kids', 'Backpack Mini Kids', 'cat-bags', 'KIDS', 420_000, []],
-  ['p-21', 'cap-snapback', 'Cap Snapback', 'cat-hats', 'MEN', 220_000, []],
-  ['p-22', 'cap-bucket', 'Cap Bucket', 'cat-hats', 'WOMEN', 200_000, []],
-  ['p-23', 'beanie-kids', 'Beanie Kids', 'cat-hats', 'KIDS', 130_000, []],
-  ['p-24', 'sports-socks', 'Sports Socks', 'cat-accessories', 'UNISEX', 90_000, []],
-] as const;
+interface ProductSeed {
+  readonly id: string;
+  readonly slug: string;
+  readonly name: string;
+  readonly categoryId: string;
+  readonly gender: ProductListItem['gender'];
+  readonly price: number;
+  /** Extra unaccented words the harness search matches, e.g. Vietnamese queries typed without diacritics. */
+  readonly searchTerms?: readonly string[];
+}
 
-export const catalogProducts: CatalogProductFixture[] = seeds.map(([id, slug, name, categoryId, gender, price, searchTerms]) => ({
+const productSeeds: readonly ProductSeed[] = [
+  {
+    id: 'p-1',
+    slug: 'running-shoe-alpha',
+    name: 'Running Shoe Alpha',
+    categoryId: 'cat-running',
+    gender: 'MEN',
+    price: 1_200_000,
+    searchTerms: ['giay chay bo'],
+  },
+  { id: 'p-2', slug: 'running-shoe-bolt', name: 'Running Shoe Bolt', categoryId: 'cat-running', gender: 'WOMEN', price: 1_100_000 },
+  { id: 'p-3', slug: 'running-shoe-dash-kids', name: 'Running Shoe Dash Kids', categoryId: 'cat-running', gender: 'KIDS', price: 650_000 },
+  { id: 'p-4', slug: 'running-shoe-trail', name: 'Running Shoe Trail', categoryId: 'cat-running', gender: 'UNISEX', price: 1_300_000 },
+  { id: 'p-5', slug: 'basketball-high-top-court', name: 'Basketball High-Top Court', categoryId: 'cat-basketball', gender: 'MEN', price: 1_800_000 },
+  { id: 'p-6', slug: 'basketball-low-top-flex', name: 'Basketball Low-Top Flex', categoryId: 'cat-basketball', gender: 'WOMEN', price: 1_600_000 },
+  { id: 'p-7', slug: 'basketball-hoop-kids', name: 'Basketball Hoop Kids', categoryId: 'cat-basketball', gender: 'KIDS', price: 780_000 },
+  { id: 'p-8', slug: 'tee-training-core', name: 'Tee Training Core', categoryId: 'cat-tshirts', gender: 'MEN', price: 280_000 },
+  { id: 'p-9', slug: 'tee-running-light', name: 'Tee Running Light', categoryId: 'cat-tshirts', gender: 'WOMEN', price: 320_000 },
+  { id: 'p-10', slug: 'tee-training-kids', name: 'Tee Training Kids', categoryId: 'cat-tshirts', gender: 'KIDS', price: 180_000 },
+  { id: 'p-11', slug: 'tee-basic-kids', name: 'Tee Basic Kids', categoryId: 'cat-tshirts', gender: 'KIDS', price: 150_000 },
+  { id: 'p-12', slug: 'tee-unisex-oversized', name: 'Tee Unisex Oversized', categoryId: 'cat-tshirts', gender: 'UNISEX', price: 300_000 },
+  { id: 'p-13', slug: 'hoodie-pullover', name: 'Hoodie Pullover', categoryId: 'cat-hoodies', gender: 'MEN', price: 650_000 },
+  { id: 'p-14', slug: 'hoodie-zip-up', name: 'Hoodie Zip-Up', categoryId: 'cat-hoodies', gender: 'WOMEN', price: 700_000 },
+  { id: 'p-15', slug: 'hoodie-fleece-kids', name: 'Hoodie Fleece Kids', categoryId: 'cat-hoodies', gender: 'KIDS', price: 380_000 },
+  { id: 'p-16', slug: 'hoodie-essential-unisex', name: 'Hoodie Essential Unisex', categoryId: 'cat-hoodies', gender: 'UNISEX', price: 620_000 },
+  { id: 'p-17', slug: 'backpack-commuter', name: 'Backpack Commuter', categoryId: 'cat-bags', gender: 'UNISEX', price: 950_000 },
+  { id: 'p-18', slug: 'backpack-mini', name: 'Backpack Mini', categoryId: 'cat-bags', gender: 'WOMEN', price: 720_000 },
+  { id: 'p-19', slug: 'duffel-bag-sport', name: 'Duffel Bag Sport', categoryId: 'cat-bags', gender: 'MEN', price: 880_000 },
+  { id: 'p-20', slug: 'backpack-mini-kids', name: 'Backpack Mini Kids', categoryId: 'cat-bags', gender: 'KIDS', price: 420_000 },
+  { id: 'p-21', slug: 'cap-snapback', name: 'Cap Snapback', categoryId: 'cat-hats', gender: 'MEN', price: 220_000 },
+  { id: 'p-22', slug: 'cap-bucket', name: 'Cap Bucket', categoryId: 'cat-hats', gender: 'WOMEN', price: 200_000 },
+  { id: 'p-23', slug: 'beanie-kids', name: 'Beanie Kids', categoryId: 'cat-hats', gender: 'KIDS', price: 130_000 },
+  { id: 'p-24', slug: 'sports-socks', name: 'Sports Socks', categoryId: 'cat-accessories', gender: 'UNISEX', price: 90_000 },
+];
+
+export const catalogProducts: CatalogProductFixture[] = productSeeds.map(({ id, slug, name, categoryId, gender, price, searchTerms = [] }) => ({
   product: {
     id,
     slug,

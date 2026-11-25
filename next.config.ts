@@ -1,12 +1,18 @@
-import { createHash } from 'node:crypto';
-import { readFileSync } from 'node:fs';
+import { spawnSync } from 'node:child_process';
+import { randomUUID } from 'node:crypto';
 
 import withBundleAnalyzer from '@next/bundle-analyzer';
 import withSerwistInit from '@serwist/next';
 import type { NextConfig } from 'next';
 import createNextIntlPlugin from 'next-intl/plugin';
 
-const offlineFallbackRevision = createHash('sha256').update(readFileSync('src/app/~offline/page.tsx')).digest('hex');
+// `/~offline` is precached as a rendered document, so its revision must change whenever anything it
+// renders changes (page, layout, styles), not only its own source file. Revision per commit, or per
+// build when git is unavailable, as Serwist's precaching guide recommends.
+function offlineFallbackRevision(): string {
+  const commit = spawnSync('git', ['rev-parse', 'HEAD'], { encoding: 'utf8' }).stdout?.trim();
+  return commit !== undefined && commit.length > 0 ? commit : randomUUID();
+}
 
 const withAnalyzer = withBundleAnalyzer({
   enabled: process.env.ANALYZE === 'true',
@@ -19,7 +25,7 @@ const withSerwist = withSerwistInit({
   register: true,
   cacheOnNavigation: false,
   reloadOnOnline: true,
-  additionalPrecacheEntries: [{ url: '/~offline', revision: offlineFallbackRevision }],
+  additionalPrecacheEntries: [{ url: '/~offline', revision: offlineFallbackRevision() }],
 });
 
 const withNextIntl = createNextIntlPlugin('./src/i18n/request.ts');
