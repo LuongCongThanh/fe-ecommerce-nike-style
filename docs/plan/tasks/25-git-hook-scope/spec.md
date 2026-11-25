@@ -46,3 +46,5 @@ Ngoài phạm vi: `.husky/commit-msg`, `lint-staged.config.mjs`, CI workflow, St
 - Đánh đổi đã chấp nhận: lỗi build chỉ phát hiện ở CI. Chạy `pnpm build` tay khi đổi `next.config.ts`, dependency hoặc route.
 
 ## Comments
+
+Tham khảo [manifest phạm vi](manifest.md); rà lại snapshot khi lập plan. Manifest không cấp quyền sửa file.

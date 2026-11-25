@@ -69,3 +69,5 @@ Ngoài phạm vi:
 - Nếu sau này Storefront cần trang chỉ dành cho nhân viên, việc kiểm quyền phải dựa vào Backend, không dựa vào cookie do client giữ.
 
 ## Comments
+
+Tham khảo [manifest phạm vi](manifest.md); rà lại snapshot khi lập plan. Manifest không cấp quyền sửa file.

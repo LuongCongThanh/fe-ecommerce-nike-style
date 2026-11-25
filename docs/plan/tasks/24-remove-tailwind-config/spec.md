@@ -40,3 +40,5 @@ Ngoài phạm vi: `eslint.config.mjs`, `eslint.base.mjs`, `.agents/skills/**` (s
 - Rủi ro rất thấp. Plugin `eslint-plugin-tailwindcss` đọc `cssConfigPath` trỏ tới `src/styles/globals.css`, không đọc file này.
 
 ## Comments
+
+Tham khảo [manifest phạm vi](manifest.md); rà lại snapshot khi lập plan. Manifest không cấp quyền sửa file.

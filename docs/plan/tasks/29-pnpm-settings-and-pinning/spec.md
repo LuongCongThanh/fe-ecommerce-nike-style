@@ -47,3 +47,5 @@ Ngoài phạm vi: nâng phiên bản dependency, `overrides` và `allowBuilds` (
 - Nếu task 27 merge trước, danh sách devDependency sẽ ngắn hơn; rebase và pin lại phần còn lại.
 
 ## Comments
+
+Tham khảo [manifest phạm vi](manifest.md); rà lại snapshot khi lập plan. Manifest không cấp quyền sửa file.

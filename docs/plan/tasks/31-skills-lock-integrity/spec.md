@@ -43,3 +43,5 @@ Ngoài phạm vi: đổi nội dung `.agents/skills/` hoặc các mirror; thêm 
 - Giá trị thấp: hash đã bảo vệ toàn vẹn nội dung. Có thể đóng task nếu maintainer chấp nhận skill bên ngoài không pin commit.
 
 ## Comments
+
+Tham khảo [manifest phạm vi](manifest.md); rà lại snapshot khi lập plan. Manifest không cấp quyền sửa file.

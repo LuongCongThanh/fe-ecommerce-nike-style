@@ -45,3 +45,5 @@ Ngoài phạm vi: thêm dịch vụ giám sát khác, đổi UI của error boun
 - Map tái cấu trúc (task 18) dự định chuyển `lib/monitoring/sentry.ts` sang `shared/monitoring/`. Ghi tên file cuối cùng vào `report.md`.
 
 ## Comments
+
+Tham khảo [manifest phạm vi](manifest.md); rà lại snapshot khi lập plan. Manifest không cấp quyền sửa file.

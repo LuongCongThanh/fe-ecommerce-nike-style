@@ -64,3 +64,5 @@ Ngoài phạm vi:
 - `allow-test-changes: true` chỉ để đổi tên file test, đường dẫn import và tên hàm được gọi.
 
 ## Comments
+
+Tham khảo [manifest phạm vi](manifest.md); rà lại snapshot khi lập plan. Manifest không cấp quyền sửa file.

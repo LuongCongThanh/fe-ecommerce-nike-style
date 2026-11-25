@@ -62,3 +62,5 @@ Ngoài phạm vi: thêm, bỏ hoặc đổi mức độ rule ngoài danh sách t
 - `projectService` có thể đổi file nào được lint có type. Diff `--print-config` ở trên là bằng chứng không đổi hành vi.
 
 ## Comments
+
+Tham khảo [manifest phạm vi](manifest.md); rà lại snapshot khi lập plan. Manifest không cấp quyền sửa file.

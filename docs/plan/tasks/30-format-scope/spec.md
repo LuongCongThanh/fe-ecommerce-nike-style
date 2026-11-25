@@ -54,3 +54,5 @@ Ngoài phạm vi: quy tắc định dạng trong `.prettierrc.mjs` (`printWidth`
 - File trong `.agents/skills/` là skill lấy từ bên ngoài. Định dạng lại chúng sẽ làm lệch so với nguồn, nên nhiều khả năng phải loại khỏi phạm vi.
 
 ## Comments
+
+Tham khảo [manifest phạm vi](manifest.md); rà lại snapshot khi lập plan. Manifest không cấp quyền sửa file.

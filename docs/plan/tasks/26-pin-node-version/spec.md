@@ -45,3 +45,5 @@ Ngoài phạm vi: nâng phiên bản Node, `.npmrc` (`engine-strict` không bậ
 - Task 22 cũng sửa `ci.yml` (khối env của job build). Hai thay đổi nằm ở dòng khác nhau; merge task nào sau thì rebase.
 
 ## Comments
+
+Tham khảo [manifest phạm vi](manifest.md); rà lại snapshot khi lập plan. Manifest không cấp quyền sửa file.
