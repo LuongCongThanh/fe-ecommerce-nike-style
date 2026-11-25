@@ -24,7 +24,7 @@ Lần đo đầu của coverage scope hiện có là 95.23% statements, 87.9% br
 
 ## Các bước
 
-1. [ ] (Bỏ qua, xem report) Chạy baseline hiện tại trên Node 24/pnpm 11.24: focused Chromium `e2e/catalog.spec.ts`, `search.spec.ts`, `pdp.spec.ts`, `checkout.spec.ts`; lưu command, exit code và failure/artifact trong report, không chỉnh test trước khi ghi nhận.
+1. [ ] (Bỏ qua; người dùng chấp nhận, xem report) Chạy baseline hiện tại trên Node 24/pnpm 11.24: focused Chromium `e2e/catalog.spec.ts`, `search.spec.ts`, `pdp.spec.ts`, `checkout.spec.ts`; lưu command, exit code và failure/artifact trong report, không chỉnh test trước khi ghi nhận.
 2. [x] Chốt các seams trên trước khi thêm/sửa assertion mới; cập nhật manifest theo các consumer/config thực tế.
 3. [ ] (Harness và test đã có; không có bằng chứng bước chạy đỏ) Viết một HTTP harness probe test đầu tiên; chạy đỏ, triển khai server/fixture tối thiểu, chạy xanh và mở rộng theo từng behavior của spec.
 4. [x] Thích ứng browser setup/assertions theo baseline và behavior hiện tại; chạy focused Chromium với harness, giữ nguyên các behavior assertion hợp lệ.

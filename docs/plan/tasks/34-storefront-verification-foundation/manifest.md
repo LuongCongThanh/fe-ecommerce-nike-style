@@ -51,7 +51,7 @@ Snapshot tham chiếu ngày 25/11/2026. File dưới đây là source hiện t�
 - `e2e/production/runtime.spec.ts`
 - `e2e/production/pwa.spec.ts`
 
-## Source production đổi ngoài test (ngoại lệ, chờ chốt)
+## Source production đổi ngoài test (ngoại lệ, người dùng đã duyệt)
 
 - `src/lib/api/env/config.ts`, `src/app/~offline/page.tsx`, `next.config.ts`. Lý do, owner và đợt xóa ghi trong [report](report.md).
 
