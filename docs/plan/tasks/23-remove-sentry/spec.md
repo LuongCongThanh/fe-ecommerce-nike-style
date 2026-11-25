@@ -16,7 +16,7 @@ Branch: `chore/23-remove-sentry`
 
 ## Problem Statement
 
-`@sentry/nextjs` có trong `dependencies` và `src/shared/lib/monitoring/sentry.ts` gọi `Sentry.captureException` khi `NODE_ENV=production`. Repo không có `Sentry.init`, `instrumentation.ts` hay `instrumentation-client.ts`, và không có DSN nào được cấp. Vì vậy lỗi production đi vào một SDK chưa khởi tạo và bị bỏ qua mà không báo gì, trong khi code trông như đã có giám sát lỗi.
+`@sentry/nextjs` có trong `dependencies` và `src/shared/lib/monitoring/sentry.ts` gọi `Sentry.captureException` khi `NODE_ENV=production`. Repo không có `Sentry.init`, không có `instrumentation-client.ts`, và không có DSN nào được cấp. `src/instrumentation.ts` có tồn tại nhưng chỉ bật MSW phía server, không khởi tạo Sentry. Vì vậy lỗi production đi vào một SDK chưa khởi tạo và bị bỏ qua mà không báo gì, trong khi code trông như đã có giám sát lỗi.
 
 Maintainer quyết định ngày 24/11/2026: gỡ Sentry. Khi có môi trường deploy thật, thêm lại giám sát lỗi bằng một task riêng.
 

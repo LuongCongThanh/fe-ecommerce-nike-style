@@ -16,7 +16,7 @@ Branch: `chore/26-pin-node-version`
 
 ## Problem Statement
 
-README ghi "Dùng Node.js 24 và pnpm được pin trong `package.json`", nhưng `package.json` chỉ pin pnpm (`packageManager`); Storefront không có `.nvmrc` hay `engines`. Workspace `fashion-store` quy định mỗi app có `.nvmrc` riêng (mise đọc qua `idiomatic_version_file_enable_tools`). `be-demo` đã có `.nvmrc` = `24`. CI lặp `node-version: 24` ở sáu job.
+README ghi "Dùng Node.js 24 và pnpm được pin trong `package.json`", nhưng `package.json` chỉ pin pnpm (`packageManager`); Storefront không có `.nvmrc` hay `engines`. Workspace `fashion-store` quy định mỗi app có `.nvmrc` riêng (mise đọc qua `idiomatic_version_file_enable_tools`). `be-demo` đã có `.nvmrc` = `24`. CI lặp `node-version: 24` ở sáu job của `ci.yml` và một job của `contract-bump.yml`.
 
 ## Solution
 
@@ -27,7 +27,7 @@ README ghi "Dùng Node.js 24 và pnpm được pin trong `package.json`", nhưng
 
 ## Phạm vi
 
-Trong phạm vi: `.nvmrc` (mới), `package.json` (`engines`), `.github/workflows/ci.yml` (`actions/setup-node`), `README.md`.
+Trong phạm vi: `.nvmrc` (mới), `package.json` (`engines`), `.github/workflows/ci.yml` và `.github/workflows/contract-bump.yml` (`actions/setup-node`), `README.md`.
 
 Ngoài phạm vi: nâng phiên bản Node, `.npmrc` (`engine-strict` không bật trong task này), các repo khác.
 
@@ -43,7 +43,7 @@ Ngoài phạm vi: nâng phiên bản Node, `.npmrc` (`engine-strict` không bậ
 
 ## Ghi chú/rủi ro
 
-- `.github/workflows/**` thuộc `denyPaths` và `package.json` là `askPaths`. Người cần cấp `approved.files: [.github/workflows/ci.yml, package.json]`, hoặc làm task trong phiên tương tác.
+- `.github/workflows/**` thuộc `denyPaths` và `package.json` là `askPaths`. Người cần cấp `approved.files: [.github/workflows/ci.yml, .github/workflows/contract-bump.yml, package.json]`, hoặc làm task trong phiên tương tác.
 - Task 22 cũng sửa `ci.yml` (khối env của job build). Hai thay đổi nằm ở dòng khác nhau; merge task nào sau thì rebase.
 
 ## Comments
