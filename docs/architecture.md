@@ -1,5 +1,7 @@
 # Kiến trúc hiện tại
 
+Thiết kế chuyển đổi đã duyệt, chưa triển khai: [ADR 0001](adr/0001-domain-modules-and-readable-names.md) và [cây đích/lộ trình](plan/storefront-structure-migration.md). Các đường dẫn dưới đây tiếp tục mô tả source hiện hành.
+
 Owner: maintainer storefront. Đối chiếu checkout 18/11/2026; source và executable config là bằng chứng hiện trạng. [Rule map](agents/code-conventions.md) dẫn tới quy tắc chi tiết.
 
 ## Module và chiều phụ thuộc

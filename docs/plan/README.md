@@ -1,5 +1,22 @@
 # Chỉ mục kế hoạch và task
 
+## Wayfinder: tái cấu trúc Storefront theo thiết kế đã duyệt
+
+Map hoàn tất quyết định ngày 25/11/2026. [Backlog bàn giao đã chốt](tasks/21-storefront-delivery-breakdown/delivery.md) gồm mười một đợt chuẩn bị/migration và bốn đợt SSR; [Delivery specs và handoff](tasks/21-storefront-delivery-breakdown/handoff.md) đã được ghi ở todo; source chưa triển khai.
+
+Đây là các hồ sơ quyết định, không thuộc hàng đợi delivery. `todo` là chưa resolve, `done` trong nhóm này là đã ghi quyết định, không phải source đã merge. Claim/blocker theo [tracker](../agents/issue-tracker.md#wayfinding-operations).
+
+| Hồ sơ                                                                                                                                     | Loại     | Trạng thái | Blocked by                             |
+| ----------------------------------------------------------------------------------------------------------------------------------------- | -------- | ---------- | -------------------------------------- |
+| [Lập đường chuyển Storefront sang module nghiệp vụ và tên dễ hiểu](tasks/16-storefront-refactor-map/spec.md)                              | Map      | done       | —                                      |
+| [Mỗi file hiện tại sẽ chuyển về đâu và còn consumer nào cần giữ?](tasks/17-storefront-migration-inventory/spec.md)                        | Task     | done       | —                                      |
+| [Module nào được dùng phần công khai nào của module khác?](tasks/18-storefront-module-boundaries/spec.md)                                 | Grilling | done       | Kiểm kê mapping và consumer            |
+| [Di chuyển provider và SDK thế nào để giữ đúng session, cache và server/client?](tasks/19-storefront-runtime-boundaries/spec.md)          | Grilling | done       | Kiểm kê mapping và consumer            |
+| [Cần giữ hoặc bổ sung bằng chứng nào để xác nhận refactor không đổi hành vi?](tasks/20-storefront-verification-policy/spec.md)            | Grilling | done       | Kiểm kê, public boundary và runtime    |
+| [Chia các đợt triển khai và blocker thế nào để mỗi đợt có thể build và kiểm tra độc lập?](tasks/21-storefront-delivery-breakdown/spec.md) | Grilling | done       | Public boundary, runtime và kiểm chứng |
+
+[Thiết kế đích và lộ trình cấu trúc Storefront](storefront-structure-migration.md): hướng kiến trúc đã duyệt, chưa triển khai; không phải task spec của runner. Quyết định nền nằm ở [ADR 0001](../adr/0001-domain-modules-and-readable-names.md).
+
 Task nằm tại `docs/plan/tasks/<NN>-<name>/spec.md`; giữ nguyên identity và tên spec/plan/report/metric/handoff vì runner, blocker, marker và resume phụ thuộc chúng. Runtime đọc frontmatter spec, không đọc bảng dưới. Không đổi delivery status chỉ vì có report.
 
 - [Tracker](../agents/issue-tracker.md): schema, lifecycle, Wayfinder và report/metric format.
@@ -31,6 +48,28 @@ Bảng giữ trạng thái điều hướng hiện có; đối chiếu spec/PR t
 | 31  | [skills-lock-integrity](tasks/31-skills-lock-integrity/spec.md)         | todo            | -          |     |
 | 32  | [middleware-to-proxy](tasks/32-middleware-to-proxy/spec.md)             | todo            | -          |     |
 | 33  | [remove-admin-route-guard](tasks/33-remove-admin-route-guard/spec.md)   | todo            | 32         |     |
+
+## Delivery: migration và SSR Storefront
+
+Specs bàn giao từ [backlog đã chốt](tasks/21-storefront-delivery-breakdown/delivery.md). [Handoff và phạm vi giao nhau](tasks/21-storefront-delivery-breakdown/handoff.md). Tất cả task mới ở todo; chỉ người dùng triage ready-for-agent.
+
+| Task                                                                                                          | Status | Blocked by                                                                                                    |
+| ------------------------------------------------------------------------------------------------------------- | ------ | ------------------------------------------------------------------------------------------------------------- |
+| [Nền kiểm chứng và baseline có thể tái lập](tasks/34-storefront-verification-foundation/spec.md)              | todo   | [Chia đợt triển khai](tasks/21-storefront-delivery-breakdown/spec.md)                                         |
+| [Rule và convention hỗ trợ migration có giới hạn](tasks/35-storefront-migration-rules/spec.md)                | todo   | [Nền kiểm chứng và baseline có thể tái lập](tasks/34-storefront-verification-foundation/spec.md)              |
+| [Shared components và cơ chế dùng chung](tasks/36-storefront-shared-migration/spec.md)                        | todo   | [Rule và convention hỗ trợ migration có giới hạn](tasks/35-storefront-migration-rules/spec.md)                |
+| [Providers và layouts giữ lifecycle](tasks/37-storefront-providers-layouts/spec.md)                           | todo   | [Shared components và cơ chế dùng chung](tasks/36-storefront-shared-migration/spec.md)                        |
+| [Catalog thí điểm nguyên owner và wishlist composition](tasks/38-storefront-catalog-migration/spec.md)        | todo   | [Providers và layouts giữ lifecycle](tasks/37-storefront-providers-layouts/spec.md)                           |
+| [Integration Backend và generated contract chuyển đồng lượt](tasks/39-storefront-backend-integration/spec.md) | todo   | [Catalog thí điểm nguyên owner và wishlist composition](tasks/38-storefront-catalog-migration/spec.md)        |
+| [Auth và account theo public session boundary](tasks/40-storefront-auth-account-migration/spec.md)            | todo   | [Integration Backend và generated contract chuyển đồng lượt](tasks/39-storefront-backend-integration/spec.md) |
+| [Cart và wishlist giữ persistence và merge](tasks/41-storefront-cart-wishlist-migration/spec.md)              | todo   | [Auth và account theo public session boundary](tasks/40-storefront-auth-account-migration/spec.md)            |
+| [Orders và checkout giữ workflow và route contract](tasks/42-storefront-orders-checkout-migration/spec.md)    | todo   | [Cart và wishlist giữ persistence và merge](tasks/41-storefront-cart-wishlist-migration/spec.md)              |
+| [Home và phần triển khai còn lại trong route](tasks/43-storefront-home-route-migration/spec.md)               | todo   | [Orders và checkout giữ workflow và route contract](tasks/42-storefront-orders-checkout-migration/spec.md)    |
+| [Khóa migration và xóa ngoại lệ đã hết consumer](tasks/44-storefront-migration-cleanup/spec.md)               | todo   | [Home và phần triển khai còn lại trong route](tasks/43-storefront-home-route-migration/spec.md)               |
+| [SSR public reader và danh sách sản phẩm thí điểm](tasks/45-storefront-ssr-products/spec.md)                  | todo   | [Khóa migration và xóa ngoại lệ đã hết consumer](tasks/44-storefront-migration-cleanup/spec.md)               |
+| [SSR category và search theo URL hiện có](tasks/46-storefront-ssr-category-search/spec.md)                    | todo   | [SSR public reader và danh sách sản phẩm thí điểm](tasks/45-storefront-ssr-products/spec.md)                  |
+| [SSR product detail và related products](tasks/47-storefront-ssr-product-detail/spec.md)                      | todo   | [SSR category và search theo URL hiện có](tasks/46-storefront-ssr-category-search/spec.md)                    |
+| [SSR phần catalog trên home và bàn giao trạng thái cuối](tasks/48-storefront-ssr-home/spec.md)                | todo   | [SSR product detail và related products](tasks/47-storefront-ssr-product-detail/spec.md)                      |
 
 ## Wayfinder: bảo trì workflow và cấu trúc
 
