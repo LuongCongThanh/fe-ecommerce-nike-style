@@ -1,7 +1,12 @@
+import { createHash } from 'node:crypto';
+import { readFileSync } from 'node:fs';
+
 import withBundleAnalyzer from '@next/bundle-analyzer';
 import withSerwistInit from '@serwist/next';
 import type { NextConfig } from 'next';
 import createNextIntlPlugin from 'next-intl/plugin';
+
+const offlineFallbackRevision = createHash('sha256').update(readFileSync('src/app/~offline/page.tsx')).digest('hex');
 
 const withAnalyzer = withBundleAnalyzer({
   enabled: process.env.ANALYZE === 'true',
@@ -14,6 +19,7 @@ const withSerwist = withSerwistInit({
   register: true,
   cacheOnNavigation: false,
   reloadOnOnline: true,
+  additionalPrecacheEntries: [{ url: '/~offline', revision: offlineFallbackRevision }],
 });
 
 const withNextIntl = createNextIntlPlugin('./src/i18n/request.ts');

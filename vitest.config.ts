@@ -7,8 +7,8 @@ export default defineConfig({
     tsconfigPaths: true,
   },
   test: {
-    include: ['src/**/*.{test,spec}.{ts,tsx}', 'scripts/**/*.test.ts', '.claude/hooks/**/*.test.ts'],
-    exclude: ['e2e/**', 'node_modules/**', '.next/**'],
+    include: ['src/**/*.{test,spec}.{ts,tsx}', 'scripts/**/*.test.ts', '.claude/hooks/**/*.test.ts', 'e2e/**/*.test.ts'],
+    exclude: ['node_modules/**', '.next/**'],
     environment: 'jsdom',
     setupFiles: ['./src/testing/setup.ts'],
     globals: true,

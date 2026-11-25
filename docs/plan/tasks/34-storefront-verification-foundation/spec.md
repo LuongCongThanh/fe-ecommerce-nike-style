@@ -1,5 +1,5 @@
 ---
-status: ready-for-agent
+status: in-progress
 blocked-by: [21-storefront-delivery-breakdown]
 pr:
 kind: refactor

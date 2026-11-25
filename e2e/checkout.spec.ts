@@ -1,30 +1,26 @@
 import { expect, test } from '@playwright/test';
 
 test.describe('Checkout COD (reservation + idempotent place order + success) — FE-E2E-001', () => {
-  test('browse → PDP → cart → checkout COD → order success', async ({ page }) => {
-    // Browse → PDP (Backpack Commuter has no Variant — Add to cart is enabled immediately, per
-    // pdp.spec.ts). As a guest first — the guest cart lives in localStorage and survives navigation.
-    await page.goto('/vi/products');
-    await page
-      .getByRole('link', { name: /Backpack Commuter/ })
-      .first()
-      .click();
-    await expect(page.getByRole('heading', { name: 'Backpack Commuter' })).toBeVisible();
-
-    await page.getByRole('button', { name: 'Thêm vào giỏ' }).click();
-    await expect(page.getByText('Đã thêm').first()).toBeVisible();
-
+  test('seeded guest cart → checkout COD → order success', async ({ page }) => {
+    // Purchase is not enabled on PDP yet. Seed a known fixture SKU in the guest cart instead.
+    await page.addInitScript(() => {
+      if (sessionStorage.getItem('__e2e_guest_cart_seeded') === 'true') return;
+      localStorage.setItem('cart-storage-v2', JSON.stringify({ version: 2, items: [{ skuId: 'p-17-sku', quantity: 1 }] }));
+      sessionStorage.setItem('__e2e_guest_cart_seeded', 'true');
+    });
     await page.goto('/vi/cart');
     await expect(page.getByText('Backpack Commuter')).toBeVisible();
 
-    // Checkout is gated behind login (middleware.ts + checkout/layout.tsx AuthGuard). Sign in via a
-    // `returnUrl` straight to `/checkout` — the mock auth token only ever lives in browser memory
-    // (Decision #90), so any *later* full navigation would drop it; landing on Checkout as the direct
-    // result of the login form's own client-side redirect avoids that entirely.
+    // The test's login response stores its real token in memory; seed the middleware's cookie hint
+    // separately because MSW cannot persist the mock token as a browser cookie.
     await page.goto('/vi/login?returnUrl=%2Fvi%2Fcheckout');
-    await page.getByLabel('Email').fill('customer@example.com');
-    await page.getByLabel('Mật khẩu').fill('Password123');
-    await page.getByRole('button', { name: 'Đăng nhập' }).click();
+    await page.waitForLoadState('networkidle');
+    await page.context().addCookies([{ name: 'access_token', value: 'e2e-auth-hint', url: new URL(page.url()).origin }]);
+    await page.getByPlaceholder('you@example.com').fill('customer@example.com');
+    await page.getByRole('textbox', { name: 'Mật khẩu' }).fill('Password123');
+    const loginResponse = page.waitForResponse((response) => response.url().endsWith('/api/auth/login/'));
+    await page.getByRole('button', { name: 'Đăng nhập', exact: true }).click();
+    expect((await loginResponse).status()).toBe(200);
     await expect(page).toHaveURL(/\/checkout$/);
 
     // COD is the only payment method shown — nothing to select (Decision #7). The demo account also

@@ -86,6 +86,20 @@ jobs:
       - run: pnpm install --frozen-lockfile
       - run: pnpm run test
 
+  coverage:
+    name: Unit coverage
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+      - uses: pnpm/action-setup@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 24
+          cache: pnpm
+      - run: pnpm install --frozen-lockfile
+      - run: pnpm run test:coverage
+
   build:
     name: Production build
     runs-on: ubuntu-latest
@@ -106,3 +120,33 @@ jobs:
           cache: pnpm
       - run: pnpm install --frozen-lockfile
       - run: pnpm run build
+
+  production-browser:
+    name: Production browser (Chromium)
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    env:
+      API_ORIGIN: http://127.0.0.1:4011
+      NEXT_PUBLIC_APP_URL: http://127.0.0.1:3101
+      NEXT_PUBLIC_API_URL: http://127.0.0.1:3101/api
+      NEXT_PUBLIC_API_MOCKING: 'false'
+      NEXT_PUBLIC_SITE_URL: http://127.0.0.1:3101
+    steps:
+      - uses: actions/checkout@v4
+      - uses: pnpm/action-setup@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 24
+          cache: pnpm
+      - run: pnpm install --frozen-lockfile
+      - run: pnpm exec playwright install --with-deps chromium
+      - run: pnpm run build
+      - run: pnpm run test:e2e:production
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: production-playwright-results
+          path: |
+            playwright-report/
+            test-results/
+          if-no-files-found: ignore
