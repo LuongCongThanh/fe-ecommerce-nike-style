@@ -1,5 +1,5 @@
 ---
-status: todo
+status: ready-for-agent
 blocked-by: [40-storefront-auth-account-migration]
 pr:
 kind: refactor

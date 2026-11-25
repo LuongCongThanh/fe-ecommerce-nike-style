@@ -1,5 +1,5 @@
 ---
-status: todo
+status: ready-for-agent
 blocked-by: [39-storefront-backend-integration]
 pr:
 kind: refactor

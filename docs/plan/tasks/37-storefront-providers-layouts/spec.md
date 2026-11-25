@@ -1,5 +1,5 @@
 ---
-status: todo
+status: ready-for-agent
 blocked-by: [36-storefront-shared-migration]
 pr:
 kind: refactor

@@ -1,5 +1,5 @@
 ---
-status: todo
+status: ready-for-agent
 blocked-by:
   - 22-env-contract
 pr:

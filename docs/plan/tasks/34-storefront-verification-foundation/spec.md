@@ -1,5 +1,5 @@
 ---
-status: todo
+status: ready-for-agent
 blocked-by: [21-storefront-delivery-breakdown]
 pr:
 kind: refactor

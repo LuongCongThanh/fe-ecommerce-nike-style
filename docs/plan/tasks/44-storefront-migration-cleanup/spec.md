@@ -1,5 +1,5 @@
 ---
-status: todo
+status: ready-for-agent
 blocked-by: [43-storefront-home-route-migration]
 pr:
 kind: refactor

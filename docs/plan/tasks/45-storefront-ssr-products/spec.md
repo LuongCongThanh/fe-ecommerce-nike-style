@@ -1,5 +1,5 @@
 ---
-status: todo
+status: ready-for-agent
 blocked-by: [44-storefront-migration-cleanup]
 pr:
 kind: logic

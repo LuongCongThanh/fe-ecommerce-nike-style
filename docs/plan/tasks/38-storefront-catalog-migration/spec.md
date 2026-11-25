@@ -1,5 +1,5 @@
 ---
-status: todo
+status: ready-for-agent
 blocked-by: [37-storefront-providers-layouts]
 pr:
 kind: refactor
