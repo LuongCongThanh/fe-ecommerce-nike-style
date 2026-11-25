@@ -24,13 +24,13 @@ Lần đo đầu của coverage scope hiện có là 95.23% statements, 87.9% br
 
 ## Các bước
 
-1. [ ] Chạy baseline hiện tại trên Node 24/pnpm 11.24: focused Chromium `e2e/catalog.spec.ts`, `search.spec.ts`, `pdp.spec.ts`, `checkout.spec.ts`; lưu command, exit code và failure/artifact trong report, không chỉnh test trước khi ghi nhận.
-2. [ ] Chốt các seams trên trước khi thêm/sửa assertion mới; cập nhật manifest theo các consumer/config thực tế.
-3. [ ] Viết một HTTP harness probe test đầu tiên; chạy đỏ, triển khai server/fixture tối thiểu, chạy xanh và mở rộng theo từng behavior của spec.
-4. [ ] Thích ứng browser setup/assertions theo baseline và behavior hiện tại; chạy focused Chromium với harness, giữ nguyên các behavior assertion hợp lệ.
-5. [ ] Thêm production Playwright config/spec và CI production gate; build production riêng, xác minh SSR/runtime/PWA đúng boundary, không placeholder.
-6. [ ] Cập nhật README, `.env.example`, architecture và task report/metric; rà diff, file path/consumer, coverage scope và rollback.
-7. [ ] Chạy focused test/lint/browser trước; sau đó root gates `pnpm lint`, `pnpm format:check`, `pnpm docs:check`, `pnpm typecheck`, `pnpm test`, `pnpm test:coverage`, `pnpm build`, focused Chromium và full `pnpm test:e2e` ba engine; chạy production Chromium bằng config riêng. Hiện mọi gate trừ full E2E đều đạt; WebKit cần host dependencies.
+1. [ ] (Bỏ qua, xem report) Chạy baseline hiện tại trên Node 24/pnpm 11.24: focused Chromium `e2e/catalog.spec.ts`, `search.spec.ts`, `pdp.spec.ts`, `checkout.spec.ts`; lưu command, exit code và failure/artifact trong report, không chỉnh test trước khi ghi nhận.
+2. [x] Chốt các seams trên trước khi thêm/sửa assertion mới; cập nhật manifest theo các consumer/config thực tế.
+3. [ ] (Harness và test đã có; không có bằng chứng bước chạy đỏ) Viết một HTTP harness probe test đầu tiên; chạy đỏ, triển khai server/fixture tối thiểu, chạy xanh và mở rộng theo từng behavior của spec.
+4. [x] Thích ứng browser setup/assertions theo baseline và behavior hiện tại; chạy focused Chromium với harness, giữ nguyên các behavior assertion hợp lệ.
+5. [x] Thêm production Playwright config/spec và CI production gate; build production riêng, xác minh SSR/runtime/PWA đúng boundary, không placeholder.
+6. [x] Cập nhật README, `.env.example`, architecture và task report/metric; rà diff, file path/consumer, coverage scope và rollback.
+7. [x] Chạy focused test/lint/browser trước; sau đó root gates `pnpm lint`, `pnpm format:check`, `pnpm docs:check`, `pnpm typecheck`, `pnpm test`, `pnpm test:coverage`, `pnpm build`, focused Chromium và full `pnpm test:e2e` ba engine; chạy production Chromium bằng config riêng.
 8. [ ] Ghi report/metric với kết quả thật; review theo spec. Mở PR vào `dev`; chỉ sau khi merge mới chuyển status `done` và cập nhật index.
 
 ## Rủi ro

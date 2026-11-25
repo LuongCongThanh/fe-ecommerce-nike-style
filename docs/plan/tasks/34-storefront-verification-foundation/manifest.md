@@ -40,14 +40,24 @@ Snapshot tham chiếu ngày 25/11/2026. File dưới đây là source hiện t�
 - `README.md`
 - `docs/architecture.md` và tài liệu owner tương ứng ở spec; chỉ cập nhật hiện trạng đã triển khai.
 
-## File mới dự kiến (chưa tồn tại)
+## File mới đã tạo
 
 - `e2e/support/catalog-server.ts`
 - `e2e/support/catalog-fixtures.ts`
 - `e2e/support/catalog-server.test.ts`
+- `e2e/support/session.ts` — bước login/logout, giỏ khách và cookie hint dùng chung giữa các spec.
+- `e2e/support/playwright-base.ts` — port, runner settings và server harness dùng chung cho hai config.
 - `playwright.production.config.ts`
 - `e2e/production/runtime.spec.ts`
 - `e2e/production/pwa.spec.ts`
+
+## Source production đổi ngoài test (ngoại lệ, chờ chốt)
+
+- `src/lib/api/env/config.ts`, `src/app/~offline/page.tsx`, `next.config.ts`. Lý do, owner và đợt xóa ghi trong [report](report.md).
+
+## Quy ước được cập nhật
+
+- `.claude/rules/process/testing.md` — thêm vị trí `e2e/production/` và `e2e/support/` vào quy tắc đặt file test.
 
 ## Test cũ được thích ứng trong scope
 
