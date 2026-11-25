@@ -11,6 +11,7 @@ import boundaries from 'eslint-plugin-boundaries';
 import noRelativeImportPaths from 'eslint-plugin-no-relative-import-paths';
 import sonarjs from 'eslint-plugin-sonarjs';
 import createNextConfig from './eslint.base.mjs';
+import { boundaryElements, restrictedPathZones } from './eslint.boundaries.mjs';
 
 const tailwindEntryCss = path.join(import.meta.dirname, 'src/styles/globals.css');
 const disableTypeChecked = typescript.configs['flat/disable-type-checked'];
@@ -49,22 +50,7 @@ const eslintConfig = [
   // When adding a new route group (e.g. (admin)), no config changes needed — the pattern auto-detects it.
   {
     settings: {
-      'boundaries/elements': [
-        {
-          type: 'app-feature',
-          // capture[0] = locale segment, capture[1] = route group name e.g. (shop), (auth)
-          pattern: 'src/app/*/(*)/**',
-          capture: ['_locale', 'group'],
-        },
-        {
-          type: 'shared',
-          pattern: 'src/shared/**',
-        },
-        {
-          type: 'core-session',
-          pattern: 'src/features/auth/session/**',
-        },
-      ],
+      'boundaries/elements': boundaryElements,
       'boundaries/ignore': ['**/*.test.*', '**/*.spec.*', '**/*.d.ts', '.next/**'],
     },
   },
@@ -181,43 +167,7 @@ const eslintConfig = [
       'import/no-useless-path-segments': 'error',
       'import/no-relative-packages': 'error',
       'import/no-cycle': ['error', { ignoreExternal: true, maxDepth: 3 }],
-      'import/no-restricted-paths': [
-        'error',
-        {
-          zones: [
-            {
-              target: ['./src/shared/**/*', './src/lib/api/**/*', './src/lib/schemas/**/*'],
-              from: ['./src/app/**/*', './src/features/**/*'],
-              message: 'Shared and API/schema code cannot depend on app or feature implementation.',
-            },
-            {
-              target: './src/shared/constants/**/*',
-              from: ['./src/shared/components/**/*', './src/shared/hooks/**/*', './src/shared/lib/**/*'],
-              message: 'Shared constants must stay foundational and cannot depend on UI, hooks, or lib code.',
-            },
-            {
-              target: './src/shared/types/**/*',
-              from: ['./src/shared/components/**/*', './src/shared/hooks/**/*', './src/shared/lib/**/*'],
-              message: 'Shared types must remain dependency-light and cannot import UI, hooks, or lib code.',
-            },
-            {
-              target: './src/shared/hooks/**/*',
-              from: './src/shared/components/**/*',
-              message: 'Hooks must not depend on shared UI components.',
-            },
-            {
-              target: './src/shared/lib/**/*',
-              from: './src/shared/components/**/*',
-              message: 'Shared lib code must not depend on shared UI components.',
-            },
-            {
-              target: './src/shared/components/base/**/*',
-              from: './src/shared/components/common/**/*',
-              message: 'Base UI primitives cannot depend on higher-level shared components.',
-            },
-          ],
-        },
-      ],
+      'import/no-restricted-paths': ['error', { zones: restrictedPathZones }],
       'no-restricted-imports': [
         'error',
         {
