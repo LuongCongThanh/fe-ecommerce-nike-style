@@ -18,7 +18,7 @@
 
 ## Lệch so với spec và rủi ro còn lại
 
-- **Ngoại lệ sửa source ngoài test (cần người dùng chốt).** Spec ghi "không đổi source feature để sửa test" và yêu cầu mọi ngoại lệ có lý do, owner và đợt xóa. Ba file production đổi trong PR này:
+- **Ngoại lệ sửa source ngoài test (người dùng đã duyệt giữ ngày 26/11/2026).** Spec ghi "không đổi source feature để sửa test" và yêu cầu mọi ngoại lệ có lý do, owner và đợt xóa. Ba file production đổi trong PR này:
 
   | File                                           | Lý do                                                                                                                                                           | Owner                   | Đợt xóa                            |
   | ---------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------- | ----------------------- | ---------------------------------- |
@@ -26,9 +26,9 @@
   | `src/app/~offline/page.tsx` (`force-static`)   | Fallback được precache dưới dạng document tĩnh; render động thì precache không có bản HTML ổn định.                                                             | Storefront PWA          | Không xóa                          |
   | `next.config.ts` (`additionalPrecacheEntries`) | Trước đó worker không precache `/~offline`, nên điều hướng offline không có fallback.                                                                           | Storefront PWA          | Không xóa                          |
 
-  Cả ba đổi hành vi production theo hướng sửa lỗi, không thêm bypass. Chúng chưa được chốt trước khi dùng như spec yêu cầu; người dùng cần duyệt hoặc yêu cầu tách sang task riêng.
+  Cả ba đổi hành vi production theo hướng sửa lỗi, không thêm bypass. Chúng được chốt sau khi đã dùng, không phải trước như spec yêu cầu; người dùng duyệt giữ cả ba trong PR này ngày 26/11/2026.
 
-- **Baseline E2E trước harness chưa được ghi.** Plan bước 1 yêu cầu chạy baseline trước khi đổi harness; bước này bị bỏ qua và không dựng lại được mà không checkout lại source cũ (repo không cho tạo worktree). Drift đã biết trước đó chỉ có ở dạng đối chiếu tĩnh trong [verification policy](../20-storefront-verification-policy/verification.md): catalog kỳ vọng taxonomy mock, PDP/checkout kỳ vọng mua từ PDP đang tắt. Chỉ baseline coverage được đo thật.
+- **Baseline E2E trước harness chưa được ghi.** Plan bước 1 yêu cầu chạy baseline trước khi đổi harness; bước này bị bỏ qua và không dựng lại được mà không checkout lại source cũ (repo không cho tạo worktree). Drift đã biết trước đó chỉ có ở dạng đối chiếu tĩnh trong [verification policy](../20-storefront-verification-policy/verification.md): catalog kỳ vọng taxonomy mock, PDP/checkout kỳ vọng mua từ PDP đang tắt. Chỉ baseline coverage được đo thật. Người dùng chấp nhận thiếu sót này ngày 26/11/2026; không dựng lại baseline.
 - The first full run preceded WebKit host dependency installation; the final run completed across all three engines.
 - Two WebGL2 handover checks remain skipped in Firefox and WebKit by the existing browser capability guard; the handover runs in Chromium, and the reduced-motion path runs in all three engines.
 - One `useMediaQuery` effect guard remains uncovered. React does not run effects during server rendering, so testing that path would require an implementation-coupled React mock. Global branches are 123/124 (99.19%), above the unchanged 99% threshold.
@@ -69,8 +69,8 @@ An earlier full Chromium run timed out while unrelated coverage/production jobs 
 - [x] Task 21 blocker is done; task 34 remains on its own `dev`-based branch.
 - [x] Manifest and plan reflect current sources, consumers, approved test seams, and rollback boundaries.
 - [x] Contract-shaped HTTP harness is shared by browser and server probes (`e2e/production/runtime.spec.ts`); the PDP remains unavailable for purchase.
-- [ ] Pre-harness E2E baseline was not recorded (see above).
-- [ ] The three production-source exceptions above await the user's decision.
+- [x] Pre-harness E2E baseline was not recorded; the user accepted the gap on 26/11/2026 (see above).
+- [x] The user approved keeping the three production-source exceptions on 26/11/2026.
 - [x] Existing 99% thresholds and coverage include/exclude paths are unchanged; coverage now passes.
 - [x] Full three-engine E2E passes after WebKit host dependencies are installed.
 - [x] Production build and production Chromium runtime/PWA checks pass.
