@@ -1,7 +1,7 @@
 ---
 status: review
 blocked-by: [34-storefront-verification-foundation]
-pr:
+pr: #118
 kind: refactor
 approved:
   files: []

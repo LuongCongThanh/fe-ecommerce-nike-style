@@ -1,6 +1,6 @@
 # Report 35
 
-- **PR:**
+- **PR:** [LuongCongThanh/fe-ecommerce-nike-style#118](https://github.com/LuongCongThanh/fe-ecommerce-nike-style/pull/118).
 - **Ngày merge:**
 
 ## Đã làm
