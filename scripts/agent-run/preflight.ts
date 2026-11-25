@@ -15,7 +15,7 @@ export async function guardPreflight(deps: Pick<Deps, 'runner'>, worktree: strin
   const event = JSON.stringify({
     hook_event_name: 'PreToolUse',
     tool_name: 'Edit',
-    tool_input: { file_path: join(worktree, 'pnpm-lock.yaml') },
+    tool_input: { file_path: join(worktree, '.env.local') },
     cwd: worktree,
   });
   const r = await deps.runner(tsx, [join(worktree, '.claude/hooks/agent-guard.ts')], {
@@ -38,7 +38,7 @@ export async function guardPreflight(deps: Pick<Deps, 'runner'>, worktree: strin
   if (r.code !== 2) {
     throw new Stop(
       SITUATION.other,
-      `Preflight: hook agent-guard không chặn file bị cấm (exit ${r.code}, mong đợi 2). Không giao việc cho agent. ${r.stderr.trim().slice(0, 300)}`,
+      `Preflight: hook agent-guard không chặn file secret (exit ${r.code}, mong đợi 2). Không giao việc cho agent. ${r.stderr.trim().slice(0, 300)}`,
       r.stderr,
     );
   }

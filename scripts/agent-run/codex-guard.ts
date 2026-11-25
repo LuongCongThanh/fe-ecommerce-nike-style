@@ -64,6 +64,10 @@ export function checkCodexTool(input: HookInput, ctx: GuardContext, browserUrl?:
       return checked.allow ? null : checked.reason;
     }
     if (ctx.phase !== 'implement') return 'Only read-only shell commands are available in this phase.';
+    if (ctx.config.allowAllCommands) {
+      const open = decide(input, ctx);
+      return open.allow ? null : open.reason;
+    }
     // Git mutations belong to the runner, even when a task approves other shell commands.
     const parsed = parseCommand(command);
     if (!parsed.ok || parsed.segments.some((segment) => segment.redirects.length > 0 || segment.words[0] === 'git'))

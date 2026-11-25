@@ -13,7 +13,7 @@ import { codexProvider, parseCodexOutput } from './codex';
 const root = process.cwd();
 const taskDir = 'docs/plan/tasks/example';
 const context: GuardContext = {
-  config: guardConfigSchema.parse(JSON.parse(readFileSync('.claude/agent-guard.json', 'utf8'))),
+  config: guardConfigSchema.parse(JSON.parse(readFileSync('.claude/hooks/lib/guard.fixture.json', 'utf8'))),
   phase: 'plan',
   taskDir,
   projectRoot: root,

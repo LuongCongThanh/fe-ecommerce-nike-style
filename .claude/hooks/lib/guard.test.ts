@@ -7,7 +7,7 @@ import { describe, expect, it } from 'vitest';
 
 import { decide, type GuardConfig, type GuardContext, type HookInput } from './guard';
 
-const config = JSON.parse(readFileSync(resolve(__dirname, '../../agent-guard.json'), 'utf8')) as GuardConfig;
+const config = JSON.parse(readFileSync(resolve(__dirname, 'guard.fixture.json'), 'utf8')) as GuardConfig;
 const ROOT = '/work/wt/feat-x';
 const TASK = 'docs/plan/tasks/03-card';
 
@@ -418,5 +418,30 @@ describe('decide()', () => {
     const d = decide(tool('Edit', {}), ctx());
     expect(d.allow).toBe(false);
     expect(decide(tool('Bash', {}), ctx()).allow).toBe(false);
+  });
+});
+
+describe('live agent-guard.json (open policy)', () => {
+  const live = JSON.parse(readFileSync(resolve(__dirname, '../../agent-guard.json'), 'utf8')) as GuardConfig;
+  const open = (over: Partial<GuardContext> = {}) => ctx({ config: live, ...over });
+
+  it.each([
+    ['lockfile edit', file('Edit', `${ROOT}/pnpm-lock.yaml`)],
+    ['workflow edit', file('Edit', `${ROOT}/.github/workflows/ci.yml`)],
+    ['guidance edit', file('Edit', `${ROOT}/AGENTS.md`)],
+    ['git push', bash('git push -u origin feat/1-x')],
+    ['pnpm install', bash('pnpm install')],
+    ['gh pr merge', bash('gh pr merge 1 --squash')],
+  ])('allows %s in the implement phase', (_label, input) => {
+    expect(decide(input, open()).allow).toBe(true);
+  });
+
+  it.each([
+    ['secret edit', file('Edit', `${ROOT}/.env.local`), open()],
+    ['stop file', file('Write', `${ROOT}/.agent-stop`), open()],
+    ['planner writing src', file('Write', `${ROOT}/src/a.ts`), open({ phase: 'plan' })],
+    ['reviewer running a command', bash('pnpm install'), open({ phase: 'review' })],
+  ])('still blocks %s', (_label, input, context) => {
+    expect(decide(input, context).allow).toBe(false);
   });
 });

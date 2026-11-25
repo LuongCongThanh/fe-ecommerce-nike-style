@@ -29,6 +29,8 @@ export const guardConfigSchema = z.object({
   readCommands: z.array(z.string()).default([]),
   /** Output filters (tail, head, grep, wc) accepted after `|` when everything before them is allowed. */
   outputFilters: z.array(z.string()).default([]),
+  /** true: any Bash command is allowed in phases that do not set their own allowCommands. Secrets and the stop file stay blocked. */
+  allowAllCommands: z.boolean().default(false),
   denyCommandPatterns: z.array(z.string()),
   denyPaths: z.array(z.string()),
   askPaths: z.array(z.string()),
@@ -316,6 +318,7 @@ function decideBash(command: string, ctx: GuardContext, cwd: string): Decision {
   for (const re of config.denyCommandPatterns) {
     if (new RegExp(re).test(command)) return notAllowed('This command (destructive pattern)');
   }
+  if (config.allowAllCommands && !phaseConfig.allowCommands) return allow;
   const parsed = parseCommand(command);
   if (!parsed.ok) {
     return deny(

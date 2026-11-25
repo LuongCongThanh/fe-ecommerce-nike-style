@@ -1,0 +1,67 @@
+{
+  "$comment": "Strict guard config used only by the guard engine tests. The live config is .claude/agent-guard.json.",
+  "stopFile": ".agent-stop",
+  "secretFiles": {
+    "deny": [".env", ".env.*"],
+    "allow": [".env.example"]
+  },
+  "allowCommands": [
+    "pnpm typecheck",
+    "pnpm lint",
+    "pnpm lint:fix",
+    "pnpm format",
+    "pnpm format:check",
+    "pnpm docs:check",
+    "pnpm test",
+    "pnpm build",
+    "pnpm exec vitest run *",
+    "pnpm exec eslint *"
+  ],
+  "readCommands": ["cat *", "ls *", "echo *", "cd *", "git diff *", "git log *", "git status *", "git rev-parse *", "git show *"],
+  "outputFilters": ["tail", "head", "grep", "wc"],
+  "denyCommandPatterns": ["\\brm\\s+(-\\S*\\s+)*-\\S*[rR]", "\\bfind\\b.*\\s-delete\\b", "\\s--output(=|\\s|$)"],
+  "denyPaths": [
+    "src/lib/api/generated/**",
+    "pnpm-lock.yaml",
+    "skills-lock.json",
+    ".claude/**",
+    ".codex/**",
+    ".agents/**",
+    ".mcp.json",
+    "scripts/**",
+    "docs/plan/AGENT-INBOX.md",
+    ".agent-run/**",
+    ".husky/**",
+    "commitlint.config.mjs",
+    "lint-staged.config.mjs",
+    "eslint.config.mjs",
+    ".prettierrc.mjs",
+    ".prettierignore",
+    "tsconfig.json",
+    "tsconfig.scripts.json",
+    "vitest.config.ts",
+    "playwright.config.ts",
+    ".github/workflows/**",
+    ".github/PULL_REQUEST_TEMPLATE.md",
+    "docs/adr/**",
+    "apps/**"
+  ],
+  "askPaths": ["package.json", "next.config.ts", "src/middleware.ts", ".gitignore"],
+  "phases": {
+    "plan": {
+      "writeOnly": ["{taskDir}/plan.md"],
+      "allowCommands": [],
+      "readCommands": []
+    },
+    "implement": {
+      "writeAlso": ["{taskDir}/report.md"]
+    },
+    "retro": {
+      "writeAlso": ["{taskDir}/report.md"]
+    },
+    "review": {
+      "writeOnly": [],
+      "allowCommands": []
+    }
+  }
+}
