@@ -62,3 +62,5 @@ Ngoài phạm vi: Content-Security-Policy (cần nonce cho script inline của N
 - `X-Frame-Options: DENY` chặn mọi việc nhúng Storefront vào iframe. Hiện không có nhu cầu nhúng; nếu CMS cần preview qua iframe thì đổi sang `SAMEORIGIN` hoặc `frame-ancestors` trong task CSP.
 
 ## Comments
+
+Tham khảo [manifest phạm vi](manifest.md); rà lại snapshot khi lập plan. Manifest không cấp quyền sửa file.

@@ -62,3 +62,5 @@ Ngoài phạm vi: `src/lib/api/env/config.ts` và nhánh `VITE_*` legacy (chỉ 
 - `allow-test-changes: true` chỉ để sửa stub env trong `seo.test.ts`.
 
 ## Comments
+
+Tham khảo [manifest phạm vi](manifest.md); rà lại snapshot khi lập plan. Manifest không cấp quyền sửa file.
