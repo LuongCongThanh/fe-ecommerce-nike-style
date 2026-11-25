@@ -30,6 +30,8 @@ Trong phạm vi: `src/shared/lib/monitoring/sentry.ts` (bỏ import Sentry; đ�
 
 Ngoài phạm vi: thêm dịch vụ giám sát khác, đổi UI của error boundary, logging phía server.
 
+[Manifest file/consumer và quyền thích ứng test trong scope](manifest.md) ghi snapshot hiện tại. Sau blocker, dùng đường dẫn đích đã chuyển thay vì tạo lại path cũ. Snapshot không thay thế việc kiểm tra diff, PR/resume work và config hiện hành trước plan.
+
 ## Acceptance criteria
 
 - [ ] `grep -rni "sentry" src package.json pnpm-workspace.yaml .env.example next.config.ts` chỉ còn tên file/hàm nếu plan giữ tên cũ, không còn import hay dependency.
@@ -45,5 +47,3 @@ Ngoài phạm vi: thêm dịch vụ giám sát khác, đổi UI của error boun
 - Map tái cấu trúc (task 18) dự định chuyển `lib/monitoring/sentry.ts` sang `shared/monitoring/`. Ghi tên file cuối cùng vào `report.md`.
 
 ## Comments
-
-Tham khảo [manifest phạm vi](manifest.md); rà lại snapshot khi lập plan. Manifest không cấp quyền sửa file.

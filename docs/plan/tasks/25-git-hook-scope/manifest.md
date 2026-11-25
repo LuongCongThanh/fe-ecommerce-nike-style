@@ -1,15 +1,25 @@
 # Manifest phạm vi — Phạm vi Git hook
 
-Snapshot tham chiếu ngày 25/11/2026, dựa trên spec hiện có. Rà lại đường dẫn, consumer và diff khi lập plan, đặc biệt sau các blocker. Danh sách này không phải approved.files và không cấp quyền sửa file; spec là nguồn chuẩn về phạm vi và điều kiện nghiệm thu.
+Snapshot tham chiếu ngày 25/11/2026. File dưới đây là source hiện tại để tìm owner/consumer; sau các blocker, dùng đường dẫn hiện hành thay vì path cũ. Đây không phải approved.files hay quyền sửa mọi file; spec là nguồn chuẩn về phạm vi và acceptance criteria. Refresh manifest khi lập plan; đổi path cơ học theo blocker không cần mở lại thiết kế. Consumer mới/khác semantics ngoài scope cần làm rõ trước khi sửa.
 
-## File và consumer cần đối chiếu
+## Source owner hiện tại
 
-`.husky/pre-commit`, `.husky/pre-push`, `.husky/commit-msg`, `lint-staged.config.mjs`, `CONTRIBUTING.md`, `.claude/rules/process/git-workflow.md`.
+- `.husky/pre-commit`
+- `.husky/pre-push`
 
-## Kiểm tra và giới hạn
+## Consumer trực tiếp hiện tại ngoài owner
 
-Đối chiếu nội dung hook và tài liệu; kiểm chứng theo spec mà không tự tạo commit hoặc push.
+- `CONTRIBUTING.md` (đoạn "Before every commit…", dòng 30)
+- `.claude/rules/process/git-workflow.md` (mục "Pre-commit checks", dòng 82; chỉ sửa trong phiên tương tác có người)
 
-## Giao nhau và bàn giao
+## Config/docs cần đối chiếu
 
-Rule Git workflow cần phiên tương tác với người; commit-msg và lint-staged ngoài phạm vi sửa. Giữ status, identity và blocker hiện có; ghi phát hiện và kết quả thực tế vào report khi thực hiện.
+- `.husky/commit-msg`, `lint-staged.config.mjs`, `.github/workflows/ci.yml`: chỉ đối chiếu, ngoài phạm vi sửa
+
+## Test cũ được thích ứng trong scope
+
+- Không có. `allow-test-changes: false`; test hiện có chỉ chạy để kiểm, không sửa.
+
+## Giao nhau với task khác
+
+- Task 30 sửa `lint-staged.config.mjs`, thứ duy nhất pre-commit còn chạy sau task 25. Hai task cùng có thể sửa `CONTRIBUTING.md`; task merge sau rebase.

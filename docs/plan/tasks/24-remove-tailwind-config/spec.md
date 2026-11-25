@@ -28,6 +28,8 @@ Trong phạm vi: xoá `tailwind.config.ts`.
 
 Ngoài phạm vi: `eslint.config.mjs`, `eslint.base.mjs`, `.agents/skills/**` (skill bên ngoài nhắc tới tailwind.config là tài liệu chung), CSS token.
 
+[Manifest file/consumer và quyền thích ứng test trong scope](manifest.md) ghi snapshot hiện tại. Sau blocker, dùng đường dẫn đích đã chuyển thay vì tạo lại path cũ. Snapshot không thay thế việc kiểm tra diff, PR/resume work và config hiện hành trước plan.
+
 ## Acceptance criteria
 
 - [ ] Trước khi xoá, `grep -rn "@config" src/styles` rỗng; ghi kết quả vào `report.md`. Nếu có `@config`, dừng và hỏi.
@@ -40,5 +42,3 @@ Ngoài phạm vi: `eslint.config.mjs`, `eslint.base.mjs`, `.agents/skills/**` (s
 - Rủi ro rất thấp. Plugin `eslint-plugin-tailwindcss` đọc `cssConfigPath` trỏ tới `src/styles/globals.css`, không đọc file này.
 
 ## Comments
-
-Tham khảo [manifest phạm vi](manifest.md); rà lại snapshot khi lập plan. Manifest không cấp quyền sửa file.

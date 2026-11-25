@@ -51,6 +51,8 @@ Ngoài phạm vi:
 - Danh sách route `/checkout`, `/account`, `/login`, `/register` và cách đọc `access_token`.
 - Hồ sơ quyết định đã `done` của task 17 và 18.
 
+[Manifest file/consumer và quyền thích ứng test trong scope](manifest.md) ghi snapshot hiện tại. Sau blocker, dùng đường dẫn đích đã chuyển thay vì tạo lại path cũ. Snapshot không thay thế việc kiểm tra diff, PR/resume work và config hiện hành trước plan.
+
 ## Acceptance criteria
 
 - [ ] Trước khi sửa, ghi vào `report.md` kết quả của `find src/app -path "*admin*"`, `grep -rn "is_admin\|USER_ROLE_COOKIE\|auth-cookies" src e2e scripts` và `grep -rn "is_admin" ../be-demo/src` (nếu có checkout `be-demo`). Nếu thấy route admin, hoặc code đặt cookie `is_admin`, dừng và hỏi.
@@ -69,5 +71,3 @@ Ngoài phạm vi:
 - Nếu sau này Storefront cần trang chỉ dành cho nhân viên, việc kiểm quyền phải dựa vào Backend, không dựa vào cookie do client giữ.
 
 ## Comments
-
-Tham khảo [manifest phạm vi](manifest.md); rà lại snapshot khi lập plan. Manifest không cấp quyền sửa file.

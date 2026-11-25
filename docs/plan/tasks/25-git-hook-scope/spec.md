@@ -33,6 +33,8 @@ Trong phạm vi: `.husky/pre-commit`, `.husky/pre-push`, `CONTRIBUTING.md` (đo�
 
 Ngoài phạm vi: `.husky/commit-msg`, `lint-staged.config.mjs`, CI workflow, Stop hook của runner.
 
+[Manifest file/consumer và quyền thích ứng test trong scope](manifest.md) ghi snapshot hiện tại. Sau blocker, dùng đường dẫn đích đã chuyển thay vì tạo lại path cũ. Snapshot không thay thế việc kiểm tra diff, PR/resume work và config hiện hành trước plan.
+
 ## Acceptance criteria
 
 - [ ] Commit một thay đổi chỉ có docs không chạy `next build`; ghi thời gian commit trước và sau vào `report.md`.
@@ -46,5 +48,3 @@ Ngoài phạm vi: `.husky/commit-msg`, `lint-staged.config.mjs`, CI workflow, St
 - Đánh đổi đã chấp nhận: lỗi build chỉ phát hiện ở CI. Chạy `pnpm build` tay khi đổi `next.config.ts`, dependency hoặc route.
 
 ## Comments
-
-Tham khảo [manifest phạm vi](manifest.md); rà lại snapshot khi lập plan. Manifest không cấp quyền sửa file.

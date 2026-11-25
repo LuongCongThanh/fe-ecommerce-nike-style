@@ -48,6 +48,8 @@ Ngoài phạm vi:
 - Tên biến `intlMiddleware` và import `next-intl/middleware`, vì đó là API của thư viện.
 - Đổi danh sách route được bảo vệ, matcher hay cách đọc cookie.
 
+[Manifest file/consumer và quyền thích ứng test trong scope](manifest.md) ghi snapshot hiện tại. Sau blocker, dùng đường dẫn đích đã chuyển thay vì tạo lại path cũ. Snapshot không thay thế việc kiểm tra diff, PR/resume work và config hiện hành trước plan.
+
 ## Acceptance criteria
 
 - [ ] `pnpm build` không còn dòng `The "middleware" file convention is deprecated`; output vẫn liệt kê `ƒ Proxy`. Ghi output trước và sau vào `report.md`.
@@ -64,5 +66,3 @@ Ngoài phạm vi:
 - `allow-test-changes: true` chỉ để đổi tên file test, đường dẫn import và tên hàm được gọi.
 
 ## Comments
-
-Tham khảo [manifest phạm vi](manifest.md); rà lại snapshot khi lập plan. Manifest không cấp quyền sửa file.

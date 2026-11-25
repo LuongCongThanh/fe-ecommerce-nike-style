@@ -32,6 +32,8 @@ Trong phạm vi: `.npmrc`, `pnpm-workspace.yaml`, `package.json`, `pnpm-lock.yam
 
 Ngoài phạm vi: nâng phiên bản dependency, `overrides` và `allowBuilds` (trừ khi task 23 đã gỡ `@sentry/cli`), dependency của ESLint (task 27).
 
+[Manifest file/consumer và quyền thích ứng test trong scope](manifest.md) ghi snapshot hiện tại. Sau blocker, dùng đường dẫn đích đã chuyển thay vì tạo lại path cũ. Snapshot không thay thế việc kiểm tra diff, PR/resume work và config hiện hành trước plan.
+
 ## Acceptance criteria
 
 - [ ] `report.md` ghi bằng chứng pnpm 11 đọc setting từ đâu: trong thư mục nháp ngoài repo, chạy `pnpm add <gói nhỏ>` với `saveExact` đặt ở `.npmrc`, rồi ở `pnpm-workspace.yaml`, và chỉ ra cách nào ghi phiên bản không có `^`.
@@ -47,5 +49,3 @@ Ngoài phạm vi: nâng phiên bản dependency, `overrides` và `allowBuilds` (
 - Nếu task 27 merge trước, danh sách devDependency sẽ ngắn hơn; rebase và pin lại phần còn lại.
 
 ## Comments
-
-Tham khảo [manifest phạm vi](manifest.md); rà lại snapshot khi lập plan. Manifest không cấp quyền sửa file.
