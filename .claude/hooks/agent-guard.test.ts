@@ -59,13 +59,13 @@ describe('agent-guard hook (process level)', () => {
   });
 
   it('blocks protected writes under AGENT_RUN and records each block in state.json', () => {
-    const r1 = run(edit('CLAUDE.md'), AGENT);
+    const r1 = run(edit('commitlint.config.mjs'), AGENT);
     const r2 = run({ tool_name: 'Bash', tool_input: { command: 'git push' } }, AGENT);
     expect([r1.code, r2.code]).toEqual([2, 2]);
     expect(r1.stderr).toContain('needs_approval');
     const state = JSON.parse(readFileSync(join(wt, '.agent-run/state.json'), 'utf8'));
     expect(state.blocks.map((b: { tool: string; target: string; kind: string }) => [b.tool, b.target, b.kind])).toEqual([
-      ['Edit', 'CLAUDE.md', 'deny-path'],
+      ['Edit', 'commitlint.config.mjs', 'deny-path'],
       ['Bash', 'git push', 'command'],
     ]);
     expect(run(edit('src/a.ts'), AGENT).code).toBe(0);

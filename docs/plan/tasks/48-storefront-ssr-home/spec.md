@@ -52,9 +52,9 @@ Triển khai theo scope dưới đây và các quyết định owner ở phần 
 
 ## Quyền và phối hợp
 
-`allow-test-changes: true` chỉ cho các test trong manifest và regression đúng scope, không cho sửa toàn suite. approved.files/commands để trống, chưa cấp quyền vượt deny/ask paths. File config/policy cần quyền riêng theo repo trước runner. Đợt Rule/convention có AGENTS/stop files phải làm cùng người trong phiên tương tác, không giao runner tự mở khóa.
+`allow-test-changes: true` chỉ cho các test trong manifest và regression đúng scope, không cho sửa toàn suite. approved.files/commands để trống, chưa cấp quyền vượt deny/ask paths. File config/policy cần quyền riêng theo repo trước runner.
 
-Tạo spec không đồng nghĩa ready-for-agent. Không chạy runner, branch/commit/push/PR/merge trong phiên viết tài liệu. Nếu sau này được yêu cầu PR: target dev và squash theo repository.
+Agent nhận task tự tạo branch `refactor/<NN>-<slug>` từ dev, commit, push, mở PR vào dev và squash-merge khi CI xanh, theo AGENTS.md.
 
 ## Context
 

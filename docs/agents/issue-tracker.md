@@ -34,14 +34,14 @@ Artifact: plan.md trước code (steps/seams/risks), report.md trước implemen
 | --------------- | ------ | ------------------------------------ |
 | todo            | Người  | Cần làm rõ/triage                    |
 | ready-for-agent | Người  | Spec đủ rõ, blocker đã done          |
-| in-progress     | Script | Runner đang thực thi                 |
+| in-progress     | Agent  | Agent hoặc runner đang thực thi      |
 | needs-info      | Script | Chờ câu trả lời/quyền/quyết định     |
 | blocked         | Script | Dependency hoặc lỗi cần xử lý        |
 | ready-for-human | Script | Dừng sau hai lần resume theo runtime |
-| review          | Script | PR mở vào dev                        |
-| done            | Người  | PR đã merge                          |
+| review          | Agent  | PR mở vào dev                        |
+| done            | Agent  | PR đã merge                          |
 
-Agent không tự đổi status delivery. Khi được phép đổi, cập nhật index cùng lượt; script hiện chỉ sửa spec và marker nên bảng có thể chậm. Human xác nhận merge mới đặt done. Runner chọn ready-for-agent theo thứ tự folder, mọi blocked-by phải done; PR marker có thể coi ready-for-agent thành review để tránh chạy trùng.
+Agent nhận task tự đặt in-progress, review và done (sau khi PR merge); chỉ người chuyển todo sang ready-for-agent. Cập nhật index cùng lượt; script hiện chỉ sửa spec và marker nên bảng có thể chậm. Done chỉ đặt khi PR đã merge. Runner chọn ready-for-agent theo thứ tự folder, mọi blocked-by phải done; PR marker có thể coi ready-for-agent thành review để tránh chạy trùng.
 
 ## Triage role mapping
 

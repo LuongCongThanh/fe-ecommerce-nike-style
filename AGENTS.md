@@ -59,18 +59,18 @@ pnpm build
 
 ## Quy trình task và GitHub
 
-- Codex và Claude Code dùng cùng spec, trạng thái, tiêu chí nghiệm thu và quy tắc Git. Với task đã đủ điều kiện, làm lần lượt: đọc spec → lập `plan.md` bằng skill `plan-task` → triển khai và ghi `report.md` → chạy kiểm tra → review theo spec và quy tắc repo.
+- Mọi agent (Codex, Claude Code, Copilot và agent khác) dùng cùng spec, trạng thái, tiêu chí nghiệm thu và quy tắc Git. Với task đã đủ điều kiện, làm lần lượt: đọc spec → lập `plan.md` bằng skill `plan-task` → triển khai và ghi `report.md` → chạy kiểm tra → review theo spec và quy tắc repo.
 - Chọn một công cụ cho từng bước. Khi đổi công cụ, tiếp tục từ `spec.md`, `plan.md`, diff hiện tại và `report.md` nếu đã có. Dùng `handoff.md` nếu lần chạy trước để lại. Kiểm tra lại bước nào đã hoàn thành trước khi làm tiếp.
 
 - Task nằm trong file Markdown cục bộ `docs/plan/tasks/<NN>-<tên>/spec.md`, không dùng GitHub Issues. Schema, vòng đời, quyền status và ngoại lệ Wayfinder: `docs/agents/issue-tracker.md`; index điều hướng: `docs/plan/README.md`; vận hành: `docs/agents/runner.md`.
-- Chỉ nhận task có `status: ready-for-agent` và mọi `blocked-by` đã `done`. Agent không tự đổi trạng thái `todo`, `ready-for-agent`, `done`.
+- Chỉ nhận task có `status: ready-for-agent` và mọi `blocked-by` đã `done`. Agent nhận task tự chuyển status của task đó `in-progress` → `review` khi mở PR → `done` sau khi PR đã merge, và cập nhật index cùng lượt. Không tự chuyển task `todo` sang `ready-for-agent`.
 - Tạo branch từ `dev` theo `<type>/<NN>-<slug>` (hoặc `<type>/<slug>`; slug nói rõ tính năng); dùng Conventional Commits.
 - Feature/fix target `dev`; `main` chỉ nhận release PR từ `dev`.
 - Không ghi tên AI tool/model/agent/assistant hoặc AI attribution trong commit, PR, review hay comment; hook và CI enforce các tên phổ biến.
-- Phiên tương tác: không tạo branch, commit, push, mở PR hoặc merge nếu người dùng chưa yêu cầu rõ.
-- Thực hiện từng task theo thứ tự trong checkout hiện tại. Áp dụng cho Codex, Claude Code và `agent-run`. Không tạo thêm Git worktree, kể cả cho bước kiểm tra. Xử lý task đang dở trước khi chuyển sang task khác.
-- Ngoại lệ: chạy `agent-run` được coi là người dùng đã yêu cầu rõ việc tạo branch, commit, push branch của task đó và mở PR vào `dev`. Chính script `agent-run` thực hiện các thao tác git này, agent không tự làm. Không bao giờ tự merge.
-- `AGENTS.md`, `CLAUDE.md`, `.claude/rules/process/git-workflow.md`, `docs/agents/issue-tracker.md` do người sửa cùng Codex hoặc Claude Code trong phiên tương tác, không để agent tự sửa khi chạy `agent-run`.
+- Khi làm task `ready-for-agent`, mọi agent được tự tạo branch, commit, push, mở PR vào `dev` và squash-merge sau khi CI xanh, không cần hỏi lại. Không merge vào `main`. Ngoài task, chỉ làm các thao tác git này khi người dùng yêu cầu.
+- Thực hiện từng task theo thứ tự trong checkout hiện tại. Áp dụng cho mọi agent và `agent-run`. Không tạo thêm Git worktree, kể cả cho bước kiểm tra. Xử lý task đang dở trước khi chuyển sang task khác.
+- `agent-run` vẫn để script tự làm branch, commit, push và mở PR; script không merge.
+- Mọi agent được sửa `AGENTS.md`, `CLAUDE.md`, `.claude/rules/process/git-workflow.md`, `docs/agents/issue-tracker.md` khi task yêu cầu. Chỉ stop file `.agent-stop` và file secret vẫn được bảo vệ.
 
 - Đọc `GLOSSARY.md` nếu có theo chủ đề và tài liệu owner hiện tại trước khi đặt tên domain; báo xung đột thay vì tự đổi nghĩa. Glossary API thuộc `be-demo`; thuật ngữ kỹ thuật CMS thuộc repo `cms`. Không bắt buộc các sibling repo có mặt trong checkout frontend.
 
