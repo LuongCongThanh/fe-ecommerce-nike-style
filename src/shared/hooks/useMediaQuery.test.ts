@@ -1,9 +1,16 @@
 import { act, renderHook } from '@testing-library/react';
+import { createElement } from 'react';
+import { renderToString } from 'react-dom/server';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 
 import { useIsMobile, useIsDesktop, useIsTablet, useMediaQuery } from '@/shared/hooks/useMediaQuery';
 
 type MatchMediaListener = (e: MediaQueryListEvent) => void;
+
+function ServerMediaQuery(): React.JSX.Element {
+  const matches = useMediaQuery('(max-width: 767px)');
+  return createElement('span', null, String(matches));
+}
 
 function mockMatchMedia(matches: boolean) {
   const listeners: MatchMediaListener[] = [];
@@ -54,6 +61,25 @@ describe('useMediaQuery', () => {
     });
 
     expect(result.current).toBe(true);
+  });
+
+  it('removes its change listener when unmounted', () => {
+    const mql = mockMatchMedia(false);
+    const { unmount } = renderHook(() => useMediaQuery('(max-width: 767px)'));
+
+    unmount();
+
+    expect(mql.removeEventListener).toHaveBeenCalledWith('change', expect.any(Function));
+  });
+
+  it('returns false during server rendering when window is unavailable', () => {
+    vi.stubGlobal('window', undefined);
+
+    try {
+      expect(renderToString(createElement(ServerMediaQuery))).toContain('false');
+    } finally {
+      vi.unstubAllGlobals();
+    }
   });
 });
 

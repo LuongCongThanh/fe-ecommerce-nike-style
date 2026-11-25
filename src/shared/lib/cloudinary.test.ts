@@ -11,6 +11,12 @@ describe('buildImageUrl', () => {
     expect(buildImageUrl('')).toBe('/images/placeholder.jpg');
   });
 
+  it('uses an empty cloud name when the public cloud name is unset', () => {
+    delete process.env.NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME;
+
+    expect(buildImageUrl('products/shirt.jpg')).toBe('https://res.cloudinary.com//image/upload/f_auto,q_auto,c_fill/products/shirt.jpg');
+  });
+
   it('builds URL with default transforms', () => {
     const url = buildImageUrl('products/shirt.jpg');
     expect(url).toBe('https://res.cloudinary.com/testcloud/image/upload/f_auto,q_auto,c_fill/products/shirt.jpg');
@@ -34,6 +40,11 @@ describe('buildImageUrl', () => {
   it('applies custom quality', () => {
     const url = buildImageUrl('products/shirt.jpg', { quality: 80 });
     expect(url).toContain('q_80');
+  });
+
+  it('preserves named quality presets', () => {
+    const url = buildImageUrl('products/shirt.jpg', { quality: 'auto' });
+    expect(url).toContain('q_auto');
   });
 
   it('does not include width/height when not provided', () => {

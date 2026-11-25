@@ -49,7 +49,7 @@ Auth store sở hữu access/refresh token trong memory. Mock bootstrap không k
 
 `/~offline` ngoài locale, fallback về tiếng Việt và link `/vi`; đây là khoảng trống localization đã biết. Serwist dùng `src/pwa/sw.ts`, build ra `public/sw.js`, đăng ký ở production và tắt trong development. Worker dùng defaultCache, document fallback `~offline`, skipWaiting/clientsClaim/navigationPreload; không hứa offline checkout.
 
-MSW server khởi động qua instrumentation Node; browser khởi động qua shared API-mocking helper khi flag bật. Serwist và MSW là hai service-worker responsibility khác nhau: tránh suy luận hành vi production từ dev MSW; kiểm cache, registration và network trong browser khi đổi chúng. Xem [API boundary](api-integration.md).
+MSW server khởi động qua instrumentation Node; browser khởi động qua shared API-mocking helper khi flag bật. Playwright dùng HTTP catalog harness riêng bám generated OpenAPI để cả browser proxy lẫn request server-side có thể kiểm thử mà không cần Backend. `playwright.production.config.ts` chạy production build/server trên port riêng, `NEXT_PUBLIC_API_MOCKING=false`, và kiểm runtime/catalog/provider cùng service-worker fallback; SSR assertion thuộc các slice SSR sau, không nằm trong baseline này. Serwist và MSW là hai service-worker responsibility khác nhau: tránh suy luận hành vi production từ dev MSW; kiểm cache, registration và network trong browser khi đổi chúng. Xem [API boundary](api-integration.md).
 
 ## 3D trong storefront
 

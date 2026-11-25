@@ -37,4 +37,4 @@ pnpm test
 pnpm build
 ```
 
-Chạy focused checks trước. `pnpm test:e2e` dùng Playwright cho browser flow; `pnpm gen:api` sinh type từ contract pin và cần nguồn OpenAPI. `pnpm docs:check` chạy offline để kiểm formatting, local links/anchors, consumer tài liệu đã xóa và graph task; xem phạm vi trong [runner](docs/agents/runner.md).
+Chạy focused checks trước. `pnpm test:e2e` dùng Playwright với HTTP catalog fixture riêng, không cần Backend. Production check dùng Chromium và Serwist thật: build với `API_ORIGIN=http://127.0.0.1:4011`, `NEXT_PUBLIC_APP_URL=http://127.0.0.1:3101`, `NEXT_PUBLIC_API_URL=http://127.0.0.1:3101/api`, `NEXT_PUBLIC_SITE_URL=http://127.0.0.1:3101`, `NEXT_PUBLIC_API_MOCKING=false`, sau đó chạy `pnpm test:e2e:production`; Playwright tự chạy fixture và `next start` riêng. CI cũng chạy coverage threshold qua `pnpm test:coverage`. `pnpm gen:api` sinh type từ contract pin và cần nguồn OpenAPI. `pnpm docs:check` chạy offline để kiểm formatting, local links/anchors, consumer tài liệu đã xóa và graph task; xem phạm vi trong [runner](docs/agents/runner.md).

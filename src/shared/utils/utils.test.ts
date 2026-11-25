@@ -93,6 +93,14 @@ describe('buildQueryString', () => {
   it('skips null and empty items inside arrays', () => {
     expect(buildQueryString({ tags: ['a', '', null, 'b'] })).toBe('tags=a&tags=b');
   });
+
+  it('skips unsupported objects inside arrays', () => {
+    expect(buildQueryString({ tags: ['a', { id: 1 }, 'b'] })).toBe('tags=a&tags=b');
+  });
+
+  it('omits unsupported objects used as direct query values', () => {
+    expect(buildQueryString({ filters: { category: 'shoes' } })).toBe('');
+  });
 });
 
 describe('truncateText', () => {

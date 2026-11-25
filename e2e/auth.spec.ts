@@ -8,6 +8,7 @@ test.describe('Auth (register/login/forgot-reset)', () => {
 
     // 1. Register
     await page.goto('/vi/register');
+    await page.waitForLoadState('networkidle');
     await page.getByLabel('Họ').fill('Nguyễn');
     await page.getByLabel('Tên').fill('An');
     await page.getByLabel('Email').fill(email);
@@ -17,21 +18,25 @@ test.describe('Auth (register/login/forgot-reset)', () => {
     await expect(page).toHaveURL(/\/home$/);
 
     // Register auto-logs-in — log out so "login" below is a real, separate step.
-    await page.getByRole('button', { name: 'Đăng xuất' }).click();
+    await page.getByRole('button', { name: 'Tài khoản' }).click();
+    await page.getByRole('menuitem', { name: 'Đăng xuất' }).click();
     await expect(page).toHaveURL(/\/login/);
 
     // 2. Login
-    await page.getByLabel('Email').fill(email);
-    await page.getByLabel('Mật khẩu').fill(oldPassword);
-    await page.getByRole('button', { name: 'Đăng nhập' }).click();
+    await page.getByPlaceholder('you@example.com').fill(email);
+    await page.getByRole('textbox', { name: 'Mật khẩu' }).fill(oldPassword);
+    await page.getByRole('button', { name: 'Đăng nhập', exact: true }).click();
     await expect(page).toHaveURL(/\/home$/);
-    await expect(page.getByRole('button', { name: 'Đăng xuất' })).toBeVisible();
+    await expect(page.getByRole('button', { name: 'Tài khoản' })).toBeVisible();
 
-    await page.getByRole('button', { name: 'Đăng xuất' }).click();
+    await page.getByRole('button', { name: 'Tài khoản' }).click();
+    await page.getByRole('menuitem', { name: 'Đăng xuất' }).click();
+    await expect(page).toHaveURL(/\/login/);
 
     // 3. Forgot password — read the mock-only dev token from the network response (stands in for the
     // real email link, per decision-log.md Decision #90).
     await page.goto('/vi/forgot-password');
+    await page.waitForLoadState('networkidle');
     await page.getByLabel('Email').fill(email);
 
     const [response] = await Promise.all([
@@ -45,23 +50,21 @@ test.describe('Auth (register/login/forgot-reset)', () => {
 
     // 4. Reset password
     await page.goto(`/vi/reset-password/${devResetToken}?uid=${devUid}`);
+    await page.waitForLoadState('networkidle');
     await page.getByLabel('Mật khẩu mới', { exact: true }).fill(newPassword);
     await page.getByLabel('Xác nhận mật khẩu mới').fill(newPassword);
     await page.getByRole('button', { name: 'Đặt lại mật khẩu' }).click();
     await expect(page).toHaveURL(/\/login$/);
 
     // 5. Login again with the new password — the old one no longer works, the new one does.
-    await page.getByLabel('Email').fill(email);
-    await page.getByLabel('Mật khẩu').fill(oldPassword);
-    await page.getByRole('button', { name: 'Đăng nhập' }).click();
-    // Asserts the generic fallback, not the mock's specific "Email hoặc mật khẩu không đúng" message —
-    // a pre-existing, documented gap (two incompatible `ApiError` classes) means the real API error
-    // message never reaches the form; see decision-log.md Decision #90's "known gaps, not fixed here".
-    await expect(page.getByText('Đăng nhập thất bại. Vui lòng thử lại.')).toBeVisible();
+    await page.getByPlaceholder('you@example.com').fill(email);
+    await page.getByRole('textbox', { name: 'Mật khẩu' }).fill(oldPassword);
+    await page.getByRole('button', { name: 'Đăng nhập', exact: true }).click();
+    await expect(page.getByRole('alert').filter({ hasText: 'Email hoặc mật khẩu không đúng.' })).toBeVisible();
 
-    await page.getByLabel('Mật khẩu').fill(newPassword);
-    await page.getByRole('button', { name: 'Đăng nhập' }).click();
+    await page.getByRole('textbox', { name: 'Mật khẩu' }).fill(newPassword);
+    await page.getByRole('button', { name: 'Đăng nhập', exact: true }).click();
     await expect(page).toHaveURL(/\/home$/);
-    await expect(page.getByRole('button', { name: 'Đăng xuất' })).toBeVisible();
+    await expect(page.getByRole('button', { name: 'Tài khoản' })).toBeVisible();
   });
 });

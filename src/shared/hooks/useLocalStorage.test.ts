@@ -1,7 +1,14 @@
 import { act, renderHook } from '@testing-library/react';
+import { createElement } from 'react';
+import { renderToString } from 'react-dom/server';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
 import { useLocalStorage } from '@/shared/hooks/useLocalStorage';
+
+function ServerValue(): React.JSX.Element {
+  const [value] = useLocalStorage('server-value', 'server-default');
+  return createElement('span', null, value);
+}
 
 describe('useLocalStorage', () => {
   beforeEach(() => {
@@ -10,6 +17,7 @@ describe('useLocalStorage', () => {
 
   afterEach(() => {
     vi.restoreAllMocks();
+    vi.unstubAllGlobals();
   });
 
   it('returns the initial value when key is not set', () => {
@@ -49,5 +57,22 @@ describe('useLocalStorage', () => {
     const { result } = renderHook(() => useLocalStorage('bad-json', 'fallback'));
 
     expect(result.current[0]).toBe('fallback');
+  });
+
+  it('uses the initial value during server rendering', () => {
+    vi.stubGlobal('window', undefined);
+
+    expect(renderToString(createElement(ServerValue))).toContain('server-default');
+  });
+
+  it('keeps state usable when localStorage refuses to persist a value', () => {
+    vi.spyOn(Storage.prototype, 'setItem').mockImplementation(() => {
+      throw new DOMException('Quota exceeded', 'QuotaExceededError');
+    });
+
+    const { result } = renderHook(() => useLocalStorage('full-storage', 'initial'));
+
+    expect(() => act(() => result.current[1]('updated'))).not.toThrow();
+    expect(result.current[0]).toBe('updated');
   });
 });

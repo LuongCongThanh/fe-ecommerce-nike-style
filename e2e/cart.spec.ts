@@ -14,14 +14,15 @@ test.describe('Cart (guest + merge + rollback)', () => {
 
     await page.getByLabel('Đăng nhập').click();
     await page.waitForURL(/\/login$/);
-    await page.getByLabel('Email').fill('customer@example.com');
-    await page.getByLabel('Mật khẩu').fill('Password123');
-    await page.getByRole('button', { name: 'Đăng nhập' }).click();
+    await page.getByPlaceholder('you@example.com').fill('customer@example.com');
+    await page.getByRole('textbox', { name: 'Mật khẩu' }).fill('Password123');
+    const mergeResponse = page.waitForResponse((response) => response.url().endsWith('/api/cart/merge') && response.request().method() === 'POST');
+    await page.getByRole('button', { name: 'Đăng nhập', exact: true }).click();
     await expect(page).toHaveURL(/\/home$/);
-    await expect(page.getByRole('button', { name: 'Đăng xuất' })).toBeVisible();
+    await expect(page.getByRole('button', { name: 'Tài khoản' })).toBeVisible();
+    expect((await mergeResponse).status()).toBe(200);
 
-    await page.goto('/vi/cart');
-    await expect(page.getByText('Tạm tính (3 sản phẩm)')).toBeVisible();
+    await expect(page.getByRole('button', { name: 'Giỏ hàng' })).toContainText('3');
   });
 
   test('guest can add/update/remove cart items without logging in', async ({ page }) => {

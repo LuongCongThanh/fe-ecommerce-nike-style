@@ -25,13 +25,15 @@ test.describe('Catalog browse (PLP + Category + Gender filter)', () => {
     await expect(page.getByRole('combobox', { name: 'Sắp xếp theo' })).toHaveText('Giá tăng dần');
   });
 
-  test('Category tree renders the Decision #50 taxonomy and links into a Category page', async ({ page }) => {
+  test('Category tree renders the pinned catalog fixture and links into a Category page', async ({ page }) => {
     await page.goto('/vi/products');
 
-    const categoryNav = page.getByRole('navigation', { name: 'Danh mục sản phẩm' });
+    const categoryNav = page.getByRole('complementary').getByRole('navigation', { name: 'Danh mục' });
     await expect(categoryNav.getByRole('link', { name: 'Shoes' })).toBeVisible();
-    await expect(categoryNav.getByRole('link', { name: 'Apparel' })).toBeVisible();
+    await expect(categoryNav.getByRole('link', { name: 'Tops' })).toBeVisible();
     await expect(categoryNav.getByRole('link', { name: 'Accessories' })).toBeVisible();
+
+    await categoryNav.getByRole('button', { name: 'Shoes' }).press('Space');
     await expect(categoryNav.getByRole('link', { name: 'Running' })).toBeVisible();
 
     await categoryNav.getByRole('link', { name: 'Running' }).click();
@@ -40,7 +42,7 @@ test.describe('Catalog browse (PLP + Category + Gender filter)', () => {
   });
 
   test('pagination on the PLP keeps the page number in the URL and going back restores it', async ({ page }) => {
-    // 24 mock products (Decision #50) at pageSize 12 guarantees a page 2 — see catalog-fixtures.ts.
+    // The pinned HTTP fixture has 24 products at pageSize 12, guaranteeing a page 2.
     await page.goto('/vi/products');
     await expect(page.getByRole('heading', { name: 'Tất cả sản phẩm' })).toBeVisible();
 
