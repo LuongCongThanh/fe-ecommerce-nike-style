@@ -1,5 +1,5 @@
 ---
-status: todo
+status: ready-for-agent
 blocked-by: [46-storefront-ssr-category-search]
 pr:
 kind: logic

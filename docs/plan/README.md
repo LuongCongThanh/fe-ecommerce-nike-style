@@ -36,15 +36,15 @@ Bảng giữ trạng thái điều hướng hiện có; đối chiếu spec/PR t
 | 04  | [order-status-badge-i18n](tasks/04-order-status-badge-i18n/spec.md)     | ready-for-agent | -          |     |
 | 05  | [remove-dead-app-config](tasks/05-remove-dead-app-config/spec.md)       | ready-for-agent | -          |     |
 | 06  | [order-return-lifecycle](tasks/06-order-return-lifecycle/spec.md)       | todo            | -          |     |
-| 22  | [env-contract](tasks/22-env-contract/spec.md)                           | todo            | -          |     |
+| 22  | [env-contract](tasks/22-env-contract/spec.md)                           | ready-for-agent | -          |     |
 | 23  | [remove-sentry](tasks/23-remove-sentry/spec.md)                         | todo            | -          |     |
 | 24  | [remove-tailwind-config](tasks/24-remove-tailwind-config/spec.md)       | todo            | -          |     |
-| 25  | [git-hook-scope](tasks/25-git-hook-scope/spec.md)                       | todo            | -          |     |
-| 26  | [pin-node-version](tasks/26-pin-node-version/spec.md)                   | todo            | -          |     |
+| 25  | [git-hook-scope](tasks/25-git-hook-scope/spec.md)                       | ready-for-agent | -          |     |
+| 26  | [pin-node-version](tasks/26-pin-node-version/spec.md)                   | ready-for-agent | -          |     |
 | 27  | [eslint-single-config](tasks/27-eslint-single-config/spec.md)           | todo            | -          |     |
-| 28  | [next-config-hardening](tasks/28-next-config-hardening/spec.md)         | todo            | 22         |     |
-| 29  | [pnpm-settings-and-pinning](tasks/29-pnpm-settings-and-pinning/spec.md) | todo            | -          |     |
-| 30  | [format-scope](tasks/30-format-scope/spec.md)                           | todo            | -          |     |
+| 28  | [next-config-hardening](tasks/28-next-config-hardening/spec.md)         | ready-for-agent | 22         |     |
+| 29  | [pnpm-settings-and-pinning](tasks/29-pnpm-settings-and-pinning/spec.md) | ready-for-agent | -          |     |
+| 30  | [format-scope](tasks/30-format-scope/spec.md)                           | ready-for-agent | -          |     |
 | 31  | [skills-lock-integrity](tasks/31-skills-lock-integrity/spec.md)         | todo            | -          |     |
 | 32  | [middleware-to-proxy](tasks/32-middleware-to-proxy/spec.md)             | todo            | -          |     |
 | 33  | [remove-admin-route-guard](tasks/33-remove-admin-route-guard/spec.md)   | todo            | 32         |     |
@@ -53,23 +53,23 @@ Bảng giữ trạng thái điều hướng hiện có; đối chiếu spec/PR t
 
 Specs bàn giao từ [backlog đã chốt](tasks/21-storefront-delivery-breakdown/delivery.md). [Handoff và phạm vi giao nhau](tasks/21-storefront-delivery-breakdown/handoff.md). Tất cả task mới ở todo; chỉ người dùng triage ready-for-agent.
 
-| Task                                                                                                          | Status | Blocked by                                                                                                    |
-| ------------------------------------------------------------------------------------------------------------- | ------ | ------------------------------------------------------------------------------------------------------------- |
-| [Nền kiểm chứng và baseline có thể tái lập](tasks/34-storefront-verification-foundation/spec.md)              | todo   | [Chia đợt triển khai](tasks/21-storefront-delivery-breakdown/spec.md)                                         |
-| [Rule và convention hỗ trợ migration có giới hạn](tasks/35-storefront-migration-rules/spec.md)                | todo   | [Nền kiểm chứng và baseline có thể tái lập](tasks/34-storefront-verification-foundation/spec.md)              |
-| [Shared components và cơ chế dùng chung](tasks/36-storefront-shared-migration/spec.md)                        | todo   | [Rule và convention hỗ trợ migration có giới hạn](tasks/35-storefront-migration-rules/spec.md)                |
-| [Providers và layouts giữ lifecycle](tasks/37-storefront-providers-layouts/spec.md)                           | todo   | [Shared components và cơ chế dùng chung](tasks/36-storefront-shared-migration/spec.md)                        |
-| [Catalog thí điểm nguyên owner và wishlist composition](tasks/38-storefront-catalog-migration/spec.md)        | todo   | [Providers và layouts giữ lifecycle](tasks/37-storefront-providers-layouts/spec.md)                           |
-| [Integration Backend và generated contract chuyển đồng lượt](tasks/39-storefront-backend-integration/spec.md) | todo   | [Catalog thí điểm nguyên owner và wishlist composition](tasks/38-storefront-catalog-migration/spec.md)        |
-| [Auth và account theo public session boundary](tasks/40-storefront-auth-account-migration/spec.md)            | todo   | [Integration Backend và generated contract chuyển đồng lượt](tasks/39-storefront-backend-integration/spec.md) |
-| [Cart và wishlist giữ persistence và merge](tasks/41-storefront-cart-wishlist-migration/spec.md)              | todo   | [Auth và account theo public session boundary](tasks/40-storefront-auth-account-migration/spec.md)            |
-| [Orders và checkout giữ workflow và route contract](tasks/42-storefront-orders-checkout-migration/spec.md)    | todo   | [Cart và wishlist giữ persistence và merge](tasks/41-storefront-cart-wishlist-migration/spec.md)              |
-| [Home và phần triển khai còn lại trong route](tasks/43-storefront-home-route-migration/spec.md)               | todo   | [Orders và checkout giữ workflow và route contract](tasks/42-storefront-orders-checkout-migration/spec.md)    |
-| [Khóa migration và xóa ngoại lệ đã hết consumer](tasks/44-storefront-migration-cleanup/spec.md)               | todo   | [Home và phần triển khai còn lại trong route](tasks/43-storefront-home-route-migration/spec.md)               |
-| [SSR public reader và danh sách sản phẩm thí điểm](tasks/45-storefront-ssr-products/spec.md)                  | todo   | [Khóa migration và xóa ngoại lệ đã hết consumer](tasks/44-storefront-migration-cleanup/spec.md)               |
-| [SSR category và search theo URL hiện có](tasks/46-storefront-ssr-category-search/spec.md)                    | todo   | [SSR public reader và danh sách sản phẩm thí điểm](tasks/45-storefront-ssr-products/spec.md)                  |
-| [SSR product detail và related products](tasks/47-storefront-ssr-product-detail/spec.md)                      | todo   | [SSR category và search theo URL hiện có](tasks/46-storefront-ssr-category-search/spec.md)                    |
-| [SSR phần catalog trên home và bàn giao trạng thái cuối](tasks/48-storefront-ssr-home/spec.md)                | todo   | [SSR product detail và related products](tasks/47-storefront-ssr-product-detail/spec.md)                      |
+| Task                                                                                                          | Status          | Blocked by                                                                                                    |
+| ------------------------------------------------------------------------------------------------------------- | --------------- | ------------------------------------------------------------------------------------------------------------- |
+| [Nền kiểm chứng và baseline có thể tái lập](tasks/34-storefront-verification-foundation/spec.md)              | ready-for-agent | [Chia đợt triển khai](tasks/21-storefront-delivery-breakdown/spec.md)                                         |
+| [Rule và convention hỗ trợ migration có giới hạn](tasks/35-storefront-migration-rules/spec.md)                | todo            | [Nền kiểm chứng và baseline có thể tái lập](tasks/34-storefront-verification-foundation/spec.md)              |
+| [Shared components và cơ chế dùng chung](tasks/36-storefront-shared-migration/spec.md)                        | ready-for-agent | [Rule và convention hỗ trợ migration có giới hạn](tasks/35-storefront-migration-rules/spec.md)                |
+| [Providers và layouts giữ lifecycle](tasks/37-storefront-providers-layouts/spec.md)                           | ready-for-agent | [Shared components và cơ chế dùng chung](tasks/36-storefront-shared-migration/spec.md)                        |
+| [Catalog thí điểm nguyên owner và wishlist composition](tasks/38-storefront-catalog-migration/spec.md)        | ready-for-agent | [Providers và layouts giữ lifecycle](tasks/37-storefront-providers-layouts/spec.md)                           |
+| [Integration Backend và generated contract chuyển đồng lượt](tasks/39-storefront-backend-integration/spec.md) | ready-for-agent | [Catalog thí điểm nguyên owner và wishlist composition](tasks/38-storefront-catalog-migration/spec.md)        |
+| [Auth và account theo public session boundary](tasks/40-storefront-auth-account-migration/spec.md)            | ready-for-agent | [Integration Backend và generated contract chuyển đồng lượt](tasks/39-storefront-backend-integration/spec.md) |
+| [Cart và wishlist giữ persistence và merge](tasks/41-storefront-cart-wishlist-migration/spec.md)              | ready-for-agent | [Auth và account theo public session boundary](tasks/40-storefront-auth-account-migration/spec.md)            |
+| [Orders và checkout giữ workflow và route contract](tasks/42-storefront-orders-checkout-migration/spec.md)    | ready-for-agent | [Cart và wishlist giữ persistence và merge](tasks/41-storefront-cart-wishlist-migration/spec.md)              |
+| [Home và phần triển khai còn lại trong route](tasks/43-storefront-home-route-migration/spec.md)               | ready-for-agent | [Orders và checkout giữ workflow và route contract](tasks/42-storefront-orders-checkout-migration/spec.md)    |
+| [Khóa migration và xóa ngoại lệ đã hết consumer](tasks/44-storefront-migration-cleanup/spec.md)               | ready-for-agent | [Home và phần triển khai còn lại trong route](tasks/43-storefront-home-route-migration/spec.md)               |
+| [SSR public reader và danh sách sản phẩm thí điểm](tasks/45-storefront-ssr-products/spec.md)                  | ready-for-agent | [Khóa migration và xóa ngoại lệ đã hết consumer](tasks/44-storefront-migration-cleanup/spec.md)               |
+| [SSR category và search theo URL hiện có](tasks/46-storefront-ssr-category-search/spec.md)                    | ready-for-agent | [SSR public reader và danh sách sản phẩm thí điểm](tasks/45-storefront-ssr-products/spec.md)                  |
+| [SSR product detail và related products](tasks/47-storefront-ssr-product-detail/spec.md)                      | ready-for-agent | [SSR category và search theo URL hiện có](tasks/46-storefront-ssr-category-search/spec.md)                    |
+| [SSR phần catalog trên home và bàn giao trạng thái cuối](tasks/48-storefront-ssr-home/spec.md)                | ready-for-agent | [SSR product detail và related products](tasks/47-storefront-ssr-product-detail/spec.md)                      |
 
 ## Wayfinder: bảo trì workflow và cấu trúc
 

@@ -1,5 +1,5 @@
 ---
-status: todo
+status: ready-for-agent
 blocked-by: [41-storefront-cart-wishlist-migration]
 pr:
 kind: refactor

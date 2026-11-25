@@ -1,5 +1,5 @@
 ---
-status: todo
+status: ready-for-agent
 blocked-by: [42-storefront-orders-checkout-migration]
 pr:
 kind: refactor

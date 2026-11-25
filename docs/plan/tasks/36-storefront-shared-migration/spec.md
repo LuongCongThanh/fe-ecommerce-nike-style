@@ -1,5 +1,5 @@
 ---
-status: todo
+status: ready-for-agent
 blocked-by: [35-storefront-migration-rules]
 pr:
 kind: refactor

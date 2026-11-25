@@ -1,5 +1,5 @@
 ---
-status: todo
+status: ready-for-agent
 blocked-by: [45-storefront-ssr-products]
 pr:
 kind: logic
