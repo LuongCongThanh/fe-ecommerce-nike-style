@@ -1,7 +1,7 @@
 ---
-status: in-progress
+status: review
 blocked-by: [21-storefront-delivery-breakdown]
-pr:
+pr: #117
 kind: refactor
 approved:
   files: []
