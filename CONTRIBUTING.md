@@ -47,7 +47,7 @@ Before every commit, `.husky/pre-commit` runs `lint-staged`, `pnpm lint`, `pnpm 
 2. Locate the owning module in [the structure guide](docs/architecture.md). Keep Next.js entry points in `app`, domain code in `features`, reusable UI in `shared`, and test support in `testing`.
 3. Write or update the plan for task work. Make one coherent change; update imports, related docs and tests together when moving files.
 4. Run focused checks first, then `pnpm lint`, `pnpm format:check`, `pnpm docs:check`, `pnpm typecheck`, `pnpm test` and `pnpm build` for source/config changes. Run affected E2E tests when browser behavior changes. For documentation-only work, run `pnpm docs:check`.
-5. Review the diff and record checks and limitations. Commit, push and open a PR only when requested; target `dev`. Merge only after required checks pass.
+5. Review the diff and record checks and limitations. For a `ready-for-agent` task any agent commits, pushes, opens a PR to `dev` and squash-merges it once required checks pass; other work does so only when requested. Never merge into `main` outside a release PR.
 
 Delete obsolete instructions once their replacement is linked from the documentation index. Preserve accepted decisions and useful task evidence; mark historical context explicitly. Do not remove fixtures, generated contracts or public assets solely because an import scan finds no reference.
 

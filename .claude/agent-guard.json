@@ -44,8 +44,6 @@
     ".github/workflows/**",
     ".github/PULL_REQUEST_TEMPLATE.md",
     "docs/adr/**",
-    "AGENTS.md",
-    "CLAUDE.md",
     "apps/**"
   ],
   "askPaths": ["package.json", "next.config.ts", "src/middleware.ts", ".gitignore"],

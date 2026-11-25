@@ -1,5 +1,5 @@
 ---
-status: todo
+status: ready-for-agent
 blocked-by: [34-storefront-verification-foundation]
 pr:
 kind: refactor
@@ -25,7 +25,7 @@ Triển khai theo scope dưới đây và các quyết định owner ở phần 
 ## Phạm vi và điểm dừng
 
 - **Prerequisite:** Nền kiểm chứng và baseline có thể tái lập.
-- **Scope:** ESLint elements/zones/restricted imports, module DAG checker nếu config hiện có không đủ, lint fixture tests, coverage old→new manifest; AGENTS/convention/rule owner và mirror skill nếu thật sự bị sửa. Policy/stop files do người cùng sửa trong phiên tương tác trước khi runner dựa vào rule mới.
+- **Scope:** ESLint elements/zones/restricted imports, module DAG checker nếu config hiện có không đủ, lint fixture tests, coverage old→new manifest; AGENTS/convention/rule owner và mirror skill nếu thật sự bị sửa.
 - **Điểm dừng:** path cũ/mới ánh xạ cùng logical owner; known existing violations được snapshot exact edge và đợt xóa (catalog↔wishlist chỉ tồn tại đến catalog pilot); allowed/wrong-symbol/private/cycle fixtures chứng minh cả pass/fail. Không bật blanket exemption cho modules/features/tests.
 - **Test quyền sửa:** config/fixture tests cụ thể, không sửa behavior test feature. Gate root, focused lint fixture, build nếu config tác động bundle; docs architecture/convention phân biệt trạng thái chuyển tiếp.
 - **Rollback:** rule/checker/manifest/docs trở lại cùng slice; không rollback source chưa chuyển.
@@ -52,9 +52,9 @@ Triển khai theo scope dưới đây và các quyết định owner ở phần 
 
 ## Quyền và phối hợp
 
-`allow-test-changes: true` chỉ cho các test trong manifest và regression đúng scope, không cho sửa toàn suite. approved.files/commands để trống, chưa cấp quyền vượt deny/ask paths. File config/policy cần quyền riêng theo repo trước runner. Đợt Rule/convention có AGENTS/stop files phải làm cùng người trong phiên tương tác, không giao runner tự mở khóa.
+`allow-test-changes: true` chỉ cho các test trong manifest và regression đúng scope, không cho sửa toàn suite. approved.files/commands để trống, chưa cấp quyền vượt deny/ask paths. File config/policy cần quyền riêng theo repo trước runner.
 
-Tạo spec không đồng nghĩa ready-for-agent. Không chạy runner, branch/commit/push/PR/merge trong phiên viết tài liệu. Nếu sau này được yêu cầu PR: target dev và squash theo repository.
+Agent nhận task tự tạo branch `refactor/<NN>-<slug>` từ dev, commit, push, mở PR vào dev và squash-merge khi CI xanh, theo AGENTS.md.
 
 ## Context
 
