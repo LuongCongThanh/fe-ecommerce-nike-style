@@ -12,6 +12,11 @@ interface RequestRecord {
   hasCookie: boolean;
 }
 
+interface HarnessResponse {
+  status: number;
+  body: unknown;
+}
+
 const PORT = Number(process.env.E2E_CATALOG_PORT ?? 4010);
 
 function respond(response: ServerResponse, status: number, body: unknown): void {
@@ -27,7 +32,8 @@ function normalize(value: string): string {
     .toLocaleLowerCase('en');
 }
 
-function paginatedProducts(url: URL) {
+/** `GET /api/v1/products`: validates paging, then filters, sorts and pages the fixture list. */
+function listProducts(url: URL): HarnessResponse {
   const page = Number(url.searchParams.get('page') ?? 1);
   const limit = Number(url.searchParams.get('limit') ?? 12);
   if (!Number.isInteger(page) || page < 1 || !Number.isInteger(limit) || limit < 1) {
@@ -102,61 +108,50 @@ function handleRequest(request: IncomingMessage, response: ServerResponse, reque
   }
 
   const scenario = url.searchParams.get('scenario');
-  const send = () => {
-    if (scenario === 'server-error') {
-      respond(response, 503, { statusCode: 503, message: 'Fixture service unavailable', error: 'Service Unavailable' });
-      return;
-    }
-
-    if (url.pathname === '/api/v1/products' && scenario === 'empty') {
-      respond(response, 200, { data: [], meta: { page: 1, limit: 12, total: 0, totalPages: 0 } });
-      return;
-    }
-
-    if (url.pathname === '/api/v1/categories') {
-      respond(response, 200, categoryTree);
-      return;
-    }
-
-    if (url.pathname === '/api/v1/sizes') {
-      respond(response, 200, catalogSizes);
-      return;
-    }
-
-    if (url.pathname === '/api/v1/colors') {
-      respond(response, 200, catalogColors);
-      return;
-    }
-
-    if (url.pathname === '/api/v1/products') {
-      const result = paginatedProducts(url);
-      respond(response, result.status, result.body);
-      return;
-    }
-
-    const slugPrefix = '/api/v1/products/slug/';
-    if (url.pathname.startsWith(slugPrefix)) {
-      const slug = url.pathname.slice(slugPrefix.length);
-      const detail = productDetails.find((product) => product.slug === slug);
-      if (detail === undefined) {
-        respond(response, 404, { statusCode: 404, message: 'Product not found', error: 'Not Found' });
-        return;
-      }
-
-      respond(response, 200, detail);
-      return;
-    }
-
-    respond(response, 404, { statusCode: 404, message: 'Route not found', error: 'Not Found' });
+  const sendFixtureResponse = () => {
+    const { status, body } = scenario === 'server-error' ? serverError : resolveCatalogRoute(url, scenario);
+    respond(response, status, body);
   };
 
   if (scenario === 'delay') {
     const delayMs = Math.max(0, Math.min(Number(url.searchParams.get('delayMs') ?? 25), 5_000));
-    setTimeout(send, delayMs);
+    setTimeout(sendFixtureResponse, delayMs);
     return;
   }
 
-  send();
+  sendFixtureResponse();
+}
+
+const serverError: HarnessResponse = { status: 503, body: { statusCode: 503, message: 'Fixture service unavailable', error: 'Service Unavailable' } };
+const routeNotFound: HarnessResponse = { status: 404, body: { statusCode: 404, message: 'Route not found', error: 'Not Found' } };
+const emptyProductPage: HarnessResponse = { status: 200, body: { data: [], meta: { page: 1, limit: 12, total: 0, totalPages: 0 } } };
+
+const fixedRoutes = new Map<string, (url: URL) => HarnessResponse>([
+  ['/api/v1/categories', () => ({ status: 200, body: categoryTree })],
+  ['/api/v1/sizes', () => ({ status: 200, body: catalogSizes })],
+  ['/api/v1/colors', () => ({ status: 200, body: catalogColors })],
+  ['/api/v1/products', listProducts],
+]);
+
+const PRODUCT_SLUG_PREFIX = '/api/v1/products/slug/';
+
+function findProductBySlug(slug: string): HarnessResponse {
+  const detail = productDetails.find((product) => product.slug === slug);
+  return detail === undefined
+    ? { status: 404, body: { statusCode: 404, message: 'Product not found', error: 'Not Found' } }
+    : { status: 200, body: detail };
+}
+
+/** Maps a catalog `GET` path to its fixture response; `scenario=empty` empties the product list only. */
+function resolveCatalogRoute(url: URL, scenario: string | null): HarnessResponse {
+  if (url.pathname === '/api/v1/products' && scenario === 'empty') return emptyProductPage;
+
+  const fixedRoute = fixedRoutes.get(url.pathname);
+  if (fixedRoute !== undefined) return fixedRoute(url);
+
+  if (url.pathname.startsWith(PRODUCT_SLUG_PREFIX)) return findProductBySlug(url.pathname.slice(PRODUCT_SLUG_PREFIX.length));
+
+  return routeNotFound;
 }
 
 export function createCatalogServer(): Server {

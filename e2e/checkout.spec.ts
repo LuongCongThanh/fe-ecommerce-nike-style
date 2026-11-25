@@ -1,8 +1,11 @@
 import { expect, test } from '@playwright/test';
 
+import { addMiddlewareLoginHint, DEMO_CUSTOMER, submitLogin } from '@/../e2e/support/session';
+
 test.describe('Checkout COD (reservation + idempotent place order + success) — FE-E2E-001', () => {
   test('seeded guest cart → checkout COD → order success', async ({ page }) => {
-    // Purchase is not enabled on PDP yet. Seed a known fixture SKU in the guest cart instead.
+    // Purchase is not enabled on PDP yet. Seed a known fixture SKU in the guest cart instead. The init
+    // script runs on every page load, so it seeds only once per tab to keep the post-order empty cart.
     await page.addInitScript(() => {
       if (sessionStorage.getItem('__e2e_guest_cart_seeded') === 'true') return;
       localStorage.setItem('cart-storage-v2', JSON.stringify({ version: 2, items: [{ skuId: 'p-17-sku', quantity: 1 }] }));
@@ -11,15 +14,12 @@ test.describe('Checkout COD (reservation + idempotent place order + success) —
     await page.goto('/vi/cart');
     await expect(page.getByText('Backpack Commuter')).toBeVisible();
 
-    // The test's login response stores its real token in memory; seed the middleware's cookie hint
-    // separately because MSW cannot persist the mock token as a browser cookie.
+    // Checkout is gated by the middleware's cookie hint. Sign in with a `returnUrl` so the login form's
+    // own client-side redirect lands on Checkout while the in-memory mock session is still alive.
     await page.goto('/vi/login?returnUrl=%2Fvi%2Fcheckout');
-    await page.waitForLoadState('networkidle');
-    await page.context().addCookies([{ name: 'access_token', value: 'e2e-auth-hint', url: new URL(page.url()).origin }]);
-    await page.getByPlaceholder('you@example.com').fill('customer@example.com');
-    await page.getByRole('textbox', { name: 'Mật khẩu' }).fill('Password123');
+    await addMiddlewareLoginHint(page);
     const loginResponse = page.waitForResponse((response) => response.url().endsWith('/api/auth/login/'));
-    await page.getByRole('button', { name: 'Đăng nhập', exact: true }).click();
+    await submitLogin(page, DEMO_CUSTOMER);
     expect((await loginResponse).status()).toBe(200);
     await expect(page).toHaveURL(/\/checkout$/);
 
