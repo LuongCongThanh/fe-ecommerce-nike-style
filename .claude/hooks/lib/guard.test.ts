@@ -85,13 +85,13 @@ const rows: Row[] = [
   ['workflows', file('Edit', `${ROOT}/.github/workflows/ci.yml`), ctx(), 'deny-path'],
   ['PR template', file('Edit', `${ROOT}/.github/PULL_REQUEST_TEMPLATE.md`), ctx(), 'deny-path'],
   ['adr', file('Write', `${ROOT}/docs/adr/0001-x.md`), ctx(), 'deny-path'],
-  ['AGENTS.md', file('Edit', `${ROOT}/AGENTS.md`), ctx(), 'deny-path'],
-  ['CLAUDE.md', file('Edit', `${ROOT}/CLAUDE.md`), ctx(), 'deny-path'],
+  ['AGENTS.md is open to agents', file('Edit', `${ROOT}/AGENTS.md`), ctx(), 'allow'],
+  ['CLAUDE.md is open to agents', file('Edit', `${ROOT}/CLAUDE.md`), ctx(), 'allow'],
   ['legacy apps', file('Edit', `${ROOT}/apps/web/x.ts`), ctx(), 'deny-path'],
-  ['MultiEdit on denied path', file('MultiEdit', `${ROOT}/CLAUDE.md`), ctx(), 'deny-path'],
+  ['MultiEdit on denied path', file('MultiEdit', `${ROOT}/commitlint.config.mjs`), ctx(), 'deny-path'],
   ['NotebookEdit on denied path', tool('NotebookEdit', { notebook_path: `${ROOT}/apps/n.ipynb` }), ctx(), 'deny-path'],
   ['relative path into denied dir', tool('Edit', { file_path: 'src/../.claude/settings.json' }), ctx(), 'deny-path'],
-  ['denied path via ../ traversal', file('Edit', `${ROOT}/src/../../feat-x/CLAUDE.md`), ctx(), 'deny-path'],
+  ['denied path via ../ traversal', file('Edit', `${ROOT}/src/../../feat-x/commitlint.config.mjs`), ctx(), 'deny-path'],
   // --- AGENT_RUN: ask paths ---
   ['package.json', file('Edit', `${ROOT}/package.json`), ctx(), 'ask-path'],
   ['next config', file('Edit', `${ROOT}/next.config.ts`), ctx(), 'ask-path'],
@@ -108,7 +108,12 @@ const rows: Row[] = [
   // --- approvals ---
   ['approved ask path', file('Edit', `${ROOT}/package.json`), ctx({ approved: { paths: ['package.json'], commands: [] } }), 'allow'],
   ['approved deny path glob', file('Edit', `${ROOT}/apps/web/x.ts`), ctx({ approved: { paths: ['apps/web/**'], commands: [] } }), 'allow'],
-  ['approval does not widen', file('Edit', `${ROOT}/CLAUDE.md`), ctx({ approved: { paths: ['package.json'], commands: [] } }), 'deny-path'],
+  [
+    'approval does not widen',
+    file('Edit', `${ROOT}/commitlint.config.mjs`),
+    ctx({ approved: { paths: ['package.json'], commands: [] } }),
+    'deny-path',
+  ],
   ['approval never unlocks secrets', file('Edit', `${ROOT}/.env.local`), ctx({ approved: { paths: ['.env.local'], commands: [] } }), 'secret'],
   ['approved command', bash('pnpm add zod'), ctx({ approved: { paths: [], commands: ['pnpm add zod'] } }), 'allow'],
   ['approved command is exact', bash('pnpm add evil'), ctx({ approved: { paths: [], commands: ['pnpm add zod'] } }), 'command'],
@@ -219,7 +224,7 @@ const rows: Row[] = [
   ['rm after allowed', bash('pnpm test && rm -rf .'), ctx(), 'command'],
   ['find -delete', bash('find . -name x -delete'), ctx(), 'command'],
   ['redirect write into denied path', bash('pnpm test > .claude/settings.json'), ctx(), 'deny-path'],
-  ['append to denied path', bash('pnpm test >> CLAUDE.md'), ctx(), 'deny-path'],
+  ['append to denied path', bash('pnpm test >> commitlint.config.mjs'), ctx(), 'deny-path'],
   ['stderr redirect to denied path', bash('pnpm test 2> scripts/x.ts'), ctx(), 'deny-path'],
   ['&> redirect to denied path', bash('pnpm test &> .husky/pre-commit'), ctx(), 'deny-path'],
   ['redirect without space', bash('pnpm test >package.json'), ctx(), 'ask-path'],
@@ -353,7 +358,7 @@ describe('decide()', () => {
   });
 
   it('tells the agent to return blocked + needs_approval for protected paths and commands', () => {
-    for (const input of [file('Edit', `${ROOT}/package.json`), file('Edit', `${ROOT}/CLAUDE.md`), bash('git push')]) {
+    for (const input of [file('Edit', `${ROOT}/package.json`), file('Edit', `${ROOT}/commitlint.config.mjs`), bash('git push')]) {
       const d = decide(input, ctx());
       expect(d.allow).toBe(false);
       if (!d.allow) {
@@ -392,16 +397,16 @@ describe('decide()', () => {
   });
 
   it('reports a stable target: relative path for files, full command for bash', () => {
-    const f = decide(file('Edit', `${ROOT}/src/../CLAUDE.md`), ctx());
+    const f = decide(file('Edit', `${ROOT}/src/../commitlint.config.mjs`), ctx());
     const b = decide(bash('git  push'), ctx());
-    expect(f.allow === false && f.target).toBe('CLAUDE.md');
+    expect(f.allow === false && f.target).toBe('commitlint.config.mjs');
     expect(b.allow === false && b.target).toBe('git  push');
   });
 
   it('resolves relative paths against the hook cwd', () => {
-    expect(decide({ tool_name: 'Edit', tool_input: { file_path: 'CLAUDE.md' }, cwd: `${ROOT}/src` }, ctx()).allow).toBe(true);
-    expect(decide({ tool_name: 'Edit', tool_input: { file_path: '../CLAUDE.md' }, cwd: `${ROOT}/src` }, ctx()).allow).toBe(false);
-    expect(decide({ tool_name: 'Edit', tool_input: { file_path: 'CLAUDE.md' }, cwd: ROOT }, ctx()).allow).toBe(false);
+    expect(decide({ tool_name: 'Edit', tool_input: { file_path: 'commitlint.config.mjs' }, cwd: `${ROOT}/src` }, ctx()).allow).toBe(true);
+    expect(decide({ tool_name: 'Edit', tool_input: { file_path: '../commitlint.config.mjs' }, cwd: `${ROOT}/src` }, ctx()).allow).toBe(false);
+    expect(decide({ tool_name: 'Edit', tool_input: { file_path: 'commitlint.config.mjs' }, cwd: ROOT }, ctx()).allow).toBe(false);
   });
 
   it('allows tools it does not know about and malformed non-file input for humans', () => {

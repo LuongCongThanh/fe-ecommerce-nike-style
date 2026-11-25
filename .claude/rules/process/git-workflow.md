@@ -8,10 +8,11 @@ description: Git and Pull Request governance — permissions, branch/commit nami
 
 ## Permission to act
 
-- Never create/switch a branch, commit, amend, rebase, merge, push, open a PR, or change a task's `status` unless the user explicitly requested that specific action.
-- Exception (`agent-run`): running the `agent-run` script counts as the user explicitly requesting a branch, commits, a push of that task's branch, and a PR into `dev`. The script performs these git operations, not the agent, and only for the task's own branch. It never merges, never touches `main`/`dev`, and never force-pushes.
+- Working a `ready-for-agent` task: any agent may create the task branch from `dev`, commit, push it, open a PR into `dev`, squash-merge it once CI is green, and move the task's `status` through `in-progress`, `review` and `done` (after merge) without asking again. Never merge into `main`, never force-push.
+- Outside a task, only create/switch a branch, commit, amend, rebase, merge, push, open a PR, or change a `status` when the user explicitly requested that action.
+- `agent-run`: the script performs branch, commit, push and PR for the task's own branch; it does not merge.
 - Read-only commands like `git status`, `git diff`, `git log`, `git show`, `git branch --show-current` are fine for understanding repository state.
-- Do not infer that "task done" means "commit" or "push".
+- Outside a task, do not infer that "done" means "commit" or "push".
 - Before any Git mutation, read `git status --short` and confirm the current branch.
 
 ## Protecting the user's worktree
@@ -108,13 +109,13 @@ Do not treat a hook failure as something to bypass; fix the underlying lint/type
 - The PR title/body must never contain the name of an AI tool, model, agent or assistant, and must never carry AI attribution in any form; CI checks against a list of common names.
 - PR comments, review comments, review summaries, release notes and GitHub discussions must also never mention an agent/assistant or describe content as AI-generated. Describe only the technical change, the decisions, the test evidence, and the actual person responsible.
 - A PR must be small, focused and reviewable. If a diff bundles several independent concerns, split it into separate branches/PRs before opening.
-- Never self-merge. Only merge when the user asks, CI is green, and the target/strategy is correct.
+- Squash-merge a task PR into `dev` once CI is green and the target is correct. Never merge into `main` outside a release PR.
 
 ## Task and traceability
 
 - The task `spec.md` (`docs/plan/tasks/<NN>-<name>/spec.md`) is the source of the delivery scope. Do not silently expand the acceptance criteria.
 - Branch, commit, and PR should share the same task/domain vocabulary where possible.
-- Task state is the frontmatter `status` (see `docs/agents/issue-tracker.md`). Humans set `todo`, `ready-for-agent`, `done`; the `agent-run` script sets the rest. Do not edit `status` unless asked.
+- Task state is the frontmatter `status` (see `docs/agents/issue-tracker.md`). Only a human moves `todo` to `ready-for-agent`. The agent working the task sets `in-progress`, `review` and `done` (only after the PR is merged) and updates the index in the same change.
 
 ## Safe recovery
 
