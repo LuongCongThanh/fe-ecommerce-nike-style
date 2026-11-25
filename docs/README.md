@@ -17,9 +17,11 @@ Bắt đầu ở [README](../README.md), sau đó đọc theo câu hỏi. Hiện
 
 ## Kế hoạch và lịch sử
 
+[ADR 0001](adr/0001-domain-modules-and-readable-names.md) ghi quyết định tổ chức theo module nghiệp vụ với tên dễ hiểu. [Thiết kế đích và lộ trình chuyển đổi](plan/storefront-structure-migration.md) đã được duyệt về hướng kiến trúc, chưa triển khai source và chưa là task runner.
+
 [Task index](plan/README.md) chỉ điều hướng; `spec.md` giữ trạng thái. [Map rebuild](plan/tasks/07-workflow-structure-map/spec.md) điều phối các quyết định, [plan task12](plan/tasks/12-documentation-ownership/plan.md) ghi phạm vi đợt docs này.
 
-Không có archive nguyên bản dài, ADR hoặc thư mục reference lịch sử trong cây hiện tại: Git giữ lịch sử. Visual/UX contract nằm ở `design.md`; runtime và regression checklist nằm ở architecture.
+Các tài liệu legacy đã gỡ vẫn được lưu trong lịch sử Git; ADR hiện tại ghi quyết định kiến trúc mới, không khôi phục kho reference cũ. Visual/UX contract nằm ở `design.md`; runtime và regression checklist nằm ở architecture.
 
 ## Ownership
 
