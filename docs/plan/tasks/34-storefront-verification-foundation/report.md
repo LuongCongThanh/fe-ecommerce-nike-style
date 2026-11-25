@@ -1,6 +1,6 @@
 # Report 34
 
-- **PR:** Pending final checks and creation.
+- **PR:** [LuongCongThanh/fe-ecommerce-nike-style#117](https://github.com/LuongCongThanh/fe-ecommerce-nike-style/pull/117).
 - **Ngày merge:** Chưa merge.
 
 ## Đã làm
@@ -19,7 +19,8 @@
 - No scope deviation. The first full run preceded WebKit host dependency installation; the final run completed across all three engines.
 - Two WebGL2 handover checks remain skipped in Firefox and WebKit by the existing browser capability guard; the handover runs in Chromium, and the reduced-motion path runs in all three engines.
 - One `useMediaQuery` effect guard remains uncovered. React does not run effects during server rendering, so testing that path would require an implementation-coupled React mock. Global branches are 123/124 (99.19%), above the unchanged 99% threshold.
-- The task remains `in-progress` until its PR is opened; task 35 stays blocked until task 34 is merged.
+- The task is `review` while PR #117 is open; task 35 stays blocked until task 34 is merged.
+- Follow-up testing policy approved for task 35 onward: add unit tests only and lower the global coverage target to about 50%; this policy change is not part of PR #117.
 
 ## Test cũ đã chạm
 
@@ -55,6 +56,7 @@ An earlier full Chromium run timed out while unrelated coverage/production jobs 
 - [x] Full three-engine E2E passes after WebKit host dependencies are installed.
 - [x] Production build and production Chromium runtime/PWA checks pass.
 - [x] README, architecture documentation, and environment example match current setup.
-- [ ] PR, review, merge, status transition to `done`, and index update are still pending.
+- [x] PR #117 is open against `dev`; the task and index are in `review`.
+- [ ] PR review and merge are pending; transition to `done` only after merge.
 
 Keep all test-generated reports out of the committed source tree.
