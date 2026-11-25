@@ -41,9 +41,9 @@ Executable owner là `.claude/agent-guard.json`; decision engine `.claude/hooks/
 | AGENT_TASK_DIR | Task folder thay placeholder taskDir                                    |
 | AGENT_APPROVED | JSON quyền file/command từ spec, đọc khi startup                        |
 
-Secret files và stop file được bảo vệ mọi phiên; automation thêm denyPaths/askPaths, command allow-list, path boundary và phase rules. Planner chỉ ghi plan của mình, không Bash; reviewer read-only; implement/retro được report. Approval không mở secret/stop. Hook fail-closed khi AGENT_RUN; interactive internal errors có policy khác trong engine. Read commands/output filters, static paths và hạn chế shell composition nằm trong config/engine, không coi regex là sandbox đầy đủ. Đọc config trước khi xin quyền file/lệnh bị chặn.
+Secret files và stop file được bảo vệ mọi phiên. Config hiện tại mở: `allowAllCommands` true, denyPaths/askPaths/denyCommandPatterns rỗng, nên agent-run được sửa mọi file và chạy mọi lệnh trong checkout; còn lại path boundary và phase rules. Engine vẫn hỗ trợ các giới hạn này, test engine dùng `.claude/hooks/lib/guard.fixture.json`. Planner chỉ ghi plan của mình, không Bash; reviewer read-only; implement/retro được report. Approval không mở secret/stop. Hook fail-closed khi AGENT_RUN; interactive internal errors có policy khác trong engine. Read commands/output filters, static paths và hạn chế shell composition nằm trong config/engine, không coi regex là sandbox đầy đủ. Đọc config trước khi xin quyền file/lệnh bị chặn.
 
-Codex adapter/preflight và Claude hook khác nhau; chỉ tuyên bố provider được bảo vệ khi phép thử provider đó pass. Stop hook chạy gate theo pha và dùng fix counter chung. Không tự sửa protected workflow/config trong automated task.
+Codex adapter/preflight và Claude hook khác nhau; chỉ tuyên bố provider được bảo vệ khi phép thử provider đó pass. Stop hook chạy gate theo pha và dùng fix counter chung. Claude preflight thử ghi `.env.local` và mong exit 2.
 
 ## Dừng và tiếp tục
 

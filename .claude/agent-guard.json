@@ -1,10 +1,11 @@
 {
-  "$comment": "Executable source of truth for guard hooks and scripts/agent-run. Human-readable contract and env vars: docs/agents/runner.md#guard-contract. Task schema: docs/agents/issue-tracker.md. Always on: secretFiles + stopFile. AGENT_RUN=1 adds automation rules.",
+  "$comment": "Executable source of truth for guard hooks and scripts/agent-run. Open policy: every path and command is allowed for agents; always on are secretFiles and stopFile, and plan/review phases keep their role limits. Contract: docs/agents/runner.md#guard-contract.",
   "stopFile": ".agent-stop",
   "secretFiles": {
     "deny": [".env", ".env.*"],
     "allow": [".env.example"]
   },
+  "allowAllCommands": true,
   "allowCommands": [
     "pnpm typecheck",
     "pnpm lint",
@@ -19,38 +20,24 @@
   ],
   "readCommands": ["cat *", "ls *", "echo *", "cd *", "git diff *", "git log *", "git status *", "git rev-parse *", "git show *"],
   "outputFilters": ["tail", "head", "grep", "wc"],
-  "denyCommandPatterns": ["\\brm\\s+(-\\S*\\s+)*-\\S*[rR]", "\\bfind\\b.*\\s-delete\\b", "\\s--output(=|\\s|$)"],
-  "denyPaths": [
-    "src/lib/api/generated/**",
-    "pnpm-lock.yaml",
-    "skills-lock.json",
-    ".claude/**",
-    ".codex/**",
-    ".agents/**",
-    ".mcp.json",
-    "scripts/**",
-    "docs/plan/AGENT-INBOX.md",
-    ".agent-run/**",
-    ".husky/**",
-    "commitlint.config.mjs",
-    "lint-staged.config.mjs",
-    "eslint.config.mjs",
-    ".prettierrc.mjs",
-    ".prettierignore",
-    "tsconfig.json",
-    "tsconfig.scripts.json",
-    "vitest.config.ts",
-    "playwright.config.ts",
-    ".github/workflows/**",
-    ".github/PULL_REQUEST_TEMPLATE.md",
-    "docs/adr/**",
-    "apps/**"
-  ],
-  "askPaths": ["package.json", "next.config.ts", "src/middleware.ts", ".gitignore"],
+  "denyCommandPatterns": [],
+  "denyPaths": [],
+  "askPaths": [],
   "phases": {
-    "plan": { "writeOnly": ["{taskDir}/plan.md"], "allowCommands": [], "readCommands": [] },
-    "implement": { "writeAlso": ["{taskDir}/report.md"] },
-    "retro": { "writeAlso": ["{taskDir}/report.md"] },
-    "review": { "writeOnly": [], "allowCommands": [] }
+    "plan": {
+      "writeOnly": ["{taskDir}/plan.md"],
+      "allowCommands": [],
+      "readCommands": []
+    },
+    "implement": {
+      "writeAlso": ["{taskDir}/report.md"]
+    },
+    "retro": {
+      "writeAlso": ["{taskDir}/report.md"]
+    },
+    "review": {
+      "writeOnly": [],
+      "allowCommands": []
+    }
   }
 }

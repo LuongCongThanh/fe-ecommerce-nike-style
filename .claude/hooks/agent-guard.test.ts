@@ -10,7 +10,7 @@ import { parseApproved } from './agent-guard';
 
 const HOOK = resolve(__dirname, 'agent-guard.ts');
 const TSX = resolve(__dirname, '../../node_modules/.bin/tsx');
-const CONFIG = resolve(__dirname, '../agent-guard.json');
+const CONFIG = resolve(__dirname, 'lib/guard.fixture.json');
 
 let main: string;
 let wt: string;
