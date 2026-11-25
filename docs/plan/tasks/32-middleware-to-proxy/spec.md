@@ -41,6 +41,7 @@ Trong phạm vi:
 - Comment nhắc `middleware.ts` trong `src/app/layout.tsx`, `src/app/[locale]/(shop)/checkout/layout.tsx`, `src/app/[locale]/(shop)/account/layout.tsx`, `src/testing/setup.ts` và `e2e/checkout.spec.ts`.
 - `docs/research/nextjs-naming-conventions.md` (dòng 112) và mọi tài liệu khác mà `grep` tìm thấy.
 - `.claude/agent-guard.json` (`askPaths`: `src/middleware.ts` → `src/proxy.ts`).
+- `.claude/hooks/lib/guard.test.ts` (dòng 98: ca `ask-path` dùng `src/middleware.ts`; đổi sang `src/proxy.ts`, giữ kết quả mong đợi `ask-path`).
 
 Ngoài phạm vi:
 
@@ -61,8 +62,8 @@ Ngoài phạm vi:
 
 ## Ghi chú/rủi ro
 
-- `.claude/**` thuộc `denyPaths` và `src/middleware.ts` là `askPaths`. Người cần cấp `approved.files: [.claude/agent-guard.json, src/middleware.ts]`, hoặc làm trong phiên tương tác. Nếu không cấp quyền sửa guard, ghi việc cập nhật `askPaths` vào `report.md` để người sửa sau.
+- `.claude/**` thuộc `denyPaths` và `src/middleware.ts` là `askPaths`. Người cần cấp `approved.files: [.claude/agent-guard.json, .claude/hooks/lib/guard.test.ts, src/middleware.ts]`, hoặc làm trong phiên tương tác. Nếu không cấp quyền sửa guard, ghi việc cập nhật `askPaths` vào `report.md` để người sửa sau.
 - `proxy` của Next 16 chỉ chạy trên Node.js runtime. File hiện không khai báo `runtime` và chỉ dùng API của `next/server`, nên không bị ảnh hưởng. Nếu codemod thêm hay đổi runtime, dừng và hỏi.
-- `allow-test-changes: true` chỉ để đổi tên file test, đường dẫn import và tên hàm được gọi.
+- `allow-test-changes: true` chỉ để đổi tên file test, đường dẫn import và tên hàm được gọi, và đổi đường dẫn ví dụ trong ca `ask-path` của `guard.test.ts`.
 
 ## Comments

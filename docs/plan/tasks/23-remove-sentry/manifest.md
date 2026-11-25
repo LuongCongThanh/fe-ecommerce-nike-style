@@ -15,14 +15,11 @@ Snapshot tham chiếu ngày 25/11/2026. File dưới đây là source hiện t�
 - `package.json` và `pnpm-lock.yaml` (chỉ qua `pnpm remove @sentry/nextjs`)
 - `pnpm-workspace.yaml` (`'@sentry/cli'` trong `allowBuilds`)
 - `.env.example` và `src/shared/lib/env.ts` (`NEXT_PUBLIC_SENTRY_DSN`, nếu task 22 chưa xoá)
+- `src/instrumentation.ts`, `src/instrumentation.node.ts`: chỉ bật MSW, không dùng Sentry; không sửa
 
 ## Test cũ được thích ứng trong scope
 
 - Không có. `allow-test-changes: false`; test hiện có chỉ chạy để kiểm, không sửa.
-
-## Lệch với spec cần chốt trước plan
-
-- Spec ghi repo không có `instrumentation.ts`, nhưng `src/instrumentation.ts` và `src/instrumentation.node.ts` có tồn tại. Hai file chỉ bật MSW phía server, không gọi Sentry, nên không đổi phạm vi; ghi nhận xét này vào `report.md`.
 
 ## Giao nhau với task khác
 

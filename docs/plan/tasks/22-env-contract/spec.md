@@ -39,7 +39,7 @@ Cách nối schema với `next.config.ts` (import tương đối, file riêng ng
 
 ## Phạm vi
 
-Trong phạm vi: `.env.example`, `src/shared/lib/env.ts` (hoặc vị trí thay thế mà plan chọn), `next.config.ts`, `src/shared/lib/seo.ts` và `seo.test.ts`, `src/features/checkout/constants/payment-config.ts` (xoá), comment trong `src/shared/lib/mock-content.ts` nhắc `NEXT_PUBLIC_APP_URL`, `.github/workflows/ci.yml` (khối env của job build), `docs/api-integration.md`, `README.md` nếu câu về env cần sửa.
+Trong phạm vi: `.env.example`, `src/shared/lib/env.ts` (hoặc vị trí thay thế mà plan chọn), `next.config.ts`, `src/shared/lib/seo.ts` và `seo.test.ts`, `src/features/checkout/constants/payment-config.ts` (xoá), comment trong `src/shared/lib/mock-content.ts` nhắc `NEXT_PUBLIC_APP_URL`, `.github/workflows/ci.yml` (khối env của job build), `docs/api-integration.md`, `README.md` nếu câu về env cần sửa, `docs/research/nextjs-naming-conventions.md` (dòng 171 và 182 nhắc và link tới `payment-config.ts`; bỏ hoặc thay ví dụ để link không gãy), `vitest.config.ts` (đường dẫn `src/shared/lib/env.ts` trong coverage `exclude`, chỉ khi plan đổi vị trí file).
 
 Ngoài phạm vi: `src/lib/api/env/config.ts` và nhánh `VITE_*` legacy (chỉ đọc giá trị đã được kiểm tra, không refactor), Sentry (task 23), security headers và `images.remotePatterns`, di chuyển file theo map tái cấu trúc Storefront.
 
@@ -58,7 +58,7 @@ Ngoài phạm vi: `src/lib/api/env/config.ts` và nhánh `VITE_*` legacy (chỉ 
 
 ## Ghi chú/rủi ro
 
-- `.github/workflows/**` thuộc `denyPaths` của agent guard. Người cần cấp `approved.files: [.github/workflows/ci.yml]`, hoặc làm task trong phiên tương tác.
+- `.github/workflows/**` và `vitest.config.ts` thuộc `denyPaths` của agent guard. Người cần cấp `approved.files: [.github/workflows/ci.yml]` (thêm `vitest.config.ts` nếu plan đổi vị trí `env.ts`), hoặc làm task trong phiên tương tác.
 - `next.config.ts` là `askPaths`.
 - Map tái cấu trúc Storefront (task 18) giữ `lib/env.ts` tại chỗ "nếu chưa có consumer". Task này tạo consumer, nên cần báo lại vị trí cuối của file trong `report.md` để inventory cập nhật.
 - `allow-test-changes: true` chỉ để sửa stub env trong `seo.test.ts`.

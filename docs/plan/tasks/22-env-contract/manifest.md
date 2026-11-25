@@ -21,16 +21,13 @@ Snapshot tham chiếu ngày 25/11/2026. File dưới đây là source hiện t�
 - `.github/workflows/ci.yml` (khối env của job build)
 - `docs/api-integration.md`
 - `README.md` nếu câu về env cần sửa
+- `docs/research/nextjs-naming-conventions.md` dòng 171 và 182 (nhắc và link tới `payment-config.ts`)
+- `vitest.config.ts` dòng 39 (coverage `exclude`; chỉ sửa khi plan đổi vị trí `env.ts`)
 - `src/lib/api/env/config.ts` chỉ đối chiếu (đọc `NEXT_PUBLIC_API_MOCKING`; ngoài phạm vi, không refactor)
 
 ## Test cũ được thích ứng trong scope
 
 - `src/shared/lib/seo.test.ts`: chỉ đổi stub `NEXT_PUBLIC_APP_URL` sang `NEXT_PUBLIC_SITE_URL`
-
-## Lệch với spec cần chốt trước plan
-
-- `docs/research/nextjs-naming-conventions.md` dòng 171 và 182 nhắc và link tới `payment-config.ts`. Xoá file làm link dòng 182 gãy và `pnpm docs:check` đỏ, nhưng spec chưa đưa file này vào phạm vi.
-- `vitest.config.ts` dòng 39 loại `src/shared/lib/env.ts` khỏi coverage. Nếu plan dời `env.ts`, dòng này cần sửa và nằm ngoài phạm vi spec.
 
 ## Giao nhau với task khác
 
