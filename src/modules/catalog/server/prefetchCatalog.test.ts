@@ -3,11 +3,12 @@ import { hydrate, QueryClient } from '@tanstack/react-query';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
 import { catalogKeys } from '@/modules/catalog/queries/catalogKeys';
-import { buildProductListQuery } from '@/modules/catalog/queries/catalogQuery';
+import { buildProductListQuery, buildRelatedQuery } from '@/modules/catalog/queries/catalogQuery';
 import {
   createCatalogPrefetcher,
   parseSearchPage,
   prefetchCategoryListing,
+  prefetchProductDetail,
   prefetchProductsListing,
   prefetchSearchResults,
 } from '@/modules/catalog/server/prefetchCatalog';
@@ -274,5 +275,82 @@ describe('parseSearchPage', () => {
     ['4', 4],
   ])('%j -> %i', (value, expected) => {
     expect(parseSearchPage(value)).toBe(expected);
+  });
+});
+
+const detailDto = {
+  id: 'p1',
+  slug: 'air-max',
+  name: 'Air Max',
+  description: null,
+  categoryId: 'cat-run',
+  gender: 'MEN',
+  variants: [
+    {
+      id: 'v1',
+      sku: 'AM-M-WHT',
+      price: 100,
+      size: { id: 's', code: 'M', name: 'Medium' },
+      color: { id: 'w', code: 'WHT', name: 'White', hex: '#fff' },
+    },
+  ],
+  images: [{ id: 'i1', url: null, colorId: 'w', isPrimary: true, altText: null }],
+};
+
+function detailBackend(overrides: { product?: Response | Error; related?: Response | Error } = {}): void {
+  fetchMock.mockImplementation(async (input) => {
+    const { pathname } = new URL(String(input));
+    const answer = (value: Response | Error | undefined, fallback: Response): Response => {
+      if (value instanceof Error) throw value;
+      return value?.clone() ?? fallback;
+    };
+    if (pathname === '/api/v1/products/slug/air-max') return answer(overrides.product, json(detailDto));
+    if (pathname === '/api/v1/products') return answer(overrides.related, json(productPage));
+    return json({ error: { code: 'NOT_FOUND', message: 'x' } }, 404);
+  });
+}
+
+describe('prefetchProductDetail', () => {
+  it('dehydrates the mapped product and its related page under the hook keys', async () => {
+    detailBackend();
+
+    const state = await prefetchProductDetail('air-max');
+
+    const client = new QueryClient();
+    hydrate(client, state);
+    expect(client.getQueryData(catalogKeys.product('air-max'))).toMatchObject({
+      id: 'p1',
+      description: '',
+      categoryId: 'cat-run',
+      images: [],
+    });
+    expect(client.getQueryData(catalogKeys.products(buildRelatedQuery('cat-run')))).toEqual(productPage);
+    expect(requested()).toEqual(['/api/v1/products/slug/air-max', '/api/v1/products?limit=5&categoryId=cat-run&sort=newest']);
+  });
+
+  it('keeps a 404 as null and reads no related products', async () => {
+    detailBackend({ product: json({ error: { code: 'NOT_FOUND', message: 'x' } }, 404) });
+
+    const state = await prefetchProductDetail('air-max');
+
+    expect(state.queries.map((q) => q.state.data)).toEqual([null]);
+    expect(requested()).toEqual(['/api/v1/products/slug/air-max']);
+  });
+
+  it('leaves the product out on 5xx or network error so the browser retries it', async () => {
+    detailBackend({ product: json({ error: { code: 'BOOM', message: 'x' } }, 500) });
+    expect((await prefetchProductDetail('air-max')).queries).toHaveLength(0);
+
+    fetchMock.mockReset();
+    detailBackend({ product: new TypeError('offline') });
+    expect((await prefetchProductDetail('air-max')).queries).toHaveLength(0);
+  });
+
+  it('keeps the product when only the related read fails', async () => {
+    detailBackend({ related: json({ error: { code: 'BOOM', message: 'x' } }, 500) });
+
+    const state = await prefetchProductDetail('air-max');
+
+    expect(state.queries.map((q) => q.queryKey)).toEqual([catalogKeys.product('air-max')]);
   });
 });
