@@ -1,7 +1,7 @@
 # Report 40
 
-- **PR:** (điền sau khi mở)
-- **Ngày merge:** (điền sau khi merge)
+- **PR:** #129
+- **Ngày merge:** 26/11/2026 (CI xanh, squash)
 
 ## Đã làm
 
