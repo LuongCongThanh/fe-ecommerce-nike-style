@@ -61,7 +61,7 @@ Retro hết lượt hiện hỏi turns_needed, lưu retro-wait và dừng; ngư�
 
 ## Chọn skill và provenance
 
-Tương tác dùng storefront-workflow để chọn tối thiểu skill: domain/grilling khi yêu cầu mơ hồ; research/prototype khi thiếu bằng chứng; to-spec/to-tickets để ghi todo; codebase-design để chọn boundary; plan-task → triển khai/TDD → verify → review cho task đã sẵn. UI dùng [UI workflow](ui-workflow.md). Quy tắc repo tuần tự trong checkout ghi đè recipe implement-spec tạo nhiều worktree.
+Tương tác dùng storefront-workflow để chọn tối thiểu skill: domain/grilling khi yêu cầu mơ hồ; research/prototype khi thiếu bằng chứng; to-spec/to-tickets để ghi todo; codebase-design để chọn boundary; plan-task → triển khai/TDD → verify → review cho task đã sẵn. UI dùng [UI workflow](ui-workflow.md). Runner luôn tuần tự trong checkout chính; khi điều phối tương tác, các task cùng frontier (mọi blocked-by đã done) được chạy song song, mỗi task một worktree.
 
 System plan trước đây tổng hợp quyết định từ nghiên cứu Anthropic Academy (khảo sát 2026-11-14, quyết định hệ thống cập nhật 2026-11-15; nguồn https://anthropic.skilljar.com/ và https://platform.claude.com/docs/). Giữ provenance này, không dùng catalog khóa học/giá/model/SDK cũ như contract vận hành. Lịch sử raw nghiên cứu/system plan tra Git; runtime/config và các quyết định pending ở roadmap là nguồn hiện tại.
 

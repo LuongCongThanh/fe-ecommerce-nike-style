@@ -1,6 +1,6 @@
 ---
 status: ready-for-agent
-blocked-by: [47-storefront-ssr-product-detail]
+blocked-by: [45-storefront-ssr-products]
 pr:
 kind: logic
 approved:
