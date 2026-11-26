@@ -1,5 +1,5 @@
 ---
-status: review
+status: done
 blocked-by: [37-storefront-providers-layouts]
 pr: #125
 kind: refactor
