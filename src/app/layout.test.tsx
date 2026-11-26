@@ -20,7 +20,7 @@ vi.mock('next/navigation', () => ({
 vi.mock('next-intl', () => ({
   NextIntlClientProvider: ({ children }: { readonly children: ReactNode }) => <section data-locale-context>{children}</section>,
 }));
-vi.mock('@/app/_composition/AppProviders', () => ({
+vi.mock('@/providers/AppProviders', () => ({
   Providers: ({ children }: { readonly children: ReactNode }) => <section data-app-providers>{children}</section>,
 }));
 vi.mock('@/styles/globals.css', () => ({}));

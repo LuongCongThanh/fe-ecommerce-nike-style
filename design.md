@@ -23,7 +23,7 @@ Homepage route `src/app/[locale]/(shop)/home/page.tsx`:
 5. Why choose us: thông tin tạo tin cậy.
 6. Newsletter: feedback form rõ ràng.
 
-Flash Sale, Best Sellers và Testimonials không render trong route hiện tại. Không tự tạo discount, stock, review/testimonial hoặc trust claim thiếu căn cứ. CMS/gateway/email thật chỉ được tuyên bố khi có integration evidence. Header/footer/navigation do storefront-shell sở hữu, không đưa vào home feature chỉ để khớp comp.
+Flash Sale, Best Sellers và Testimonials không render trong route hiện tại. Không tự tạo discount, stock, review/testimonial hoặc trust claim thiếu căn cứ. CMS/gateway/email thật chỉ được tuyên bố khi có integration evidence. Header/footer/navigation do `src/layouts` sở hữu, không đưa vào home feature chỉ để khớp comp.
 
 PLP ưu tiên scan ảnh/giá và filter/sort rõ; mobile filter không che mất context hoặc làm khó đóng. PDP ưu tiên ảnh, variant, giá và availability từ API. Out-of-stock/loading/error/empty phải có hierarchy và thông báo riêng; UI không tính nghiệp vụ để bù transport thiếu.
 

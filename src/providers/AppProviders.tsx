@@ -10,7 +10,7 @@ import { ThemeProvider } from 'next-themes';
 import { Toaster } from 'sonner';
 
 import { AuthRuntimeProvider } from '@/features/auth/session/AuthRuntimeProvider';
-import { makeQueryClient } from '@/shared/lib/query-client';
+import { makeQueryClient } from '@/providers/query-client';
 
 const progressBarOptions = { showSpinner: false };
 
