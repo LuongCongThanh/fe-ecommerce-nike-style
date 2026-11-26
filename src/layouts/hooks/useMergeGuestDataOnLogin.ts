@@ -2,9 +2,9 @@
 
 import { useEffect, useRef } from 'react';
 
-import { useAuth } from '@/features/auth/session/useAuth';
 import { mergeCartOnLogin } from '@/features/cart/hooks/useCart';
 import { mergeWishlistOnLogin } from '@/features/wishlist/hooks/useWishlist';
+import { useAuth } from '@/modules/auth/session/useAuth';
 
 /** Shop-level orchestration: merge guest cart and wishlist once when the session becomes
  * authenticated. Keep this in the storefront shell so identity/session does not own shopping data. */

@@ -84,7 +84,7 @@ export const PUBLIC_ENTRIES: readonly PublicEntry[] = [
   { consumers: ['home'], target: 'catalog:queries/catalogKeys', symbols: ['catalogKeys'] },
   // layouts / providers → domain modules
   { consumers: ['layouts'], target: 'catalog:search/hooks/useHeaderSearch', symbols: ['useHeaderSearch'] },
-  { consumers: ['layouts'], target: 'auth:session/useAuth', symbols: ['useAuth'] },
+  { consumers: ['layouts', 'providers'], target: 'auth:session/useAuth', symbols: ['useAuth'] },
   { consumers: ['providers'], target: 'auth:session/AuthRuntimeProvider', symbols: ['AuthRuntimeProvider'] },
   { consumers: ['layouts'], target: 'cart:components/CartDrawer', symbols: ['CartDrawer'] },
   { consumers: ['layouts'], target: 'cart:hooks/useCart', symbols: ['useCart', 'mergeCartOnLogin'] },
@@ -105,8 +105,7 @@ export const PUBLIC_ENTRIES: readonly PublicEntry[] = [
     target: 'auth:reset-password/components/ResetPasswordForm',
     symbols: ['ResetPasswordForm'],
   },
-  // Design target basename: auth/schemas/auth.schema (renamed in the auth slice).
-  { consumers: [app('(auth)/reset-password/[token]/page')], target: 'auth:schemas/auth', symbols: ['isValidResetPasswordRequest'] },
+  { consumers: [app('(auth)/reset-password/[token]/page')], target: 'auth:schemas/auth.schema', symbols: ['isValidResetPasswordRequest'] },
   { consumers: [app('(shop)/account/addresses/page')], target: 'account:addresses/components/AddressesClient', symbols: ['AddressesClient'] },
   { consumers: [app('(shop)/account/layout'), app('(shop)/checkout/layout')], target: 'auth:session/AuthGuard', symbols: ['AuthGuard'] },
   { consumers: [app('(shop)/account/orders/[id]/page')], target: 'orders:order-detail/components/OrderDetailClient', symbols: ['OrderDetailClient'] },
@@ -148,13 +147,6 @@ export const KNOWN_VIOLATIONS: readonly KnownViolation[] = [
     symbols: ['clearCart', 'resetCartState', 'useCartStore'],
     removedBy: '41-storefront-cart-wishlist-migration',
     reason: 'Move-to-cart test seeds and reads the private cart store; replaced by an owner test entry/fixture.',
-  },
-  {
-    from: 'providers:AppProviders.test',
-    to: 'auth:stores/auth.store',
-    symbols: ['*'],
-    removedBy: '40-storefront-auth-account-migration',
-    reason: 'Provider lifecycle test mocks the private auth store for bootstrap; replaced when auth exposes a runtime test seam.',
   },
   {
     from: 'checkout:queries/useCreateOrder',

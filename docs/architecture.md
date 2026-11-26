@@ -11,9 +11,9 @@ src/app              route/layout, metadata, composition
 src/providers        AppProviders (root mount), query-client factory
 src/layouts          Header, Footer, MobileNav, DesktopMegaMenu, useMergeGuestDataOnLogin,
                      catalog/CatalogWishlistAction (wishlist slot cho ProductCard)
-src/modules         catalog (task 38; nguyên owner, gồm mock-content)
-src/features         home, auth, account,
-                     cart, wishlist, checkout, orders
+src/modules         catalog (task 38; nguyên owner, gồm mock-content),
+                     auth, account (task 40)
+src/features         home, cart, wishlist, checkout, orders
 src/shared           components (UI primitives), routing, styles, feedback, queries,
                      persistence, pagination, formatting, monitoring, utils,
                      hooks, lib (query client, env, seo, cloudinary), common types
@@ -24,9 +24,9 @@ src/testing          Vitest setup và render helper
 src/pwa              service worker
 ```
 
-Chiều phụ thuộc là app → feature → shared components/utility → API/schema. Không cần mỗi feature có đủ thư mục api/components/hooks/schemas; tạo khi có trách nhiệm thật. Catalog đã sang `src/modules/catalog` (task 38), các feature còn lại chờ slice của chúng. Search thuộc catalog; header/footer/navigation nằm ở `src/layouts` (task 37), khác cây đích tám feature của kế hoạch lịch sử.
+Chiều phụ thuộc là app → feature → shared components/utility → API/schema. Không cần mỗi feature có đủ thư mục api/components/hooks/schemas; tạo khi có trách nhiệm thật. Catalog (task 38), auth và account (task 40) đã sang `src/modules`, các feature còn lại chờ slice của chúng. Search thuộc catalog; header/footer/navigation nằm ở `src/layouts` (task 37), khác cây đích tám feature của kế hoạch lịch sử.
 
-Route giữ composition. Component trình bày nhận view model; endpoint/query hook/controller sở hữu network, mapper và invalidation. Catalog mapper hiện nằm tại `src/integrations/backend/endpoints/catalog.ts`, không khẳng định mọi mapper đã chuyển vào feature. API client không import auth feature: adapter runtime tạo seam ngược có chủ ý.
+Route giữ composition. Component trình bày nhận view model; endpoint/query hook/controller sở hữu network, mapper và invalidation. Catalog mapper hiện nằm tại `src/integrations/backend/endpoints/catalog.ts`, không khẳng định mọi mapper đã chuyển vào feature. API client không import module auth: adapter runtime tạo seam ngược có chủ ý.
 
 Một số flow cần phối hợp feature: shell đọc session/cart/wishlist; wishlist chuyển item sang cart; checkout sử dụng cart và mở order; account hiển thị order. Không tạo barrel mới để che private import.
 
@@ -43,7 +43,7 @@ Cây `src/shared` sau task 36:
 
 ### Boundary được enforce trong giai đoạn chuyển cấu trúc
 
-Shared (task 36), providers và layouts (task 37), catalog (task 38), integrations/backend (task 39) đã chuyển sang cây đích; các owner khác vẫn ở cây cũ; rule đã nhận cả path cũ lẫn path đích của cùng logical owner (`features/<module>` ↔ `modules/<module>`, `features/storefront-shell` ↔ `layouts`, `app/_composition` ↔ `providers`, `lib/api` + `lib/schemas` cũ đã bị xóa, chỉ còn `integrations/backend`). `pnpm lint` chạy hai lớp:
+Shared (task 36), providers và layouts (task 37), catalog (task 38), integrations/backend (task 39), auth và account (task 40) đã chuyển sang cây đích; các owner khác vẫn ở cây cũ; rule đã nhận cả path cũ lẫn path đích của cùng logical owner (`features/<module>` ↔ `modules/<module>`, `features/storefront-shell` ↔ `layouts`, `app/_composition` ↔ `providers`, `lib/api` + `lib/schemas` cũ đã bị xóa, chỉ còn `integrations/backend`). `pnpm lint` chạy hai lớp:
 
 - `eslint.boundaries.mjs` (ESLint `import/no-restricted-paths`, `boundaries/elements`): shared/integrations không import module, app, layouts hay providers; module không import app, layouts hay providers.
 - `scripts/check-module-boundaries.ts` (`pnpm lint:boundaries`): import liên module chỉ qua consumer + file + named symbol trong ma trận [public boundary](plan/tasks/18-storefront-module-boundaries/boundaries.md); chặn namespace, side-effect, dynamic import, `vi.mock` string, re-export, cycle cấp module và path nội bộ không resolve; kiểm manifest coverage cũ→mới với `vitest.config.ts`.
@@ -52,7 +52,6 @@ Vi phạm đang tồn tại được snapshot từng cạnh chính xác, có lý
 
 | Cạnh                                                   | Đợt xóa                                   |
 | ------------------------------------------------------ | ----------------------------------------- |
-| `providers/AppProviders.test` mock auth store          | `40-storefront-auth-account-migration`    |
 | `wishlist/components/WishlistClient.test` → cart store | `41-storefront-cart-wishlist-migration`   |
 | `checkout/queries/useCreateOrder` → cart store         | `42-storefront-orders-checkout-migration` |
 
