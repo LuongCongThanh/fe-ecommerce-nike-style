@@ -1,7 +1,7 @@
 # Report 47
 
 - **PR:** #141
-- **Ngày merge:** chưa merge
+- **Ngày merge:** 26/11/2026 (squash, CI xanh)
 
 ## Đã làm
 
