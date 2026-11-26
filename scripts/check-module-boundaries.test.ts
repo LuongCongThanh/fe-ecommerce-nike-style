@@ -45,19 +45,16 @@ beforeEach(() => {
   write('src/modules/cart/hooks/useCart.ts', 'export const useCart = () => 1;\nexport type CartLine = { id: string };\n');
   write('src/modules/cart/stores/cart.store.ts', 'export const clearCart = () => undefined;\n');
   write('src/modules/cart/testing/cart.fixture.ts', 'export const resetCartForTest = () => undefined;\n');
-  write('src/features/catalog/priceRange.ts', 'export const getProductPriceRange = () => 1;\nexport const internalRange = 2;\n');
-  write('src/features/catalog/ProductsClient.tsx', 'export default function ProductsClient() { return null; }\n');
+  write('src/modules/catalog/priceRange.ts', 'export const getProductPriceRange = () => 1;\nexport const internalRange = 2;\n');
+  write('src/modules/catalog/ProductsClient.tsx', 'export default function ProductsClient() { return null; }\n');
 });
 
 afterEach(() => rmSync(root, { recursive: true, force: true }));
 
 describe('locate', () => {
   it.each([
-    ['src/features/catalog/priceRange.ts', 'catalog:priceRange'],
     ['src/modules/catalog/priceRange.ts', 'catalog:priceRange'],
-    ['src/features/storefront-shell/components/Header.tsx', 'layouts:components/Header'],
     ['src/layouts/components/Header.tsx', 'layouts:components/Header'],
-    ['src/app/_composition/AppProviders.tsx', 'providers:AppProviders'],
     ['src/providers/AppProviders.tsx', 'providers:AppProviders'],
     ['src/integrations/backend/schemas/cart/cart.schema.ts', 'integrations:schemas/cart/cart.schema'],
     ['src/app/[locale]/(shop)/cart/page.tsx', 'app:[locale]/(shop)/cart/page'],
@@ -65,16 +62,23 @@ describe('locate', () => {
   ])('maps %s to the logical owner %s', (path, key) => {
     expect(locate(path).key).toBe(key);
   });
+
+  it.each(['src/features/catalog/priceRange.ts', 'src/features/storefront-shell/components/Header.tsx', 'src/app/_composition/AppProviders.tsx'])(
+    'no longer maps the removed root %s to a module or layer',
+    (path) => {
+      expect(['catalog', 'layouts', 'providers']).not.toContain(locate(path).unit);
+    },
+  );
 });
 
 describe('checkModuleBoundaries public entries', () => {
-  it('accepts allowlisted named, type and default imports from old and new roots', () => {
+  it('accepts allowlisted named, type and default imports from module roots', () => {
     write(
-      'src/features/checkout/useCreateOrder.ts',
+      'src/modules/checkout/useCreateOrder.ts',
       "import { useCart } from '@/modules/cart/hooks/useCart';\nimport type { CartLine } from '@/modules/cart/hooks/useCart';\n",
     );
-    write('src/modules/wishlist/WishlistClient.tsx', "import { getProductPriceRange } from '@/features/catalog/priceRange';\n");
-    write('src/app/[locale]/(shop)/products/page.tsx', "import ProductsClient from '@/features/catalog/ProductsClient';\n");
+    write('src/modules/wishlist/WishlistClient.tsx', "import { getProductPriceRange } from '@/modules/catalog/priceRange';\n");
+    write('src/app/[locale]/(shop)/products/page.tsx', "import ProductsClient from '@/modules/catalog/ProductsClient';\n");
 
     expect(rules()).toEqual([]);
   });
@@ -86,14 +90,14 @@ describe('checkModuleBoundaries public entries', () => {
   });
 
   it('rejects a private file of another module', () => {
-    write('src/features/checkout/useCreateOrder.ts', "import { clearCart } from '@/modules/cart/stores/cart.store';\n");
+    write('src/modules/checkout/useCreateOrder.ts', "import { clearCart } from '@/modules/cart/stores/cart.store';\n");
 
-    expect(rules()).toEqual(['private src/features/checkout/useCreateOrder.ts']);
+    expect(rules()).toEqual(['private src/modules/checkout/useCreateOrder.ts']);
   });
 
   it('rejects a symbol that is not listed for that consumer', () => {
-    write('src/modules/wishlist/WishlistClient.tsx', "import { getProductPriceRange, internalRange } from '@/features/catalog/priceRange';\n");
-    write('src/features/checkout/Summary.tsx', "import { getProductPriceRange } from '@/features/catalog/priceRange';\n");
+    write('src/modules/wishlist/WishlistClient.tsx', "import { getProductPriceRange, internalRange } from '@/modules/catalog/priceRange';\n");
+    write('src/modules/checkout/Summary.tsx', "import { getProductPriceRange } from '@/modules/catalog/priceRange';\n");
 
     const violations = checkModuleBoundaries(root, policy).violations;
 
@@ -109,9 +113,9 @@ describe('checkModuleBoundaries public entries', () => {
     ['named re-export', "export { useCart } from '@/modules/cart/hooks/useCart';\n", 'reexport'],
     ['star re-export', "export * from '@/modules/cart/hooks/useCart';\n", 'reexport'],
   ])('rejects a %s across modules', (_label, source, rule) => {
-    write('src/features/checkout/consumer.test.ts', source);
+    write('src/modules/checkout/consumer.test.ts', source);
 
-    expect(rules()).toEqual([`${rule} src/features/checkout/consumer.test.ts`]);
+    expect(rules()).toEqual([`${rule} src/modules/checkout/consumer.test.ts`]);
   });
 
   it('allows a testOnly entry from a test file and rejects it from production code', () => {
@@ -123,33 +127,33 @@ describe('checkModuleBoundaries public entries', () => {
   });
 
   it('rejects a default import unless the entry lists default', () => {
-    write('src/features/checkout/Summary.tsx', "import ProductsClient from '@/features/catalog/ProductsClient';\n");
+    write('src/modules/checkout/Summary.tsx', "import ProductsClient from '@/modules/catalog/ProductsClient';\n");
 
-    expect(rules()).toEqual(['private src/features/checkout/Summary.tsx']);
+    expect(rules()).toEqual(['private src/modules/checkout/Summary.tsx']);
   });
 
   it('reports internal specifiers that no longer resolve', () => {
-    write('src/features/checkout/Summary.test.tsx', "vi.mock('@/modules/cart/hooks/missing');\n");
+    write('src/modules/checkout/Summary.test.tsx', "vi.mock('@/modules/cart/hooks/missing');\n");
 
-    expect(rules()).toEqual(['unresolved src/features/checkout/Summary.test.tsx']);
+    expect(rules()).toEqual(['unresolved src/modules/checkout/Summary.test.tsx']);
   });
 
   it('flags a module root missing from the policy', () => {
-    write('src/features/loyalty/points.ts');
+    write('src/modules/loyalty/points.ts');
 
-    expect(rules()).toEqual(['unregistered-module src/features/loyalty/points.ts']);
+    expect(rules()).toEqual(['unregistered-module src/modules/loyalty/points.ts']);
   });
 });
 
 describe('checkModuleBoundaries layers', () => {
   it.each([
     ['src/modules/cart/useLayout.ts', "import { value } from '@/layouts/Header';\n"],
-    ['src/modules/cart/useApp.ts', "import { value } from '@/app/_composition/AppProviders';\n"],
+    ['src/modules/cart/useApp.ts', "import { value } from '@/app/[locale]/layout';\n"],
     ['src/shared/useCart.ts', "import { useCart } from '@/modules/cart/hooks/useCart';\n"],
     ['src/integrations/backend/client.ts', "import { value } from '@/providers/query-client';\n"],
   ])('rejects %s importing up the dependency direction', (file, source) => {
     write('src/layouts/Header.tsx');
-    write('src/app/_composition/AppProviders.tsx');
+    write('src/app/[locale]/layout.tsx');
     write('src/providers/query-client.ts');
     write(file, source);
 
@@ -170,10 +174,10 @@ describe('checkModuleBoundaries layers', () => {
 
 describe('checkModuleBoundaries snapshots and cycles', () => {
   beforeEach(() => {
-    write('src/features/catalog/ProductCard.tsx', "import { useIsWishlisted } from '@/modules/wishlist/useWishlist';\n");
+    write('src/modules/catalog/ProductCard.tsx', "import { useIsWishlisted } from '@/modules/wishlist/useWishlist';\n");
     write(
       'src/modules/wishlist/useWishlist.ts',
-      "import { getProductPriceRange } from '@/features/catalog/priceRange';\nexport const useIsWishlisted = () => false;\n",
+      "import { getProductPriceRange } from '@/modules/catalog/priceRange';\nexport const useIsWishlisted = () => false;\n",
     );
   });
 
@@ -184,11 +188,11 @@ describe('checkModuleBoundaries snapshots and cycles', () => {
   };
 
   it('fails a module cycle and the private edge without a snapshot', () => {
-    expect(rules().sort()).toEqual(['cycle src', 'private src/features/catalog/ProductCard.tsx']);
+    expect(rules().sort()).toEqual(['cycle src', 'private src/modules/catalog/ProductCard.tsx']);
   });
 
-  it('accepts the exact snapshotted edge and cycle from the new root', () => {
-    rmSync(join(root, 'src/features/catalog'), { recursive: true });
+  it('accepts the exact snapshotted edge and cycle', () => {
+    rmSync(join(root, 'src/modules/catalog'), { recursive: true });
     write('src/modules/catalog/priceRange.ts', 'export const getProductPriceRange = () => 1;\n');
     write('src/modules/catalog/ProductCard.tsx', "import { useIsWishlisted } from '@/modules/wishlist/useWishlist';\n");
     write('src/modules/catalog/ProductsClient.tsx', 'export default function ProductsClient() { return null; }\n');
@@ -204,22 +208,22 @@ describe('checkModuleBoundaries snapshots and cycles', () => {
   });
 
   it('rejects a snapshotted edge that gains a new symbol', () => {
-    write('src/features/catalog/ProductCard.tsx', "import { useIsWishlisted, useWishlist } from '@/modules/wishlist/useWishlist';\n");
+    write('src/modules/catalog/ProductCard.tsx', "import { useIsWishlisted, useWishlist } from '@/modules/wishlist/useWishlist';\n");
 
-    expect(rules(snapshot)).toEqual(['private src/features/catalog/ProductCard.tsx']);
+    expect(rules(snapshot)).toEqual(['private src/modules/catalog/ProductCard.tsx']);
   });
 
   it('reports stale snapshots once the edge and cycle are gone', () => {
-    write('src/features/catalog/ProductCard.tsx', 'export const ProductCard = () => null;\n');
+    write('src/modules/catalog/ProductCard.tsx', 'export const ProductCard = () => null;\n');
 
     expect(rules(snapshot)).toEqual(['stale-exception scripts/check-module-boundaries.ts', 'stale-exception scripts/check-module-boundaries.ts']);
   });
 
   it('does not build module cycles from test-only edges', () => {
-    write('src/features/catalog/ProductCard.tsx', 'export const ProductCard = () => null;\n');
-    write('src/features/catalog/ProductCard.test.tsx', "import { useIsWishlisted } from '@/modules/wishlist/useWishlist';\n");
+    write('src/modules/catalog/ProductCard.tsx', 'export const ProductCard = () => null;\n');
+    write('src/modules/catalog/ProductCard.test.tsx', "import { useIsWishlisted } from '@/modules/wishlist/useWishlist';\n");
 
-    expect(rules()).toEqual(['private src/features/catalog/ProductCard.test.tsx']);
+    expect(rules()).toEqual(['private src/modules/catalog/ProductCard.test.tsx']);
   });
 });
 

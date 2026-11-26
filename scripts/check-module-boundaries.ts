@@ -5,8 +5,7 @@
  * ESLint cannot express: the public entry matrix (consumer + owner file + named symbol), module-level
  * cycles, exact snapshots of known violations and the coverage old→new manifest.
  *
- * Old and new paths map to the same logical owner, e.g. `src/features/catalog/priceRange.ts` and
- * `src/modules/catalog/priceRange.ts` are both `catalog:priceRange`. Design source:
+ * Every file maps to a logical owner, e.g. `src/modules/catalog/priceRange.ts` is `catalog:priceRange`. Design source:
  * docs/plan/tasks/18-storefront-module-boundaries/boundaries.md.
  */
 import { existsSync, globSync, readdirSync, readFileSync, statSync } from 'node:fs';
@@ -23,11 +22,9 @@ const COMPOSITION_UNITS = new Set(['app', 'layouts', 'providers']);
 /** Foundation units never depend on domain modules or composition. */
 const FOUNDATION_UNITS = new Set(['shared', 'integrations', 'platform']);
 
-/** Ordered: the first matching prefix wins. `logicalPrefix` keeps old and new paths on one identity. */
+/** Ordered: the first matching prefix wins. `logicalPrefix` prefixes the logical path when set. */
 const ROOTS: ReadonlyArray<{ prefix: string; unit: string; logicalPrefix?: string }> = [
-  { prefix: 'src/features/storefront-shell/', unit: 'layouts' },
   { prefix: 'src/layouts/', unit: 'layouts' },
-  { prefix: 'src/app/_composition/', unit: 'providers' },
   { prefix: 'src/providers/', unit: 'providers' },
   { prefix: 'src/app/', unit: 'app' },
   { prefix: 'src/shared/', unit: 'shared' },
@@ -154,30 +151,32 @@ export const DEFAULT_POLICY: BoundaryPolicy = {
 
 /**
  * Coverage old→new manifest: every file collected by `vitest.config.ts` coverage today and the owner
- * path it moves to (boundaries.md, "Owner helper/type"). A slice that moves a file must keep the new
- * path collected; `null` means the file stays in place.
+ * path. A slice that moves a file lists its new path here and keeps it collected; `null` means the
+ * file stays in place.
  */
 export const COVERAGE_MANIFEST: Readonly<Record<string, readonly string[] | null>> = {
-  'src/shared/hooks/useCanRender3D.ts': ['src/modules/home/hooks/useCanRender3D.ts'],
+  'src/integrations/backend/adapters/browser-bootstrap.ts': null,
+  'src/integrations/backend/client/api-error.ts': null,
+  'src/modules/catalog/mock-content.ts': null,
+  'src/modules/home/hooks/useCanRender3D.ts': null,
+  'src/shared/components/ErrorState.tsx': null,
+  'src/shared/components/LoadingSpinner.tsx': null,
+  'src/shared/components/PageLoader.tsx': null,
+  'src/shared/components/QueryState.tsx': null,
+  'src/shared/feedback/notification.ts': null,
+  'src/shared/formatting/currency.ts': null,
   'src/shared/hooks/useLocalStorage.ts': null,
   'src/shared/hooks/useMediaQuery.ts': null,
   'src/shared/hooks/usePagination.ts': null,
-  'src/shared/lib/api-mocking.ts': ['src/integrations/backend/adapters/browser-bootstrap.ts'],
   'src/shared/lib/cloudinary.ts': null,
-  'src/shared/lib/errors/api-error.ts': ['src/integrations/backend/client/api-error.ts'],
-  'src/shared/lib/focusRing.ts': ['src/shared/styles/focusRing.ts'],
-  'src/shared/lib/hooks/createPersistedListStore.ts': ['src/shared/persistence/createPersistedListStore.ts'],
-  'src/shared/lib/hooks/useApiMutation.ts': ['src/shared/queries/useApiMutation.ts'],
-  'src/shared/lib/mock-content.ts': ['src/modules/catalog/mock-content.ts'],
-  'src/shared/lib/motion.ts': ['src/shared/styles/motion.ts'],
-  'src/shared/lib/notification.ts': ['src/shared/feedback/notification.ts'],
   'src/shared/lib/seo.ts': null,
-  'src/shared/ui/ErrorState.tsx': ['src/shared/components/ErrorState.tsx'],
-  'src/shared/ui/LoadingSpinner.tsx': ['src/shared/components/LoadingSpinner.tsx'],
-  'src/shared/ui/PageLoader.tsx': ['src/shared/components/PageLoader.tsx'],
-  'src/shared/ui/QueryState.tsx': ['src/shared/components/QueryState.tsx'],
-  'src/shared/utils/pagination.ts': ['src/shared/pagination/pagination.ts'],
-  'src/shared/utils/utils.ts': ['src/shared/styles/cn.ts', 'src/shared/formatting/currency.ts'],
+  'src/shared/pagination/pagination.ts': null,
+  'src/shared/persistence/createPersistedListStore.ts': null,
+  'src/shared/queries/useApiMutation.ts': null,
+  'src/shared/styles/cn.ts': null,
+  'src/shared/styles/focusRing.ts': null,
+  'src/shared/styles/motion.ts': null,
+  'src/shared/utils/utils.ts': null,
 };
 
 export interface Location {
@@ -212,8 +211,8 @@ const isTestFile = (path: string): boolean => /\.(test|spec)\.[jt]sx?$/.test(pat
 
 export function locate(file: string): Location {
   const path = toPosix(file);
-  const domain = /^src\/(?:features|modules)\/([^/]+)\/(.*)$/.exec(path);
-  if (domain && domain[1] !== 'storefront-shell') {
+  const domain = /^src\/modules\/([^/]+)\/(.*)$/.exec(path);
+  if (domain) {
     const [, unit = '', rest = ''] = domain;
     const logical = stripExtension(rest);
     return { unit, logical, key: `${unit}:${logical}` };
