@@ -1,6 +1,14 @@
 import { describe, expect, it } from 'vitest';
 
-import { clearCatalogFilters, parseCatalogFilters, toSearchParams, withCatalogFilter, withCatalogPage } from '@/modules/catalog/catalogUrlState';
+import {
+  clearCatalogFilters,
+  normalizeSearchQuery,
+  parseCatalogFilters,
+  parsePageParam,
+  toSearchParams,
+  withCatalogFilter,
+  withCatalogPage,
+} from '@/modules/catalog/catalogUrlState';
 
 describe('parseCatalogFilters (FE-UNIT-001)', () => {
   it('defaults to sortBy=newest and page=1 when the query string is empty', () => {
@@ -98,5 +106,34 @@ describe('toSearchParams', () => {
     expect(params.getAll('size')).toEqual(['M', 'L']);
     expect(params.get('page')).toBe('2');
     expect(params.has('gender')).toBe(false);
+  });
+});
+
+describe('parsePageParam', () => {
+  it.each([
+    [undefined, 1],
+    [null, 1],
+    ['', 1],
+    ['abc', 1],
+    ['0', 1],
+    ['-2', 1],
+    ['1.5', 1],
+    ['4', 4],
+  ])('%j -> %i', (value, expected) => {
+    expect(parsePageParam(value)).toBe(expected);
+  });
+
+  it('is the page parseCatalogFilters reads', () => {
+    expect(parseCatalogFilters(new URLSearchParams('page=7')).page).toBe(parsePageParam('7'));
+    expect(parseCatalogFilters(new URLSearchParams('page=x')).page).toBe(parsePageParam('x'));
+  });
+});
+
+describe('normalizeSearchQuery', () => {
+  it('trims and turns a missing value into an empty string', () => {
+    expect(normalizeSearchQuery('  shoe ')).toBe('shoe');
+    expect(normalizeSearchQuery('   ')).toBe('');
+    expect(normalizeSearchQuery(undefined)).toBe('');
+    expect(normalizeSearchQuery(null)).toBe('');
   });
 });

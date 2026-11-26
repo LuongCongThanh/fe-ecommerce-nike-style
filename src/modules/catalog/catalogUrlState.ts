@@ -17,6 +17,21 @@ export interface CatalogFilters {
 const VALID_GENDERS: readonly Gender[] = ['men', 'women', 'kids', 'unisex'];
 const VALID_SORTS: readonly CatalogSort[] = ['newest', 'price_asc', 'price_desc'];
 
+/**
+ * The one page parser for every URL-state reader (PLP, Category, Search; server prefetch and browser
+ * hooks): a positive integer, otherwise page 1. Keeping a single copy means server and browser build
+ * the same query key from the same URL.
+ */
+export function parsePageParam(value: string | null | undefined): number {
+  const page = Number(value);
+  return Number.isInteger(page) && page > 0 ? page : 1;
+}
+
+/** The one search `q` normalizer (trimmed; missing becomes `''`), shared by server prefetch and browser hooks. */
+export function normalizeSearchQuery(value: string | null | undefined): string {
+  return (value ?? '').trim();
+}
+
 function parsePositiveNumber(value: string | null): number | undefined {
   if (value === null || value === '') return undefined;
   const parsed = Number(value);
@@ -35,8 +50,7 @@ export function parseCatalogFilters(searchParams: URLSearchParams): CatalogFilte
   const sortParam = searchParams.get('sortBy');
   const sortBy = VALID_SORTS.includes(sortParam as CatalogSort) ? (sortParam as CatalogSort) : 'newest';
 
-  const pageParam = Number(searchParams.get('page'));
-  const page = Number.isInteger(pageParam) && pageParam > 0 ? pageParam : 1;
+  const page = parsePageParam(searchParams.get('page'));
 
   return {
     gender,
