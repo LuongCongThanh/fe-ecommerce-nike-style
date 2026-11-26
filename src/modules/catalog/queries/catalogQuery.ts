@@ -51,3 +51,6 @@ export function buildProductListQuery(
 export function buildSearchQuery(q: string, page: number): ProductQuery {
   return { page, limit: CATALOG_PAGE_SIZE, sort: 'newest', q };
 }
+
+/** Home "new arrivals": the five newest products. Server prefetch and the home section share this key. */
+export const HOME_NEW_ARRIVALS_QUERY: ProductQuery = { sort: 'newest', limit: 5 };
