@@ -1,7 +1,7 @@
 # Report 43
 
-- **PR:** (điền sau khi mở)
-- **Ngày merge:** (điền sau khi merge)
+- **PR:** #130
+- **Ngày merge:** 26/11/2026
 
 ## Đã làm
 
@@ -24,15 +24,15 @@ Quyết định người dùng 26/11/2026: không E2E, unit coverage khoảng 50
 
 Môi trường: nhánh `refactor/43-storefront-home-route-migration`, Linux, pnpm, dev mode.
 
-| Lệnh                                                        | Exit | Kết quả                        |
-| ----------------------------------------------------------- | ---- | ------------------------------ |
-| `pnpm exec vitest run src/modules/home src/layouts src/app` | 0    | pass                           |
-| `pnpm lint` (ESLint + `lint:boundaries`)                    | 0    | sạch                           |
-| `pnpm format:check`                                         | 0    |                                |
-| `pnpm docs:check`                                           | 0    |                                |
-| `pnpm typecheck`                                            | 0    |                                |
-| `pnpm test`                                                 | 0    | 108 files, 1222 tests          |
-| `pnpm test:coverage`                                        | 0    | 99.51/99.21/100/100, ngưỡng 50 |
-| `pnpm build`                                                | 0    |                                |
-| `pnpm test:e2e`                                             | —    | not run — user decision        |
-| `playwright.production.config.ts`                           | —    | not run — user decision        |
+| Lệnh                                                        | Exit | Kết quả                               |
+| ----------------------------------------------------------- | ---- | ------------------------------------- |
+| `pnpm exec vitest run src/modules/home src/layouts src/app` | 0    | pass                                  |
+| `pnpm lint` (ESLint + `lint:boundaries`)                    | 0    | sạch                                  |
+| `pnpm format:check`                                         | 0    |                                       |
+| `pnpm docs:check`                                           | 0    |                                       |
+| `pnpm typecheck`                                            | 0    |                                       |
+| `pnpm test`                                                 | 0    | 109 files, 1224 tests (sau merge dev) |
+| `pnpm test:coverage`                                        | 0    | 99.51/99.21/100/100, ngưỡng 50        |
+| `pnpm build`                                                | 0    |                                       |
+| `pnpm test:e2e`                                             | —    | not run — user decision               |
+| `playwright.production.config.ts`                           | —    | not run — user decision               |
