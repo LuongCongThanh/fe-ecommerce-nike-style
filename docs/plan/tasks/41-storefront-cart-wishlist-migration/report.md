@@ -1,7 +1,7 @@
 # Report 41
 
-- **PR:** (điền sau khi mở)
-- **Ngày merge:** (điền sau khi merge)
+- **PR:** #131
+- **Ngày merge:** 26/11/2026
 
 ## Đã làm
 
@@ -24,17 +24,18 @@
 
 Môi trường: nhánh `refactor/41-storefront-cart-wishlist-migration`, Linux, pnpm, dev mode.
 
-| Lệnh                              | Exit | Kết quả                                 |
-| --------------------------------- | ---- | --------------------------------------- |
-| `pnpm lint`                       | 0    | ESLint + `lint:boundaries` (2 ngoại lệ) |
-| `pnpm format:check`               | 0    |                                         |
-| `pnpm docs:check`                 | 0    |                                         |
-| `pnpm typecheck`                  | 0    |                                         |
-| `pnpm test`                       | 0    | 1225 tests (sau merge dev)              |
-| `pnpm test:coverage`              | 0    | 99.51/99.21/100/100, ngưỡng 50          |
-| `pnpm build`                      | 0    |                                         |
-| `pnpm test:e2e`                   | —    | not run — user decision                 |
-| `playwright.production.config.ts` | —    | not run — user decision                 |
+| Lệnh                                                                                             | Exit | Kết quả                                 |
+| ------------------------------------------------------------------------------------------------ | ---- | --------------------------------------- |
+| `pnpm lint`                                                                                      | 0    | ESLint + `lint:boundaries` (2 ngoại lệ) |
+| `pnpm format:check`                                                                              | 0    |                                         |
+| `pnpm docs:check`                                                                                | 0    |                                         |
+| `pnpm typecheck`                                                                                 | 0    |                                         |
+| `pnpm test`                                                                                      | 0    | 1225 tests (sau merge dev)              |
+| `pnpm test:coverage`                                                                             | 0    | 99.51/99.21/100/100, ngưỡng 50          |
+| `pnpm build`                                                                                     | 0    |                                         |
+| CI PR #131 (lint, typecheck, unit, coverage, build, production browser Chromium, docs, contract) | 0    | pass                                    |
+| `pnpm test:e2e`                                                                                  | —    | not run — user decision                 |
+| `playwright.production.config.ts`                                                                | —    | not run — user decision                 |
 
 ## Cho task 42
 
