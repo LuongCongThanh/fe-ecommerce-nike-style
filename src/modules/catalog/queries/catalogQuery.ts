@@ -64,3 +64,6 @@ export function buildRelatedQuery(categoryId: string): ProductQuery {
 export function selectRelated(page: ProductPage | undefined, excludeSlug: string): ProductSummary[] {
   return (page?.data ?? []).filter((product) => product.slug !== excludeSlug).slice(0, RELATED_LIMIT);
 }
+
+/** Home "new arrivals": the five newest products. Server prefetch and the home section share this key. */
+export const HOME_NEW_ARRIVALS_QUERY: ProductQuery = { sort: 'newest', limit: 5 };

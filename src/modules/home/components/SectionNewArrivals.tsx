@@ -4,15 +4,14 @@ import { useQuery } from '@tanstack/react-query';
 import { useLocale, useTranslations } from 'next-intl';
 
 import { getProducts } from '@/integrations/backend/endpoints/catalog';
-import type { ProductQuery, ProductSummary } from '@/integrations/backend/models/catalog';
+import type { ProductSummary } from '@/integrations/backend/models/catalog';
 import { ProductCard } from '@/modules/catalog/components/ProductCard';
 import { catalogKeys } from '@/modules/catalog/queries/catalogKeys';
+import { HOME_NEW_ARRIVALS_QUERY as NEWEST } from '@/modules/catalog/queries/catalogQuery';
 import { QueryState } from '@/shared/components/QueryState';
 import { Reveal } from '@/shared/components/Reveal';
 import { SectionHeading } from '@/shared/components/SectionHeading';
 import { Skeleton } from '@/shared/components/Skeleton';
-
-const NEWEST: ProductQuery = { sort: 'newest', limit: 5 };
 
 function NewArrivalsSkeleton(): React.JSX.Element {
   return (

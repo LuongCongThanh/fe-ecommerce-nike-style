@@ -1,7 +1,7 @@
 ---
-status: ready-for-agent
+status: review
 blocked-by: [45-storefront-ssr-products]
-pr:
+pr: 143
 kind: logic
 approved:
   files: []
