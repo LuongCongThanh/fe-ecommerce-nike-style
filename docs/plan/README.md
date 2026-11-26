@@ -46,7 +46,7 @@ Bảng giữ trạng thái điều hướng hiện có; đối chiếu spec/PR t
 | 29  | [pnpm-settings-and-pinning](tasks/29-pnpm-settings-and-pinning/spec.md) | ready-for-agent | -          |     |
 | 30  | [format-scope](tasks/30-format-scope/spec.md)                           | ready-for-agent | -          |     |
 | 31  | [skills-lock-integrity](tasks/31-skills-lock-integrity/spec.md)         | todo            | -          |     |
-| 32  | [middleware-to-proxy](tasks/32-middleware-to-proxy/spec.md)             | review          | -          |     |
+| 32  | [middleware-to-proxy](tasks/32-middleware-to-proxy/spec.md)             | done            | -          |     |
 | 33  | [remove-admin-route-guard](tasks/33-remove-admin-route-guard/spec.md)   | todo            | 32         |     |
 
 ## Delivery: migration và SSR Storefront

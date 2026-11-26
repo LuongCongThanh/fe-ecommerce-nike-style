@@ -1,7 +1,7 @@
 ---
-status: review
+status: done
 blocked-by: []
-pr:
+pr: #148
 kind: refactor
 approved:
   files: []

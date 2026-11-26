@@ -1,7 +1,7 @@
 # Report 32
 
-- **PR:** (điền sau khi mở)
-- **Ngày merge:** (điền ở PR mark-done)
+- **PR:** #148
+- **Ngày merge:** 26/11/2026
 
 ## Đã làm
 
