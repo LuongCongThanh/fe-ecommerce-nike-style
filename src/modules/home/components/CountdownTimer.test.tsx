@@ -1,7 +1,7 @@
 import { act, render, screen } from '@testing-library/react';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
-import { CountdownTimer } from '@/features/home/components/CountdownTimer';
+import { CountdownTimer } from '@/modules/home/components/CountdownTimer';
 
 const BASE_TIME = new Date('2024-01-01T00:00:00.000Z');
 

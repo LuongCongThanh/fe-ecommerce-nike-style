@@ -1,4 +1,4 @@
-import type { HomeBenefit, HomeHero, HomeTestimonial } from '@/features/home/types/home';
+import type { HomeBenefit, HomeHero, HomeTestimonial } from '@/modules/home/types/home.types';
 
 /**
  * Deterministic, visually distinct placeholder image per seed — replaces the single shared

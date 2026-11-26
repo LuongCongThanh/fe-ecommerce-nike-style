@@ -1,7 +1,7 @@
 import * as Icons from 'lucide-react';
 import { useTranslations } from 'next-intl';
 
-import { homeBenefitsData } from '@/features/home/home-content';
+import { homeBenefitsData } from '@/modules/home/home-content';
 import { Reveal } from '@/shared/components/Reveal';
 
 export function SectionWhyChooseUs(): React.JSX.Element {
