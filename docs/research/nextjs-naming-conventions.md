@@ -179,8 +179,8 @@ Folder thường đều lowercase/kebab; các ngoại lệ route đã liệt kê
 Các điểm cụ thể:
 
 - [auth.store.test.ts](../../src/modules/auth/stores/auth.store.test.ts) kiểm [auth.store.ts](../../src/modules/auth/stores/auth.store.ts): stem test đã đồng dạng sau task 40.
-- [payment-config.ts](../../src/features/checkout/constants/payment-config.ts), [home-content.ts](../../src/modules/home/home-content.ts) là legacy kebab utility; file mới tương đương theo owner nên là `paymentConfig.ts`, `homeContent.ts`.
-- [checkout-flow.test.tsx](../../src/features/checkout/components/checkout-flow.test.tsx) đặt theo flow: được testing rule cho phép; không tự kết luận sai chỉ vì thiếu component cùng tên.
+- [payment-config.ts](../../src/modules/checkout/constants/payment-config.ts), [home-content.ts](../../src/modules/home/home-content.ts) là legacy kebab utility; file mới tương đương theo owner nên là `paymentConfig.ts`, `homeContent.ts`.
+- [checkout-flow.test.tsx](../../src/modules/checkout/components/checkout-flow.test.tsx) đặt theo flow: được testing rule cho phép; không tự kết luận sai chỉ vì thiếu component cùng tên.
 - [catalogUrlState.ts](../../src/modules/catalog/catalogUrlState.ts) và [useProducts.ts](../../src/modules/catalog/queries/useProducts.ts) đã đúng hướng camelCase/hook hiện hành.
 
 Đây là inventory tĩnh, không phải kết quả lint/test toàn repo. Rule owner nói không bulk-rename legacy chỉ để đồng bộ hình thức.

@@ -1,5 +1,5 @@
 ---
-status: ready-for-agent
+status: review
 blocked-by: [41-storefront-cart-wishlist-migration]
 pr:
 kind: refactor

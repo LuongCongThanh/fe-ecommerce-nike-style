@@ -14,8 +14,8 @@ src/layouts          Header, Footer, MobileNav, DesktopMegaMenu, useMergeGuestDa
                      catalog/CatalogWishlistAction (wishlist slot cho ProductCard)
 src/modules         catalog (task 38; nguyên owner, gồm mock-content),
                      home (task 43; gồm useCanRender3D và types),
-                     auth, account (task 40), cart, wishlist (task 41)
-src/features         checkout, orders
+                     auth, account (task 40), cart, wishlist (task 41),
+                     checkout, orders (task 42)
 src/shared           components (UI primitives), routing, styles, feedback, queries,
                      persistence, pagination, formatting, monitoring, utils,
                      hooks, lib (query client, env, seo, cloudinary), common types
@@ -26,7 +26,7 @@ src/testing          Vitest setup và render helper
 src/pwa              service worker
 ```
 
-Chiều phụ thuộc là app → feature → shared components/utility → API/schema. Không cần mỗi feature có đủ thư mục api/components/hooks/schemas; tạo khi có trách nhiệm thật. Catalog (task 38), home (task 43), auth và account (task 40), cart và wishlist (task 41) đã sang `src/modules`, các feature còn lại chờ slice của chúng. Search thuộc catalog; header/footer/navigation nằm ở `src/layouts` (task 37), khác cây đích tám feature của kế hoạch lịch sử.
+Chiều phụ thuộc là app → feature → shared components/utility → API/schema. Không cần mỗi feature có đủ thư mục api/components/hooks/schemas; tạo khi có trách nhiệm thật. Catalog (task 38), home (task 43), auth và account (task 40), cart và wishlist (task 41), checkout và orders (task 42) đã sang `src/modules`; `src/features` không còn module nào. Search thuộc catalog; header/footer/navigation nằm ở `src/layouts` (task 37), khác cây đích tám feature của kế hoạch lịch sử.
 
 Route giữ composition. Component trình bày nhận view model; endpoint/query hook/controller sở hữu network, mapper và invalidation. Catalog mapper hiện nằm tại `src/integrations/backend/endpoints/catalog.ts`, không khẳng định mọi mapper đã chuyển vào feature. API client không import module auth: adapter runtime tạo seam ngược có chủ ý.
 
@@ -45,18 +45,14 @@ Cây `src/shared` sau task 36:
 
 ### Boundary được enforce trong giai đoạn chuyển cấu trúc
 
-Shared (task 36), providers và layouts (task 37), catalog (task 38), integrations/backend (task 39), home (task 43), auth và account (task 40), cart và wishlist (task 41) đã chuyển sang cây đích; các owner khác vẫn ở cây cũ; rule đã nhận cả path cũ lẫn path đích của cùng logical owner (`features/<module>` ↔ `modules/<module>`, `features/storefront-shell` ↔ `layouts`, `app/_composition` ↔ `providers`, `lib/api` + `lib/schemas` cũ đã bị xóa, chỉ còn `integrations/backend`). `pnpm lint` chạy hai lớp:
+Shared (task 36), providers và layouts (task 37), catalog (task 38), integrations/backend (task 39), home (task 43), auth và account (task 40), cart và wishlist (task 41), checkout và orders (task 42) đã chuyển sang cây đích; rule đã nhận cả path cũ lẫn path đích của cùng logical owner (`features/<module>` ↔ `modules/<module>`, `features/storefront-shell` ↔ `layouts`, `app/_composition` ↔ `providers`, `lib/api` + `lib/schemas` cũ đã bị xóa, chỉ còn `integrations/backend`). `pnpm lint` chạy hai lớp:
 
 - `eslint.boundaries.mjs` (ESLint `import/no-restricted-paths`, `boundaries/elements`): shared/integrations không import module, app, layouts hay providers; module không import app, layouts hay providers.
 - `scripts/check-module-boundaries.ts` (`pnpm lint:boundaries`): import liên module chỉ qua consumer + file + named symbol trong ma trận [public boundary](plan/tasks/18-storefront-module-boundaries/boundaries.md); chặn namespace, side-effect, dynamic import, `vi.mock` string, re-export, cycle cấp module và path nội bộ không resolve; kiểm manifest coverage cũ→mới với `vitest.config.ts`.
 
-Vi phạm đang tồn tại được snapshot từng cạnh chính xác, có lý do và đợt xóa; snapshot hết consumer làm check fail (stale), nên đợt sở hữu phải xóa nó cùng lượt:
+Vi phạm đang tồn tại được snapshot từng cạnh chính xác, có lý do và đợt xóa; snapshot hết consumer làm check fail (stale), nên đợt sở hữu phải xóa nó cùng lượt. Hiện không còn cạnh ngoại lệ nào (`checkout/queries/useCreateOrder` → cart store đã bỏ ở task 42: checkout lấy `clearCart` từ `useCart()`).
 
-| Cạnh                                           | Đợt xóa                                   |
-| ---------------------------------------------- | ----------------------------------------- |
-| `checkout/queries/useCreateOrder` → cart store | `42-storefront-orders-checkout-migration` |
-
-Test cùng owner được dùng private implementation của owner; test khác module theo cùng allowlist như production. Test của module khác cần seed/đọc cart dùng test entry của owner `modules/cart/testing/cart.fixture` (`resetCartForTest`, `readCartItemsForTest`), được allowlist chỉ cho file test (`testOnly`) của wishlist. Không thêm wildcard hay exemption cho cả modules/features/tests.
+Test cùng owner được dùng private implementation của owner; test khác module theo cùng allowlist như production. Test của module khác cần seed/đọc cart dùng test entry của owner `modules/cart/testing/cart.fixture` (`resetCartForTest`, `readCartItemsForTest`), được allowlist chỉ cho file test (`testOnly`) của wishlist và checkout. Không thêm wildcard hay exemption cho cả modules/features/tests.
 
 ## Data và state
 
