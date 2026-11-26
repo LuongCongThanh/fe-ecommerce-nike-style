@@ -1,3 +1,5 @@
+import { unstable_rethrow } from 'next/navigation';
+
 import 'server-only';
 
 import { dehydrate, type DehydratedState, QueryClient } from '@tanstack/react-query';
@@ -68,6 +70,12 @@ function logged<T>(key: readonly unknown[], read: () => Promise<T>): () => Promi
     try {
       return await read();
     } catch (error) {
+      // Next.js control-flow errors (dynamic-usage bailout) are not read failures: do not log them.
+      try {
+        unstable_rethrow(error);
+      } catch {
+        throw error;
+      }
       logPrefetchFailure(key, error);
       throw error;
     }

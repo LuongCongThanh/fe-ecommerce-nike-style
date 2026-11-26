@@ -7,6 +7,7 @@ import { buildProductListQuery, buildRelatedQuery } from '@/modules/catalog/quer
 import {
   createCatalogPrefetcher,
   prefetchCategoryListing,
+  prefetchHome,
   prefetchProductDetail,
   prefetchProductsListing,
   prefetchSearchResults,
@@ -370,5 +371,17 @@ describe('parallel reads and failure logging', () => {
     const messages = log.mock.calls.map(([message]) => String(message));
     expect(messages.some((m) => m.includes('"products"') && m.includes('NETWORK_ERROR (status 0)'))).toBe(true);
     expect(messages.join(' ')).not.toContain('backend.test');
+  });
+});
+
+describe('Next.js internal errors', () => {
+  it('are not logged as read failures', async () => {
+    const log = vi.spyOn(console, 'error').mockImplementation(() => undefined);
+    const internal = Object.assign(new Error('NEXT_HTTP_ERROR_FALLBACK;404'), { digest: 'NEXT_HTTP_ERROR_FALLBACK;404' });
+    fetchMock.mockRejectedValue(internal);
+
+    await prefetchHome();
+
+    expect(log).not.toHaveBeenCalled();
   });
 });
