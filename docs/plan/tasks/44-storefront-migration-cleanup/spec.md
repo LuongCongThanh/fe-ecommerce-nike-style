@@ -1,7 +1,7 @@
 ---
 status: review
 blocked-by: [40-storefront-auth-account-migration, 42-storefront-orders-checkout-migration, 43-storefront-home-route-migration]
-pr: 137
+pr: #137
 kind: refactor
 approved:
   files: []
