@@ -131,6 +131,7 @@ export const PUBLIC_ENTRIES: readonly PublicEntry[] = [
     target: 'catalog:product-detail/components/ProductDetailPageClient',
     symbols: ['ProductDetailPageClient'],
   },
+  { consumers: [app('(shop)/products/[slug]/page')], target: 'catalog:server/prefetchCatalog', symbols: ['prefetchProductDetail'] },
   { consumers: [app('(shop)/products/page')], target: 'catalog:catalogUrlState', symbols: ['toSearchParams'] },
   { consumers: [app('(shop)/products/page')], target: 'catalog:server/prefetchCatalog', symbols: ['prefetchProductsListing'] },
   { consumers: [app('(shop)/products/page')], target: 'catalog:components/FilterSidebar', symbols: ['FilterSidebar'] },

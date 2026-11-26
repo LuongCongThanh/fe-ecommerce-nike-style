@@ -3,20 +3,18 @@
 import { useQuery } from '@tanstack/react-query';
 
 import { getProducts } from '@/integrations/backend/endpoints/catalog';
-import type { ProductQuery, ProductSummary } from '@/integrations/backend/models/catalog';
+import type { ProductSummary } from '@/integrations/backend/models/catalog';
 import { catalogKeys } from '@/modules/catalog/queries/catalogKeys';
-
-const RELATED_LIMIT = 4;
+import { buildRelatedQuery, selectRelated } from '@/modules/catalog/queries/catalogQuery';
 
 /** Other Products in the same Category, newest first, excluding the current one. */
 export function useRelatedProducts(categoryId: string | undefined, excludeSlug: string): { related: ProductSummary[]; isLoading: boolean } {
-  const query: ProductQuery = { categoryId, limit: RELATED_LIMIT + 1, sort: 'newest' };
+  const query = buildRelatedQuery(categoryId ?? '');
   const { data, isLoading } = useQuery({
     queryKey: catalogKeys.products(query),
     enabled: categoryId !== undefined,
-    queryFn: async () => getProducts(query),
+    queryFn: async () => getProducts(buildRelatedQuery(categoryId ?? '')),
   });
 
-  const related = (data?.data ?? []).filter((p) => p.slug !== excludeSlug).slice(0, RELATED_LIMIT);
-  return { related, isLoading };
+  return { related: selectRelated(data, excludeSlug), isLoading };
 }

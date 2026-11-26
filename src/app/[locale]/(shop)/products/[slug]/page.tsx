@@ -1,6 +1,8 @@
+import { HydrationBoundary } from '@tanstack/react-query';
 import { setRequestLocale } from 'next-intl/server';
 
 import { ProductDetailPageClient } from '@/modules/catalog/product-detail/components/ProductDetailPageClient';
+import { prefetchProductDetail } from '@/modules/catalog/server/prefetchCatalog';
 
 interface ProductPageProps {
   readonly params: Promise<{
@@ -12,6 +14,11 @@ interface ProductPageProps {
 export default async function ProductDetailPage({ params }: ProductPageProps) {
   const { locale, slug } = await params;
   setRequestLocale(locale);
+  const dehydratedState = await prefetchProductDetail(slug);
 
-  return <ProductDetailPageClient slug={slug} locale={locale} />;
+  return (
+    <HydrationBoundary state={dehydratedState}>
+      <ProductDetailPageClient slug={slug} locale={locale} />
+    </HydrationBoundary>
+  );
 }
