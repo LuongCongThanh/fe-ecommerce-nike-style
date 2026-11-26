@@ -1,6 +1,6 @@
-import { act, screen } from '@testing-library/react';
+import { act, renderHook, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
-import { beforeEach, describe, expect, it, vi } from 'vitest';
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
 import { useAuth } from '@/features/auth/session/useAuth';
 import { Header } from '@/layouts/components/Header';
@@ -46,6 +46,14 @@ function LoginProbe() {
 
 beforeEach(() => {
   vi.mocked(getCategoryTree).mockResolvedValue([]);
+});
+
+afterEach(() => {
+  // Reset the real auth store through its public API: logout() clears auth synchronously.
+  const { result } = renderHook(() => useAuth());
+  act(() => {
+    result.current.logout();
+  });
 });
 
 describe('Header', () => {

@@ -42,6 +42,10 @@ Môi trường: nhánh `refactor/37-storefront-providers-layouts`, Linux, pnpm, 
 
 Coverage tập file task (stmts/branches/funcs/lines): 86.17/78.26/78.37/86.2 (yêu cầu ≥ 50% line). Lệnh ghi trong `metric.md`.
 
+## Review
+
+Sửa theo code review (chỉ test): `useMergeGuestDataOnLogin.test.tsx` assert cả hai merge được gọi và không có `unhandledRejection`; `DesktopMegaMenu.test.tsx` đổi tên "opens on click" thành "opens on hover" (menu chỉ mở bằng hover/focus); `Header.test.tsx` reset auth store qua `clearAuth()` trong `afterEach`. `src/providers` cố ý nằm ngoài glob `include` của coverage (tập file tương đương trước đây: `query-client.ts` đã bị exclude).
+
 ## Acceptance criteria: chạy tay
 
 - Blocker 36 `done` (PR #120/#121). Không còn file dưới `features/storefront-shell`, `app/_composition`, `shared/lib/query-client.ts`.

@@ -1,5 +1,5 @@
 import { act, renderHook } from '@testing-library/react';
-import { beforeEach, describe, expect, it, vi } from 'vitest';
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
 import { useAuth } from '@/features/auth/session/useAuth';
 import { mergeCartAfterLogin } from '@/lib/api/endpoints/cart';
@@ -29,8 +29,17 @@ function useProbe() {
 }
 
 beforeEach(() => {
+  vi.clearAllMocks();
   vi.mocked(mergeCartAfterLogin).mockResolvedValue([]);
   vi.mocked(mergeWishlistAfterLogin).mockResolvedValue([]);
+});
+
+afterEach(() => {
+  // Reset the real auth store through its public API: logout() clears auth synchronously.
+  const { result } = renderHook(() => useAuth());
+  act(() => {
+    result.current.logout();
+  });
 });
 
 describe('useMergeGuestDataOnLogin', () => {
@@ -52,15 +61,26 @@ describe('useMergeGuestDataOnLogin', () => {
   it('swallows merge failures instead of crashing the layout', async () => {
     vi.mocked(mergeCartAfterLogin).mockRejectedValue(new Error('cart'));
     vi.mocked(mergeWishlistAfterLogin).mockRejectedValue(new Error('wishlist'));
+    const unhandled = vi.fn();
+    process.on('unhandledRejection', unhandled);
     const { result } = renderHook(useProbe);
 
-    await act(async () => {
-      result.current.logout();
-    });
-    await act(async () => {
-      result.current.login('token', user);
-    });
+    try {
+      await act(async () => {
+        result.current.logout();
+      });
+      await act(async () => {
+        result.current.login('token', user);
+      });
+      // Let any escaped rejection surface (Node emits 'unhandledRejection' after the microtask queue drains).
+      await new Promise((resolve) => setTimeout(resolve, 0));
+    } finally {
+      process.off('unhandledRejection', unhandled);
+    }
 
+    expect(mergeCartAfterLogin).toHaveBeenCalledTimes(1);
+    expect(mergeWishlistAfterLogin).toHaveBeenCalledTimes(1);
+    expect(unhandled).not.toHaveBeenCalled();
     expect(result.current.isLoggedIn).toBe(true);
   });
 });

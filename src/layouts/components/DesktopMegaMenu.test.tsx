@@ -25,7 +25,7 @@ describe('DesktopMegaMenu', () => {
     expect(container).toBeEmptyDOMElement();
   });
 
-  it('opens on click showing the first category and its localized links', async () => {
+  it('opens on hover showing the first category and its localized links', async () => {
     const user = userEvent.setup();
     renderWithProviders(<DesktopMegaMenu locale="vi" />);
 
