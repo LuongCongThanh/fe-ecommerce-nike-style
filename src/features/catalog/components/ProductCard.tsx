@@ -11,9 +11,9 @@ import { useTranslations } from 'next-intl';
 import { resolveDiscount } from '@/features/catalog/discount';
 import type { BadgeValue } from '@/features/catalog/types/badge';
 import { useIsWishlisted } from '@/features/wishlist/hooks/useWishlist';
-import { SPRING_MOMENTUM, SPRING_UI } from '@/shared/lib/motion';
-import { Badge } from '@/shared/ui/Badge';
-import { formatCurrency } from '@/shared/utils/utils';
+import { Badge } from '@/shared/components/Badge';
+import { formatCurrency } from '@/shared/formatting/currency';
+import { SPRING_MOMENTUM, SPRING_UI } from '@/shared/styles/motion';
 
 interface BadgeLabels {
   'best-seller': string;

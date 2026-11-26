@@ -10,11 +10,11 @@ import { ShoppingBag, Trash2 } from 'lucide-react';
 import { useLocale } from 'next-intl';
 
 import { useCart } from '@/features/cart/hooks/useCart';
-import { Button } from '@/shared/ui/Button';
-import { QuantitySelector } from '@/shared/ui/QuantitySelector';
-import { ScrollArea } from '@/shared/ui/ScrollArea';
-import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger } from '@/shared/ui/Sheet';
-import { formatCurrency } from '@/shared/utils/utils';
+import { Button } from '@/shared/components/Button';
+import { QuantitySelector } from '@/shared/components/QuantitySelector';
+import { ScrollArea } from '@/shared/components/ScrollArea';
+import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger } from '@/shared/components/Sheet';
+import { formatCurrency } from '@/shared/formatting/currency';
 
 interface CartDrawerProps {
   readonly children: React.ReactNode;

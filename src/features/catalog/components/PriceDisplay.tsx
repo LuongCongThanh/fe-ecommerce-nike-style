@@ -1,5 +1,6 @@
 import { resolveDiscount } from '@/features/catalog/discount';
-import { cn, formatCurrency } from '@/shared/utils/utils';
+import { formatCurrency } from '@/shared/formatting/currency';
+import { cn } from '@/shared/styles/cn';
 
 interface PriceDisplayProps {
   readonly price: number;

@@ -4,10 +4,10 @@
 import { useTranslations } from 'next-intl';
 
 import { useProfileForm } from '@/features/account/profile/hooks/useProfileForm';
-import { Button } from '@/shared/ui/Button';
-import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/shared/ui/Form';
-import { Input } from '@/shared/ui/Input';
-import { QueryState } from '@/shared/ui/QueryState';
+import { Button } from '@/shared/components/Button';
+import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/shared/components/Form';
+import { Input } from '@/shared/components/Input';
+import { QueryState } from '@/shared/components/QueryState';
 
 export function ProfileClient(): React.JSX.Element {
   const t = useTranslations('common');

@@ -5,8 +5,8 @@
 
 import { motion, useReducedMotion } from 'framer-motion';
 
-import { SPRING_UI } from '@/shared/lib/motion';
-import { cn } from '@/shared/utils/utils';
+import { cn } from '@/shared/styles/cn';
+import { SPRING_UI } from '@/shared/styles/motion';
 
 export interface VariantOption {
   readonly value: string;

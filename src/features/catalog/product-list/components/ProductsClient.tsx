@@ -9,10 +9,10 @@ import { useTranslations } from 'next-intl';
 import { CatalogProductGrid } from '@/features/catalog/components/CatalogProductGrid';
 import { CatalogGridSkeleton } from '@/features/catalog/components/ProductSkeletons';
 import { useCatalogListing } from '@/features/catalog/hooks/useCatalogListing';
-import { Button } from '@/shared/ui/Button';
-import { Pagination } from '@/shared/ui/Pagination';
-import { QueryState } from '@/shared/ui/QueryState';
-import { cn } from '@/shared/utils/utils';
+import { Button } from '@/shared/components/Button';
+import { Pagination } from '@/shared/components/Pagination';
+import { QueryState } from '@/shared/components/QueryState';
+import { cn } from '@/shared/styles/cn';
 
 export default function ProductsClient(): React.JSX.Element {
   const t = useTranslations('common');

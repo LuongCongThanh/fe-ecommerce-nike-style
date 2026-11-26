@@ -1,21 +1,8 @@
-import { type ClassValue, clsx } from 'clsx';
 import { format } from 'date-fns';
 import { vi } from 'date-fns/locale';
-import { twMerge } from 'tailwind-merge';
-
-export function cn(...inputs: ClassValue[]): string {
-  return twMerge(clsx(inputs));
-}
 
 function isQueryValue(value: unknown): value is string | number | boolean {
   return typeof value === 'string' || typeof value === 'number' || typeof value === 'boolean';
-}
-
-export function formatCurrency(amount: number, locale = 'vi-VN'): string {
-  return new Intl.NumberFormat(locale, {
-    style: 'currency',
-    currency: 'VND',
-  }).format(amount);
 }
 
 export function formatDate(date: string | Date): string {

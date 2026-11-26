@@ -6,9 +6,9 @@ import Link from 'next/link';
 import { Menu } from 'lucide-react';
 
 import { useCategoryTree } from '@/features/catalog/queries/useCategoryTree';
-import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from '@/shared/ui/Accordion';
-import { Button } from '@/shared/ui/Button';
-import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger } from '@/shared/ui/Sheet';
+import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from '@/shared/components/Accordion';
+import { Button } from '@/shared/components/Button';
+import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger } from '@/shared/components/Sheet';
 
 interface MobileNavProps {
   readonly locale: string;

@@ -2,7 +2,7 @@
 
 import { create } from 'zustand';
 
-import { createPersistedListStore } from '@/shared/lib/hooks/createPersistedListStore';
+import { createPersistedListStore } from '@/shared/persistence/createPersistedListStore';
 
 export interface CartItem {
   skuId: string;

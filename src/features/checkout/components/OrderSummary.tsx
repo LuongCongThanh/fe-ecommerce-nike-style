@@ -11,7 +11,7 @@ import { useFormContext, useWatch } from 'react-hook-form';
 import { useCart } from '@/features/cart/hooks/useCart';
 import type { CheckoutInput } from '@/features/checkout/schemas/checkout';
 import { SHIPPING_FEE_BY_METHOD } from '@/features/checkout/schemas/checkout';
-import { formatCurrency } from '@/shared/utils/utils';
+import { formatCurrency } from '@/shared/formatting/currency';
 
 export function OrderSummary() {
   const t = useTranslations('checkout');

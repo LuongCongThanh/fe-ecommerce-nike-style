@@ -8,8 +8,8 @@ import { useLocale, useTranslations } from 'next-intl';
 import { OrderStatusBadge } from '@/features/orders/components/OrderStatusBadge';
 import { formatOrderDate } from '@/features/orders/formatOrderDate';
 import { useOrders } from '@/features/orders/order-list/queries/useOrders';
-import { QueryState } from '@/shared/ui/QueryState';
-import { formatCurrency } from '@/shared/utils/utils';
+import { QueryState } from '@/shared/components/QueryState';
+import { formatCurrency } from '@/shared/formatting/currency';
 
 /**
  * Fetches client-side via `useOrders()` rather than taking a server-fetched prop — the mock auth token

@@ -10,8 +10,8 @@ import type { PanInfo } from 'framer-motion';
 import { AnimatePresence, motion, useReducedMotion } from 'framer-motion';
 import { ChevronLeft, ChevronRight } from 'lucide-react';
 
-import { projectMomentum, SPRING_MOMENTUM, SPRING_UI } from '@/shared/lib/motion';
-import { cn } from '@/shared/utils/utils';
+import { cn } from '@/shared/styles/cn';
+import { projectMomentum, SPRING_MOMENTUM, SPRING_UI } from '@/shared/styles/motion';
 
 interface ProductGalleryProps {
   readonly images: string[];

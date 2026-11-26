@@ -6,7 +6,7 @@ import { useRouter } from 'next/navigation';
 import { useLocale } from 'next-intl';
 
 import { useIsLoggedIn } from '@/features/auth/session/useAuth';
-import { ROUTES } from '@/shared/constants/routes';
+import { ROUTES } from '@/shared/routing/routes';
 
 export function AuthGuard({ children }: { readonly children: React.ReactNode }): React.JSX.Element | null {
   const router = useRouter();

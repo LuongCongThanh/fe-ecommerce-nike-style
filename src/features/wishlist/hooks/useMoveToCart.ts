@@ -6,7 +6,7 @@ import { useCart } from '@/features/cart/hooks/useCart';
 import { getVariantAxes, resolveSku } from '@/features/catalog/variantResolution';
 import { useWishlist } from '@/features/wishlist/hooks/useWishlist';
 import type { Product } from '@/lib/schemas/catalog/catalog';
-import { notify } from '@/shared/lib/notification';
+import { notify } from '@/shared/feedback/notification';
 
 /**
  * Move to cart (glossary.md — Move to cart): a Product with ≥1 Variant navigates to the PDP so the

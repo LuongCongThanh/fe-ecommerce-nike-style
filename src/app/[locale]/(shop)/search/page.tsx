@@ -1,5 +1,5 @@
 import { SearchClient } from '@/features/catalog/search/components/SearchClient';
-import { PageShell } from '@/shared/ui/PageShell';
+import { PageShell } from '@/shared/components/PageShell';
 
 interface SearchPageProps {
   readonly searchParams: Promise<{ q?: string }>;

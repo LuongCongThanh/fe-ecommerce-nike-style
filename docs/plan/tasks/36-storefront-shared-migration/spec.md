@@ -1,7 +1,7 @@
 ---
-status: ready-for-agent
+status: review
 blocked-by: [35-storefront-migration-rules]
-pr:
+pr: #120
 kind: refactor
 approved:
   files: []

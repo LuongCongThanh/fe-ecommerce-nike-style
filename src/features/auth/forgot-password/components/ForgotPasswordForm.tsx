@@ -14,9 +14,9 @@ import { useApiErrorMessage } from '@/features/auth/hooks/useApiErrorMessage';
 import type { ForgotPasswordFormInput } from '@/features/auth/schemas/auth';
 import { ForgotPasswordFormSchema } from '@/features/auth/schemas/auth';
 import { forgotPasswordAction } from '@/features/auth/services/auth';
-import { Button } from '@/shared/ui/Button';
-import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/shared/ui/Form';
-import { Input } from '@/shared/ui/Input';
+import { Button } from '@/shared/components/Button';
+import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/shared/components/Form';
+import { Input } from '@/shared/components/Input';
 
 export function ForgotPasswordForm() {
   const locale = useLocale();

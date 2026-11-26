@@ -6,7 +6,7 @@ import { useLocale } from 'next-intl';
 
 import { isAdminRole } from '@/features/auth/session/roles';
 import { performLogout, setAccessToken, setUser, useAuthStore } from '@/features/auth/stores/auth.store';
-import { ROUTES } from '@/shared/constants/routes';
+import { ROUTES } from '@/shared/routing/routes';
 import type { User } from '@/shared/types/user';
 
 export function login(token: string, userData: User): void {

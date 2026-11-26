@@ -1,53 +1,47 @@
 # Manifest phạm vi — Shared components và cơ chế dùng chung
 
-Snapshot tham chiếu ngày 25/11/2026. File dưới đây là source hiện tại để tìm owner/consumer; sau các blocker, dùng owner đích trong mapping. Đây không phải approved.files hay quyền sửa mọi file. Refresh manifest khi lập plan; đổi path cơ học theo blocker không cần mở lại thiết kế. Consumer mới/khác semantics ngoài scope cần làm rõ trước khi sửa.
+Snapshot ban đầu ngày 25/11/2026, đã làm mới ngày 26/11/2026 theo checkout sau khi chuyển (blocker 35 done): mục source liệt kê path đích hiện tại. Đây không phải approved.files hay quyền sửa mọi file. Refresh manifest khi lập plan; đổi path cơ học theo blocker không cần mở lại thiết kế. Consumer mới/khác semantics ngoài scope cần làm rõ trước khi sửa.
 
-## Source owner hiện tại
+## Source owner (path đích sau khi chuyển)
 
-- `src/shared/constants/auth-cookies.ts`
-- `src/shared/constants/routes.ts`
-- `src/shared/lib/focusRing.ts`
-- `src/shared/lib/hooks/createPersistedListStore.test.tsx`
-- `src/shared/lib/hooks/createPersistedListStore.ts`
-- `src/shared/lib/hooks/useApiMutation.test.tsx`
-- `src/shared/lib/hooks/useApiMutation.ts`
-- `src/shared/lib/monitoring/sentry.ts`
-- `src/shared/lib/motion.ts`
-- `src/shared/lib/notification.test.ts`
-- `src/shared/lib/notification.ts`
-- `src/shared/ui/Accordion.tsx`
-- `src/shared/ui/Badge.tsx`
-- `src/shared/ui/Button.tsx`
-- `src/shared/ui/Checkbox.tsx`
-- `src/shared/ui/ConfirmDialog.test.tsx`
-- `src/shared/ui/ConfirmDialog.tsx`
-- `src/shared/ui/Dialog.tsx`
-- `src/shared/ui/DropdownMenu.tsx`
-- `src/shared/ui/ErrorState.tsx`
-- `src/shared/ui/Form.tsx`
-- `src/shared/ui/Input.tsx`
-- `src/shared/ui/Label.tsx`
-- `src/shared/ui/LoadingSpinner.tsx`
-- `src/shared/ui/PageLoader.tsx`
-- `src/shared/ui/PageShell.tsx`
-- `src/shared/ui/Pagination.test.tsx`
-- `src/shared/ui/Pagination.tsx`
-- `src/shared/ui/Popover.tsx`
-- `src/shared/ui/QuantitySelector.test.tsx`
-- `src/shared/ui/QuantitySelector.tsx`
-- `src/shared/ui/QueryState.tsx`
-- `src/shared/ui/Reveal.tsx`
-- `src/shared/ui/ScrollArea.tsx`
-- `src/shared/ui/SectionHeading.tsx`
-- `src/shared/ui/Select.tsx`
-- `src/shared/ui/Separator.tsx`
-- `src/shared/ui/Sheet.tsx`
-- `src/shared/ui/Skeleton.tsx`
-- `src/shared/ui/SocialMarks.tsx`
-- `src/shared/ui/Tooltip.tsx`
-- `src/shared/utils/pagination.test.ts`
-- `src/shared/utils/pagination.ts`
-- `src/shared/utils/utils.test.ts`
+- `src/shared/components/Accordion.tsx`
+- `src/shared/components/Badge.tsx`
+- `src/shared/components/Button.tsx`
+- `src/shared/components/Checkbox.tsx`
+- `src/shared/components/ConfirmDialog.tsx`
+- `src/shared/components/Dialog.tsx`
+- `src/shared/components/DropdownMenu.tsx`
+- `src/shared/components/ErrorState.tsx`
+- `src/shared/components/Form.tsx`
+- `src/shared/components/Input.tsx`
+- `src/shared/components/Label.tsx`
+- `src/shared/components/LoadingSpinner.tsx`
+- `src/shared/components/PageLoader.tsx`
+- `src/shared/components/PageShell.tsx`
+- `src/shared/components/Pagination.tsx`
+- `src/shared/components/Popover.tsx`
+- `src/shared/components/QuantitySelector.tsx`
+- `src/shared/components/QueryState.tsx`
+- `src/shared/components/Reveal.tsx`
+- `src/shared/components/ScrollArea.tsx`
+- `src/shared/components/SectionHeading.tsx`
+- `src/shared/components/Select.tsx`
+- `src/shared/components/Separator.tsx`
+- `src/shared/components/Sheet.tsx`
+- `src/shared/components/Skeleton.tsx`
+- `src/shared/components/SocialMarks.tsx`
+- `src/shared/components/Tooltip.tsx`
+- `src/shared/feedback/notification.ts`
+- `src/shared/formatting/currency.ts`
+- `src/shared/monitoring/sentry.ts`
+- `src/shared/pagination/pagination.ts`
+- `src/shared/persistence/createPersistedListStore.ts`
+- `src/shared/queries/useApiMutation.ts`
+- `src/shared/routing/auth-cookies.ts`
+- `src/shared/routing/routes.ts`
+- `src/shared/styles/cn.ts`
+- `src/shared/styles/focusRing.ts`
+- `src/shared/styles/motion.ts`
 - `src/shared/utils/utils.ts`
 
 ## Consumer trực tiếp hiện tại ngoài owner
@@ -140,13 +134,21 @@ Snapshot tham chiếu ngày 25/11/2026. File dưới đây là source hiện t�
 
 ## Test cũ được thích ứng trong scope
 
-- `src/shared/lib/hooks/createPersistedListStore.test.tsx`
-- `src/shared/lib/hooks/useApiMutation.test.tsx`
-- `src/shared/lib/notification.test.ts`
-- `src/shared/ui/ConfirmDialog.test.tsx`
-- `src/shared/ui/Pagination.test.tsx`
-- `src/shared/ui/QuantitySelector.test.tsx`
-- `src/shared/utils/pagination.test.ts`
-- `src/shared/utils/utils.test.ts`
+Path đích sau khi chuyển:
+
+- `src/shared/persistence/createPersistedListStore.test.tsx`
+- `src/shared/queries/useApiMutation.test.tsx`
+- `src/shared/feedback/notification.test.ts`
+- `src/shared/components/ConfirmDialog.test.tsx`
+- `src/shared/components/Pagination.test.tsx`
+- `src/shared/components/QuantitySelector.test.tsx`
+- `src/shared/pagination/pagination.test.ts`
+- `src/shared/utils/utils.test.ts` (phần còn lại sau khi tách)
+- `src/shared/components/PageLoader.test.tsx`, `src/shared/components/QueryState.test.tsx`, `src/shared/styles/motion.test.ts`: đã tồn tại cạnh source, chỉ đổi đường dẫn import cùng owner.
+- `src/shared/styles/cn.test.ts`, `src/shared/formatting/currency.test.ts`: tách từ `utils.test.ts`.
+
+Các test chỉ di chuyển/tách (`PageLoader.test.tsx`, `QueryState.test.tsx`, `motion.test.ts`, `cn.test.ts`, `currency.test.ts`) không đổi assertion; chỉ đổi path import và nơi đặt.
+
+Test mới (chỉ thêm, không sửa test cũ) cho coverage tập file đã chuyển: `DropdownMenu`, `PageShell`, `Popover`, `Reveal`, `ScrollArea`, `SectionHeading`, `Select`, `Sheet`, `Skeleton`, `SocialMarks`, `Tooltip` (cạnh source trong `shared/components/`) và `shared/routing/routes.test.ts`.
 
 Các test mới đi cạnh owner hoặc e2e/production theo policy. Với consumer test khác chưa xuất hiện ở scan, bổ sung manifest/file scope trước triển khai; không thay assertion để né regression. Không công khai private stores để cứu setup test.

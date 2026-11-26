@@ -13,14 +13,14 @@ import { useDeleteAddress } from '@/features/account/addresses/queries/useDelete
 import { useSetDefaultAddress } from '@/features/account/addresses/queries/useSetDefaultAddress';
 import type { AddressFormInput } from '@/features/account/addresses/schemas/address';
 import type { StorefrontAddress } from '@/lib/api/endpoints/address';
-import { Badge } from '@/shared/ui/Badge';
-import { Button } from '@/shared/ui/Button';
-import { Checkbox } from '@/shared/ui/Checkbox';
-import { ConfirmDialog } from '@/shared/ui/ConfirmDialog';
-import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/shared/ui/Form';
-import { Input } from '@/shared/ui/Input';
-import { Label } from '@/shared/ui/Label';
-import { QueryState } from '@/shared/ui/QueryState';
+import { Badge } from '@/shared/components/Badge';
+import { Button } from '@/shared/components/Button';
+import { Checkbox } from '@/shared/components/Checkbox';
+import { ConfirmDialog } from '@/shared/components/ConfirmDialog';
+import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/shared/components/Form';
+import { Input } from '@/shared/components/Input';
+import { Label } from '@/shared/components/Label';
+import { QueryState } from '@/shared/components/QueryState';
 
 const EMPTY_FORM: AddressFormInput = { fullName: '', phone: '', province: '', district: '', ward: '', detail: '', isDefault: false };
 

@@ -9,7 +9,7 @@ description: Design-token/CVA usage rules and the accessibility baseline for eve
 
 ## Components and styling
 
-- Reuse a primitive from `src/shared/ui` before creating a new control. Shared UI contains pure UI only — no business logic or API calls.
+- Reuse a primitive from `src/shared/components` before creating a new control. Shared UI contains pure UI only — no business logic or API calls.
 - Keep an app/feature-specific component local until there is evidence it should be reused; do not move an abstraction to a shared module too early.
 - Use semantic tokens from `src/styles`; do not hard-code a color when a matching token exists.
 - Use `cn()` to combine conditional classes and CVA when a component has a public variant. Do not hand-concatenate complex class strings.

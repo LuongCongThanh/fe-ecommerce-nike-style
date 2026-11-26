@@ -2,8 +2,8 @@ import { useTranslations } from 'next-intl';
 
 import { TestimonialCard } from '@/features/home/components/TestimonialCard';
 import { homeTestimonialsData } from '@/features/home/home-content';
-import { Reveal } from '@/shared/ui/Reveal';
-import { SectionHeading } from '@/shared/ui/SectionHeading';
+import { Reveal } from '@/shared/components/Reveal';
+import { SectionHeading } from '@/shared/components/SectionHeading';
 
 export function SectionTestimonials(): React.JSX.Element {
   const t = useTranslations('home.testimonials');

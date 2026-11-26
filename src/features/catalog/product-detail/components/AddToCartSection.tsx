@@ -5,7 +5,7 @@ import { ShoppingCart } from 'lucide-react';
 
 import { VariantSelector } from '@/features/catalog/product-detail/components/VariantSelector';
 import type { VariantSelectionState } from '@/features/catalog/product-detail/hooks/useVariantSelection';
-import { Button } from '@/shared/ui/Button';
+import { Button } from '@/shared/components/Button';
 
 type AddToCartSectionProps = Pick<VariantSelectionState, 'colors' | 'sizes' | 'colorCode' | 'sizeCode' | 'selectColor' | 'selectSize'>;
 

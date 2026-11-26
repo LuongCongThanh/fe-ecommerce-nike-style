@@ -4,9 +4,9 @@ import Link from 'next/link';
 import { CheckCircle } from 'lucide-react';
 
 import { getOrderOrNull } from '@/features/orders/services/order';
-import { Button } from '@/shared/ui/Button';
-import { Separator } from '@/shared/ui/Separator';
-import { formatCurrency } from '@/shared/utils/utils';
+import { Button } from '@/shared/components/Button';
+import { Separator } from '@/shared/components/Separator';
+import { formatCurrency } from '@/shared/formatting/currency';
 
 // Depends on the request's auth cookies to fetch a real order — see `account/orders/page.tsx` for why
 // this can't be statically generated.

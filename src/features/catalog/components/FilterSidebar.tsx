@@ -8,10 +8,10 @@ import { CategoryNav } from '@/features/catalog/components/CategoryNav';
 import { useCatalogFilterControls } from '@/features/catalog/hooks/useCatalogFilterControls';
 import { useCatalogOptions } from '@/features/catalog/queries/useCatalogOptions';
 import { useCategoryTree } from '@/features/catalog/queries/useCategoryTree';
-import { Button } from '@/shared/ui/Button';
-import { Input } from '@/shared/ui/Input';
-import { Select, SelectContent, SelectGroup, SelectItem, SelectTrigger, SelectValue } from '@/shared/ui/Select';
-import { cn } from '@/shared/utils/utils';
+import { Button } from '@/shared/components/Button';
+import { Input } from '@/shared/components/Input';
+import { Select, SelectContent, SelectGroup, SelectItem, SelectTrigger, SelectValue } from '@/shared/components/Select';
+import { cn } from '@/shared/styles/cn';
 
 interface FilterSidebarProps {
   /** Highlights the current node in the Category tree — only set on `/categories/[slug]`. */

@@ -7,9 +7,9 @@ import { useRouter } from 'next/navigation';
 import { Heart, Package, ShoppingBag, X } from 'lucide-react';
 
 import { LoginForm } from '@/features/auth/login/components/LoginForm';
-import { LoadingSpinner } from '@/shared/ui/LoadingSpinner';
-import { FacebookMark, GoogleMark, TwitterMark } from '@/shared/ui/SocialMarks';
-import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/shared/ui/Tooltip';
+import { LoadingSpinner } from '@/shared/components/LoadingSpinner';
+import { FacebookMark, GoogleMark, TwitterMark } from '@/shared/components/SocialMarks';
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/shared/components/Tooltip';
 
 export default function LoginPage(): React.JSX.Element {
   const router = useRouter();

@@ -1,7 +1,7 @@
 import { setRequestLocale } from 'next-intl/server';
 
 import { WishlistClient } from '@/features/wishlist/components/WishlistClient';
-import { PageShell } from '@/shared/ui/PageShell';
+import { PageShell } from '@/shared/components/PageShell';
 
 interface WishlistPageProps {
   readonly params: Promise<{ locale: string }>;

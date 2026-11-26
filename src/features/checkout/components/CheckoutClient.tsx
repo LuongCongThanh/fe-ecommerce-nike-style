@@ -13,10 +13,10 @@ import { useCreateOrder } from '@/features/checkout/queries/useCreateOrder';
 import { useReservation } from '@/features/checkout/queries/useReservation';
 import type { CheckoutInput } from '@/features/checkout/schemas/checkout';
 import { SHIPPING_FEE_BY_METHOD } from '@/features/checkout/schemas/checkout';
-import { Button } from '@/shared/ui/Button';
-import { FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/shared/ui/Form';
-import { Input } from '@/shared/ui/Input';
-import { formatCurrency } from '@/shared/utils/utils';
+import { Button } from '@/shared/components/Button';
+import { FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/shared/components/Form';
+import { Input } from '@/shared/components/Input';
+import { formatCurrency } from '@/shared/formatting/currency';
 
 type CheckoutValues = CheckoutInput;
 

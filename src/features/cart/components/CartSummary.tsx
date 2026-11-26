@@ -6,9 +6,9 @@ import Link from 'next/link';
 import { ArrowRight, Truck } from 'lucide-react';
 
 import { useCart } from '@/features/cart/hooks/useCart';
-import { Button } from '@/shared/ui/Button';
-import { Separator } from '@/shared/ui/Separator';
-import { formatCurrency } from '@/shared/utils/utils';
+import { Button } from '@/shared/components/Button';
+import { Separator } from '@/shared/components/Separator';
+import { formatCurrency } from '@/shared/formatting/currency';
 
 interface CartSummaryProps {
   readonly locale: string;

@@ -15,8 +15,8 @@ import { useApiErrorMessage } from '@/features/auth/hooks/useApiErrorMessage';
 import type { ResetPasswordFormInput } from '@/features/auth/schemas/auth';
 import { ResetPasswordFormSchema } from '@/features/auth/schemas/auth';
 import { resetPasswordAction } from '@/features/auth/services/auth';
-import { Button } from '@/shared/ui/Button';
-import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/shared/ui/Form';
+import { Button } from '@/shared/components/Button';
+import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/shared/components/Form';
 
 interface ResetPasswordFormProps {
   readonly token: string;
