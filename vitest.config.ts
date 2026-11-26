@@ -36,7 +36,6 @@ export default defineConfig({
         'src/**/*.test.*',
         'src/**/*.spec.*',
         'src/shared/lib/guards/**',
-        'src/shared/lib/query-client.ts',
         'src/shared/lib/env.ts',
         'src/shared/monitoring/**',
         'src/shared/lib/errors/error-codes.ts',

@@ -8,7 +8,9 @@ Owner: maintainer storefront. Đối chiếu checkout 18/11/2026, boundary enfor
 
 ```text
 src/app              route/layout, metadata, composition
-src/features         home, storefront-shell, catalog, auth, account,
+src/providers        AppProviders (root mount), query-client factory
+src/layouts          Header, Footer, MobileNav, DesktopMegaMenu, useMergeGuestDataOnLogin
+src/features         home, catalog, auth, account,
                      cart, wishlist, checkout, orders
 src/shared           components (UI primitives), routing, styles, feedback, queries,
                      persistence, pagination, formatting, monitoring, utils,
@@ -21,7 +23,7 @@ src/testing          Vitest setup và render helper
 src/pwa              service worker
 ```
 
-Chiều phụ thuộc là app → feature → shared components/utility → API/schema. Không cần mỗi feature có đủ thư mục api/components/hooks/schemas; tạo khi có trách nhiệm thật. Search hiện thuộc catalog, home và storefront-shell là feature riêng, khác cây đích tám feature của kế hoạch lịch sử.
+Chiều phụ thuộc là app → feature → shared components/utility → API/schema. Không cần mỗi feature có đủ thư mục api/components/hooks/schemas; tạo khi có trách nhiệm thật. Search hiện thuộc catalog; header/footer/navigation nằm ở `src/layouts` (task 37), khác cây đích tám feature của kế hoạch lịch sử.
 
 Route giữ composition. Component trình bày nhận view model; endpoint/query hook/controller sở hữu network, mapper và invalidation. Catalog mapper hiện nằm tại `src/lib/api/endpoints/catalog.ts`, không khẳng định mọi mapper đã chuyển vào feature. API client không import auth feature: adapter runtime tạo seam ngược có chủ ý.
 
@@ -36,11 +38,11 @@ Cây `src/shared` sau task 36:
 - `styles/`: `cn.ts`, `motion.ts`, `focusRing.ts`. `formatting/currency.ts`: `formatCurrency`.
 - `feedback/notification.ts`: một owner toast. `queries/useApiMutation.ts`: cơ chế mutation client.
 - `persistence/createPersistedListStore.ts`, `pagination/pagination.ts`, `monitoring/sentry.ts`.
-- Giữ tại chỗ (ngoại lệ có danh sách, chưa có consumer phải đổi): `utils/utils.ts` (formatDate, formatDateTime, slugify, buildQueryString, truncateText, validateVietnamesePhone; ngoại lệ có owner là task 44, đợt khóa migration: chứng minh consumer rồi xóa hoặc giữ thành inactive exception có tên), `hooks/`, `lib/` (query-client, env, seo, cloudinary, api-mocking, mock-content, errors), `constants/` (app-config, query-keys), `types/`. Các file này chờ slice owner của chúng (provider, home, catalog, integrations).
+- Giữ tại chỗ (ngoại lệ có danh sách, chưa có consumer phải đổi): `utils/utils.ts` (formatDate, formatDateTime, slugify, buildQueryString, truncateText, validateVietnamesePhone; ngoại lệ có owner là task 44, đợt khóa migration: chứng minh consumer rồi xóa hoặc giữ thành inactive exception có tên), `hooks/`, `lib/` (env, seo, cloudinary, api-mocking, mock-content, errors), `constants/` (app-config, query-keys), `types/`. Các file này chờ slice owner của chúng (home, catalog, integrations).
 
 ### Boundary được enforce trong giai đoạn chuyển cấu trúc
 
-Shared đã chuyển sang cây đích (task 36); các owner khác vẫn ở cây cũ; rule đã nhận cả path cũ lẫn path đích của cùng logical owner (`features/<module>` ↔ `modules/<module>`, `features/storefront-shell` ↔ `layouts`, `app/_composition` ↔ `providers`, `lib/api` + `lib/schemas` ↔ `integrations/backend`). `pnpm lint` chạy hai lớp:
+Shared (task 36), providers và layouts (task 37) đã chuyển sang cây đích; các owner khác vẫn ở cây cũ; rule đã nhận cả path cũ lẫn path đích của cùng logical owner (`features/<module>` ↔ `modules/<module>`, `features/storefront-shell` ↔ `layouts`, `app/_composition` ↔ `providers`, `lib/api` + `lib/schemas` ↔ `integrations/backend`). `pnpm lint` chạy hai lớp:
 
 - `eslint.boundaries.mjs` (ESLint `import/no-restricted-paths`, `boundaries/elements`): shared/integrations không import module, app, layouts hay providers; module không import app, layouts hay providers.
 - `scripts/check-module-boundaries.ts` (`pnpm lint:boundaries`): import liên module chỉ qua consumer + file + named symbol trong ma trận [public boundary](plan/tasks/18-storefront-module-boundaries/boundaries.md); chặn namespace, side-effect, dynamic import, `vi.mock` string, re-export, cycle cấp module và path nội bộ không resolve; kiểm manifest coverage cũ→mới với `vitest.config.ts`.
@@ -67,7 +69,7 @@ Test cùng owner được dùng private implementation của owner; test khác m
 | Filter/sort/page    | URL                                               | Giữ link chia sẻ và back/forward; reset page khi đổi bộ lọc theo flow                   |
 | Local interaction   | State trong component                             | Đặt ở phạm vi nhỏ nhất; không global hóa mặc định                                       |
 
-Query client tạo một lần mỗi instance Providers bằng lazy state trong `src/app/_composition/AppProviders.tsx`; root layout mount Providers duy nhất. Locale layout chỉ mount NextIntlClientProvider. Không mount query/session/theme provider lại trong từng nhóm route. `src/shared/lib/query-client.ts` giữ chính sách cache/retry hiện tại.
+Query client tạo một lần mỗi instance Providers bằng lazy state trong `src/providers/AppProviders.tsx`; root layout mount Providers duy nhất. Locale layout chỉ mount NextIntlClientProvider. Không mount query/session/theme provider lại trong từng nhóm route. `src/providers/query-client.ts` giữ chính sách cache/retry hiện tại.
 
 ## Session và HTTP boundary
 

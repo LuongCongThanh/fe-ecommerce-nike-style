@@ -3,7 +3,7 @@ import { useQueryClient } from '@tanstack/react-query';
 import type { ReactNode } from 'react';
 import { describe, expect, it, vi } from 'vitest';
 
-import { Providers } from '@/app/_composition/AppProviders';
+import { Providers } from '@/providers/AppProviders';
 import { getAuthRuntimeAdapter } from '@/lib/api/client/runtime';
 
 const { bootstrapAuth } = vi.hoisted(() => ({ bootstrapAuth: vi.fn().mockResolvedValue(undefined) }));
