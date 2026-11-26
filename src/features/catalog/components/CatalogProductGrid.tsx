@@ -7,7 +7,7 @@ import { useLocale, useTranslations } from 'next-intl';
 
 import { ProductCard } from '@/features/catalog/components/ProductCard';
 import type { ProductSummary } from '@/lib/api/models/catalog';
-import { SPRING_MOVE } from '@/shared/lib/motion';
+import { SPRING_MOVE } from '@/shared/styles/motion';
 
 interface CatalogProductGridProps {
   readonly products: readonly ProductSummary[];

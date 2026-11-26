@@ -5,8 +5,8 @@ import { useTranslations } from 'next-intl';
 
 import { CatalogProductGrid } from '@/features/catalog/components/CatalogProductGrid';
 import { useProductSearchListing } from '@/features/catalog/hooks/useProductSearchListing';
-import { Pagination } from '@/shared/ui/Pagination';
-import { QueryState } from '@/shared/ui/QueryState';
+import { Pagination } from '@/shared/components/Pagination';
+import { QueryState } from '@/shared/components/QueryState';
 
 export function SearchClient(): React.JSX.Element {
   const t = useTranslations('common');

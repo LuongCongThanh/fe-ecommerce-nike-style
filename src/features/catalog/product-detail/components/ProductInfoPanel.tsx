@@ -14,8 +14,8 @@ import { AddToCartSection } from '@/features/catalog/product-detail/components/A
 import { MobileBuyBar } from '@/features/catalog/product-detail/components/MobileBuyBar';
 import type { VariantSelectionState } from '@/features/catalog/product-detail/hooks/useVariantSelection';
 import type { ProductDetail } from '@/lib/api/models/catalog';
-import { SPRING_UI } from '@/shared/lib/motion';
-import { formatCurrency } from '@/shared/utils/utils';
+import { formatCurrency } from '@/shared/formatting/currency';
+import { SPRING_UI } from '@/shared/styles/motion';
 
 // Decision #59 / docs/architecture.md#3d-trong-storefront — three.js only ever loads for a mounted PDP, never at a
 // higher-level route/layout, and never during SSR (WebGL has no server-side renderer).

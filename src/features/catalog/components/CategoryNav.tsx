@@ -4,8 +4,8 @@ import Link from 'next/link';
 import { useTranslations } from 'next-intl';
 
 import type { CategoryNode } from '@/lib/api/models/catalog';
-import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from '@/shared/ui/Accordion';
-import { cn } from '@/shared/utils/utils';
+import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from '@/shared/components/Accordion';
+import { cn } from '@/shared/styles/cn';
 
 interface CategoryNavProps {
   readonly categories: readonly CategoryNode[];

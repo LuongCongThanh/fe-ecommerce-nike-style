@@ -3,8 +3,8 @@
 
 import { Check } from 'lucide-react';
 
+import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from '@/shared/components/Accordion';
 import { isMockContentEnabled } from '@/shared/lib/mock-content';
-import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from '@/shared/ui/Accordion';
 
 interface ProductDetailTabsProps {
   readonly description: string;

@@ -4,7 +4,7 @@ import Link from 'next/link';
 import { ArrowUpRight } from 'lucide-react';
 import { useLocale, useTranslations } from 'next-intl';
 
-import { Reveal } from '@/shared/ui/Reveal';
+import { Reveal } from '@/shared/components/Reveal';
 
 export function SectionEditorialCollection(): React.JSX.Element {
   const locale = useLocale();

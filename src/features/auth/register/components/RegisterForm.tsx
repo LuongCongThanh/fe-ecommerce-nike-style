@@ -15,9 +15,9 @@ import { useApiErrorMessage } from '@/features/auth/hooks/useApiErrorMessage';
 import type { RegisterFormInput } from '@/features/auth/schemas/auth';
 import { RegisterFormSchema } from '@/features/auth/schemas/auth';
 import { registerAction } from '@/features/auth/services/auth';
-import { Button } from '@/shared/ui/Button';
-import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/shared/ui/Form';
-import { Input } from '@/shared/ui/Input';
+import { Button } from '@/shared/components/Button';
+import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/shared/components/Form';
+import { Input } from '@/shared/components/Input';
 
 export function RegisterForm() {
   const router = useRouter();

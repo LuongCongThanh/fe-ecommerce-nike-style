@@ -18,10 +18,10 @@ import { useVariantSelection } from '@/features/catalog/product-detail/hooks/use
 import { useProduct } from '@/features/catalog/product-detail/queries/useProduct';
 import { useRelatedProducts } from '@/features/catalog/product-detail/queries/useRelatedProducts';
 import type { ProductDetail } from '@/lib/api/models/catalog';
-import { SPRING_MOVE } from '@/shared/lib/motion';
-import { PageShell } from '@/shared/ui/PageShell';
-import { QueryState } from '@/shared/ui/QueryState';
-import { SectionHeading } from '@/shared/ui/SectionHeading';
+import { PageShell } from '@/shared/components/PageShell';
+import { QueryState } from '@/shared/components/QueryState';
+import { SectionHeading } from '@/shared/components/SectionHeading';
+import { SPRING_MOVE } from '@/shared/styles/motion';
 
 interface ProductDetailPageClientProps {
   readonly slug: string;

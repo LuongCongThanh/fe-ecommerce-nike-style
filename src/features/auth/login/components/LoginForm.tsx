@@ -16,11 +16,11 @@ import { useApiErrorMessage } from '@/features/auth/hooks/useApiErrorMessage';
 import type { LoginFormInput } from '@/features/auth/schemas/auth';
 import { LoginFormSchema } from '@/features/auth/schemas/auth';
 import { loginAction } from '@/features/auth/services/auth';
-import { Button } from '@/shared/ui/Button';
-import { Checkbox } from '@/shared/ui/Checkbox';
-import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/shared/ui/Form';
-import { Input } from '@/shared/ui/Input';
-import { Label } from '@/shared/ui/Label';
+import { Button } from '@/shared/components/Button';
+import { Checkbox } from '@/shared/components/Checkbox';
+import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/shared/components/Form';
+import { Input } from '@/shared/components/Input';
+import { Label } from '@/shared/components/Label';
 
 export function LoginForm() {
   const router = useRouter();

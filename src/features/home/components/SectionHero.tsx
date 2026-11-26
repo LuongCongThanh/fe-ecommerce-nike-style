@@ -10,7 +10,7 @@ import { useLocale, useTranslations } from 'next-intl';
 import { HeroCarousel } from '@/features/home/components/HeroCarousel';
 import { EASE_OUT } from '@/features/home/components/motion';
 import { TrustBadgeList } from '@/features/home/components/TrustBadgeList';
-import { Button } from '@/shared/ui/Button';
+import { Button } from '@/shared/components/Button';
 
 const revealUp = {
   hidden: { opacity: 0, transform: 'translateY(12px)' },

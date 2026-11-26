@@ -3,7 +3,7 @@ import { NextResponse } from 'next/server';
 
 import createMiddleware from 'next-intl/middleware';
 
-import { USER_ROLE_COOKIE } from '@/shared/constants/auth-cookies';
+import { USER_ROLE_COOKIE } from '@/shared/routing/auth-cookies';
 
 const intlMiddleware = createMiddleware({
   locales: ['vi', 'en'],

@@ -9,9 +9,9 @@ import { Trash2 } from 'lucide-react';
 
 import type { CartLine } from '@/features/cart/hooks/useCart';
 import { useCart } from '@/features/cart/hooks/useCart';
-import { Button } from '@/shared/ui/Button';
-import { QuantitySelector } from '@/shared/ui/QuantitySelector';
-import { formatCurrency } from '@/shared/utils/utils';
+import { Button } from '@/shared/components/Button';
+import { QuantitySelector } from '@/shared/components/QuantitySelector';
+import { formatCurrency } from '@/shared/formatting/currency';
 
 export function CartTable() {
   const { items, updateQuantity, removeCartItemWithUndo } = useCart();

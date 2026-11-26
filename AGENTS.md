@@ -46,7 +46,7 @@ pnpm build
 ## Ranh giới triển khai
 
 - Giữ đúng chiều phụ thuộc: route/layout của app -> feature -> UI hoặc utility dùng chung -> API SDK và schema.
-- Dùng `@/*` cho import nội bộ app, ví dụ `@/shared/ui/Button`.
+- Dùng `@/*` cho import nội bộ app, ví dụ `@/shared/components/Button`.
 - Không dùng parent-relative import xuyên module, deep import vào file private của module khác hoặc tạo barrel `index.ts` mới.
 - Import liên module chỉ qua ma trận public entry (consumer + file + named symbol). `pnpm lint` chạy thêm `pnpm lint:boundaries` (`scripts/check-module-boundaries.ts`); zone layer ở `eslint.boundaries.mjs`. Khi chuyển file, cập nhật entry/snapshot/coverage manifest cùng lượt; ngoại lệ là cạnh chính xác có lý do và đợt xóa.
 - Dùng TanStack Query cho server state, Zustand cho shared client state, React Hook Form cho form và URL cho filter/sort/pagination có thể chia sẻ.

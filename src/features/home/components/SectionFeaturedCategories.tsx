@@ -5,10 +5,10 @@ import { useLocale, useTranslations } from 'next-intl';
 import { CategoryCard } from '@/features/catalog/components/CategoryCard';
 import { useCategoryTree } from '@/features/catalog/queries/useCategoryTree';
 import { placeholderImage } from '@/features/home/home-content';
-import { QueryState } from '@/shared/ui/QueryState';
-import { Reveal } from '@/shared/ui/Reveal';
-import { SectionHeading } from '@/shared/ui/SectionHeading';
-import { Skeleton } from '@/shared/ui/Skeleton';
+import { QueryState } from '@/shared/components/QueryState';
+import { Reveal } from '@/shared/components/Reveal';
+import { SectionHeading } from '@/shared/components/SectionHeading';
+import { Skeleton } from '@/shared/components/Skeleton';
 
 const MAX_CATEGORIES = 7;
 

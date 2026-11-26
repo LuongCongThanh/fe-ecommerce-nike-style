@@ -15,10 +15,10 @@ import { DesktopMegaMenu } from '@/features/storefront-shell/components/DesktopM
 import { MobileNav } from '@/features/storefront-shell/components/MobileNav';
 import { useMergeGuestDataOnLogin } from '@/features/storefront-shell/hooks/useMergeGuestDataOnLogin';
 import { useWishlist } from '@/features/wishlist/hooks/useWishlist';
-import { Button } from '@/shared/ui/Button';
-import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuSeparator, DropdownMenuTrigger } from '@/shared/ui/DropdownMenu';
-import { Input } from '@/shared/ui/Input';
-import { cn } from '@/shared/utils/utils';
+import { Button } from '@/shared/components/Button';
+import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuSeparator, DropdownMenuTrigger } from '@/shared/components/DropdownMenu';
+import { Input } from '@/shared/components/Input';
+import { cn } from '@/shared/styles/cn';
 
 // Shared hover treatment for every icon-action button (search/account/wishlist/cart) — a small
 // lift + shadow-depth increase on hover reads as tactile/dimensional. Appended to the existing

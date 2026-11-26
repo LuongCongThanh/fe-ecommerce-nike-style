@@ -10,7 +10,7 @@ import { clearCart } from '@/features/cart/stores/cart.store';
 import type { CheckoutInput } from '@/features/checkout/schemas/checkout';
 import { orderKeys } from '@/features/orders/queries/orderKeys';
 import { createOrder } from '@/lib/api/endpoints/orders';
-import { useApiMutation } from '@/shared/lib/hooks/useApiMutation';
+import { useApiMutation } from '@/shared/queries/useApiMutation';
 
 /**
  * `reservationId` ties Place Order to the Reservation created when Checkout started; `requestKey` is

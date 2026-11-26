@@ -1,6 +1,6 @@
 import { Check } from 'lucide-react';
 
-import { cn } from '@/shared/utils/utils';
+import { cn } from '@/shared/styles/cn';
 
 interface TrustBadgeListProps {
   readonly items: string[];

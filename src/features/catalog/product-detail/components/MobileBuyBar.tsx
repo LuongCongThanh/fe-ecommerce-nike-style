@@ -8,9 +8,9 @@ import { useEffect, useRef, useState } from 'react';
 import { AnimatePresence, motion, useReducedMotion } from 'framer-motion';
 import { ShoppingCart } from 'lucide-react';
 
-import { SPRING_SHEET } from '@/shared/lib/motion';
-import { Button } from '@/shared/ui/Button';
-import { formatCurrency } from '@/shared/utils/utils';
+import { Button } from '@/shared/components/Button';
+import { formatCurrency } from '@/shared/formatting/currency';
+import { SPRING_SHEET } from '@/shared/styles/motion';
 
 interface MobileBuyBarProps {
   readonly productName: string;

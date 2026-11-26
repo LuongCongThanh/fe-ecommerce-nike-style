@@ -7,8 +7,8 @@ import { useTranslations } from 'next-intl';
 
 import { CatalogProductGrid } from '@/features/catalog/components/CatalogProductGrid';
 import { useCatalogListing } from '@/features/catalog/hooks/useCatalogListing';
-import { Button } from '@/shared/ui/Button';
-import { Pagination } from '@/shared/ui/Pagination';
+import { Button } from '@/shared/components/Button';
+import { Pagination } from '@/shared/components/Pagination';
 
 interface CategoryClientProps {
   readonly categorySlug: string;

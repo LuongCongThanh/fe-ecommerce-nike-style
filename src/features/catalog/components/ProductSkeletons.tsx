@@ -1,7 +1,7 @@
 // Hallmark redesign · design-system: design.md · scope: app page (functional, no enrichment)
 // Apple Design pass · §1 Response — a skeleton shaped like the real layout, so first paint never
 // jumps. A centred spinner tells the user "wait"; a skeleton tells them what is arriving and where.
-import { Skeleton } from '@/shared/ui/Skeleton';
+import { Skeleton } from '@/shared/components/Skeleton';
 
 const GRID_PLACEHOLDER_COUNT = 12;
 

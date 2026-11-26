@@ -3,7 +3,7 @@
 import { AnimatePresence, motion, useReducedMotion } from 'framer-motion';
 
 import { useNewsletterForm } from '@/features/home/hooks/useNewsletterForm';
-import { Button } from '@/shared/ui/Button';
+import { Button } from '@/shared/components/Button';
 
 interface NewsletterFormProps {
   readonly title?: string;

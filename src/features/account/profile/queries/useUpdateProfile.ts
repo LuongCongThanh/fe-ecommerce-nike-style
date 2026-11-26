@@ -3,7 +3,7 @@
 import { useQueryClient } from '@tanstack/react-query';
 
 import { updateProfile } from '@/lib/api/endpoints/profile';
-import { useApiMutation } from '@/shared/lib/hooks/useApiMutation';
+import { useApiMutation } from '@/shared/queries/useApiMutation';
 import type { User } from '@/shared/types/user';
 
 const profileKey = ['profile'] as const;

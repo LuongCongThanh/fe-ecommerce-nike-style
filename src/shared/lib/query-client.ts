@@ -6,7 +6,7 @@ import { ApiError } from '@/shared/lib/errors/api-error';
  * No `mutations.onError` default here — that used to toast a generic message on every failed
  * mutation, *in addition to* the specific message each mutation hook's own `onError` already showed
  * (react-query v5 runs both), producing a double toast on every failure. The one place a mutation
- * toasts is now `useApiMutation` (`shared/lib/hooks/useApiMutation.ts`), which every mutation hook
+ * toasts is now `useApiMutation` (`shared/queries/useApiMutation.ts`), which every mutation hook
  * goes through.
  */
 export function makeQueryClient() {

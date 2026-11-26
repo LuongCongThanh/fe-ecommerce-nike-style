@@ -1,5 +1,5 @@
 import type { StorefrontOrderStatus } from '@/lib/api/endpoints/orders';
-import { Badge } from '@/shared/ui/Badge';
+import { Badge } from '@/shared/components/Badge';
 
 // Mỗi trạng thái trong luồng chính (PENDING→PROCESSING→PACKED→SHIPPED→DELIVERED/CANCELLED) có màu badge
 // riêng để phân biệt được ở cái nhìn đầu tiên. RETURN_REQUESTED/RETURNED chỉ nhánh sau DELIVERED nên

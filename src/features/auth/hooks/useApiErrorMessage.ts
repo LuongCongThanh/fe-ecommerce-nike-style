@@ -2,8 +2,8 @@
 
 import { useState } from 'react';
 
+import { notify } from '@/shared/feedback/notification';
 import { ApiError } from '@/shared/lib/errors/api-error';
-import { notify } from '@/shared/lib/notification';
 
 /**
  * The interface used to be just `handleApiError`, which only set the inline alert — every call site

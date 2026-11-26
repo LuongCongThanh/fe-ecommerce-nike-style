@@ -27,8 +27,9 @@ export default defineConfig({
         'src/shared/lib/**/*.{ts,tsx}',
         'src/shared/hooks/**/*.{ts,tsx}',
         'src/shared/stores/**/*.{ts,tsx}',
-        'src/shared/ui/{ErrorState,LoadingSpinner,PageLoader,QueryState}.tsx',
+        'src/shared/components/{ErrorState,LoadingSpinner,PageLoader,QueryState}.tsx',
         'src/shared/utils/**/*.{ts,tsx}',
+        'src/shared/{feedback,formatting,pagination,persistence,queries,styles}/**/*.{ts,tsx}',
       ],
       exclude: [
         'src/**/*.d.ts',
@@ -37,7 +38,7 @@ export default defineConfig({
         'src/shared/lib/guards/**',
         'src/shared/lib/query-client.ts',
         'src/shared/lib/env.ts',
-        'src/shared/lib/monitoring/**',
+        'src/shared/monitoring/**',
         'src/shared/lib/errors/error-codes.ts',
       ],
       thresholds: {

@@ -11,8 +11,8 @@ import { getCategoryTrail } from '@/features/catalog/categoryTree';
 import { FilterSidebar } from '@/features/catalog/components/FilterSidebar';
 import { useCategoryTree } from '@/features/catalog/queries/useCategoryTree';
 import type { CategoryEntry } from '@/lib/api/models/catalog';
-import { PageShell } from '@/shared/ui/PageShell';
-import { QueryState } from '@/shared/ui/QueryState';
+import { PageShell } from '@/shared/components/PageShell';
+import { QueryState } from '@/shared/components/QueryState';
 
 interface CategoryPageClientProps {
   readonly slug: string;

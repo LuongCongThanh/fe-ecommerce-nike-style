@@ -7,10 +7,10 @@ import { ProductCard } from '@/features/catalog/components/ProductCard';
 import { catalogKeys } from '@/features/catalog/queries/catalogKeys';
 import { getProducts } from '@/lib/api/endpoints/catalog';
 import type { ProductQuery, ProductSummary } from '@/lib/api/models/catalog';
-import { QueryState } from '@/shared/ui/QueryState';
-import { Reveal } from '@/shared/ui/Reveal';
-import { SectionHeading } from '@/shared/ui/SectionHeading';
-import { Skeleton } from '@/shared/ui/Skeleton';
+import { QueryState } from '@/shared/components/QueryState';
+import { Reveal } from '@/shared/components/Reveal';
+import { SectionHeading } from '@/shared/components/SectionHeading';
+import { Skeleton } from '@/shared/components/Skeleton';
 
 const NEWEST: ProductQuery = { sort: 'newest', limit: 5 };
 

@@ -4,7 +4,7 @@ import { useQueryClient } from '@tanstack/react-query';
 
 import { orderKeys } from '@/features/orders/queries/orderKeys';
 import { cancelOrder } from '@/lib/api/endpoints/orders';
-import { useApiMutation } from '@/shared/lib/hooks/useApiMutation';
+import { useApiMutation } from '@/shared/queries/useApiMutation';
 
 export const useCancelOrder = (id: string) => {
   const qc = useQueryClient();

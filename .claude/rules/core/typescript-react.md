@@ -61,10 +61,10 @@ import type { FormEvent } from 'react';
 
 import { useQuery } from '@tanstack/react-query';
 
-import { Button } from '@/shared/ui/Button';
+import { Button } from '@/shared/components/Button';
 import { getProducts } from '@/lib/api/endpoints/catalog';
 import type { Product } from '@/lib/schemas/catalog/catalog';
-import { ROUTES } from '@/shared/constants/routes';
+import { ROUTES } from '@/shared/routing/routes';
 
 import { ProductCard } from './ProductCard';
 ```
