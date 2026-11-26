@@ -1,7 +1,7 @@
 ---
-status: review
+status: done
 blocked-by: [39-storefront-backend-integration]
-pr:
+pr: #130
 kind: refactor
 approved:
   files: []

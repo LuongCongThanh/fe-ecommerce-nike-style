@@ -2,8 +2,8 @@
 
 | Chỉ số                                     |               Trước |                 Sau |
 | ------------------------------------------ | ------------------: | ------------------: |
-| Unit tests passing                         |                1218 |                1222 |
-| Test files                                 |                 105 |                 108 |
+| Unit tests passing                         |                1218 |                1224 |
+| Test files                                 |                 105 |                 109 |
 | Repo coverage (stmts/branches/funcs/lines) | 99.51/99.21/100/100 | 99.51/99.21/100/100 |
 | Ngưỡng coverage toàn cục                   |                  50 |                  50 |
 | File dưới `src/features/home`              |                  27 |                   0 |
