@@ -1,6 +1,6 @@
 ---
 status: ready-for-agent
-blocked-by: [42-storefront-orders-checkout-migration]
+blocked-by: [39-storefront-backend-integration]
 pr:
 kind: refactor
 approved:

@@ -1,6 +1,6 @@
 ---
 status: ready-for-agent
-blocked-by: [43-storefront-home-route-migration]
+blocked-by: [40-storefront-auth-account-migration, 42-storefront-orders-checkout-migration, 43-storefront-home-route-migration]
 pr:
 kind: refactor
 approved:

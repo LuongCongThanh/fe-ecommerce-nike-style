@@ -69,7 +69,7 @@ pnpm build
 - Feature/fix target `dev`; `main` chỉ nhận release PR từ `dev`.
 - Không ghi tên AI tool/model/agent/assistant hoặc AI attribution trong commit, PR, review hay comment; hook và CI enforce các tên phổ biến.
 - Khi làm task `ready-for-agent`, mọi agent được tự tạo branch, commit, push, mở PR vào `dev` và squash-merge sau khi CI xanh, không cần hỏi lại. Không merge vào `main`. Ngoài task, chỉ làm các thao tác git này khi người dùng yêu cầu.
-- Thực hiện từng task theo thứ tự trong checkout hiện tại. Áp dụng cho mọi agent và `agent-run`. Không tạo thêm Git worktree, kể cả cho bước kiểm tra. Xử lý task đang dở trước khi chuyển sang task khác.
+- `agent-run` thực hiện từng task theo thứ tự trong checkout hiện tại, không tạo worktree. Agent tương tác được chạy song song các task có mọi `blocked-by` đã `done`, mỗi task một Git worktree trên branch riêng từ `dev`; rebase lên `dev` mới nhất trước khi merge và xóa worktree sau khi xong. Xử lý task đang dở trước khi chuyển sang task khác.
 - `agent-run` vẫn để script tự làm branch, commit, push và mở PR; script không merge.
 - Mọi agent được sửa `AGENTS.md`, `CLAUDE.md`, `.claude/rules/process/git-workflow.md`, `docs/agents/issue-tracker.md` khi task yêu cầu. Chỉ stop file `.agent-stop` và file secret vẫn được bảo vệ.
 
