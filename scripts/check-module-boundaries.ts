@@ -81,6 +81,7 @@ export const PUBLIC_ENTRIES: readonly PublicEntry[] = [
   { consumers: ['home'], target: 'catalog:components/CategoryCard', symbols: ['CategoryCard'] },
   { consumers: ['home', 'layouts'], target: 'catalog:queries/useCategoryTree', symbols: ['useCategoryTree'] },
   { consumers: ['home'], target: 'catalog:queries/catalogKeys', symbols: ['catalogKeys'] },
+  { consumers: ['home'], target: 'catalog:queries/catalogQuery', symbols: ['HOME_NEW_ARRIVALS_QUERY'] },
   // layouts / providers → domain modules
   { consumers: ['layouts'], target: 'catalog:search/hooks/useHeaderSearch', symbols: ['useHeaderSearch'] },
   { consumers: ['layouts', 'providers'], target: 'auth:session/useAuth', symbols: ['useAuth'] },
@@ -135,6 +136,7 @@ export const PUBLIC_ENTRIES: readonly PublicEntry[] = [
   { consumers: [app('(shop)/products/page')], target: 'catalog:server/prefetchCatalog', symbols: ['prefetchProductsListing'] },
   { consumers: [app('(shop)/products/page')], target: 'catalog:components/FilterSidebar', symbols: ['FilterSidebar'] },
   { consumers: [app('(shop)/products/page')], target: 'catalog:product-list/components/ProductsClient', symbols: ['default'] },
+  { consumers: [app('(shop)/home/page')], target: 'catalog:server/prefetchCatalog', symbols: ['prefetchHome'] },
   { consumers: [app('(shop)/search/page')], target: 'catalog:search/components/SearchClient', symbols: ['SearchClient'] },
   { consumers: [app('(shop)/wishlist/page')], target: 'wishlist:components/WishlistClient', symbols: ['WishlistClient'] },
 ];
