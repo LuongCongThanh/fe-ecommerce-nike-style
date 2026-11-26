@@ -178,7 +178,7 @@ Folder thường đều lowercase/kebab; các ngoại lệ route đã liệt kê
 
 Các điểm cụ thể:
 
-- [auth-store.test.ts](../../src/features/auth/stores/auth-store.test.ts) kiểm [auth.store.ts](../../src/features/auth/stores/auth.store.ts): stem test chưa đồng dạng; khi chạm boundary có thể đổi thành `auth.store.test.ts`.
+- [auth.store.test.ts](../../src/modules/auth/stores/auth.store.test.ts) kiểm [auth.store.ts](../../src/modules/auth/stores/auth.store.ts): stem test đã đồng dạng sau task 40.
 - [payment-config.ts](../../src/features/checkout/constants/payment-config.ts), [home-content.ts](../../src/modules/home/home-content.ts) là legacy kebab utility; file mới tương đương theo owner nên là `paymentConfig.ts`, `homeContent.ts`.
 - [checkout-flow.test.tsx](../../src/features/checkout/components/checkout-flow.test.tsx) đặt theo flow: được testing rule cho phép; không tự kết luận sai chỉ vì thiếu component cùng tên.
 - [catalogUrlState.ts](../../src/modules/catalog/catalogUrlState.ts) và [useProducts.ts](../../src/modules/catalog/queries/useProducts.ts) đã đúng hướng camelCase/hook hiện hành.
