@@ -36,7 +36,7 @@ Cây `src/shared` sau task 36:
 - `styles/`: `cn.ts`, `motion.ts`, `focusRing.ts`. `formatting/currency.ts`: `formatCurrency`.
 - `feedback/notification.ts`: một owner toast. `queries/useApiMutation.ts`: cơ chế mutation client.
 - `persistence/createPersistedListStore.ts`, `pagination/pagination.ts`, `monitoring/sentry.ts`.
-- Giữ tại chỗ (ngoại lệ có danh sách, chưa có consumer phải đổi): `utils/utils.ts` (formatDate, formatDateTime, slugify, buildQueryString, truncateText, validateVietnamesePhone), `hooks/`, `lib/` (query-client, env, seo, cloudinary, api-mocking, mock-content, errors), `constants/` (app-config, query-keys), `types/`. Các file này chờ slice owner của chúng (provider, home, catalog, integrations).
+- Giữ tại chỗ (ngoại lệ có danh sách, chưa có consumer phải đổi): `utils/utils.ts` (formatDate, formatDateTime, slugify, buildQueryString, truncateText, validateVietnamesePhone; ngoại lệ có owner là task 44, đợt khóa migration: chứng minh consumer rồi xóa hoặc giữ thành inactive exception có tên), `hooks/`, `lib/` (query-client, env, seo, cloudinary, api-mocking, mock-content, errors), `constants/` (app-config, query-keys), `types/`. Các file này chờ slice owner của chúng (provider, home, catalog, integrations).
 
 ### Boundary được enforce trong giai đoạn chuyển cấu trúc
 

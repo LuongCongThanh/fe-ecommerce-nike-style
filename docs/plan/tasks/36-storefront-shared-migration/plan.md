@@ -4,22 +4,22 @@ Branch: `impl/36-shared-migration` (từ `refactor/36-storefront-shared-migratio
 
 ## Blocker và trạng thái
 
-- Task 35: PR #118 đã squash vào `dev`; spec 35 còn `review` trong checkout (tracker chưa đặt done, ngày merge chưa ghi). Không sửa status 35 ở đợt này. Checkout sạch; manifest chỉ lệch ở chỗ `PageLoader.test.tsx`, `QueryState.test.tsx`, `lib/motion.test.ts` đã tồn tại cạnh source (đi cùng owner).
+- Task 35: `done` (PR #118 merged vào `dev`; PR #119 merge commit `eb8f088` đặt status done và ghi ngày merge). Checkout sạch; manifest chỉ lệch ở chỗ `PageLoader.test.tsx`, `QueryState.test.tsx`, `lib/motion.test.ts` đã tồn tại cạnh source (đi cùng owner); manifest đã được làm mới theo path đích.
 
 ## Mapping (cũ → đích, theo boundaries.md)
 
-| Cũ                                                                                                                    | Đích                                                                                   |
-| --------------------------------------------------------------------------------------------------------------------- | -------------------------------------------------------------------------------------- |
-| `shared/ui/*` (31 file + 5 test)                                                                                      | `shared/components/*`                                                                  |
-| `shared/constants/{routes,auth-cookies}.ts`                                                                           | `shared/routing/`                                                                      |
-| `shared/lib/{motion,focusRing}.ts` (+ `motion.test.ts`)                                                               | `shared/styles/`                                                                       |
-| `shared/lib/notification.ts` + test                                                                                   | `shared/feedback/`                                                                     |
-| `shared/lib/hooks/useApiMutation.ts` + test                                                                           | `shared/queries/`                                                                      |
-| `shared/lib/hooks/createPersistedListStore.ts` + test                                                                 | `shared/persistence/`                                                                  |
-| `shared/utils/pagination.ts` + test                                                                                   | `shared/pagination/`                                                                   |
-| `shared/utils/utils.ts`: `cn` / `formatCurrency` (+ tests tách theo owner)                                            | `shared/styles/cn.ts` / `shared/formatting/currency.ts`                                |
-| `shared/utils/utils.ts`: formatDate, formatDateTime, slugify, buildQueryString, truncateText, validateVietnamesePhone | giữ `shared/utils/utils.ts` (export chưa rõ consumer; không xóa, không công khai thêm) |
-| `shared/lib/monitoring/sentry.ts`                                                                                     | `shared/monitoring/sentry.ts`                                                          |
+| Cũ                                                                                                                    | Đích                                                                                                                                                                                                                                                      |
+| --------------------------------------------------------------------------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `shared/ui/*` (31 file + 5 test)                                                                                      | `shared/components/*`                                                                                                                                                                                                                                     |
+| `shared/constants/{routes,auth-cookies}.ts`                                                                           | `shared/routing/`                                                                                                                                                                                                                                         |
+| `shared/lib/{motion,focusRing}.ts` (+ `motion.test.ts`)                                                               | `shared/styles/`                                                                                                                                                                                                                                          |
+| `shared/lib/notification.ts` + test                                                                                   | `shared/feedback/`                                                                                                                                                                                                                                        |
+| `shared/lib/hooks/useApiMutation.ts` + test                                                                           | `shared/queries/`                                                                                                                                                                                                                                         |
+| `shared/lib/hooks/createPersistedListStore.ts` + test                                                                 | `shared/persistence/`                                                                                                                                                                                                                                     |
+| `shared/utils/pagination.ts` + test                                                                                   | `shared/pagination/`                                                                                                                                                                                                                                      |
+| `shared/utils/utils.ts`: `cn` / `formatCurrency` (+ tests tách theo owner)                                            | `shared/styles/cn.ts` / `shared/formatting/currency.ts`                                                                                                                                                                                                   |
+| `shared/utils/utils.ts`: formatDate, formatDateTime, slugify, buildQueryString, truncateText, validateVietnamesePhone | giữ `shared/utils/utils.ts` (export chưa rõ consumer; không xóa, không công khai thêm). Owner: task 44 (khóa migration và xóa ngoại lệ đã hết consumer); đợt xóa: task 44 chứng minh consumer từng export và xóa hoặc giữ thành inactive exception có tên |
+| `shared/lib/monitoring/sentry.ts`                                                                                     | `shared/monitoring/sentry.ts`                                                                                                                                                                                                                             |
 
 Giữ tại chỗ (ngoài scope, owner slice khác hoặc không đổi): `app-config`, `query-keys`, `env`, `errors`, `useLocalStorage`, `useMediaQuery`, `usePagination`, `cloudinary`, `seo`, `query-client`, `api-mocking`, `mock-content`, `useCanRender3D`, `types/user`.
 
@@ -41,7 +41,8 @@ Test colocated chuyển cùng source (notification, useApiMutation, createPersis
 3. [x] Cập nhật `vitest.config.ts` glob (tập file tương đương, ngưỡng không đổi).
 4. [x] `eslint --fix` (thứ tự import), prettier.
 5. [x] Docs hiện trạng.
-6. [x] Gates: focused vitest, `pnpm lint`, `pnpm format:check`, `pnpm docs:check`, `pnpm typecheck`, `pnpm test`, `pnpm test:coverage`, `pnpm build`. Không chạy E2E/production theo quyết định người dùng.
+6. [x] Bổ sung test hành vi colocated cho phần đã chuyển chưa có test (yêu cầu người dùng: unit coverage tập đã chuyển ≥ 50%); không đổi assertion hay ngưỡng vitest.
+7. [x] Gates: focused vitest, `pnpm lint`, `pnpm format:check`, `pnpm docs:check`, `pnpm typecheck`, `pnpm test`, `pnpm test:coverage`, `pnpm build`. Không chạy E2E/production theo quyết định người dùng.
 
 ## Rủi ro và rollback
 
