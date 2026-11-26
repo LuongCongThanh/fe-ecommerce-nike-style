@@ -1,0 +1,48 @@
+'use client';
+
+import { useRef } from 'react';
+import { useRouter } from 'next/navigation';
+
+import { useQueryClient } from '@tanstack/react-query';
+
+import { createOrder } from '@/integrations/backend/endpoints/orders';
+import { useCart } from '@/modules/cart/hooks/useCart';
+import type { CheckoutInput } from '@/modules/checkout/schemas/checkout.schema';
+import { orderKeys } from '@/modules/orders/queries/orderKeys';
+import { useApiMutation } from '@/shared/queries/useApiMutation';
+
+/**
+ * `reservationId` ties Place Order to the Reservation created when Checkout started; `requestKey` is
+ * generated once and reused across retries of the *same* submission (double-click, reload, network
+ * retry), so the mock backend can replay the original order instead of creating a duplicate (issue #16
+ * — idempotent Place Order).
+ */
+export const useCreateOrder = (locale: string, reservationId: string | null) => {
+  const qc = useQueryClient();
+  const router = useRouter();
+  const { items, clearCart } = useCart();
+  // Generated fresh every render, but only the first one sticks — the ref keeps the same key across
+  // re-renders and retries of this hook instance.
+  const requestKeyRef = useRef(crypto.randomUUID());
+
+  return useApiMutation({
+    mutationFn: async (data: CheckoutInput) => {
+      if (reservationId === null) {
+        throw new Error('Chưa giữ chỗ sản phẩm — vui lòng thử lại.');
+      }
+      return createOrder({
+        ...data,
+        items: items.map((i) => ({ variantId: i.skuId, quantity: i.quantity })),
+        reservationId,
+        requestKey: requestKeyRef.current,
+      });
+    },
+    successMessage: 'Đặt hàng thành công!',
+    errorFallback: 'Đặt hàng thất bại. Vui lòng thử lại.',
+    onSuccess: async (order) => {
+      clearCart();
+      await qc.invalidateQueries({ queryKey: orderKeys.list() });
+      router.push(`/${locale}/checkout/success?orderId=${String(order.id)}`);
+    },
+  });
+};

@@ -95,7 +95,7 @@ export const PUBLIC_ENTRIES: readonly PublicEntry[] = [
   { consumers: ['wishlist'], target: 'catalog:priceRange', symbols: ['getProductPriceRange'] },
   { consumers: ['wishlist'], target: 'catalog:variantResolution', symbols: ['getVariantAxes', 'resolveSku'] },
   { consumers: ['wishlist'], target: 'cart:hooks/useCart', symbols: ['useCart'] },
-  { consumers: ['wishlist'], target: 'cart:testing/cart.fixture', symbols: ['resetCartForTest', 'readCartItemsForTest'], testOnly: true },
+  { consumers: ['wishlist', 'checkout'], target: 'cart:testing/cart.fixture', symbols: ['resetCartForTest', 'readCartItemsForTest'], testOnly: true },
   // checkout → cart/orders
   { consumers: ['checkout'], target: 'cart:hooks/useCart', symbols: ['useCart', 'CartLine'] },
   { consumers: ['checkout'], target: 'orders:queries/orderKeys', symbols: ['orderKeys'] },
@@ -120,11 +120,9 @@ export const PUBLIC_ENTRIES: readonly PublicEntry[] = [
     target: 'catalog:category-detail/components/CategoryPageClient',
     symbols: ['CategoryPageClient'],
   },
-  { consumers: [app('(shop)/checkout/page')], target: 'checkout:components/CheckoutClient', symbols: ['CheckoutClient'] },
-  { consumers: [app('(shop)/checkout/page')], target: 'checkout:components/OrderSummary', symbols: ['OrderSummary'] },
-  { consumers: [app('(shop)/checkout/page')], target: 'checkout:hooks/useCheckoutForm', symbols: ['useCheckoutForm'] },
-  // Design target basename: orders/services/order.service (renamed in the orders slice).
-  { consumers: [app('(shop)/checkout/success/page')], target: 'orders:services/order', symbols: ['getOrderOrNull'] },
+  { consumers: [app('(shop)/checkout/page')], target: 'checkout:components/CheckoutScreen', symbols: ['CheckoutScreen'] },
+  { consumers: [app('(shop)/checkout/success/page')], target: 'checkout:components/CheckoutSuccess', symbols: ['CheckoutSuccess'] },
+  { consumers: [app('(shop)/checkout/success/page')], target: 'orders:services/order.service', symbols: ['getOrderOrNull'] },
   { consumers: [app('(shop)/home/page')], target: 'home:components/SectionEditorialCollection', symbols: ['SectionEditorialCollection'] },
   { consumers: [app('(shop)/home/page')], target: 'home:components/SectionFeaturedCategories', symbols: ['SectionFeaturedCategories'] },
   { consumers: [app('(shop)/home/page')], target: 'home:components/SectionHero', symbols: ['SectionHero'] },
@@ -143,15 +141,7 @@ export const PUBLIC_ENTRIES: readonly PublicEntry[] = [
 ];
 
 /** Exact edges that exist today and are deleted by a named delivery slice. Never add wildcards. */
-export const KNOWN_VIOLATIONS: readonly KnownViolation[] = [
-  {
-    from: 'checkout:queries/useCreateOrder',
-    to: 'cart:stores/cart.store',
-    symbols: ['clearCart'],
-    removedBy: '42-storefront-orders-checkout-migration',
-    reason: 'Checkout clears the cart through the private store; useCart already returns clearCart.',
-  },
-];
+export const KNOWN_VIOLATIONS: readonly KnownViolation[] = [];
 
 export const KNOWN_CYCLES: readonly KnownCycle[] = [];
 
