@@ -15,6 +15,7 @@ import { parseCatalogFilters, parseCatalogOptionFilters } from '@/modules/catalo
 import { catalogKeys } from '@/modules/catalog/queries/catalogKeys';
 import {
   buildProductListQuery,
+  buildRelatedQuery,
   buildSearchQuery,
   CATALOG_REFERENCE_STALE_TIME,
   type CategoryData,
@@ -118,6 +119,19 @@ export async function prefetchProductsListing(searchParams: URLSearchParams): Pr
   };
 
   await Promise.all([categoriesRead, prefetcher.options(), loadProducts()]);
+  return prefetcher.dehydrate();
+}
+
+/**
+ * `/[locale]/products/[slug]`: the Product by slug, then its related strip when it has a Category.
+ * A 404 is stored as `null` (the page keeps its not-found UI). A failed related read, or a failed
+ * product read, leaves that key out so the browser hook fetches it again; the related read never
+ * blocks or invalidates the product.
+ */
+export async function prefetchProductDetail(slug: string): Promise<DehydratedState> {
+  const prefetcher = createCatalogPrefetcher();
+  const product = await prefetcher.product(slug);
+  if (product !== undefined && product !== null) await prefetcher.products(buildRelatedQuery(product.categoryId));
   return prefetcher.dehydrate();
 }
 

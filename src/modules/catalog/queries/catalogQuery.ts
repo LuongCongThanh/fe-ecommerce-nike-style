@@ -1,4 +1,4 @@
-import type { CategoryNode, ProductQuery } from '@/integrations/backend/models/catalog';
+import type { CategoryNode, ProductPage, ProductQuery, ProductSummary } from '@/integrations/backend/models/catalog';
 import type { CatalogFilters, CatalogOptionFilters } from '@/modules/catalog/catalogUrlState';
 import { toApiGender } from '@/modules/catalog/catalogUrlState';
 import { flattenCategories } from '@/modules/catalog/categoryTree';
@@ -50,6 +50,19 @@ export function buildProductListQuery(
 /** Search is the same list call scoped to `q` only (no category, gender, price or PLP options). */
 export function buildSearchQuery(q: string, page: number): ProductQuery {
   return { page, limit: CATALOG_PAGE_SIZE, sort: 'newest', q };
+}
+
+/** PDP related strip: up to this many other Products of the same Category. */
+export const RELATED_LIMIT = 4;
+
+/** One extra row is fetched so the current Product can be dropped and `RELATED_LIMIT` still remain. */
+export function buildRelatedQuery(categoryId: string): ProductQuery {
+  return { categoryId, limit: RELATED_LIMIT + 1, sort: 'newest' };
+}
+
+/** Drops the current Product from a related page and trims it to `RELATED_LIMIT`. */
+export function selectRelated(page: ProductPage | undefined, excludeSlug: string): ProductSummary[] {
+  return (page?.data ?? []).filter((product) => product.slug !== excludeSlug).slice(0, RELATED_LIMIT);
 }
 
 /** Home "new arrivals": the five newest products. Server prefetch and the home section share this key. */
