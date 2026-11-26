@@ -4,13 +4,13 @@ Branch: `logic/48-storefront-ssr-home` (từ `dev`). Blocker thật chỉ còn 4
 
 ## Mapping (manifest cũ -> đích hiện tại)
 
-| Manifest                                                  | Đích                                                          |
-| --------------------------------------------------------- | ------------------------------------------------------------- |
-| `src/features/catalog/queries/catalogKeys.ts`             | `src/modules/catalog/queries/catalogKeys.ts` (không đổi key)  |
-| `src/modules/home/components/SectionNewArrivals.tsx`      | dùng `HOME_NEW_ARRIVALS_QUERY` thay hằng cục bộ `NEWEST`      |
-| `src/modules/home/components/SectionFeaturedCategories`   | không đổi: `useCategoryTree` đã trùng key/shape với prefetch  |
-| `src/app/[locale]/(shop)/home/page.tsx`                   | `await prefetchHome()` + `HydrationBoundary`                  |
-| Mới                                                       | `prefetchHome` trong `modules/catalog/server/prefetchCatalog.ts` (chỉ thêm) |
+| Manifest                                                | Đích                                                                        |
+| ------------------------------------------------------- | --------------------------------------------------------------------------- |
+| `src/features/catalog/queries/catalogKeys.ts`           | `src/modules/catalog/queries/catalogKeys.ts` (không đổi key)                |
+| `src/modules/home/components/SectionNewArrivals.tsx`    | dùng `HOME_NEW_ARRIVALS_QUERY` thay hằng cục bộ `NEWEST`                    |
+| `src/modules/home/components/SectionFeaturedCategories` | không đổi: `useCategoryTree` đã trùng key/shape với prefetch                |
+| `src/app/[locale]/(shop)/home/page.tsx`                 | `await prefetchHome()` + `HydrationBoundary`                                |
+| Mới                                                     | `prefetchHome` trong `modules/catalog/server/prefetchCatalog.ts` (chỉ thêm) |
 
 ## Thiết kế
 
