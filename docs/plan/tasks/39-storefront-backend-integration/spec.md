@@ -1,7 +1,7 @@
 ---
-status: review
+status: done
 blocked-by: [38-storefront-catalog-migration]
-pr:
+pr: #127
 kind: refactor
 approved:
   files: []
