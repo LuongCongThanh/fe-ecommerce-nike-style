@@ -1,7 +1,7 @@
 // Hallmark redesign · design-system: design.md · scope: app page (functional, no enrichment)
 import { setRequestLocale } from 'next-intl/server';
 
-import { CartClient } from '@/features/cart/components/CartClient';
+import { CartClient } from '@/modules/cart/components/CartClient';
 import { PageShell } from '@/shared/components/PageShell';
 
 interface CartPageProps {

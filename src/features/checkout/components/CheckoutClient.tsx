@@ -7,12 +7,12 @@ import { Loader2 } from 'lucide-react';
 import { useLocale, useTranslations } from 'next-intl';
 import { useFormContext } from 'react-hook-form';
 
-import { useCart } from '@/features/cart/hooks/useCart';
 import { useRedirectIfCartEmpty } from '@/features/checkout/hooks/useRedirectIfCartEmpty';
 import { useCreateOrder } from '@/features/checkout/queries/useCreateOrder';
 import { useReservation } from '@/features/checkout/queries/useReservation';
 import type { CheckoutInput } from '@/features/checkout/schemas/checkout';
 import { SHIPPING_FEE_BY_METHOD } from '@/features/checkout/schemas/checkout';
+import { useCart } from '@/modules/cart/hooks/useCart';
 import { Button } from '@/shared/components/Button';
 import { FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/shared/components/Form';
 import { Input } from '@/shared/components/Input';

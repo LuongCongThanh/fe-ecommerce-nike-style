@@ -6,9 +6,9 @@ import Link from 'next/link';
 import { ShoppingBag } from 'lucide-react';
 import { useTranslations } from 'next-intl';
 
-import { CartSummary } from '@/features/cart/components/CartSummary';
-import { CartTable } from '@/features/cart/components/CartTable';
-import { useCart } from '@/features/cart/hooks/useCart';
+import { CartSummary } from '@/modules/cart/components/CartSummary';
+import { CartTable } from '@/modules/cart/components/CartTable';
+import { useCart } from '@/modules/cart/hooks/useCart';
 import { Button } from '@/shared/components/Button';
 import { QueryState } from '@/shared/components/QueryState';
 

@@ -3,9 +3,9 @@ import { afterAll, afterEach, beforeAll, beforeEach, describe, expect, it, vi } 
 import { server } from '@/integrations/backend/testing/msw-server';
 
 import { renderWithProviders } from '@/testing/render';
-import { WishlistClient } from '@/features/wishlist/components/WishlistClient';
-import { clearCart, resetCartState, useCartStore } from '@/features/cart/stores/cart.store';
-import { resetWishlistState, useWishlistStore } from '@/features/wishlist/stores/wishlist.store';
+import { WishlistClient } from '@/modules/wishlist/components/WishlistClient';
+import { readCartItemsForTest, resetCartForTest } from '@/modules/cart/testing/cart.fixture';
+import { resetWishlistState, useWishlistStore } from '@/modules/wishlist/stores/wishlist.store';
 
 // Real seeded Products from `src/integrations/backend/mocks/catalog-fixtures.ts`.
 const PRODUCT_WITH_VARIANT_SLUG = 'running-shoe-alpha'; // p-1 — has Color x Size
@@ -25,8 +25,7 @@ beforeEach(() => {
   push.mockClear();
   localStorage.clear();
   resetWishlistState();
-  resetCartState();
-  clearCart();
+  resetCartForTest();
 });
 
 function renderWishlistClient() {
@@ -43,7 +42,7 @@ describe('WishlistClient — move to cart (FE-INT, issue #14)', () => {
 
     expect(push).toHaveBeenCalledWith(`/vi/products/${PRODUCT_WITH_VARIANT_SLUG}`);
     // Not added to the cart directly, and stays on the wishlist — only navigation happened.
-    expect(useCartStore.getState().items).toEqual([]);
+    expect(readCartItemsForTest()).toEqual([]);
     expect(useWishlistStore.getState().items).toEqual([{ productId: PRODUCT_WITH_VARIANT_ID }]);
   });
 
@@ -55,7 +54,7 @@ describe('WishlistClient — move to cart (FE-INT, issue #14)', () => {
     fireEvent.click(button);
 
     expect(push).not.toHaveBeenCalled();
-    await waitFor(() => expect(useCartStore.getState().items).toHaveLength(1));
+    await waitFor(() => expect(readCartItemsForTest()).toHaveLength(1));
     expect(useWishlistStore.getState().items).toEqual([]);
   });
 
@@ -67,7 +66,7 @@ describe('WishlistClient — move to cart (FE-INT, issue #14)', () => {
     fireEvent.click(button);
 
     await waitFor(() => expect(screen.getByText('Danh sách yêu thích đang trống')).toBeInTheDocument());
-    expect(useCartStore.getState().items).toEqual([]);
+    expect(readCartItemsForTest()).toEqual([]);
   });
 
   it('shows an empty state when the wishlist has nothing in it', () => {

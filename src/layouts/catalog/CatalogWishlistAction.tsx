@@ -4,7 +4,7 @@ import { motion } from 'framer-motion';
 import { Heart } from 'lucide-react';
 import { useTranslations } from 'next-intl';
 
-import { useIsWishlisted } from '@/features/wishlist/hooks/useWishlist';
+import { useIsWishlisted } from '@/modules/wishlist/hooks/useWishlist';
 import { SPRING_MOMENTUM, SPRING_UI } from '@/shared/styles/motion';
 
 interface CatalogWishlistActionProps {

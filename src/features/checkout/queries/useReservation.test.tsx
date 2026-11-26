@@ -9,7 +9,7 @@ import { resetMockReservationsForTesting } from '@/integrations/backend/mocks/re
 import { server } from '@/integrations/backend/testing/msw-server';
 
 import { useReservation } from '@/features/checkout/queries/useReservation';
-import type { CartLine } from '@/features/cart/hooks/useCart';
+import type { CartLine } from '@/modules/cart/hooks/useCart';
 
 // Real seeded SKUs from `src/integrations/backend/mocks/catalog-fixtures.ts`.
 const SKU_HIGH_STOCK = 'p-1-0-0'; // stock 14

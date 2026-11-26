@@ -7,8 +7,8 @@ import Image from 'next/image';
 import { AnimatePresence, motion } from 'framer-motion';
 import { Trash2 } from 'lucide-react';
 
-import type { CartLine } from '@/features/cart/hooks/useCart';
-import { useCart } from '@/features/cart/hooks/useCart';
+import type { CartLine } from '@/modules/cart/hooks/useCart';
+import { useCart } from '@/modules/cart/hooks/useCart';
 import { Button } from '@/shared/components/Button';
 import { QuantitySelector } from '@/shared/components/QuantitySelector';
 import { formatCurrency } from '@/shared/formatting/currency';

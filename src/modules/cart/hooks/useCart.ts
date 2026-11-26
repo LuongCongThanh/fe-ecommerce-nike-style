@@ -2,10 +2,10 @@
 
 import { useQuery } from '@tanstack/react-query';
 
-import type { CartItem } from '@/features/cart/stores/cart.store';
-import { cartPersistence, getCartItems, initCartFromStorage, replaceCartItems, useCartStore } from '@/features/cart/stores/cart.store';
 import { ensureApiMockingReady } from '@/integrations/backend/adapters/browser-bootstrap';
 import { getSkusByIds, mergeCartAfterLogin } from '@/integrations/backend/endpoints/cart';
+import type { CartItem } from '@/modules/cart/stores/cart.store';
+import { cartPersistence, getCartItems, initCartFromStorage, replaceCartItems, useCartStore } from '@/modules/cart/stores/cart.store';
 import { notify } from '@/shared/feedback/notification';
 
 /** Live-resolved line for display/totals — price/stock are never cached, always read from the SKU (glossary.md). */

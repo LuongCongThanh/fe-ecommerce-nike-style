@@ -98,8 +98,8 @@ const rows: Row[] = [
   ['middleware', file('Edit', `${ROOT}/src/middleware.ts`), ctx(), 'ask-path'],
   ['gitignore', file('Edit', `${ROOT}/.gitignore`), ctx(), 'ask-path'],
   // --- AGENT_RUN: allowed writes ---
-  ['source file', file('Edit', `${ROOT}/src/features/cart/Cart.tsx`), ctx(), 'allow'],
-  ['new test', file('Write', `${ROOT}/src/features/cart/Cart.test.tsx`), ctx(), 'allow'],
+  ['source file', file('Edit', `${ROOT}/src/modules/cart/Cart.tsx`), ctx(), 'allow'],
+  ['new test', file('Write', `${ROOT}/src/modules/cart/Cart.test.tsx`), ctx(), 'allow'],
   ['nested package.json lookalike', file('Write', `${ROOT}/src/package.json`), ctx(), 'allow'],
   ['write outside worktree', file('Write', '/etc/passwd'), ctx(), 'outside-root'],
   ['write to main checkout', file('Write', '/work/main/src/a.ts'), ctx(), 'outside-root'],

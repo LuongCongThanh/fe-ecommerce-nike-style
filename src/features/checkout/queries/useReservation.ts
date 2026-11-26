@@ -4,9 +4,9 @@ import { useMemo } from 'react';
 
 import { useQuery } from '@tanstack/react-query';
 
-import type { CartLine } from '@/features/cart/hooks/useCart';
 import { ApiError } from '@/integrations/backend/client/api-error';
 import { createReservation } from '@/integrations/backend/endpoints/checkout';
+import type { CartLine } from '@/modules/cart/hooks/useCart';
 
 interface ReservationState {
   reservationId: string | null;

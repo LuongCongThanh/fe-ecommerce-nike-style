@@ -5,11 +5,11 @@ import { useRouter } from 'next/navigation';
 
 import { useQueryClient } from '@tanstack/react-query';
 
-import { useCart } from '@/features/cart/hooks/useCart';
-import { clearCart } from '@/features/cart/stores/cart.store';
 import type { CheckoutInput } from '@/features/checkout/schemas/checkout';
 import { orderKeys } from '@/features/orders/queries/orderKeys';
 import { createOrder } from '@/integrations/backend/endpoints/orders';
+import { useCart } from '@/modules/cart/hooks/useCart';
+import { clearCart } from '@/modules/cart/stores/cart.store';
 import { useApiMutation } from '@/shared/queries/useApiMutation';
 
 /**

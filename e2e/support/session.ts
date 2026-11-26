@@ -44,7 +44,7 @@ export async function addMiddlewareLoginHint(page: Page): Promise<void> {
   await page.context().addCookies([{ name: 'access_token', value: 'e2e-login-hint', url: new URL(page.url()).origin }]);
 }
 
-/** Replaces the guest cart with the given SKUs using the versioned envelope from `src/features/cart/stores/cart.store.ts`. */
+/** Replaces the guest cart with the given SKUs using the versioned envelope from `src/modules/cart/stores/cart.store.ts`. */
 export async function seedGuestCart(page: Page, items: ReadonlyArray<{ skuId: string; quantity: number }>): Promise<void> {
   await page.evaluate((cartItems) => {
     localStorage.setItem('cart-storage-v2', JSON.stringify({ version: 2, items: cartItems }));

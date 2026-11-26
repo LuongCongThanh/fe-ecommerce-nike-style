@@ -9,7 +9,7 @@ import { AnimatePresence, motion } from 'framer-motion';
 import { ShoppingBag, Trash2 } from 'lucide-react';
 import { useLocale } from 'next-intl';
 
-import { useCart } from '@/features/cart/hooks/useCart';
+import { useCart } from '@/modules/cart/hooks/useCart';
 import { Button } from '@/shared/components/Button';
 import { QuantitySelector } from '@/shared/components/QuantitySelector';
 import { ScrollArea } from '@/shared/components/ScrollArea';
