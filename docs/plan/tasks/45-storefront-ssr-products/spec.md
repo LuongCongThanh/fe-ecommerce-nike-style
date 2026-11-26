@@ -1,7 +1,7 @@
 ---
-status: review
+status: done
 blocked-by: [44-storefront-migration-cleanup]
-pr:
+pr: #139
 kind: logic
 approved:
   files: []
