@@ -1,7 +1,7 @@
 # Report 48
 
 - **PR:** #143
-- **Ngày merge:** (điền khi merge)
+- **Ngày merge:** 26/11/2026 (squash, CI xanh)
 
 ## Đã làm
 
@@ -31,14 +31,14 @@
 
 Nhánh `logic/48-storefront-ssr-home`, Linux, pnpm.
 
-| Lệnh                              | Exit | Kết quả                           |
-| --------------------------------- | ---- | --------------------------------- |
-| `pnpm lint`                       | 0    | sau khi thêm public entry home    |
-| `pnpm format:check`               | 0    |                                   |
-| `pnpm docs:check`                 | 0    |                                   |
-| `pnpm typecheck`                  | 0    |                                   |
-| `pnpm test`                       | 0    | 117 files, 1261 tests             |
-| `pnpm test:coverage`              | 0    | 99.51/99.21/100/100, ngưỡng 50    |
-| `pnpm build`                      | 0    |                                   |
+| Lệnh                              | Exit | Kết quả                            |
+| --------------------------------- | ---- | ---------------------------------- |
+| `pnpm lint`                       | 0    | sau khi thêm public entry home     |
+| `pnpm format:check`               | 0    |                                    |
+| `pnpm docs:check`                 | 0    |                                    |
+| `pnpm typecheck`                  | 0    |                                    |
+| `pnpm test`                       | 0    | 117 files, 1261 tests              |
+| `pnpm test:coverage`              | 0    | 99.51/99.21/100/100, ngưỡng 50     |
+| `pnpm build`                      | 0    |                                    |
 | `pnpm test:e2e`                   | —    | not run — user decision 2026-11-26 |
 | `playwright.production.config.ts` | —    | not run — user decision 2026-11-26 |
