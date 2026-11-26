@@ -1,6 +1,6 @@
 # Report 44
 
-- **PR:** (điền sau khi mở)
+- **PR:** #137
 - **Ngày merge:** (điền sau khi merge)
 
 ## Đã làm
