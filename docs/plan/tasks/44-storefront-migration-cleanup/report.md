@@ -1,7 +1,7 @@
 # Report 44
 
 - **PR:** #137
-- **Ngày merge:** (điền sau khi merge)
+- **Ngày merge:** 26/11/2026
 
 ## Đã làm
 
@@ -12,7 +12,7 @@
 - Audit: 0 import active tới root cũ; `src/features`, `src/lib` không tồn tại; known violation/cycle rỗng.
 - `shared/utils/utils.ts`: 6 export không có consumer ngoài test của nó. Giữ thành inactive exception có tên (không xóa để không mất file trong coverage scope; không cấp API mới).
 - `(auth)/layout`, `account/layout`, `checkout/layout`: đã mỏng, giữ trong `app`.
-- Harness production (task 34) tồn tại: `playwright.production.config.ts`, `e2e/production/{pwa,runtime}.spec.ts`, job CI `production-browser`, script `test:e2e:production`.
+- Harness production (task 34) tồn tại: `playwright.production.config.ts`, `e2e/production/{pwa,runtime}.spec.ts`, job CI `production-browser`, script `test:e2e:production`. CI của PR #137: job `Production browser (Chromium)` pass (chỉ chạy trên CI, không chạy local).
 
 ## Lệch so với spec và rủi ro còn lại
 
