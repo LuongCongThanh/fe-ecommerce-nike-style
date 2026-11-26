@@ -2,7 +2,7 @@ import { act, renderHook, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
-import { useAuth } from '@/features/auth/session/useAuth';
+import { useAuth } from '@/modules/auth/session/useAuth';
 import { Header } from '@/layouts/components/Header';
 import { getCategoryTree } from '@/integrations/backend/endpoints/catalog';
 import { renderWithProviders } from '@/testing/render';
