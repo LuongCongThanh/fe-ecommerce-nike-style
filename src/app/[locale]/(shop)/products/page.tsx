@@ -1,8 +1,8 @@
 // Hallmark redesign · design-system: design.md · scope: app page (functional, no enrichment)
 import { setRequestLocale } from 'next-intl/server';
 
-import { FilterSidebar } from '@/features/catalog/components/FilterSidebar';
-import ProductsClient from '@/features/catalog/product-list/components/ProductsClient';
+import { FilterSidebar } from '@/modules/catalog/components/FilterSidebar';
+import ProductsClient from '@/modules/catalog/product-list/components/ProductsClient';
 import { PageShell } from '@/shared/components/PageShell';
 
 interface ProductsPageProps {

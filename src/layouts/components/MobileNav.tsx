@@ -5,7 +5,7 @@ import Link from 'next/link';
 
 import { Menu } from 'lucide-react';
 
-import { useCategoryTree } from '@/features/catalog/queries/useCategoryTree';
+import { useCategoryTree } from '@/modules/catalog/queries/useCategoryTree';
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from '@/shared/components/Accordion';
 import { Button } from '@/shared/components/Button';
 import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger } from '@/shared/components/Sheet';

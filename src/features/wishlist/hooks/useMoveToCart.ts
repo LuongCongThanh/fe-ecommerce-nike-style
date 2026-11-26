@@ -3,9 +3,9 @@
 import { useRouter } from 'next/navigation';
 
 import { useCart } from '@/features/cart/hooks/useCart';
-import { getVariantAxes, resolveSku } from '@/features/catalog/variantResolution';
 import { useWishlist } from '@/features/wishlist/hooks/useWishlist';
 import type { Product } from '@/lib/schemas/catalog/catalog';
+import { getVariantAxes, resolveSku } from '@/modules/catalog/variantResolution';
 import { notify } from '@/shared/feedback/notification';
 
 /**

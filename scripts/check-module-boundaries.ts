@@ -145,20 +145,6 @@ export const PUBLIC_ENTRIES: readonly PublicEntry[] = [
 /** Exact edges that exist today and are deleted by a named delivery slice. Never add wildcards. */
 export const KNOWN_VIOLATIONS: readonly KnownViolation[] = [
   {
-    from: 'catalog:components/ProductCard',
-    to: 'wishlist:hooks/useWishlist',
-    symbols: ['useIsWishlisted'],
-    removedBy: '38-storefront-catalog-migration',
-    reason: 'Catalog → wishlist; replaced by the action slot composed under layouts/catalog.',
-  },
-  {
-    from: 'catalog:components/ProductCard.test',
-    to: 'wishlist:stores/wishlist.store',
-    symbols: ['resetWishlistState'],
-    removedBy: '38-storefront-catalog-migration',
-    reason: 'Card test resets wishlist state while the card subscribes to wishlist; the action test moves to the composition owner.',
-  },
-  {
     from: 'wishlist:components/WishlistClient.test',
     to: 'cart:stores/cart.store',
     symbols: ['clearCart', 'resetCartState', 'useCartStore'],
@@ -181,13 +167,7 @@ export const KNOWN_VIOLATIONS: readonly KnownViolation[] = [
   },
 ];
 
-export const KNOWN_CYCLES: readonly KnownCycle[] = [
-  {
-    modules: ['catalog', 'wishlist'],
-    removedBy: '38-storefront-catalog-migration',
-    reason: 'ProductCard subscribes to wishlist while wishlist uses catalog product rules.',
-  },
-];
+export const KNOWN_CYCLES: readonly KnownCycle[] = [];
 
 export const DEFAULT_POLICY: BoundaryPolicy = {
   modules: DOMAIN_MODULES,

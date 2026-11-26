@@ -1,7 +1,7 @@
 ---
-status: ready-for-agent
+status: review
 blocked-by: [37-storefront-providers-layouts]
-pr:
+pr: #125
 kind: refactor
 approved:
   files: []

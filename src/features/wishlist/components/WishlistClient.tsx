@@ -6,9 +6,9 @@ import Link from 'next/link';
 import { Heart, ShoppingCart, Trash2 } from 'lucide-react';
 import { useTranslations } from 'next-intl';
 
-import { getProductPriceRange } from '@/features/catalog/priceRange';
 import { useMoveToCart } from '@/features/wishlist/hooks/useMoveToCart';
 import { useWishlist } from '@/features/wishlist/hooks/useWishlist';
+import { getProductPriceRange } from '@/modules/catalog/priceRange';
 import { Button } from '@/shared/components/Button';
 import { QueryState } from '@/shared/components/QueryState';
 import { formatCurrency } from '@/shared/formatting/currency';

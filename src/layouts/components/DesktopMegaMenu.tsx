@@ -6,7 +6,7 @@ import Link from 'next/link';
 import { AnimatePresence, motion } from 'framer-motion';
 import { ChevronDown, ChevronRight } from 'lucide-react';
 
-import { useCategoryTree } from '@/features/catalog/queries/useCategoryTree';
+import { useCategoryTree } from '@/modules/catalog/queries/useCategoryTree';
 import { Popover, PopoverContent, PopoverTrigger } from '@/shared/components/Popover';
 
 // Apple Design pass · springs + instant feedback + materials (safe-mode: no new gesture code)
