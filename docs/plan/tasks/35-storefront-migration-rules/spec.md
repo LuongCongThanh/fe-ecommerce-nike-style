@@ -1,5 +1,5 @@
 ---
-status: review
+status: done
 blocked-by: [34-storefront-verification-foundation]
 pr: #118
 kind: refactor
