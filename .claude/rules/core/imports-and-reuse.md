@@ -43,7 +43,7 @@ import { x } from '../../../shared/x';
 import { AdminShell } from '../../apps/admin/src/shell/AdminShell';
 
 // A feature importing another feature's private implementation
-import { internalMapper } from '@/features/orders/internal/mapper';
+import { internalMapper } from '@/modules/orders/internal/mapper';
 
 // A root barrel hiding the real dependency
 import { Button, ProductSchema, getProducts } from '@/all';
@@ -87,8 +87,8 @@ Never copy-paste and rename variables, CSS classes or wording to create a new im
 | Endpoint/API transport                                    | `src/integrations/backend`                                         |
 | Locale config and request setup                           | `src/i18n`                                                         |
 | Logic used by multiple features                           | The owning feature for domain logic; `src/shared` for generic code |
-| Logic used by one Storefront page                         | In the owning `src/features/<domain>` module                       |
-| Logic used within one feature                             | Keep it in `features/<domain>`                                     |
+| Logic used by one Storefront page                         | In the owning `src/modules/<domain>` module                        |
+| Logic used within one feature                             | Keep it in `modules/<domain>`                                      |
 | Design tokens/theme                                       | `src/styles` (Tailwind entry CSS)                                  |
 
 - Move an abstraction to the smallest common scope that contains every consumer; do not jump straight to `src/shared` if it is only used in one feature today.

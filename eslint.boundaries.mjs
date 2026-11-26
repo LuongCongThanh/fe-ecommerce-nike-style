@@ -1,13 +1,12 @@
-// Path-level layer rules for the Storefront migration (task 35). Old and new paths of one logical
-// owner sit in the same zone so a moved file keeps the rule. Symbol allowlist, module cycles and the
+// Path-level layer rules for the Storefront (task 35, old roots removed by task 44). Symbol allowlist, module cycles and the
 // exact snapshot of known violations live in scripts/check-module-boundaries.ts.
 
 export const DOMAIN_MODULES = ['account', 'auth', 'cart', 'catalog', 'checkout', 'home', 'orders', 'wishlist'];
 
-const domainModuleRoots = DOMAIN_MODULES.flatMap((name) => [`./src/features/${name}/**/*`, `./src/modules/${name}/**/*`]);
+const domainModuleRoots = DOMAIN_MODULES.map((name) => `./src/modules/${name}/**/*`);
 
-/** App routes, layouts (old storefront-shell) and providers (old app/_composition). */
-const compositionRoots = ['./src/app/**/*', './src/features/storefront-shell/**/*', './src/layouts/**/*', './src/providers/**/*'];
+/** App routes, layouts and providers. */
+const compositionRoots = ['./src/app/**/*', './src/layouts/**/*', './src/providers/**/*'];
 
 const foundationRoots = ['./src/shared/**/*', './src/integrations/**/*'];
 
@@ -15,7 +14,7 @@ const foundationRoots = ['./src/shared/**/*', './src/integrations/**/*'];
 export const restrictedPathZones = [
   {
     target: foundationRoots,
-    from: ['./src/features/**/*', './src/modules/**/*', ...compositionRoots],
+    from: ['./src/modules/**/*', ...compositionRoots],
     message: 'Shared and integration code cannot depend on app, layouts, providers or domain modules.',
   },
   {
@@ -50,7 +49,7 @@ export const restrictedPathZones = [
   },
 ];
 
-/** `boundaries/elements` for route-group isolation; auth session keeps one element across old/new roots. */
+/** `boundaries/elements` for route-group isolation and the auth session element. */
 export const boundaryElements = [
   {
     type: 'app-feature',
