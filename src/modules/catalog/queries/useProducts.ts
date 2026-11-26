@@ -3,35 +3,21 @@
 import { keepPreviousData, useQuery } from '@tanstack/react-query';
 
 import { getProducts } from '@/integrations/backend/endpoints/catalog';
-import type { ProductQuery } from '@/integrations/backend/models/catalog';
 import type { CatalogFilters, CatalogOptionFilters } from '@/modules/catalog/catalogUrlState';
-import { toApiGender } from '@/modules/catalog/catalogUrlState';
 import { catalogKeys } from '@/modules/catalog/queries/catalogKeys';
+import { buildProductListQuery, NO_OPTION_FILTERS, resolveCategoryId } from '@/modules/catalog/queries/catalogQuery';
 import { useCategoryTree } from '@/modules/catalog/queries/useCategoryTree';
-
-const PAGE_SIZE = 12;
-const NO_OPTIONS: CatalogOptionFilters = { size: [], color: [] };
 
 /**
  * PLP/Category product list from the API. A category slug resolves to its id through the Category
  * tree; the API includes the Category's descendants (BR-CAT-15). An unknown slug fetches nothing.
  */
-export function useProducts(categorySlug: string | undefined, filters: CatalogFilters, options: CatalogOptionFilters = NO_OPTIONS) {
+export function useProducts(categorySlug: string | undefined, filters: CatalogFilters, options: CatalogOptionFilters = NO_OPTION_FILTERS) {
   const { data: categories, isLoading: isCategoriesLoading, error: categoriesError } = useCategoryTree();
-  const categoryId = categorySlug === undefined ? undefined : categories?.flat.find((c) => c.slug === categorySlug)?.id;
+  const categoryId = categorySlug === undefined ? undefined : resolveCategoryId(categories, categorySlug);
   const isCategoryResolved = categorySlug === undefined || categoryId !== undefined;
 
-  const query: ProductQuery = {
-    page: filters.page,
-    limit: PAGE_SIZE,
-    sort: filters.sortBy,
-    categoryId,
-    gender: filters.gender === undefined ? undefined : [toApiGender(filters.gender)],
-    size: options.size,
-    color: options.color,
-    minPrice: filters.minPrice,
-    maxPrice: filters.maxPrice,
-  };
+  const query = buildProductListQuery(categoryId, filters, options);
 
   const result = useQuery({
     queryKey: catalogKeys.products(query),

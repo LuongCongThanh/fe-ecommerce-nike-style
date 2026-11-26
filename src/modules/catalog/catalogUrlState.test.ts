@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest';
 
-import { clearCatalogFilters, parseCatalogFilters, withCatalogFilter, withCatalogPage } from '@/modules/catalog/catalogUrlState';
+import { clearCatalogFilters, parseCatalogFilters, toSearchParams, withCatalogFilter, withCatalogPage } from '@/modules/catalog/catalogUrlState';
 
 describe('parseCatalogFilters (FE-UNIT-001)', () => {
   it('defaults to sortBy=newest and page=1 when the query string is empty', () => {
@@ -88,5 +88,15 @@ describe('clearCatalogFilters', () => {
     const result = clearCatalogFilters(new URLSearchParams('gender=men&sortBy=price_asc&minPrice=1&maxPrice=2&page=3&category=running'));
 
     expect(result.toString()).toBe('category=running');
+  });
+});
+
+describe('toSearchParams', () => {
+  it('flattens Next.js searchParams, keeping repeated keys in order and skipping undefined', () => {
+    const params = toSearchParams({ size: ['M', 'L'], page: '2', gender: undefined });
+
+    expect(params.getAll('size')).toEqual(['M', 'L']);
+    expect(params.get('page')).toBe('2');
+    expect(params.has('gender')).toBe(false);
   });
 });
