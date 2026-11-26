@@ -59,5 +59,5 @@ export const boundaryElements = [
     capture: ['_locale', 'group'],
   },
   { type: 'shared', pattern: 'src/shared/**' },
-  { type: 'core-session', pattern: ['src/features/auth/session/**', 'src/modules/auth/session/**'] },
+  { type: 'core-session', pattern: 'src/modules/auth/session/**' },
 ];

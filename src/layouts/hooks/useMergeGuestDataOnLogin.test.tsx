@@ -1,7 +1,7 @@
 import { act, renderHook } from '@testing-library/react';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
-import { useAuth } from '@/features/auth/session/useAuth';
+import { useAuth } from '@/modules/auth/session/useAuth';
 import { mergeCartAfterLogin } from '@/integrations/backend/endpoints/cart';
 import { mergeWishlistAfterLogin } from '@/integrations/backend/endpoints/wishlist';
 import { useMergeGuestDataOnLogin } from '@/layouts/hooks/useMergeGuestDataOnLogin';

@@ -2,7 +2,7 @@
 
 import { useEffect, useRef } from 'react';
 
-import { useAuth } from '@/features/auth/session/useAuth';
+import { useAuth } from '@/modules/auth/session/useAuth';
 import { mergeCartOnLogin } from '@/modules/cart/hooks/useCart';
 import { mergeWishlistOnLogin } from '@/modules/wishlist/hooks/useWishlist';
 

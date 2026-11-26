@@ -7,10 +7,10 @@ import { motion, useMotionValue, useReducedMotion, useSpring, useTransform } fro
 import { Heart, LogOut, Search, ShoppingCart, User, X } from 'lucide-react';
 import { useLocale, useTranslations } from 'next-intl';
 
-import { useAuth } from '@/features/auth/session/useAuth';
 import { DesktopMegaMenu } from '@/layouts/components/DesktopMegaMenu';
 import { MobileNav } from '@/layouts/components/MobileNav';
 import { useMergeGuestDataOnLogin } from '@/layouts/hooks/useMergeGuestDataOnLogin';
+import { useAuth } from '@/modules/auth/session/useAuth';
 import { CartDrawer } from '@/modules/cart/components/CartDrawer';
 import { useCart } from '@/modules/cart/hooks/useCart';
 import { useHeaderSearch } from '@/modules/catalog/search/hooks/useHeaderSearch';
