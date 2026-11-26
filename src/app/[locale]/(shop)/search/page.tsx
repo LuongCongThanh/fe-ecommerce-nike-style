@@ -1,4 +1,4 @@
-import { SearchClient } from '@/features/catalog/search/components/SearchClient';
+import { SearchClient } from '@/modules/catalog/search/components/SearchClient';
 import { PageShell } from '@/shared/components/PageShell';
 
 interface SearchPageProps {

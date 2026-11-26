@@ -9,8 +9,10 @@ Owner: maintainer storefront. Đối chiếu checkout 18/11/2026, boundary enfor
 ```text
 src/app              route/layout, metadata, composition
 src/providers        AppProviders (root mount), query-client factory
-src/layouts          Header, Footer, MobileNav, DesktopMegaMenu, useMergeGuestDataOnLogin
-src/features         home, catalog, auth, account,
+src/layouts          Header, Footer, MobileNav, DesktopMegaMenu, useMergeGuestDataOnLogin,
+                     catalog/CatalogWishlistAction (wishlist slot cho ProductCard)
+src/modules         catalog (task 38; nguyên owner, gồm mock-content)
+src/features         home, auth, account,
                      cart, wishlist, checkout, orders
 src/shared           components (UI primitives), routing, styles, feedback, queries,
                      persistence, pagination, formatting, monitoring, utils,
@@ -23,7 +25,7 @@ src/testing          Vitest setup và render helper
 src/pwa              service worker
 ```
 
-Chiều phụ thuộc là app → feature → shared components/utility → API/schema. Không cần mỗi feature có đủ thư mục api/components/hooks/schemas; tạo khi có trách nhiệm thật. Search hiện thuộc catalog; header/footer/navigation nằm ở `src/layouts` (task 37), khác cây đích tám feature của kế hoạch lịch sử.
+Chiều phụ thuộc là app → feature → shared components/utility → API/schema. Không cần mỗi feature có đủ thư mục api/components/hooks/schemas; tạo khi có trách nhiệm thật. Catalog đã sang `src/modules/catalog` (task 38), các feature còn lại chờ slice của chúng. Search thuộc catalog; header/footer/navigation nằm ở `src/layouts` (task 37), khác cây đích tám feature của kế hoạch lịch sử.
 
 Route giữ composition. Component trình bày nhận view model; endpoint/query hook/controller sở hữu network, mapper và invalidation. Catalog mapper hiện nằm tại `src/lib/api/endpoints/catalog.ts`, không khẳng định mọi mapper đã chuyển vào feature. API client không import auth feature: adapter runtime tạo seam ngược có chủ ý.
 
@@ -38,24 +40,22 @@ Cây `src/shared` sau task 36:
 - `styles/`: `cn.ts`, `motion.ts`, `focusRing.ts`. `formatting/currency.ts`: `formatCurrency`.
 - `feedback/notification.ts`: một owner toast. `queries/useApiMutation.ts`: cơ chế mutation client.
 - `persistence/createPersistedListStore.ts`, `pagination/pagination.ts`, `monitoring/sentry.ts`.
-- Giữ tại chỗ (ngoại lệ có danh sách, chưa có consumer phải đổi): `utils/utils.ts` (formatDate, formatDateTime, slugify, buildQueryString, truncateText, validateVietnamesePhone; ngoại lệ có owner là task 44, đợt khóa migration: chứng minh consumer rồi xóa hoặc giữ thành inactive exception có tên), `hooks/`, `lib/` (env, seo, cloudinary, api-mocking, mock-content, errors), `constants/` (app-config, query-keys), `types/`. Các file này chờ slice owner của chúng (home, catalog, integrations).
+- Giữ tại chỗ (ngoại lệ có danh sách, chưa có consumer phải đổi): `utils/utils.ts` (formatDate, formatDateTime, slugify, buildQueryString, truncateText, validateVietnamesePhone; ngoại lệ có owner là task 44, đợt khóa migration: chứng minh consumer rồi xóa hoặc giữ thành inactive exception có tên), `hooks/`, `lib/` (env, seo, cloudinary, api-mocking, errors), `constants/` (app-config, query-keys), `types/`. Các file này chờ slice owner của chúng (home, catalog, integrations).
 
 ### Boundary được enforce trong giai đoạn chuyển cấu trúc
 
-Shared (task 36), providers và layouts (task 37) đã chuyển sang cây đích; các owner khác vẫn ở cây cũ; rule đã nhận cả path cũ lẫn path đích của cùng logical owner (`features/<module>` ↔ `modules/<module>`, `features/storefront-shell` ↔ `layouts`, `app/_composition` ↔ `providers`, `lib/api` + `lib/schemas` ↔ `integrations/backend`). `pnpm lint` chạy hai lớp:
+Shared (task 36), providers và layouts (task 37), catalog (task 38) đã chuyển sang cây đích; các owner khác vẫn ở cây cũ; rule đã nhận cả path cũ lẫn path đích của cùng logical owner (`features/<module>` ↔ `modules/<module>`, `features/storefront-shell` ↔ `layouts`, `app/_composition` ↔ `providers`, `lib/api` + `lib/schemas` ↔ `integrations/backend`). `pnpm lint` chạy hai lớp:
 
 - `eslint.boundaries.mjs` (ESLint `import/no-restricted-paths`, `boundaries/elements`): shared/integrations không import module, app, layouts hay providers; module không import app, layouts hay providers.
 - `scripts/check-module-boundaries.ts` (`pnpm lint:boundaries`): import liên module chỉ qua consumer + file + named symbol trong ma trận [public boundary](plan/tasks/18-storefront-module-boundaries/boundaries.md); chặn namespace, side-effect, dynamic import, `vi.mock` string, re-export, cycle cấp module và path nội bộ không resolve; kiểm manifest coverage cũ→mới với `vitest.config.ts`.
 
 Vi phạm đang tồn tại được snapshot từng cạnh chính xác, có lý do và đợt xóa; snapshot hết consumer làm check fail (stale), nên đợt sở hữu phải xóa nó cùng lượt:
 
-| Cạnh                                                                                  | Đợt xóa                                   |
-| ------------------------------------------------------------------------------------- | ----------------------------------------- |
-| `catalog/components/ProductCard` → wishlist `useWishlist` và cycle catalog ↔ wishlist | `38-storefront-catalog-migration`         |
-| `catalog/components/ProductCard.test` → wishlist store                                | `38-storefront-catalog-migration`         |
-| `providers/AppProviders.test` mock auth store                                         | `40-storefront-auth-account-migration`    |
-| `wishlist/components/WishlistClient.test` → cart store                                | `41-storefront-cart-wishlist-migration`   |
-| `checkout/queries/useCreateOrder` → cart store                                        | `42-storefront-orders-checkout-migration` |
+| Cạnh                                                   | Đợt xóa                                   |
+| ------------------------------------------------------ | ----------------------------------------- |
+| `providers/AppProviders.test` mock auth store          | `40-storefront-auth-account-migration`    |
+| `wishlist/components/WishlistClient.test` → cart store | `41-storefront-cart-wishlist-migration`   |
+| `checkout/queries/useCreateOrder` → cart store         | `42-storefront-orders-checkout-migration` |
 
 Test cùng owner được dùng private implementation của owner; test khác module theo cùng allowlist như production. Không thêm wildcard hay exemption cho cả modules/features/tests.
 
@@ -87,10 +87,10 @@ MSW server khởi động qua instrumentation Node; browser khởi động qua s
 
 ## 3D trong storefront
 
-| Surface   | Owner                                                                | Gate hiện tại                                                   |
-| --------- | -------------------------------------------------------------------- | --------------------------------------------------------------- |
-| Home Hero | `src/features/home/components/hero3d/HeroSlides3D.tsx`               | HeroCarousel dynamic import `ssr: false`, useCanRender3D        |
-| PDP       | `src/features/catalog/product-detail/components/ProductViewer3D.tsx` | ProductInfoPanel dynamic import `ssr: false`, chỉ khi PDP mount |
+| Surface   | Owner                                                               | Gate hiện tại                                                   |
+| --------- | ------------------------------------------------------------------- | --------------------------------------------------------------- |
+| Home Hero | `src/features/home/components/hero3d/HeroSlides3D.tsx`              | HeroCarousel dynamic import `ssr: false`, useCanRender3D        |
+| PDP       | `src/modules/catalog/product-detail/components/ProductViewer3D.tsx` | ProductInfoPanel dynamic import `ssr: false`, chỉ khi PDP mount |
 
 Không import `three`/`@react-three/*` từ route/layout dùng chung: WebGL không có server renderer, chunk nặng không thuộc đường găng mọi trang. Hero lên lịch kiểm tra idle/timer, dùng capability hook `off`/`pending`/`ready` và tier; thất bại giữ 2D cho phiên. Không mô tả PDP đã dùng cùng capability gate khi source chỉ có dynamic import. Surface mới cần quyết định rõ và gate/fallback tương ứng.
 
@@ -112,3 +112,7 @@ Ngày 2026-08-30: production build + next start, Chromium 390×844, CPU throttle
 Đây là baseline lịch sử, chưa đo lại trong đợt docs. Đo lại khi thay thời điểm mount; không dùng chênh lệch này làm chứng nhận hiệu năng hiện tại.
 
 Khi sửa motion trang chủ, kiểm reduced motion, lần xuất hiện đầu, trạng thái gửi newsletter và nhịp giữa chữ, ảnh, CTA và carousel. Giữ easing/duration nhất quán, transform reveal đầy đủ và crossfade không làm mất focus hoặc feedback. Mốc rà animation trước đây là commit `30961c2`; Git giữ chi tiết sáu hạng mục lịch sử.
+
+### Catalog và wishlist composition (task 38)
+
+`modules/catalog` không import wishlist: `ProductCard` nhận `wishlistAction?: ReactNode` và `CatalogProductGrid` nhận `renderWishlistAction?(productId)`. Heart nằm ở `layouts/catalog/CatalogWishlistAction` (dùng `useIsWishlisted`); hiện chưa consumer nào nối vì mọi card trước đây đặt `showWishlist={false}`. Cạnh catalog ↔ wishlist còn lại là wishlist → catalog (`priceRange`, `variantResolution`), một chiều. Schema/type đổi tên theo ADR: `schemas/filter.schema.ts`, `types/badge.types.ts`.

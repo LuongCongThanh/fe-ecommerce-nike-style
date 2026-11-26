@@ -40,7 +40,7 @@ Presentational component
 ## Structuring a feature with an API connection
 
 ```text
-src/features/catalog/
+src/modules/catalog/
 ├── components/                 # Shared catalog views
 ├── hooks/                      # Listing/filter orchestration
 ├── queries/                    # Query keys, server cache and mutation policy
@@ -60,10 +60,10 @@ src/features/catalog/
 Read the actual contracts rather than copying a synthetic endpoint example:
 
 - `src/lib/api/endpoints/catalog.ts`: endpoint/transport boundary.
-- `src/features/catalog/queries/catalogKeys.ts`: shared catalog cache keys.
-- `src/features/catalog/queries/useProducts.ts`: query/cache policy.
-- `src/features/catalog/hooks/useCatalogListing.ts`: URL and listing orchestration.
-- `src/features/catalog/product-list/components/ProductsClient.tsx`: screen composition.
+- `src/modules/catalog/queries/catalogKeys.ts`: shared catalog cache keys.
+- `src/modules/catalog/queries/useProducts.ts`: query/cache policy.
+- `src/modules/catalog/hooks/useCatalogListing.ts`: URL and listing orchestration.
+- `src/modules/catalog/product-list/components/ProductsClient.tsx`: screen composition.
 
 Presentational children receive normalized state and callbacks. A container may connect query/controller hooks; it does not add another transport client.
 

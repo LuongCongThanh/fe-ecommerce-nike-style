@@ -3,10 +3,10 @@
 import { useQuery } from '@tanstack/react-query';
 import { useLocale, useTranslations } from 'next-intl';
 
-import { ProductCard } from '@/features/catalog/components/ProductCard';
-import { catalogKeys } from '@/features/catalog/queries/catalogKeys';
 import { getProducts } from '@/lib/api/endpoints/catalog';
 import type { ProductQuery, ProductSummary } from '@/lib/api/models/catalog';
+import { ProductCard } from '@/modules/catalog/components/ProductCard';
+import { catalogKeys } from '@/modules/catalog/queries/catalogKeys';
 import { QueryState } from '@/shared/components/QueryState';
 import { Reveal } from '@/shared/components/Reveal';
 import { SectionHeading } from '@/shared/components/SectionHeading';
@@ -37,7 +37,6 @@ function NewArrivalCard({ product, locale }: { readonly product: ProductSummary;
       images={product.imageUrl === null ? [] : [product.imageUrl]}
       isPriceRange={product.minPrice !== product.maxPrice}
       badges={['new']}
-      showWishlist={false}
       locale={locale}
     />
   );

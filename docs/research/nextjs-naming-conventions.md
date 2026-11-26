@@ -181,7 +181,7 @@ Các điểm cụ thể:
 - [auth-store.test.ts](../../src/features/auth/stores/auth-store.test.ts) kiểm [auth.store.ts](../../src/features/auth/stores/auth.store.ts): stem test chưa đồng dạng; khi chạm boundary có thể đổi thành `auth.store.test.ts`.
 - [payment-config.ts](../../src/features/checkout/constants/payment-config.ts), [home-content.ts](../../src/features/home/home-content.ts) là legacy kebab utility; file mới tương đương theo owner nên là `paymentConfig.ts`, `homeContent.ts`.
 - [checkout-flow.test.tsx](../../src/features/checkout/components/checkout-flow.test.tsx) đặt theo flow: được testing rule cho phép; không tự kết luận sai chỉ vì thiếu component cùng tên.
-- [catalogUrlState.ts](../../src/features/catalog/catalogUrlState.ts) và [useProducts.ts](../../src/features/catalog/queries/useProducts.ts) đã đúng hướng camelCase/hook hiện hành.
+- [catalogUrlState.ts](../../src/modules/catalog/catalogUrlState.ts) và [useProducts.ts](../../src/modules/catalog/queries/useProducts.ts) đã đúng hướng camelCase/hook hiện hành.
 
 Đây là inventory tĩnh, không phải kết quả lint/test toàn repo. Rule owner nói không bulk-rename legacy chỉ để đồng bộ hình thức.
 
