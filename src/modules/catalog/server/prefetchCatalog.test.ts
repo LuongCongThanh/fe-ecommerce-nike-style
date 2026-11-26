@@ -4,7 +4,13 @@ import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
 import { catalogKeys } from '@/modules/catalog/queries/catalogKeys';
 import { buildProductListQuery } from '@/modules/catalog/queries/catalogQuery';
-import { createCatalogPrefetcher, prefetchProductsListing } from '@/modules/catalog/server/prefetchCatalog';
+import {
+  createCatalogPrefetcher,
+  parseSearchPage,
+  prefetchCategoryListing,
+  prefetchProductsListing,
+  prefetchSearchResults,
+} from '@/modules/catalog/server/prefetchCatalog';
 
 vi.mock('server-only', () => ({}));
 
@@ -170,5 +176,103 @@ describe('createCatalogPrefetcher', () => {
     await prefetcher.search(' shoe ', 2);
     expect(requested()).toEqual(['/api/v1/products?page=2&limit=12&q=shoe&sort=newest']);
     expect(prefetcher.dehydrate().queries[0]?.queryKey).toEqual(catalogKeys.search('shoe', 2));
+  });
+});
+
+describe('prefetchCategoryListing', () => {
+  it('resolves the path slug through the tree before requesting products, with the URL filters', async () => {
+    backend();
+
+    const state = await prefetchCategoryListing('running', new URLSearchParams('page=2&sortBy=price_asc&gender=men'));
+
+    const calls = requested();
+    expect(calls.findIndex((path) => path.startsWith('/api/v1/categories'))).toBeLessThan(
+      calls.findIndex((path) => path.startsWith('/api/v1/products')),
+    );
+    expect(calls.find((path) => path.startsWith('/api/v1/products'))).toBe(
+      '/api/v1/products?page=2&limit=12&categoryId=cat-run&gender=MEN&sort=price_asc',
+    );
+    const client = new QueryClient();
+    hydrate(client, state);
+    const query = buildProductListQuery('cat-run', { gender: 'men', sortBy: 'price_asc', page: 2, minPrice: undefined, maxPrice: undefined });
+    expect(client.getQueryData(catalogKeys.products(query))).toMatchObject({ meta: { page: 1 } });
+    expect(client.getQueryData(catalogKeys.sizes())).toBeDefined();
+  });
+
+  it('lets the path slug win over ?category=', async () => {
+    backend();
+
+    await prefetchCategoryListing('running', new URLSearchParams('category=shoes'));
+
+    expect(requested().find((path) => path.startsWith('/api/v1/products'))).toContain('categoryId=cat-run');
+  });
+
+  it('fetches no products for an unknown slug, but keeps the tree', async () => {
+    backend();
+
+    const state = await prefetchCategoryListing('ghost', new URLSearchParams(''));
+
+    expect(requested().some((path) => path.startsWith('/api/v1/products'))).toBe(false);
+    expect(state.queries.some((query) => query.queryKey[1] === 'categories')).toBe(true);
+  });
+
+  it('fetches no products when the tree failed, and does not dehydrate the failure', async () => {
+    backend({ categories: json({ error: { code: 'BOOM', message: 'x' } }, 503) });
+
+    const state = await prefetchCategoryListing('running', new URLSearchParams(''));
+
+    expect(requested().some((path) => path.startsWith('/api/v1/products'))).toBe(false);
+    expect(state.queries.some((query) => query.queryKey[1] === 'categories')).toBe(false);
+  });
+
+  it('keeps tree and filter options when the product list fails', async () => {
+    backend({ products: new TypeError('fetch failed') });
+
+    const state = await prefetchCategoryListing('running', new URLSearchParams(''));
+
+    expect(state.queries.map((query) => query.queryKey[1]).sort()).toEqual(['categories', 'colors', 'sizes']);
+  });
+});
+
+describe('prefetchSearchResults', () => {
+  it('prefetches only the search key for the trimmed q and page, with no PLP filters or reference data', async () => {
+    backend();
+
+    const state = await prefetchSearchResults('  shoe ', '3');
+
+    expect(requested()).toEqual(['/api/v1/products?page=3&limit=12&q=shoe&sort=newest']);
+    expect(state.queries.map((query) => query.queryKey)).toEqual([catalogKeys.search('shoe', 3)]);
+  });
+
+  it.each([undefined, '', '   '])('fetches nothing for q=%j', async (q) => {
+    backend();
+
+    const state = await prefetchSearchResults(q, '1');
+
+    expect(fetchMock).not.toHaveBeenCalled();
+    expect(state.queries).toHaveLength(0);
+  });
+
+  it('omits the failed query so the browser hook can retry', async () => {
+    backend({ products: json({ error: { code: 'BOOM', message: 'x' } }, 500) });
+
+    const state = await prefetchSearchResults('shoe', undefined);
+
+    expect(state.queries).toHaveLength(0);
+    expect(requested()).toHaveLength(1);
+  });
+});
+
+describe('parseSearchPage', () => {
+  it.each([
+    [undefined, 1],
+    [null, 1],
+    ['abc', 1],
+    ['0', 1],
+    ['-2', 1],
+    ['1.5', 1],
+    ['4', 4],
+  ])('%j -> %i', (value, expected) => {
+    expect(parseSearchPage(value)).toBe(expected);
   });
 });

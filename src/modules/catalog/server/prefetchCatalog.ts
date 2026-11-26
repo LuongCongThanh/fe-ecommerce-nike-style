@@ -95,16 +95,10 @@ export function createCatalogPrefetcher(): CatalogPrefetcher {
   };
 }
 
-/**
- * `/[locale]/products`: categories, sizes and colors for the filter sidebar plus the product page the
- * URL asks for. With `?category=<slug>` the tree resolves the slug first; a slug that is not in the
- * tree (or a tree that failed to load) fetches no products, as the browser hook does.
- */
-export async function prefetchProductsListing(searchParams: URLSearchParams): Promise<DehydratedState> {
+async function prefetchListing(categorySlug: string | undefined, searchParams: URLSearchParams): Promise<DehydratedState> {
   const prefetcher = createCatalogPrefetcher();
   const filters = parseCatalogFilters(searchParams);
   const options = parseCatalogOptionFilters(searchParams);
-  const categorySlug = searchParams.get('category') ?? undefined;
   const categoriesRead = prefetcher.categories();
 
   const loadProducts = async (): Promise<void> => {
@@ -117,5 +111,39 @@ export async function prefetchProductsListing(searchParams: URLSearchParams): Pr
   };
 
   await Promise.all([categoriesRead, prefetcher.options(), loadProducts()]);
+  return prefetcher.dehydrate();
+}
+
+/**
+ * `/[locale]/products`: categories, sizes and colors for the filter sidebar plus the product page the
+ * URL asks for. With `?category=<slug>` the tree resolves the slug first; a slug that is not in the
+ * tree (or a tree that failed to load) fetches no products, as the browser hook does.
+ */
+export async function prefetchProductsListing(searchParams: URLSearchParams): Promise<DehydratedState> {
+  return prefetchListing(searchParams.get('category') ?? undefined, searchParams);
+}
+
+/**
+ * `/[locale]/categories/[slug]`: the same data as the PLP, with the slug taken from the path (it wins
+ * over any `?category=`, as `useCatalogListing(categorySlug)` does). The tree resolves the slug before
+ * products are requested; an unknown slug fetches no products and the page shows its not-found state.
+ */
+export async function prefetchCategoryListing(slug: string, searchParams: URLSearchParams): Promise<DehydratedState> {
+  return prefetchListing(slug, searchParams);
+}
+
+/** Reads `page` the way `useProductSearchListing` does: a positive integer, otherwise 1. */
+export function parseSearchPage(value: string | null | undefined): number {
+  const page = Number(value);
+  return Number.isInteger(page) && page > 0 ? page : 1;
+}
+
+/**
+ * `/[locale]/search`: only the results for the trimmed `q` and `page`. Search never touches the PLP
+ * filters, categories, sizes or colors; an empty or whitespace `q` fetches nothing.
+ */
+export async function prefetchSearchResults(q: string | undefined, page: string | undefined): Promise<DehydratedState> {
+  const prefetcher = createCatalogPrefetcher();
+  await prefetcher.search(q ?? '', parseSearchPage(page));
   return prefetcher.dehydrate();
 }
