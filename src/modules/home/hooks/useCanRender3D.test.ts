@@ -1,7 +1,7 @@
 import { act, renderHook } from '@testing-library/react';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
-import { useCanRender3D } from '@/shared/hooks/useCanRender3D';
+import { useCanRender3D } from '@/modules/home/hooks/useCanRender3D';
 
 interface MediaState {
   readonly reducedMotion?: boolean;

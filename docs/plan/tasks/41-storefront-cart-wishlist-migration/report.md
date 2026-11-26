@@ -30,7 +30,7 @@ Môi trường: nhánh `refactor/41-storefront-cart-wishlist-migration`, Linux, 
 | `pnpm format:check`               | 0    |                                         |
 | `pnpm docs:check`                 | 0    |                                         |
 | `pnpm typecheck`                  | 0    |                                         |
-| `pnpm test`                       | 0    | 1221 tests (sau merge dev)              |
+| `pnpm test`                       | 0    | 1225 tests (sau merge dev)              |
 | `pnpm test:coverage`              | 0    | 99.51/99.21/100/100, ngưỡng 50          |
 | `pnpm build`                      | 0    |                                         |
 | `pnpm test:e2e`                   | —    | not run — user decision                 |

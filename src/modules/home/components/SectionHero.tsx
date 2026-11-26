@@ -7,9 +7,9 @@ import { motion, useReducedMotion } from 'framer-motion';
 import { ArrowUpRight } from 'lucide-react';
 import { useLocale, useTranslations } from 'next-intl';
 
-import { HeroCarousel } from '@/features/home/components/HeroCarousel';
-import { EASE_OUT } from '@/features/home/components/motion';
-import { TrustBadgeList } from '@/features/home/components/TrustBadgeList';
+import { HeroCarousel } from '@/modules/home/components/HeroCarousel';
+import { EASE_OUT } from '@/modules/home/components/motion';
+import { TrustBadgeList } from '@/modules/home/components/TrustBadgeList';
 import { Button } from '@/shared/components/Button';
 
 const revealUp = {

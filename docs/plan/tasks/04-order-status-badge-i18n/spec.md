@@ -43,7 +43,6 @@ Ngoài phạm vi: `Badge.tsx`, `OrdersClient`, `OrderDetailClient` (các chuỗi
 - Nếu `src/lang/*/order.json` thiếu quyền ghi trong lượt chạy (guard), dừng và báo `needs_approval`; không tự đổi chỗ đặt khóa.
 - `README` agent nêu storefront hỗ trợ hai ngôn ngữ: task này chỉ vá một component, không tuyên bố hoàn tất i18n cho đơn hàng.
 
-
 ## Comments
 
 ### 18/11/2026 — Cập nhật sau rà ranh giới source

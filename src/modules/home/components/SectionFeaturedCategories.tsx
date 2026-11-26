@@ -2,9 +2,9 @@
 
 import { useLocale, useTranslations } from 'next-intl';
 
-import { placeholderImage } from '@/features/home/home-content';
 import { CategoryCard } from '@/modules/catalog/components/CategoryCard';
 import { useCategoryTree } from '@/modules/catalog/queries/useCategoryTree';
+import { placeholderImage } from '@/modules/home/home-content';
 import { QueryState } from '@/shared/components/QueryState';
 import { Reveal } from '@/shared/components/Reveal';
 import { SectionHeading } from '@/shared/components/SectionHeading';

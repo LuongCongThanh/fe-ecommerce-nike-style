@@ -1,7 +1,7 @@
 import { useTranslations } from 'next-intl';
 
-import { TestimonialCard } from '@/features/home/components/TestimonialCard';
-import { homeTestimonialsData } from '@/features/home/home-content';
+import { TestimonialCard } from '@/modules/home/components/TestimonialCard';
+import { homeTestimonialsData } from '@/modules/home/home-content';
 import { Reveal } from '@/shared/components/Reveal';
 import { SectionHeading } from '@/shared/components/SectionHeading';
 

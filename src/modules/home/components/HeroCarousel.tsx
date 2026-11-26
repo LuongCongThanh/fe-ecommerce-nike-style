@@ -9,8 +9,8 @@ import { AnimatePresence, motion, useReducedMotion } from 'framer-motion';
 import { ArrowUpRight, ChevronLeft, ChevronRight } from 'lucide-react';
 import { useLocale, useTranslations } from 'next-intl';
 
-import { DURATION_SLOW, EASE_OUT } from '@/features/home/components/motion';
-import { useCanRender3D } from '@/shared/hooks/useCanRender3D';
+import { DURATION_SLOW, EASE_OUT } from '@/modules/home/components/motion';
+import { useCanRender3D } from '@/modules/home/hooks/useCanRender3D';
 
 const AUTOPLAY_DELAY_MS = 6500;
 const SWIPE_THRESHOLD_PX = 50;
@@ -23,7 +23,7 @@ const HERO_SLIDES = [
 
 // three.js only ever reaches the browser through this wrapper, and only after `useCanRender3D`
 // clears every gate — see docs/architecture.md ("three.js in the storefront").
-const HeroSlides3D = dynamic(async () => import('@/features/home/components/hero3d/HeroSlides3D'), { ssr: false });
+const HeroSlides3D = dynamic(async () => import('@/modules/home/components/hero3d/HeroSlides3D'), { ssr: false });
 
 function wrapSlideIndex(index: number): number {
   return (index + HERO_SLIDES.length) % HERO_SLIDES.length;

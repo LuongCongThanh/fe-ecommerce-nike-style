@@ -34,8 +34,8 @@ Snapshot tham chiếu ngày 25/11/2026. File dưới đây là source hiện t�
 - `src/features/catalog/product-detail/queries/useProduct.ts`
 - `src/features/catalog/product-detail/queries/useRelatedProducts.ts`
 - `src/features/catalog/search/components/SearchClient.tsx`
-- `src/features/home/components/SectionFeaturedCategories.tsx`
-- `src/features/home/components/SectionNewArrivals.tsx`
+- `src/modules/home/components/SectionFeaturedCategories.tsx`
+- `src/modules/home/components/SectionNewArrivals.tsx`
 - `src/features/storefront-shell/components/DesktopMegaMenu.tsx`
 - `src/features/storefront-shell/components/MobileNav.tsx`
 

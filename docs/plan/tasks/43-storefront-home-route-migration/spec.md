@@ -1,5 +1,5 @@
 ---
-status: ready-for-agent
+status: review
 blocked-by: [39-storefront-backend-integration]
 pr:
 kind: refactor

@@ -41,13 +41,13 @@ Ngày chốt 24/11/2026. Người dùng đã đồng ý sáu lựa chọn qua ba
 
 Áp cùng contract cho cả vi/en và chỉ dữ liệu API đã có consumer; chia delivery nhỏ, bắt đầu products, không đòi một PR chuyển hết.
 
-| Trang / khu vực | Dữ liệu server prefetch | Điều kiện giữ behavior |
-| --- | --- | --- |
-| `/[locale]/products` | Products theo URL filters/page/sort; category tree, sizes/colors mà UI cần | Dùng normalization hiện tại, PAGE_SIZE 12; không đổi URL hoặc enum mapping |
-| `/[locale]/categories/[slug]` | Category tree trước để resolve slug/id; products đúng category và URL options | Không resolve được slug thì không gọi products với categoryId undefined |
-| `/[locale]/search` | Search đúng q trim/page, chỉ khi q không rỗng | Giữ key search riêng, không trộn filter PLP |
-| `/[locale]/products/[slug]` | Product detail; related products khi đã biết category và có consumer hiện tại | Giữ null cho API 404 và stock/variant/mapping đang có; không mở AddToCart |
-| `/[locale]/home` | Featured category tree và new arrivals query đang gọi API | Không SSR thêm dữ liệu fixture/hero3D/newsletter; không tự thay mock section thành API |
+| Trang / khu vực               | Dữ liệu server prefetch                                                       | Điều kiện giữ behavior                                                                 |
+| ----------------------------- | ----------------------------------------------------------------------------- | -------------------------------------------------------------------------------------- |
+| `/[locale]/products`          | Products theo URL filters/page/sort; category tree, sizes/colors mà UI cần    | Dùng normalization hiện tại, PAGE_SIZE 12; không đổi URL hoặc enum mapping             |
+| `/[locale]/categories/[slug]` | Category tree trước để resolve slug/id; products đúng category và URL options | Không resolve được slug thì không gọi products với categoryId undefined                |
+| `/[locale]/search`            | Search đúng q trim/page, chỉ khi q không rỗng                                 | Giữ key search riêng, không trộn filter PLP                                            |
+| `/[locale]/products/[slug]`   | Product detail; related products khi đã biết category và có consumer hiện tại | Giữ null cho API 404 và stock/variant/mapping đang có; không mở AddToCart              |
+| `/[locale]/home`              | Featured category tree và new arrivals query đang gọi API                     | Không SSR thêm dữ liệu fixture/hero3D/newsletter; không tự thay mock section thành API |
 
 Query policy/shape thuộc catalog, reader/HTTP/mapper thuộc integration. Route chỉ gọi catalog server entry mỏng, phần prefetch/dehydrate đặt dưới `modules/catalog/server/`; có wrapper client composition ngoài app nếu cần render action. Home có thể dùng catalog server entry công khai đúng các query trên, không import private server helpers. Chi tiết tên file/symbol ghi cùng delivery spec; không thêm HTTP ngoài integration. Không thêm personalized data, session hay token vào HTML/hydrated state.
 
@@ -60,24 +60,24 @@ Query policy/shape thuộc catalog, reader/HTTP/mapper thuộc integration. Rout
 
 ## Mapping runtime để bàn giao
 
-| Nguồn hiện tại | Đích / trách nhiệm | Boundary phải giữ |
-| --- | --- | --- |
-| `app/_composition/AppProviders.tsx` + test | `providers/AppProviders.tsx` + test | Root mount; QueryClient per mount; auth→query→theme/motion; toaster/progress một owner |
-| `shared/lib/query-client.ts` | `providers/query-client.ts` | Giữ browser retry/staleTime/focus và mutation toast policy |
-| `features/auth/session/AuthRuntimeProvider.tsx` | `modules/auth/session/AuthRuntimeProvider.tsx` | Register trước bootstrap; cleanup identity; không register user adapter trong Node |
-| `features/storefront-shell/**` | `layouts/**` | Giữ guest merge và header/footer; không mount provider trùng |
-| `lib/api/client/**` | `integrations/backend/client/**` | Legacy transport giữ behavior và server caller hiện tại; không gắn client-only toàn folder |
-| `lib/api/endpoints/**` | `integrations/backend/endpoints/**` | Giữ URL, method, error class, request/response mapping; không ngầm cutover |
-| `lib/schemas/**` | `integrations/backend/schemas/**` | Transport schema; schema form vẫn thuộc module |
-| `lib/api/models/**`, `generated/**` | `integrations/backend/models/**`, `generated/**` | Giữ type/model và contract pin; không sửa generated bằng tay |
-| `lib/api/env/**` | `integrations/backend/env/**` | Giữ env fallback và VITE compatibility hiện tại trong rename; server reader dùng config server riêng |
-| `lib/api/adapters/browser.ts`, `server.ts` | `integrations/backend/adapters/browser.ts`, `server.ts` | Chỉ MSW bootstrap, không giả là auth SSR transport |
-| `lib/api/testing/**`, `mocks/**` | `integrations/backend/testing/**`, `mocks/**` | msw/browser và msw/node tách entry; handler/fixture chung, unhandled bypass |
-| `shared/lib/api-mocking.ts` | `integrations/backend/adapters/browser-bootstrap.ts` | Memoized readiness; flag đúng chuỗi true |
-| `src/instrumentation.ts`, `instrumentation.node.ts` | Giữ vị trí, sửa import | Giữ NEXT_RUNTIME nodejs dynamic guard; không kéo msw/node vào browser/Edge |
-| `scripts/gen-api.mjs`, `package.json`, `.github/workflows/ci.yml` | Giữ owner, sửa generated output/format/diff path cùng lượt | Giữ pin openapi-v0.5.0 và nội dung contract |
-| `src/pwa/sw.ts`, `next.config.ts`, public assets | Giữ vai trò/path | MSW worker khác Serwist; giữ offline fallback, production register và rewrite/browser origin |
-| Reader public SSR mới | `integrations/backend/server/` | Chỉ thêm ở SSR delivery; server-only, không browser singleton/session, no-store |
+| Nguồn hiện tại                                                    | Đích / trách nhiệm                                         | Boundary phải giữ                                                                                    |
+| ----------------------------------------------------------------- | ---------------------------------------------------------- | ---------------------------------------------------------------------------------------------------- |
+| `app/_composition/AppProviders.tsx` + test                        | `providers/AppProviders.tsx` + test                        | Root mount; QueryClient per mount; auth→query→theme/motion; toaster/progress một owner               |
+| `shared/lib/query-client.ts`                                      | `providers/query-client.ts`                                | Giữ browser retry/staleTime/focus và mutation toast policy                                           |
+| `features/auth/session/AuthRuntimeProvider.tsx`                   | `modules/auth/session/AuthRuntimeProvider.tsx`             | Register trước bootstrap; cleanup identity; không register user adapter trong Node                   |
+| `features/storefront-shell/**`                                    | `layouts/**`                                               | Giữ guest merge và header/footer; không mount provider trùng                                         |
+| `lib/api/client/**`                                               | `integrations/backend/client/**`                           | Legacy transport giữ behavior và server caller hiện tại; không gắn client-only toàn folder           |
+| `lib/api/endpoints/**`                                            | `integrations/backend/endpoints/**`                        | Giữ URL, method, error class, request/response mapping; không ngầm cutover                           |
+| `lib/schemas/**`                                                  | `integrations/backend/schemas/**`                          | Transport schema; schema form vẫn thuộc module                                                       |
+| `lib/api/models/**`, `generated/**`                               | `integrations/backend/models/**`, `generated/**`           | Giữ type/model và contract pin; không sửa generated bằng tay                                         |
+| `lib/api/env/**`                                                  | `integrations/backend/env/**`                              | Giữ env fallback và VITE compatibility hiện tại trong rename; server reader dùng config server riêng |
+| `lib/api/adapters/browser.ts`, `server.ts`                        | `integrations/backend/adapters/browser.ts`, `server.ts`    | Chỉ MSW bootstrap, không giả là auth SSR transport                                                   |
+| `lib/api/testing/**`, `mocks/**`                                  | `integrations/backend/testing/**`, `mocks/**`              | msw/browser và msw/node tách entry; handler/fixture chung, unhandled bypass                          |
+| `shared/lib/api-mocking.ts`                                       | `integrations/backend/adapters/browser-bootstrap.ts`       | Memoized readiness; flag đúng chuỗi true                                                             |
+| `src/instrumentation.ts`, `instrumentation.node.ts`               | Giữ vị trí, sửa import                                     | Giữ NEXT_RUNTIME nodejs dynamic guard; không kéo msw/node vào browser/Edge                           |
+| `scripts/gen-api.mjs`, `package.json`, `.github/workflows/ci.yml` | Giữ owner, sửa generated output/format/diff path cùng lượt | Giữ pin openapi-v0.5.0 và nội dung contract                                                          |
+| `src/pwa/sw.ts`, `next.config.ts`, public assets                  | Giữ vai trò/path                                           | MSW worker khác Serwist; giữ offline fallback, production register và rewrite/browser origin         |
+| Reader public SSR mới                                             | `integrations/backend/server/`                             | Chỉ thêm ở SSR delivery; server-only, không browser singleton/session, no-store                      |
 
 Các reader server mới dùng config `API_ORIGIN` server hiện có; không đưa server config/secret vào NEXT_PUBLIC. QueryClient SSR mới không tái dùng makeQueryClient browser nếu kéo auth/session hoặc mutation side effect vào server. Shared schemas/models/generated không được gắn server-only vì cả hai runtime dùng.
 

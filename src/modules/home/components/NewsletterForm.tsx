@@ -2,7 +2,7 @@
 
 import { AnimatePresence, motion, useReducedMotion } from 'framer-motion';
 
-import { useNewsletterForm } from '@/features/home/hooks/useNewsletterForm';
+import { useNewsletterForm } from '@/modules/home/hooks/useNewsletterForm';
 import { Button } from '@/shared/components/Button';
 
 interface NewsletterFormProps {

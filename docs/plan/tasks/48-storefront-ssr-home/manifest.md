@@ -5,8 +5,8 @@ Snapshot tham chiếu ngày 25/11/2026. File dưới đây là source hiện t�
 ## Source owner hiện tại
 
 - `src/features/catalog/queries/catalogKeys.ts`
-- `src/features/home/components/SectionFeaturedCategories.tsx`
-- `src/features/home/components/SectionNewArrivals.tsx`
+- `src/modules/home/components/SectionFeaturedCategories.tsx`
+- `src/modules/home/components/SectionNewArrivals.tsx`
 
 ## Consumer trực tiếp hiện tại ngoài owner
 

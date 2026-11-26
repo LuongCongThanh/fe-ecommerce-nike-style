@@ -1,6 +1,6 @@
 import { useTranslations } from 'next-intl';
 
-import { NewsletterForm } from '@/features/home/components/NewsletterForm';
+import { NewsletterForm } from '@/modules/home/components/NewsletterForm';
 
 export function SectionNewsletter(): React.JSX.Element {
   const t = useTranslations('home.newsletter');
