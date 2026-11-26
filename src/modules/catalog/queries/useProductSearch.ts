@@ -3,6 +3,7 @@
 import { useQuery } from '@tanstack/react-query';
 
 import { getProducts } from '@/integrations/backend/endpoints/catalog';
+import { normalizeSearchQuery } from '@/modules/catalog/catalogUrlState';
 import { catalogKeys } from '@/modules/catalog/queries/catalogKeys';
 import { buildSearchQuery } from '@/modules/catalog/queries/catalogQuery';
 
@@ -12,7 +13,7 @@ import { buildSearchQuery } from '@/modules/catalog/queries/catalogQuery';
  * Keying by `(query, page)` means a slow, older request can never overwrite a newer one's result.
  */
 export function useProductSearch(query: string, page: number) {
-  const q = query.trim();
+  const q = normalizeSearchQuery(query);
   return useQuery({
     queryKey: catalogKeys.search(q, page),
     enabled: q.length > 0,

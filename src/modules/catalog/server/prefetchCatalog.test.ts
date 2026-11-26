@@ -6,8 +6,8 @@ import { catalogKeys } from '@/modules/catalog/queries/catalogKeys';
 import { buildProductListQuery, buildRelatedQuery } from '@/modules/catalog/queries/catalogQuery';
 import {
   createCatalogPrefetcher,
-  parseSearchPage,
   prefetchCategoryListing,
+  prefetchHome,
   prefetchProductDetail,
   prefetchProductsListing,
   prefetchSearchResults,
@@ -264,20 +264,6 @@ describe('prefetchSearchResults', () => {
   });
 });
 
-describe('parseSearchPage', () => {
-  it.each([
-    [undefined, 1],
-    [null, 1],
-    ['abc', 1],
-    ['0', 1],
-    ['-2', 1],
-    ['1.5', 1],
-    ['4', 4],
-  ])('%j -> %i', (value, expected) => {
-    expect(parseSearchPage(value)).toBe(expected);
-  });
-});
-
 const detailDto = {
   id: 'p1',
   slug: 'air-max',
@@ -352,5 +338,50 @@ describe('prefetchProductDetail', () => {
     const state = await prefetchProductDetail('air-max');
 
     expect(state.queries.map((q) => q.queryKey)).toEqual([catalogKeys.product('air-max')]);
+  });
+});
+
+describe('parallel reads and failure logging', () => {
+  it('starts the independent PLP reads together, before any answers', async () => {
+    const started: string[] = [];
+    const release: Array<() => void> = [];
+    fetchMock.mockImplementation(
+      (input) =>
+        new Promise<Response>((resolve) => {
+          const { pathname } = new URL(String(input));
+          started.push(pathname);
+          release.push(() => resolve(json(pathname === '/api/v1/categories' ? tree : pathname === '/api/v1/products' ? productPage : [])));
+        }),
+    );
+
+    const pending = prefetchProductsListing(new URLSearchParams(''));
+    await vi.waitFor(() => expect(started).toHaveLength(4));
+    expect(started.sort()).toEqual(['/api/v1/categories', '/api/v1/colors', '/api/v1/products', '/api/v1/sizes']);
+    release.forEach((go) => go());
+    await pending;
+  });
+
+  it('logs the query key of a failed read, with no URL or secret, and still dehydrates the rest', async () => {
+    const log = vi.spyOn(console, 'error').mockImplementation(() => undefined);
+    backend({ products: new Error('socket hang up at http://backend.test/secret') });
+
+    const state = await prefetchProductsListing(new URLSearchParams(''));
+
+    expect(state.queries.some((q) => JSON.stringify(q.queryKey).includes('products'))).toBe(false);
+    const messages = log.mock.calls.map(([message]) => String(message));
+    expect(messages.some((m) => m.includes('"products"') && m.includes('NETWORK_ERROR (status 0)'))).toBe(true);
+    expect(messages.join(' ')).not.toContain('backend.test');
+  });
+});
+
+describe('Next.js internal errors', () => {
+  it('are not logged as read failures', async () => {
+    const log = vi.spyOn(console, 'error').mockImplementation(() => undefined);
+    const internal = Object.assign(new Error('NEXT_HTTP_ERROR_FALLBACK;404'), { digest: 'NEXT_HTTP_ERROR_FALLBACK;404' });
+    fetchMock.mockRejectedValue(internal);
+
+    await prefetchHome();
+
+    expect(log).not.toHaveBeenCalled();
   });
 });

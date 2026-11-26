@@ -23,3 +23,24 @@ export const IS_API_MOCKING = readEnv('VITE_API_MOCKING', nextApiMocking) === 't
 
 /** Absolute origin per docs/api-integration.md — needed because Node's `fetch` (unlike a browser) can't resolve a path-only URL. */
 export const API_BASE_URL = readEnv('VITE_SITE_URL', nextSiteUrl) ?? 'http://localhost:3000';
+
+const DEFAULT_SERVER_API_ORIGIN = 'http://localhost:8080';
+let warnedMissingServerOrigin = false;
+
+/**
+ * Backend origin for server-side public reads (`API_ORIGIN`, the same server-only setting
+ * `next.config.ts` proxies `/api/v1` to). Read at call time, never exposed to the browser. A missing
+ * value falls back to the local Backend for development; in production that is a misconfiguration, so
+ * it is logged loudly (once per process).
+ */
+export function readServerApiOrigin(): string {
+  const configured = hasProcess ? process.env.API_ORIGIN : undefined;
+  if (configured === undefined || configured === '') {
+    if (hasProcess && process.env.NODE_ENV === 'production' && !warnedMissingServerOrigin) {
+      warnedMissingServerOrigin = true;
+      console.error(`[backend] API_ORIGIN is not set in production; server reads fall back to ${DEFAULT_SERVER_API_ORIGIN}.`);
+    }
+    return DEFAULT_SERVER_API_ORIGIN;
+  }
+  return configured.replace(/\/+$/, '');
+}

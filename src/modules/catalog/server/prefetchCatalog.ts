@@ -1,3 +1,5 @@
+import { unstable_rethrow } from 'next/navigation';
+
 import 'server-only';
 
 import { dehydrate, type DehydratedState, QueryClient } from '@tanstack/react-query';
@@ -11,7 +13,7 @@ import {
   getProductsServer,
   getSizesServer,
 } from '@/integrations/backend/server/catalog';
-import { parseCatalogFilters, parseCatalogOptionFilters } from '@/modules/catalog/catalogUrlState';
+import { normalizeSearchQuery, parseCatalogFilters, parseCatalogOptionFilters, parsePageParam } from '@/modules/catalog/catalogUrlState';
 import { catalogKeys } from '@/modules/catalog/queries/catalogKeys';
 import {
   buildProductListQuery,
@@ -23,6 +25,7 @@ import {
   resolveCategoryId,
   toCategoryData,
 } from '@/modules/catalog/queries/catalogQuery';
+import { QUERY_CLIENT_DEFAULTS } from '@/shared/queries/queryClientDefaults';
 
 /**
  * Server prefetch for public catalog pages. Writes the same keys, shapes and normalization as the
@@ -44,9 +47,39 @@ export interface CatalogPrefetcher {
   dehydrate(): DehydratedState;
 }
 
-/** A QueryClient for one request: no retry (the reader already has its timeout), never shared or cached across requests. */
+/**
+ * A QueryClient for one request, never shared or cached across requests. Defaults come from the same
+ * object as the browser client (`makeQueryClient`); only `retry` differs: the reader already has its
+ * timeout and the server never retries (runtime.md).
+ */
 function createRequestQueryClient(): QueryClient {
-  return new QueryClient({ defaultOptions: { queries: { retry: false } } });
+  return new QueryClient({
+    defaultOptions: { ...QUERY_CLIENT_DEFAULTS, queries: { ...QUERY_CLIENT_DEFAULTS.queries, retry: false } },
+  });
+}
+
+/** Logs a failed prefetch with its query key and failure class only: no URL, header, cookie or payload. */
+function logPrefetchFailure(key: readonly unknown[], error: unknown): void {
+  const detail = error instanceof ApiError ? `${error.code} (status ${String(error.status)})` : 'unexpected error';
+  console.error(`[catalog] server prefetch failed for ${JSON.stringify(key)}: ${detail}`);
+}
+
+/** Wraps a reader so a failure is logged, then rethrown for `prefetchQuery` to drop from hydration. */
+function logged<T>(key: readonly unknown[], read: () => Promise<T>): () => Promise<T> {
+  return async () => {
+    try {
+      return await read();
+    } catch (error) {
+      // Next.js control-flow errors (dynamic-usage bailout) are not read failures: do not log them.
+      try {
+        unstable_rethrow(error);
+      } catch {
+        throw error;
+      }
+      logPrefetchFailure(key, error);
+      throw error;
+    }
+  };
 }
 
 export function createCatalogPrefetcher(): CatalogPrefetcher {
@@ -56,40 +89,51 @@ export function createCatalogPrefetcher(): CatalogPrefetcher {
     async categories() {
       await queryClient.prefetchQuery({
         queryKey: catalogKeys.categories(),
-        queryFn: async () => toCategoryData(await getCategoryTreeServer()),
+        queryFn: logged(catalogKeys.categories(), async () => toCategoryData(await getCategoryTreeServer())),
         staleTime: CATALOG_REFERENCE_STALE_TIME,
       });
       return queryClient.getQueryData<CategoryData>(catalogKeys.categories());
     },
     async options() {
       await Promise.all([
-        queryClient.prefetchQuery({ queryKey: catalogKeys.sizes(), queryFn: getSizesServer, staleTime: CATALOG_REFERENCE_STALE_TIME }),
-        queryClient.prefetchQuery({ queryKey: catalogKeys.colors(), queryFn: getColorsServer, staleTime: CATALOG_REFERENCE_STALE_TIME }),
+        queryClient.prefetchQuery({
+          queryKey: catalogKeys.sizes(),
+          queryFn: logged(catalogKeys.sizes(), getSizesServer),
+          staleTime: CATALOG_REFERENCE_STALE_TIME,
+        }),
+        queryClient.prefetchQuery({
+          queryKey: catalogKeys.colors(),
+          queryFn: logged(catalogKeys.colors(), getColorsServer),
+          staleTime: CATALOG_REFERENCE_STALE_TIME,
+        }),
       ]);
     },
     async products(query) {
-      await queryClient.prefetchQuery({ queryKey: catalogKeys.products(query), queryFn: async () => getProductsServer(query) });
+      await queryClient.prefetchQuery({
+        queryKey: catalogKeys.products(query),
+        queryFn: logged(catalogKeys.products(query), async () => getProductsServer(query)),
+      });
       return queryClient.getQueryData<ProductPage>(catalogKeys.products(query));
     },
     async search(q, page) {
-      const trimmed = q.trim();
+      const trimmed = normalizeSearchQuery(q);
       if (trimmed.length === 0) return undefined;
       const key = catalogKeys.search(trimmed, page);
-      await queryClient.prefetchQuery({ queryKey: key, queryFn: async () => getProductsServer(buildSearchQuery(trimmed, page)) });
+      await queryClient.prefetchQuery({ queryKey: key, queryFn: logged(key, async () => getProductsServer(buildSearchQuery(trimmed, page))) });
       return queryClient.getQueryData<ProductPage>(key);
     },
     async product(slug) {
       const key = catalogKeys.product(slug);
       await queryClient.prefetchQuery({
         queryKey: key,
-        queryFn: async () => {
+        queryFn: logged(key, async () => {
           try {
             return await getProductBySlugServer(slug);
           } catch (error) {
             if (error instanceof ApiError && error.status === 404) return null;
             throw error;
           }
-        },
+        }),
       });
       return queryClient.getQueryData<ProductDetail | null>(key);
     },
@@ -134,19 +178,13 @@ export async function prefetchCategoryListing(slug: string, searchParams: URLSea
   return prefetchListing(slug, searchParams);
 }
 
-/** Reads `page` the way `useProductSearchListing` does: a positive integer, otherwise 1. */
-export function parseSearchPage(value: string | null | undefined): number {
-  const page = Number(value);
-  return Number.isInteger(page) && page > 0 ? page : 1;
-}
-
 /**
  * `/[locale]/search`: only the results for the trimmed `q` and `page`. Search never touches the PLP
  * filters, categories, sizes or colors; an empty or whitespace `q` fetches nothing.
  */
 export async function prefetchSearchResults(q: string | undefined, page: string | undefined): Promise<DehydratedState> {
   const prefetcher = createCatalogPrefetcher();
-  await prefetcher.search(q ?? '', parseSearchPage(page));
+  await prefetcher.search(normalizeSearchQuery(q), parsePageParam(page));
   return prefetcher.dehydrate();
 }
 

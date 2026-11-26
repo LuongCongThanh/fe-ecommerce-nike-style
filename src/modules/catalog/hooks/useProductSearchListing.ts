@@ -2,6 +2,7 @@
 
 import { useRouter, useSearchParams } from 'next/navigation';
 
+import { parsePageParam } from '@/modules/catalog/catalogUrlState';
 import { useProductSearch } from '@/modules/catalog/queries/useProductSearch';
 
 /** Search results page: reads `q`/`page` from the URL and exposes `onPageChange` as the one place
@@ -11,8 +12,7 @@ export function useProductSearchListing() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const query = searchParams.get('q') ?? '';
-  const pageParam = Number(searchParams.get('page'));
-  const page = Number.isInteger(pageParam) && pageParam > 0 ? pageParam : 1;
+  const page = parsePageParam(searchParams.get('page'));
 
   const result = useProductSearch(query, page);
 
