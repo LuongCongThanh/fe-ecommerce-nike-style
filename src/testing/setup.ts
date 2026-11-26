@@ -6,7 +6,7 @@ afterEach(() => {
   cleanup();
 });
 
-// Guard: các test dùng `@vitest-environment node` (vd. middleware/edge runtime) không có `window`.
+// Guard: các test dùng `@vitest-environment node` (vd. proxy/edge runtime) không có `window`.
 if (typeof window !== 'undefined') {
   Object.defineProperty(window, 'matchMedia', {
     writable: true,

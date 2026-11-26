@@ -40,7 +40,7 @@ export const metadata: Metadata = {
 
 export default async function RootLayout({ children }: { readonly children: React.ReactNode }) {
   // Root layout nằm ngoài segment [locale] nên không nhận được nó qua `params` — dùng `getLocale()`
-  // của next-intl (đọc locale mà `middleware.ts` đã xác định cho request hiện tại) để khai đúng
+  // của next-intl (đọc locale mà `proxy.ts` đã xác định cho request hiện tại) để khai đúng
   // <html lang>. Route không có tiền tố locale (vd. /~offline) fallback về 'vi' qua i18n/request.ts.
   const locale = await getLocale();
 

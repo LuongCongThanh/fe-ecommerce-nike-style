@@ -34,10 +34,10 @@ export async function logOut(page: Page): Promise<void> {
 }
 
 /**
- * Sets the `access_token` cookie the middleware reads as its login hint. The real Backend sets it;
+ * Sets the `access_token` cookie the proxy reads as its login hint. The real Backend sets it;
  * in mock mode no cookie set by the MSW worker reaches the browser (see the transport note in
  * `src/integrations/backend/mocks/auth-fixtures.ts`), so the test supplies it. This only lets the request past
- * the UX redirect in `src/middleware.ts`; the checkout API calls still use the session from the real
+ * the UX redirect in `src/proxy.ts`; the checkout API calls still use the session from the real
  * login response. Nothing in production code changes.
  */
 export async function addMiddlewareLoginHint(page: Page): Promise<void> {
