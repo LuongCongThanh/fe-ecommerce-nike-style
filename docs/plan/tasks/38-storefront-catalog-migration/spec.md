@@ -1,7 +1,7 @@
 ---
 status: review
 blocked-by: [37-storefront-providers-layouts]
-pr: #PR
+pr: #125
 kind: refactor
 approved:
   files: []
