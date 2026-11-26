@@ -2,7 +2,7 @@
 
 import { useQuery } from '@tanstack/react-query';
 
-import { getCategoryTree } from '@/lib/api/endpoints/catalog';
+import { getCategoryTree } from '@/integrations/backend/endpoints/catalog';
 import { flattenCategories } from '@/modules/catalog/categoryTree';
 import { catalogKeys } from '@/modules/catalog/queries/catalogKeys';
 

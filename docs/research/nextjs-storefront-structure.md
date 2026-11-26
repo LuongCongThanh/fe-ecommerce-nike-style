@@ -4,7 +4,7 @@ Ngày đối chiếu: 24/11/2026. Trạng thái: **khuyến nghị để thảo 
 
 ## Kết luận đề xuất
 
-Giữ `app` cho route/composition, `features` theo năng lực nghiệp vụ, `shared` cho thành phần thực sự dùng chung, `lib/api` và `lib/schemas` cho SDK/contract. Bổ sung ranh giới server/client rõ tại nơi cần, không thay toàn bộ cây thành FSD hoặc Clean Architecture. Đây là đánh giá theo code hiện tại và chi phí chuyển đổi, không phải một tiêu chuẩn Next.js bắt buộc.
+Giữ `app` cho route/composition, `features` theo năng lực nghiệp vụ, `shared` cho thành phần thực sự dùng chung, `integrations/backend` cho SDK/contract. Bổ sung ranh giới server/client rõ tại nơi cần, không thay toàn bộ cây thành FSD hoặc Clean Architecture. Đây là đánh giá theo code hiện tại và chi phí chuyển đổi, không phải một tiêu chuẩn Next.js bắt buộc.
 
 `model` là tên hợp lệ: FSD định nghĩa segment này chứa schemas, interfaces, stores và business logic. Vì thế không có căn cứ nói muốn SOLID thì phải đổi `model` thành bốn thư mục `types/constants/schemas/domain`. Tách theo trách nhiệm và lý do thay đổi; một module nhỏ có thể giữ type, constant và hàm liên quan cùng nhau. [FSD: slices/segments](https://feature-sliced.design/docs/reference/slices-segments).
 
@@ -16,14 +16,14 @@ Giữ `app` cho route/composition, `features` theo năng lực nghiệp vụ, `s
 | ------------------------------------------------- | ------------------------------------------------------------------------------------------------- | ---------------------------------------------------------------------------------------- |
 | `src/app/[locale]/(shop)/products/page.tsx`       | Async route đặt locale và compose `FilterSidebar`, `ProductsClient`; không đọc danh sách sản phẩm | Route là Server Component chưa đồng nghĩa dữ liệu catalog đã server-rendered             |
 | `src/features/catalog/queries/useProducts.ts`     | Client hook resolve category, xây ProductQuery, giữ previous data                                 | Có owner query rõ; SSR cần tái sử dụng input/key và tránh request trùng                  |
-| `src/lib/api/endpoints/catalog.ts`                | Endpoint và DTO mapper tập trung; URL khác giữa Node/browser                                      | Không cần thêm feature repository chỉ để chuyển tiếp request                             |
+| `src/integrations/backend/endpoints/catalog.ts`   | Endpoint và DTO mapper tập trung; URL khác giữa Node/browser                                      | Không cần thêm feature repository chỉ để chuyển tiếp request                             |
 | `src/features/catalog/variantResolution.ts`       | Interface và logic resolve SKU cùng module thuần; có test cạnh file                               | Ví dụ trách nhiệm rõ mà không cần interface/service/class riêng                          |
 | `src/features/checkout/queries/useCreateOrder.ts` | Hook phối hợp cart, order keys, endpoint, idempotency key và điều hướng                           | Cross-feature dependency có thật; áp FSD nguyên bản đòi hỏi thiết kế lại composition     |
 | `src/features/checkout/queries/useReservation.ts` | Query được enable theo cart, tắt retry, có test cạnh hook                                         | Việc tách folder không tự bảo toàn semantics giữ chỗ                                     |
-| `src/lib/api/client/runtime.ts`                   | Auth adapter ở biến module, lifecycle đăng ký/cleanup                                             | Không dùng adapter token toàn cục này cho session riêng từng request SSR                 |
+| `src/integrations/backend/client/runtime.ts`      | Auth adapter ở biến module, lifecycle đăng ký/cleanup                                             | Không dùng adapter token toàn cục này cho session riêng từng request SSR                 |
 | `package.json`, `playwright.config.ts`            | Next `^16.2.10`, unit dùng Vitest, E2E ở `./e2e`                                                  | Docs Next latest có thể đi trước version được cài; kiểm API theo lockfile khi triển khai |
 
-Rule hiện tại cấm direct fetch ngoài SDK, barrel `index.ts` mới và deep import private; transport validation thuộc `lib/schemas`. [Frontend architecture](../../.claude/rules/apps/frontend-architecture.md), [SOLID](../../.claude/rules/core/solid-patterns.md), [testing](../../.claude/rules/process/testing.md). Ghi chú này không tự thay các rule đó.
+Rule hiện tại cấm direct fetch ngoài SDK, barrel `index.ts` mới và deep import private; transport validation thuộc `integrations/backend/schemas`. [Frontend architecture](../../.claude/rules/apps/frontend-architecture.md), [SOLID](../../.claude/rules/core/solid-patterns.md), [testing](../../.claude/rules/process/testing.md). Ghi chú này không tự thay các rule đó.
 
 ## So sánh bốn hướng
 
@@ -114,7 +114,7 @@ Bảng này là khuyến nghị cho repo, không phải quy định từ Next/FS
 | Component props/interface nhỏ     | Cạnh component. Không tạo file `interfaces/` cho mỗi props                                                                                 |
 | View model/command                | Cạnh mapper/use case hoặc module feature có owner; tách DTO nếu semantics/nullability khác                                                 |
 | Port/interface                    | Cạnh capability cần dependency inversion, khi có runtime implementations hoặc seam test có giá trị                                         |
-| Transport schema                  | `src/lib/schemas`; generated TypeScript không thay runtime validation                                                                      |
+| Transport schema                  | `src/integrations/backend/schemas`; generated TypeScript không thay runtime validation                                                     |
 | Form schema                       | Feature `schemas/` hoặc module model tương ứng; không trộn form input với response DTO                                                     |
 | Business rule thuần               | Module tên hành vi như `variantResolution.ts`, colocated test                                                                              |
 | HTTP service                      | Function endpoint trong SDK hiện tại; không thêm `CatalogService -> CatalogRepository -> SDK` chuyển tiếp 1:1                              |
@@ -129,7 +129,7 @@ Next mặc định page/layout là Server Component; state, event và browser AP
 Khuyến nghị triển khai:
 
 1. Ưu tiên public catalog/SEO để server đọc dữ liệu trước; URL là input chung cho server reader và client query. Chọn render props hoặc prefetch/dehydrate dựa trên nhu cầu client refetch, không dùng hai cache độc lập thiếu chính sách.
-2. Vẫn đi qua `lib/api`; feature server module compose SDK, không tự gọi HTTP. Giữ browser token/refresh adapter tách request-scoped server transport; không đưa token cá nhân vào singleton hoặc cache public.
+2. Vẫn đi qua `integrations/backend`; feature server module compose SDK, không tự gọi HTTP. Giữ browser token/refresh adapter tách request-scoped server transport; không đưa token cá nhân vào singleton hoặc cache public.
 3. Xác định timeout/error, cache/revalidation và query key trước khi migrate PLP/PDP; tránh fetch cùng dataset lại ngay khi hydrate.
 4. Giữ checkout/session/reservation theo semantics hiện có tới khi cookie/auth backend và cache riêng tư được xác minh. Đổi folder không giải quyết authentication cutover.
 5. Không đánh dấu toàn feature `'use client'`; không import store/browser runtime từ server reader. Không thêm BFF/route handler chỉ để proxy 1:1 khi rewrite/SDK đã đáp ứng.

@@ -1,7 +1,7 @@
 import { screen, waitFor } from '@testing-library/react';
 import { http, HttpResponse } from 'msw';
 import { afterAll, afterEach, beforeAll, beforeEach, describe, expect, it, vi } from 'vitest';
-import { server } from '@/lib/api/testing/msw-server';
+import { server } from '@/integrations/backend/testing/msw-server';
 
 import { renderWithProviders } from '@/testing/render';
 import { SearchClient } from '@/modules/catalog/search/components/SearchClient';

@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest';
 
-import type { Sku } from '@/lib/schemas/catalog/catalog';
+import type { Sku } from '@/integrations/backend/schemas/catalog/catalog.schema';
 
 import { getVariantAxes, resolveSku } from '@/modules/catalog/variantResolution';
 

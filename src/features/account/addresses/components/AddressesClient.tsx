@@ -12,7 +12,7 @@ import { useAddresses } from '@/features/account/addresses/queries/useAddresses'
 import { useDeleteAddress } from '@/features/account/addresses/queries/useDeleteAddress';
 import { useSetDefaultAddress } from '@/features/account/addresses/queries/useSetDefaultAddress';
 import type { AddressFormInput } from '@/features/account/addresses/schemas/address';
-import type { StorefrontAddress } from '@/lib/api/endpoints/address';
+import type { StorefrontAddress } from '@/integrations/backend/endpoints/address';
 import { Badge } from '@/shared/components/Badge';
 import { Button } from '@/shared/components/Button';
 import { Checkbox } from '@/shared/components/Checkbox';

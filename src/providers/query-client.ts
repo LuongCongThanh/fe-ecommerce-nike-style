@@ -1,6 +1,6 @@
 import { QueryClient } from '@tanstack/react-query';
 
-import { ApiError } from '@/shared/lib/errors/api-error';
+import { ApiError } from '@/integrations/backend/client/api-error';
 
 /**
  * No `mutations.onError` default here — that used to toast a generic message on every failed

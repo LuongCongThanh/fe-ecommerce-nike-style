@@ -57,8 +57,7 @@ describe('locate', () => {
     ['src/layouts/components/Header.tsx', 'layouts:components/Header'],
     ['src/app/_composition/AppProviders.tsx', 'providers:AppProviders'],
     ['src/providers/AppProviders.tsx', 'providers:AppProviders'],
-    ['src/lib/schemas/cart/cart.ts', 'integrations:schemas/cart/cart'],
-    ['src/integrations/backend/schemas/cart/cart.ts', 'integrations:schemas/cart/cart'],
+    ['src/integrations/backend/schemas/cart/cart.schema.ts', 'integrations:schemas/cart/cart.schema'],
     ['src/app/[locale]/(shop)/cart/page.tsx', 'app:[locale]/(shop)/cart/page'],
     ['src/i18n/request.ts', 'platform:i18n/request'],
   ])('maps %s to the logical owner %s', (path, key) => {

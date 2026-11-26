@@ -11,12 +11,12 @@ import { formatOrderDate } from '@/features/orders/formatOrderDate';
 import { useCancelOrder } from '@/features/orders/order-detail/queries/useCancelOrder';
 import { useOrder } from '@/features/orders/order-detail/queries/useOrder';
 import { useRequestReturn } from '@/features/orders/order-detail/queries/useRequestReturn';
-import { canCancelOrder, canRequestReturn } from '@/lib/api/endpoints/order-transitions';
+import { ApiError } from '@/integrations/backend/client/api-error';
+import { canCancelOrder, canRequestReturn } from '@/integrations/backend/endpoints/order-transitions';
 import { Button } from '@/shared/components/Button';
 import { QueryState } from '@/shared/components/QueryState';
 import { Separator } from '@/shared/components/Separator';
 import { formatCurrency } from '@/shared/formatting/currency';
-import { ApiError } from '@/shared/lib/errors/api-error';
 
 interface OrderDetailClientProps {
   readonly id: string;

@@ -4,20 +4,23 @@ import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
 import { useAuth } from '@/features/auth/session/useAuth';
 import { Header } from '@/layouts/components/Header';
-import { getCategoryTree } from '@/lib/api/endpoints/catalog';
+import { getCategoryTree } from '@/integrations/backend/endpoints/catalog';
 import { renderWithProviders } from '@/testing/render';
 
 const push = vi.hoisted(() => vi.fn());
 
 vi.mock('next/navigation', () => ({ useRouter: () => ({ push }) }));
 vi.mock('next-intl', async (importOriginal) => ({ ...(await importOriginal<typeof import('next-intl')>()), useLocale: () => 'vi' }));
-vi.mock('@/lib/api/endpoints/catalog', () => ({ getCategoryTree: vi.fn() }));
-vi.mock('@/lib/api/endpoints/cart', () => ({ getSkusByIds: vi.fn().mockResolvedValue([]), mergeCartAfterLogin: vi.fn().mockResolvedValue([]) }));
-vi.mock('@/lib/api/endpoints/wishlist', () => ({
+vi.mock('@/integrations/backend/endpoints/catalog', () => ({ getCategoryTree: vi.fn() }));
+vi.mock('@/integrations/backend/endpoints/cart', () => ({
+  getSkusByIds: vi.fn().mockResolvedValue([]),
+  mergeCartAfterLogin: vi.fn().mockResolvedValue([]),
+}));
+vi.mock('@/integrations/backend/endpoints/wishlist', () => ({
   getProductsByIds: vi.fn().mockResolvedValue([]),
   mergeWishlistAfterLogin: vi.fn().mockResolvedValue([]),
 }));
-vi.mock('@/lib/api/endpoints/auth', () => ({ logout: vi.fn().mockResolvedValue(undefined) }));
+vi.mock('@/integrations/backend/endpoints/auth', () => ({ logout: vi.fn().mockResolvedValue(undefined) }));
 
 const customer = {
   id: 1,

@@ -9,7 +9,7 @@ import { useCart } from '@/features/cart/hooks/useCart';
 import { clearCart } from '@/features/cart/stores/cart.store';
 import type { CheckoutInput } from '@/features/checkout/schemas/checkout';
 import { orderKeys } from '@/features/orders/queries/orderKeys';
-import { createOrder } from '@/lib/api/endpoints/orders';
+import { createOrder } from '@/integrations/backend/endpoints/orders';
 import { useApiMutation } from '@/shared/queries/useApiMutation';
 
 /**

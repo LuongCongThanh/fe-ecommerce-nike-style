@@ -1,15 +1,15 @@
 import { fireEvent, screen, waitFor, within } from '@testing-library/react';
 import { afterAll, afterEach, beforeAll, beforeEach, describe, expect, it } from 'vitest';
-import { resetAuthRuntime } from '@/lib/api/client/fetcher';
-import { resetMockAddressDbForTesting } from '@/lib/api/mocks/address-fixtures';
-import { registerAuthRuntimeAdapter } from '@/lib/api/client/runtime';
-import { encodeAccessToken } from '@/lib/api/mocks/auth-fixtures';
-import { server } from '@/lib/api/testing/msw-server';
+import { resetAuthRuntime } from '@/integrations/backend/client/fetcher';
+import { resetMockAddressDbForTesting } from '@/integrations/backend/mocks/address-fixtures';
+import { registerAuthRuntimeAdapter } from '@/integrations/backend/client/runtime';
+import { encodeAccessToken } from '@/integrations/backend/mocks/auth-fixtures';
+import { server } from '@/integrations/backend/testing/msw-server';
 
 import { renderWithProviders } from '@/testing/render';
 import { AddressesClient } from '@/features/account/addresses/components/AddressesClient';
 
-// Demo account (user id 1) seeded in `src/lib/api/mocks/address-fixtures.ts` with 1 default address.
+// Demo account (user id 1) seeded in `src/integrations/backend/mocks/address-fixtures.ts` with 1 default address.
 const ACCOUNT_USER_ID = 1;
 
 beforeAll(() => server.listen({ onUnhandledRequest: 'error' }));

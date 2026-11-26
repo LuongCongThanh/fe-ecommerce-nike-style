@@ -28,7 +28,6 @@ const TARGETS = [
   'src/modules/cart/useCart.js',
   'src/shared/flag.js',
   'src/integrations/backend/client.js',
-  'src/lib/api/client.js',
 ];
 
 beforeAll(() => {
@@ -68,7 +67,6 @@ describe('restrictedPathZones', () => {
     ['src/shared/useCart.js', 'src/features/cart/useCart.js'],
     ['src/shared/useCartNew.js', 'src/modules/cart/useCart.js'],
     ['src/integrations/backend/useLayout.js', 'src/layouts/Header.js'],
-    ['src/lib/api/useProviders.js', 'src/providers/AppProviders.js'],
   ])('blocks %s importing %s', async (file, importPath) => {
     await expect(lint(file, importPath)).resolves.toEqual(['import/no-restricted-paths']);
   });
@@ -78,7 +76,7 @@ describe('restrictedPathZones', () => {
     ['src/features/storefront-shell/HeaderCart.js', 'src/features/cart/useCart.js'],
     ['src/providers/Bootstrap.js', 'src/integrations/backend/client.js'],
     ['src/modules/cart/useFlag.js', 'src/shared/flag.js'],
-    ['src/features/cart/useClient.js', 'src/lib/api/client.js'],
+    ['src/features/cart/useClient.js', 'src/integrations/backend/client.js'],
     ['src/shared/useClient.js', 'src/integrations/backend/client.js'],
   ])('allows %s importing %s', async (file, importPath) => {
     await expect(lint(file, importPath)).resolves.toEqual([]);

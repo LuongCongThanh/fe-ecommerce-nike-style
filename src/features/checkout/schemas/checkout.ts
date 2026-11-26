@@ -1,6 +1,6 @@
 import { z } from 'zod';
 
-import { VIETNAM_PHONE_REGEX } from '@/lib/schemas/address/address';
+import { VIETNAM_PHONE_REGEX } from '@/integrations/backend/schemas/address/address.schema';
 
 export const addressSchema = z.object({
   fullName: z.string().min(1, 'Vui lòng nhập họ tên'),

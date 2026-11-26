@@ -1,9 +1,9 @@
 import { screen } from '@testing-library/react';
 import { afterAll, afterEach, beforeAll, describe, expect, it } from 'vitest';
-import { resetAuthRuntime } from '@/lib/api/client/fetcher';
-import { registerAuthRuntimeAdapter } from '@/lib/api/client/runtime';
-import { encodeAccessToken } from '@/lib/api/mocks/auth-fixtures';
-import { server } from '@/lib/api/testing/msw-server';
+import { resetAuthRuntime } from '@/integrations/backend/client/fetcher';
+import { registerAuthRuntimeAdapter } from '@/integrations/backend/client/runtime';
+import { encodeAccessToken } from '@/integrations/backend/mocks/auth-fixtures';
+import { server } from '@/integrations/backend/testing/msw-server';
 
 import { renderWithProviders } from '@/testing/render';
 import { OrdersClient } from '@/features/orders/order-list/components/OrdersClient';

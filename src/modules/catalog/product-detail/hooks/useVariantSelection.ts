@@ -2,7 +2,7 @@
 
 import { useState } from 'react';
 
-import type { ColorOption, ProductDetail, ProductVariant, SizeOption } from '@/lib/api/models/catalog';
+import type { ColorOption, ProductDetail, ProductVariant, SizeOption } from '@/integrations/backend/models/catalog';
 
 const PLACEHOLDER_IMAGE = '/images/products/placeholder.jpg';
 

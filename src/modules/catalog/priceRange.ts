@@ -1,4 +1,4 @@
-import type { Product } from '@/lib/schemas/catalog/catalog';
+import type { Product } from '@/integrations/backend/schemas/catalog/catalog.schema';
 
 export interface PriceRange {
   readonly min: number;

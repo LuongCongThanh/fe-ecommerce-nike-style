@@ -2,8 +2,8 @@
 
 import { useMutation, type UseMutationOptions } from '@tanstack/react-query';
 
+import { ApiError } from '@/integrations/backend/client/api-error';
 import { notify } from '@/shared/feedback/notification';
-import { ApiError } from '@/shared/lib/errors/api-error';
 
 interface ApiMutationOptions<TData, TVariables> extends Omit<UseMutationOptions<TData, unknown, TVariables>, 'onSuccess'> {
   /** Shown on failure unless the error is an `ApiError` with its own message. */

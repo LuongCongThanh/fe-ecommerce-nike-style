@@ -1,6 +1,6 @@
 import { z } from 'zod';
 
-import { createAddressFormSchema } from '@/lib/schemas/address/address';
+import { createAddressFormSchema } from '@/integrations/backend/schemas/address/address.schema';
 
 const ShippingAddressSchema = createAddressFormSchema({
   fullName: 'Họ tên phải có ít nhất 2 ký tự',

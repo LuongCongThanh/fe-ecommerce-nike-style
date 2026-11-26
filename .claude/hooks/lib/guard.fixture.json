@@ -21,7 +21,7 @@
   "outputFilters": ["tail", "head", "grep", "wc"],
   "denyCommandPatterns": ["\\brm\\s+(-\\S*\\s+)*-\\S*[rR]", "\\bfind\\b.*\\s-delete\\b", "\\s--output(=|\\s|$)"],
   "denyPaths": [
-    "src/lib/api/generated/**",
+    "src/integrations/backend/generated/**",
     "pnpm-lock.yaml",
     "skills-lock.json",
     ".claude/**",

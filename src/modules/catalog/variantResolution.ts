@@ -1,4 +1,4 @@
-import type { Sku } from '@/lib/schemas/catalog/catalog';
+import type { Sku } from '@/integrations/backend/schemas/catalog/catalog.schema';
 
 export interface VariantAxes {
   /** Distinct Color values across a Product's SKUs, in first-seen order — empty when Color isn't a Variant axis for this Product. */

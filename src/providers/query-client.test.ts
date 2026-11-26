@@ -1,7 +1,7 @@
 import { describe, expect, it } from 'vitest';
 
 import { makeQueryClient } from '@/providers/query-client';
-import { ApiError } from '@/shared/lib/errors/api-error';
+import { ApiError } from '@/integrations/backend/client/api-error';
 
 function retryPolicy() {
   const retry = makeQueryClient().getDefaultOptions().queries?.retry;

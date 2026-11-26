@@ -1,7 +1,7 @@
 import { describe, expect, it } from 'vitest';
 
 import { flattenCategories, getCategoryTrail } from '@/modules/catalog/categoryTree';
-import type { CategoryEntry, CategoryNode } from '@/lib/api/models/catalog';
+import type { CategoryEntry, CategoryNode } from '@/integrations/backend/models/catalog';
 
 function node(id: string, slug: string, children: readonly CategoryNode[] = []): CategoryNode {
   return { id, slug, name: slug, children };

@@ -1,10 +1,10 @@
 import { fireEvent, screen, waitFor } from '@testing-library/react';
 import { afterAll, afterEach, beforeAll, beforeEach, describe, expect, it } from 'vitest';
-import { resetAuthRuntime } from '@/lib/api/client/fetcher';
-import { registerAuthRuntimeAdapter } from '@/lib/api/client/runtime';
-import { encodeAccessToken } from '@/lib/api/mocks/auth-fixtures';
-import { resetMockOrderDbForTesting, setOrderStatusForTesting } from '@/lib/api/mocks/order-fixtures';
-import { server } from '@/lib/api/testing/msw-server';
+import { resetAuthRuntime } from '@/integrations/backend/client/fetcher';
+import { registerAuthRuntimeAdapter } from '@/integrations/backend/client/runtime';
+import { encodeAccessToken } from '@/integrations/backend/mocks/auth-fixtures';
+import { resetMockOrderDbForTesting, setOrderStatusForTesting } from '@/integrations/backend/mocks/order-fixtures';
+import { server } from '@/integrations/backend/testing/msw-server';
 
 import { renderWithProviders } from '@/testing/render';
 import { OrderDetailClient } from '@/features/orders/order-detail/components/OrderDetailClient';

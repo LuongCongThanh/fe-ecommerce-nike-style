@@ -17,7 +17,7 @@
     "tokens": "tsx scripts/token-usage.ts",
     "agent-run": "tsx scripts/agent-run/index.ts",
     "verify-gates": "tsx scripts/verify-gates.ts",
-    "gen:api": "node scripts/gen-api.mjs && prettier --write src/lib/api/generated/openapi.ts",
+    "gen:api": "node scripts/gen-api.mjs && prettier --write src/integrations/backend/generated/openapi.ts",
     "test": "vitest run",
     "test:watch": "vitest",
     "test:coverage": "vitest run --coverage",

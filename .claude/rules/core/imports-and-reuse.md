@@ -20,8 +20,8 @@ Example:
 
 ```ts
 import { Button } from '@/shared/components/Button';
-import { getProducts } from '@/lib/api/endpoints/catalog';
-import type { Product } from '@/lib/schemas/catalog/catalog';
+import { getProducts } from '@/integrations/backend/endpoints/catalog';
+import type { Product } from '@/integrations/backend/schemas/catalog/catalog.schema';
 import { ROUTES } from '@/shared/routing/routes';
 
 import { ProductCard } from './ProductCard';
@@ -31,7 +31,7 @@ import { ProductCard } from './ProductCard';
 
 1. Same folder or direct submodule: use `./` to express local cohesion.
 2. Different module/folder in the same app: use `@/`; never walk up the tree with `../`.
-3. Across a layer boundary (`src/shared/components`, `src/lib/api`, `src/lib/schemas`, `src/shared`): import the module that owns the symbol; do not reach into another module's private helpers.
+3. Across a layer boundary (`src/shared/components`, `src/integrations/backend`, `src/integrations/backend/schemas`, `src/shared`): import the module that owns the symbol; do not reach into another module's private helpers.
 
 ## Forbidden imports
 
@@ -70,7 +70,7 @@ ESLint is the final enforcer of exact ordering. Do not add comments to disable `
 Before creating a new component, hook, schema, endpoint, formatter, constant or utility:
 
 1. Use `rg` to search by domain noun, action verb, UI label and similar type names.
-2. Check `src/shared/components`, `src/shared`, `src/lib/schemas` and `src/lib/api` for an existing implementation.
+2. Check `src/shared/components`, `src/shared`, `src/integrations/backend/schemas` and `src/integrations/backend` for an existing implementation.
 3. Check the app's shared modules and neighboring features.
 4. If an implementation with the same semantics already exists, reuse or extend its API instead of writing a copy.
 5. If two implementations with the same semantics are found within the area being changed, merge/extract the shared part in the same change when it is safe to do so.
@@ -83,8 +83,8 @@ Never copy-paste and rename variables, CSS classes or wording to create a new im
 | --------------------------------------------------------- | ------------------------------------------------------------------ |
 | UI primitive with no business logic                       | `src/shared/components`                                            |
 | Component/hook/helper used by several features, no domain | `src/shared`                                                       |
-| Schema/transport type                                     | The matching domain in `src/lib/schemas`                           |
-| Endpoint/API transport                                    | `src/lib/api`                                                      |
+| Schema/transport type                                     | The matching domain in `src/integrations/backend/schemas`          |
+| Endpoint/API transport                                    | `src/integrations/backend`                                         |
 | Locale config and request setup                           | `src/i18n`                                                         |
 | Logic used by multiple features                           | The owning feature for domain logic; `src/shared` for generic code |
 | Logic used by one Storefront page                         | In the owning `src/features/<domain>` module                       |
@@ -131,7 +131,7 @@ When intentionally keeping a duplicate:
 
 - Do not create catch-all `utils.ts`, `helpers.ts`, `common.ts` or `shared.ts`.
 - Do not create a generic component with many boolean props just to merge two UIs with different semantics.
-- Do not create a service/repository wrapper that forwards 1:1 to `src/lib/api` without adding a valuable boundary.
+- Do not create a service/repository wrapper that forwards 1:1 to `src/integrations/backend` without adding a valuable boundary.
 - Do not put one domain's business logic into `src/shared/components` or a generic shared hook.
 - Do not break the dependency direction to achieve "DRY". A small, independent duplication is better than an abstraction that creates incorrect domain coupling.
 

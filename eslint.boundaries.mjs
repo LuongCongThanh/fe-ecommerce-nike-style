@@ -9,7 +9,7 @@ const domainModuleRoots = DOMAIN_MODULES.flatMap((name) => [`./src/features/${na
 /** App routes, layouts (old storefront-shell) and providers (old app/_composition). */
 const compositionRoots = ['./src/app/**/*', './src/features/storefront-shell/**/*', './src/layouts/**/*', './src/providers/**/*'];
 
-const foundationRoots = ['./src/shared/**/*', './src/lib/api/**/*', './src/lib/schemas/**/*', './src/integrations/**/*'];
+const foundationRoots = ['./src/shared/**/*', './src/integrations/**/*'];
 
 /** Zones for `import/no-restricted-paths`: `target` is the importing file, `from` the imported one. */
 export const restrictedPathZones = [

@@ -3,7 +3,7 @@
 import { useQuery } from '@tanstack/react-query';
 
 import { addressKeys } from '@/features/account/addresses/queries/addressKeys';
-import { getAddresses } from '@/lib/api/endpoints/address';
+import { getAddresses } from '@/integrations/backend/endpoints/address';
 
 export const useAddresses = () =>
   useQuery({

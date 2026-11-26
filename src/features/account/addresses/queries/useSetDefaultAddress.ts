@@ -3,7 +3,7 @@
 import { useQueryClient } from '@tanstack/react-query';
 
 import { addressKeys } from '@/features/account/addresses/queries/addressKeys';
-import { setDefaultAddress } from '@/lib/api/endpoints/address';
+import { setDefaultAddress } from '@/integrations/backend/endpoints/address';
 import { useApiMutation } from '@/shared/queries/useApiMutation';
 
 export const useSetDefaultAddress = () => {

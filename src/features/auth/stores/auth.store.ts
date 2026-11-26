@@ -1,9 +1,9 @@
 import { create } from 'zustand';
 
-import { logout, refreshSession } from '@/lib/api/endpoints/auth';
-import { getProfile } from '@/lib/api/endpoints/profile';
-import { ensureApiMockingReady } from '@/shared/lib/api-mocking';
-import type { User } from '@/shared/types/user';
+import { ensureApiMockingReady } from '@/integrations/backend/adapters/browser-bootstrap';
+import { logout, refreshSession } from '@/integrations/backend/endpoints/auth';
+import { getProfile } from '@/integrations/backend/endpoints/profile';
+import type { User } from '@/integrations/backend/models/user.types';
 
 export type AuthStatus = 'initializing' | 'authenticated' | 'anonymous';
 

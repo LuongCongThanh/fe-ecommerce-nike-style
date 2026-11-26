@@ -2,8 +2,8 @@
 
 import { useQuery } from '@tanstack/react-query';
 
-import { ApiError } from '@/lib/api/client/api-error';
-import { getProductBySlug } from '@/lib/api/endpoints/catalog';
+import { ApiError } from '@/integrations/backend/client/api-error';
+import { getProductBySlug } from '@/integrations/backend/endpoints/catalog';
 import { catalogKeys } from '@/modules/catalog/queries/catalogKeys';
 
 /** PDP lookup by slug. `null` means the API has no ACTIVE Product with that slug (404). */

@@ -1,5 +1,5 @@
-import type { StorefrontOrder } from '@/lib/api/endpoints/orders';
-import { getOrder } from '@/lib/api/endpoints/orders';
+import type { StorefrontOrder } from '@/integrations/backend/endpoints/orders';
+import { getOrder } from '@/integrations/backend/endpoints/orders';
 
 /** Preserve the checkout-success fallback when the request cannot read an order, including
  * when SSR has no in-memory mock auth token. A missing result does not imply a nonexistent order. */

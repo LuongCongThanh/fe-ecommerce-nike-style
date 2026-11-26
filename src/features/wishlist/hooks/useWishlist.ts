@@ -9,9 +9,9 @@ import {
   useWishlistStore,
   wishlistPersistence,
 } from '@/features/wishlist/stores/wishlist.store';
-import { getProductsByIds, mergeWishlistAfterLogin } from '@/lib/api/endpoints/wishlist';
-import type { Product } from '@/lib/schemas/catalog/catalog';
-import { ensureApiMockingReady } from '@/shared/lib/api-mocking';
+import { ensureApiMockingReady } from '@/integrations/backend/adapters/browser-bootstrap';
+import { getProductsByIds, mergeWishlistAfterLogin } from '@/integrations/backend/endpoints/wishlist';
+import type { Product } from '@/integrations/backend/schemas/catalog/catalog.schema';
 
 /** Merges the guest wishlist into the account's wishlist after login/register — union+dedupe by Product (glossary.md — Merge Wishlist). */
 export async function mergeWishlistOnLogin(): Promise<void> {

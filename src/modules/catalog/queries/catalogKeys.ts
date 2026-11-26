@@ -1,4 +1,4 @@
-import type { ProductQuery } from '@/lib/api/models/catalog';
+import type { ProductQuery } from '@/integrations/backend/models/catalog';
 
 export const catalogKeys = {
   all: ['catalog'] as const,

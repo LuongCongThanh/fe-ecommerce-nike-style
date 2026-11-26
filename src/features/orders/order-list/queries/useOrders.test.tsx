@@ -1,16 +1,16 @@
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { renderHook, waitFor } from '@testing-library/react';
 import { afterAll, afterEach, beforeAll, beforeEach, describe, expect, it } from 'vitest';
-import { resetAuthRuntime } from '@/lib/api/client/fetcher';
-import { registerAuthRuntimeAdapter } from '@/lib/api/client/runtime';
-import { encodeAccessToken } from '@/lib/api/mocks/auth-fixtures';
-import { server } from '@/lib/api/testing/msw-server';
+import { resetAuthRuntime } from '@/integrations/backend/client/fetcher';
+import { registerAuthRuntimeAdapter } from '@/integrations/backend/client/runtime';
+import { encodeAccessToken } from '@/integrations/backend/mocks/auth-fixtures';
+import { server } from '@/integrations/backend/testing/msw-server';
 
 import { useOrder } from '@/features/orders/order-detail/queries/useOrder';
 import { useOrders } from '@/features/orders/order-list/queries/useOrders';
-import { ApiError } from '@/shared/lib/errors/api-error';
+import { ApiError } from '@/integrations/backend/client/api-error';
 
-// Demo account (user id 1) seeded in `src/lib/api/mocks/order-fixtures.ts` with orders 1001/1002.
+// Demo account (user id 1) seeded in `src/integrations/backend/mocks/order-fixtures.ts` with orders 1001/1002.
 const ACCOUNT_USER_ID = 1;
 const OWN_ORDER_ID = '1001';
 const OTHER_USERS_ORDER_ID = '9999'; // doesn't exist in the mock DB at all — same shape as "not mine"

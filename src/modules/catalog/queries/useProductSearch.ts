@@ -2,7 +2,7 @@
 
 import { useQuery } from '@tanstack/react-query';
 
-import { getProducts } from '@/lib/api/endpoints/catalog';
+import { getProducts } from '@/integrations/backend/endpoints/catalog';
 import { catalogKeys } from '@/modules/catalog/queries/catalogKeys';
 
 const PAGE_SIZE = 12;

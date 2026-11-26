@@ -9,7 +9,7 @@ import { motion, useReducedMotion } from 'framer-motion';
 import { ChevronRight } from 'lucide-react';
 import { useTranslations } from 'next-intl';
 
-import type { ProductDetail } from '@/lib/api/models/catalog';
+import type { ProductDetail } from '@/integrations/backend/models/catalog';
 import { CatalogProductGrid } from '@/modules/catalog/components/CatalogProductGrid';
 import { ProductDetailSkeleton } from '@/modules/catalog/components/ProductSkeletons';
 import { ProductDetailTabs } from '@/modules/catalog/product-detail/components/ProductDetailTabs';

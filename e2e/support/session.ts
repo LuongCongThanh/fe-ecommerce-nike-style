@@ -1,6 +1,6 @@
 import { expect, type Locator, type Page } from '@playwright/test';
 
-/** Seeded MSW demo account (`src/lib/api/mocks/auth-fixtures.ts`); its account cart already holds 2 items. */
+/** Seeded MSW demo account (`src/integrations/backend/mocks/auth-fixtures.ts`); its account cart already holds 2 items. */
 export const DEMO_CUSTOMER = { email: 'customer@example.com', password: 'Password123' } as const;
 
 interface Credentials {
@@ -36,7 +36,7 @@ export async function logOut(page: Page): Promise<void> {
 /**
  * Sets the `access_token` cookie the middleware reads as its login hint. The real Backend sets it;
  * in mock mode no cookie set by the MSW worker reaches the browser (see the transport note in
- * `src/lib/api/mocks/auth-fixtures.ts`), so the test supplies it. This only lets the request past
+ * `src/integrations/backend/mocks/auth-fixtures.ts`), so the test supplies it. This only lets the request past
  * the UX redirect in `src/middleware.ts`; the checkout API calls still use the session from the real
  * login response. Nothing in production code changes.
  */

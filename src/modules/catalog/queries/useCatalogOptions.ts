@@ -2,7 +2,7 @@
 
 import { useQuery } from '@tanstack/react-query';
 
-import { getColors, getSizes } from '@/lib/api/endpoints/catalog';
+import { getColors, getSizes } from '@/integrations/backend/endpoints/catalog';
 import { catalogKeys } from '@/modules/catalog/queries/catalogKeys';
 
 /** Sizes and colors for the PLP filter — the shared lists the back office manages (BR-CAT-11). */

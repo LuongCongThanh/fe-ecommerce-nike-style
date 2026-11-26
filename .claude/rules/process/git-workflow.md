@@ -74,7 +74,7 @@ test(schemas): cover invalid order transitions
 - Review `git diff -- <paths>` before staging each related group of files.
 - Stage source and tests that belong to the same behavior. Docs/contract changes for the same slice are staged together when needed so the commit is self-contained.
 - Never stage secrets, `.env.local`, credentials, tokens, build output, coverage, `.next`, `dist`, logs, or scratch files.
-- A generated file is only committed if the repository tracks it and the workflow requires it. Do not hand-edit `src/lib/api/generated/openapi.ts`; run `pnpm gen:api`.
+- A generated file is only committed if the repository tracks it and the workflow requires it. Do not hand-edit `src/integrations/backend/generated/openapi.ts`; run `pnpm gen:api`.
 - A lockfile only changes alongside its package manifest and must reflect the actual package-manager command run. Never hand-edit a lockfile.
 - If a formatter changes a file outside scope, revert just that formatting with a safe edit; never use a destructive restore command on a file that has the user's changes.
 

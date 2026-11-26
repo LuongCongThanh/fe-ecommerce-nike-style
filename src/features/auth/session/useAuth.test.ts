@@ -1,6 +1,6 @@
 import { act, renderHook, waitFor } from '@testing-library/react';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
-import { logout as revokeSession } from '@/lib/api/endpoints/auth';
+import { logout as revokeSession } from '@/integrations/backend/endpoints/auth';
 
 import { clearAuth, setAccessToken, setRefreshToken } from '@/features/auth/stores/auth.store';
 import { login, useAuth, useIsLoggedIn } from '@/features/auth/session/useAuth';
@@ -9,7 +9,7 @@ const mockPush = vi.fn();
 vi.mock('next/navigation', () => ({ useRouter: () => ({ push: mockPush }) }));
 vi.mock('next-intl', () => ({ useLocale: () => 'vi' }));
 
-vi.mock('@/lib/api/endpoints/auth', () => ({
+vi.mock('@/integrations/backend/endpoints/auth', () => ({
   logout: vi.fn().mockResolvedValue(undefined),
 }));
 

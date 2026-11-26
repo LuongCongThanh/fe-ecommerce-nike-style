@@ -1,5 +1,5 @@
 ---
-status: ready-for-agent
+status: in-progress
 blocked-by: [38-storefront-catalog-migration]
 pr:
 kind: refactor

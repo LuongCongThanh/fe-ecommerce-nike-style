@@ -16,7 +16,7 @@ vi.mock('sonner', () => ({
 }));
 
 import { useApiMutation } from '@/shared/queries/useApiMutation';
-import { ApiError } from '@/shared/lib/errors/api-error';
+import { ApiError } from '@/integrations/backend/client/api-error';
 
 function renderWithClient<T>(hook: () => T) {
   const queryClient = new QueryClient({ defaultOptions: { queries: { retry: false }, mutations: { retry: false } } });

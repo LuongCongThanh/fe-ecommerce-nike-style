@@ -1,7 +1,7 @@
 ---
 paths:
-  - 'src/lib/schemas/**'
-  - 'src/lib/api/**'
+  - 'src/integrations/backend/schemas/**'
+  - 'src/integrations/backend/**'
   - 'src/**/*.{ts,tsx}'
 description: Data-flow layering contract from component to Zod schema, plus TanStack Query/Zustand ownership rules.
 ---
@@ -14,7 +14,7 @@ description: Data-flow layering contract from component to Zod schema, plus TanS
 Presentational component
   -> feature hook / view-model hook
     -> TanStack Query hook
-      -> src/lib/api endpoint
+      -> src/integrations/backend endpoint
         -> apiClient
           -> pinned OpenAPI contract / transitional Zod schema
 ```
@@ -28,14 +28,14 @@ Presentational component
 
 ## Layer responsibilities
 
-| Layer                       | Allowed                                                                      | Not allowed                                            |
-| --------------------------- | ---------------------------------------------------------------------------- | ------------------------------------------------------ |
-| `src/lib/schemas`           | Validate the transport contract, infer the transport type                    | Call the API, hold UI state, format labels             |
-| `src/lib/api/endpoints`     | URL, method, params/body, response schema                                    | Query cache, toast, router, JSX                        |
-| Feature query/mutation hook | Query key, queryFn, cache policy, invalidation                               | Render markup, read the DOM, hold layout               |
-| Mapper/selector             | DTO -> domain/view model via a pure function                                 | Side effects, network calls, toast, mutating the cache |
-| View-model/controller hook  | Combine query, mutation, URL/local state into a model + intents for the view | Contain JSX or styles                                  |
-| Component                   | Render normalized state, accessibility, emit user intent                     | Know status codes, envelopes, cache keys, DTO parsing  |
+| Layer                                | Allowed                                                                      | Not allowed                                            |
+| ------------------------------------ | ---------------------------------------------------------------------------- | ------------------------------------------------------ |
+| `src/integrations/backend/schemas`   | Validate the transport contract, infer the transport type                    | Call the API, hold UI state, format labels             |
+| `src/integrations/backend/endpoints` | URL, method, params/body, response schema                                    | Query cache, toast, router, JSX                        |
+| Feature query/mutation hook          | Query key, queryFn, cache policy, invalidation                               | Render markup, read the DOM, hold layout               |
+| Mapper/selector                      | DTO -> domain/view model via a pure function                                 | Side effects, network calls, toast, mutating the cache |
+| View-model/controller hook           | Combine query, mutation, URL/local state into a model + intents for the view | Contain JSX or styles                                  |
+| Component                            | Render normalized state, accessibility, emit user intent                     | Know status codes, envelopes, cache keys, DTO parsing  |
 
 ## Structuring a feature with an API connection
 
@@ -59,7 +59,7 @@ src/modules/catalog/
 
 Read the actual contracts rather than copying a synthetic endpoint example:
 
-- `src/lib/api/endpoints/catalog.ts`: endpoint/transport boundary.
+- `src/integrations/backend/endpoints/catalog.ts`: endpoint/transport boundary.
 - `src/modules/catalog/queries/catalogKeys.ts`: shared catalog cache keys.
 - `src/modules/catalog/queries/useProducts.ts`: query/cache policy.
 - `src/modules/catalog/hooks/useCatalogListing.ts`: URL and listing orchestration.
@@ -79,7 +79,7 @@ Presentational children receive normalized state and callbacks. A container may 
 
 ## Schema and contract
 
-- Catalog uses generated types from the pinned OpenAPI contract and endpoint-owned mapping. Transitional endpoints keep existing Zod transport validation in `src/lib/schemas`. Do not force both representations onto one endpoint or cast unknown data in the UI.
+- Catalog uses generated types from the pinned OpenAPI contract and endpoint-owned mapping. Transitional endpoints keep existing Zod transport validation in `src/integrations/backend/schemas`. Do not force both representations onto one endpoint or cast unknown data in the UI.
 - Name schemas `<Domain>Schema`, request/response as `<Action>RequestSchema` and `<Action>ResponseSchema`; the inferred type drops the `Schema` suffix.
 - Clearly distinguish nullable, optional and default per the transport contract; do not convert between them ad hoc in a component.
 - Price and stock belong to the SKU in the current domain; Gender is a Product attribute/filter, not a Category.
@@ -87,7 +87,7 @@ Presentational children receive normalized state and callbacks. A container may 
 
 ## API SDK
 
-- Every application API call goes through `src/lib/api`; components/hooks never call `fetch` or Axios directly.
+- Every application API call goes through `src/integrations/backend`; components/hooks never call `fetch` or Axios directly.
 - Preserve each endpoint's accepted contract/validation strategy. Endpoints using transitional schemas pass them to the API client; contract migrations update generated types and mapping together.
 - Normalize errors with `ApiError`; the UI does not infer an error shape from `unknown` itself.
 - Do not put business logic or React state into the API SDK. Browser/server adapters only handle runtime/transport differences.

@@ -4,7 +4,7 @@ import { useRouter } from 'next/navigation';
 
 import { useCart } from '@/features/cart/hooks/useCart';
 import { useWishlist } from '@/features/wishlist/hooks/useWishlist';
-import type { Product } from '@/lib/schemas/catalog/catalog';
+import type { Product } from '@/integrations/backend/schemas/catalog/catalog.schema';
 import { getVariantAxes, resolveSku } from '@/modules/catalog/variantResolution';
 import { notify } from '@/shared/feedback/notification';
 

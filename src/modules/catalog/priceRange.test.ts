@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest';
 
-import type { Product } from '@/lib/schemas/catalog/catalog';
+import type { Product } from '@/integrations/backend/schemas/catalog/catalog.schema';
 
 import { getProductPriceRange } from '@/modules/catalog/priceRange';
 

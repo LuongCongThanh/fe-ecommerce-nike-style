@@ -2,9 +2,9 @@
 
 import { useQueryClient } from '@tanstack/react-query';
 
-import { updateProfile } from '@/lib/api/endpoints/profile';
+import { updateProfile } from '@/integrations/backend/endpoints/profile';
+import type { User } from '@/integrations/backend/models/user.types';
 import { useApiMutation } from '@/shared/queries/useApiMutation';
-import type { User } from '@/shared/types/user';
 
 const profileKey = ['profile'] as const;
 

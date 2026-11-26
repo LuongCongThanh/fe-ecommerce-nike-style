@@ -1,14 +1,14 @@
 import { fireEvent, screen, waitFor } from '@testing-library/react';
 import { afterAll, afterEach, beforeAll, beforeEach, describe, expect, it } from 'vitest';
-import { resetAuthRuntime } from '@/lib/api/client/fetcher';
-import { encodeAccessToken } from '@/lib/api/mocks/auth-fixtures';
-import { registerAuthRuntimeAdapter } from '@/lib/api/client/runtime';
-import { server } from '@/lib/api/testing/msw-server';
+import { resetAuthRuntime } from '@/integrations/backend/client/fetcher';
+import { encodeAccessToken } from '@/integrations/backend/mocks/auth-fixtures';
+import { registerAuthRuntimeAdapter } from '@/integrations/backend/client/runtime';
+import { server } from '@/integrations/backend/testing/msw-server';
 
 import { renderWithProviders } from '@/testing/render';
 import { ProfileClient } from '@/features/account/profile/components/ProfileClient';
 
-// Demo account seeded in `src/lib/api/mocks/auth-fixtures.ts`.
+// Demo account seeded in `src/integrations/backend/mocks/auth-fixtures.ts`.
 const ACCOUNT_USER_ID = 1;
 
 beforeAll(() => server.listen({ onUnhandledRequest: 'error' }));

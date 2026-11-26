@@ -4,7 +4,7 @@ import type { ReactNode } from 'react';
 import { describe, expect, it, vi } from 'vitest';
 
 import { Providers } from '@/providers/AppProviders';
-import { getAuthRuntimeAdapter } from '@/lib/api/client/runtime';
+import { getAuthRuntimeAdapter } from '@/integrations/backend/client/runtime';
 
 const { bootstrapAuth } = vi.hoisted(() => ({ bootstrapAuth: vi.fn().mockResolvedValue(undefined) }));
 vi.mock('@/features/auth/stores/auth.store', () => ({ bootstrapAuth, clearAuth: vi.fn(), getAccessToken: () => null, refreshAccessToken: vi.fn() }));

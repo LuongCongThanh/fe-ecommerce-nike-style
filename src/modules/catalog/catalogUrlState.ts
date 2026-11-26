@@ -1,4 +1,4 @@
-import type { Gender as ApiGender } from '@/lib/api/models/catalog';
+import type { Gender as ApiGender } from '@/integrations/backend/models/catalog';
 
 /** URL spelling of a Gender (`?gender=men`); `toApiGender` maps it to the API value. */
 export type Gender = 'men' | 'women' | 'kids' | 'unisex';
