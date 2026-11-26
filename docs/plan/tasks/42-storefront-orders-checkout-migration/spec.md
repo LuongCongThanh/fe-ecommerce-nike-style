@@ -1,7 +1,7 @@
 ---
 status: review
 blocked-by: [41-storefront-cart-wishlist-migration]
-pr:
+pr: 135
 kind: refactor
 approved:
   files: []
