@@ -7,9 +7,9 @@ import { useTheme } from 'next-themes';
 import type { IUniform, Mesh, Texture } from 'three';
 import { Color, DataTexture, LinearFilter, ShaderMaterial, SRGBColorSpace, TextureLoader, Vector2 } from 'three';
 
-import { readTokenColor } from '@/features/home/components/hero3d/cssColor';
-import { HERO_DISSOLVE_FRAGMENT, HERO_DISSOLVE_VERTEX } from '@/features/home/components/hero3d/dissolveShader';
-import type { Render3DTier } from '@/shared/hooks/useCanRender3D';
+import { readTokenColor } from '@/modules/home/components/hero3d/cssColor';
+import { HERO_DISSOLVE_FRAGMENT, HERO_DISSOLVE_VERTEX } from '@/modules/home/components/hero3d/dissolveShader';
+import type { Render3DTier } from '@/modules/home/hooks/useCanRender3D';
 
 /** Matches the DOM carousel's slide change so the overlay text and the dissolve land together. */
 const TRANSITION_MS = 900;

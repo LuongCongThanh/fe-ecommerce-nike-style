@@ -2,7 +2,7 @@ import { render, screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { describe, expect, it, vi } from 'vitest';
 
-import { NewsletterForm } from '@/features/home/components/NewsletterForm';
+import { NewsletterForm } from '@/modules/home/components/NewsletterForm';
 
 describe('NewsletterForm', () => {
   it('renders submit button with default label', () => {

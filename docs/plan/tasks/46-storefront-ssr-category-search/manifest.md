@@ -19,7 +19,7 @@ Snapshot tham chiếu ngày 25/11/2026. File dưới đây là source hiện t�
 - `src/features/catalog/components/FilterSidebar.tsx`
 - `src/features/catalog/hooks/useProductSearchListing.ts`
 - `src/features/catalog/queries/useProducts.ts`
-- `src/features/home/components/SectionFeaturedCategories.tsx`
+- `src/modules/home/components/SectionFeaturedCategories.tsx`
 - `src/features/storefront-shell/components/DesktopMegaMenu.tsx`
 - `src/features/storefront-shell/components/Header.tsx`
 - `src/features/storefront-shell/components/MobileNav.tsx`

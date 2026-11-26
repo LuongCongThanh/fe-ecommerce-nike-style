@@ -26,6 +26,7 @@ export default defineConfig({
       include: [
         'src/shared/lib/**/*.{ts,tsx}',
         'src/modules/catalog/mock-content.ts',
+        'src/modules/home/hooks/useCanRender3D.ts',
         'src/integrations/backend/adapters/browser-bootstrap.ts',
         'src/integrations/backend/client/api-error.ts',
         'src/shared/hooks/**/*.{ts,tsx}',
