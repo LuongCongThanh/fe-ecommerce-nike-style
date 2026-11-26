@@ -1,7 +1,7 @@
 ---
 status: review
 blocked-by: [45-storefront-ssr-products]
-pr:
+pr: 141
 kind: logic
 approved:
   files: []
