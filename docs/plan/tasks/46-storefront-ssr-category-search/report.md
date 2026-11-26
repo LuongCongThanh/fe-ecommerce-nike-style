@@ -1,6 +1,6 @@
 # Report 46
 
-- **PR:** (điền sau khi mở)
+- **PR:** #142
 - **Trạng thái:** review
 
 ## Đã làm
