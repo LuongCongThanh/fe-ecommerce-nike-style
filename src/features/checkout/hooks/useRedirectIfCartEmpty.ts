@@ -3,7 +3,7 @@
 import { useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 
-import { useCart } from '@/features/cart/hooks/useCart';
+import { useCart } from '@/modules/cart/hooks/useCart';
 
 /**
  * Guard rule: Checkout never renders for a genuinely empty cart — redirects back to `/cart` instead.

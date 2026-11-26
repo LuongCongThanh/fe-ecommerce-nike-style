@@ -1,6 +1,6 @@
 import { setRequestLocale } from 'next-intl/server';
 
-import { WishlistClient } from '@/features/wishlist/components/WishlistClient';
+import { WishlistClient } from '@/modules/wishlist/components/WishlistClient';
 import { PageShell } from '@/shared/components/PageShell';
 
 interface WishlistPageProps {

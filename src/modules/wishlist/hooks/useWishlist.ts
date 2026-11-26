@@ -2,16 +2,16 @@
 
 import { useQuery } from '@tanstack/react-query';
 
+import { ensureApiMockingReady } from '@/integrations/backend/adapters/browser-bootstrap';
+import { getProductsByIds, mergeWishlistAfterLogin } from '@/integrations/backend/endpoints/wishlist';
+import type { Product } from '@/integrations/backend/schemas/catalog/catalog.schema';
 import {
   getWishlistItems,
   initWishlistFromStorage,
   replaceWishlistItems,
   useWishlistStore,
   wishlistPersistence,
-} from '@/features/wishlist/stores/wishlist.store';
-import { ensureApiMockingReady } from '@/integrations/backend/adapters/browser-bootstrap';
-import { getProductsByIds, mergeWishlistAfterLogin } from '@/integrations/backend/endpoints/wishlist';
-import type { Product } from '@/integrations/backend/schemas/catalog/catalog.schema';
+} from '@/modules/wishlist/stores/wishlist.store';
 
 /** Merges the guest wishlist into the account's wishlist after login/register — union+dedupe by Product (glossary.md — Merge Wishlist). */
 export async function mergeWishlistOnLogin(): Promise<void> {

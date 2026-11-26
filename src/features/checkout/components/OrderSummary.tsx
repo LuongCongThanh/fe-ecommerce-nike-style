@@ -8,9 +8,9 @@ import { motion } from 'framer-motion';
 import { useTranslations } from 'next-intl';
 import { useFormContext, useWatch } from 'react-hook-form';
 
-import { useCart } from '@/features/cart/hooks/useCart';
 import type { CheckoutInput } from '@/features/checkout/schemas/checkout';
 import { SHIPPING_FEE_BY_METHOD } from '@/features/checkout/schemas/checkout';
+import { useCart } from '@/modules/cart/hooks/useCart';
 import { formatCurrency } from '@/shared/formatting/currency';
 
 export function OrderSummary() {

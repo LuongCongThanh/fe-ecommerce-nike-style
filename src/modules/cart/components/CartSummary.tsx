@@ -5,7 +5,7 @@ import Link from 'next/link';
 
 import { ArrowRight, Truck } from 'lucide-react';
 
-import { useCart } from '@/features/cart/hooks/useCart';
+import { useCart } from '@/modules/cart/hooks/useCart';
 import { Button } from '@/shared/components/Button';
 import { Separator } from '@/shared/components/Separator';
 import { formatCurrency } from '@/shared/formatting/currency';

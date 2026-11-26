@@ -8,13 +8,13 @@ import { Heart, LogOut, Search, ShoppingCart, User, X } from 'lucide-react';
 import { useLocale, useTranslations } from 'next-intl';
 
 import { useAuth } from '@/features/auth/session/useAuth';
-import { CartDrawer } from '@/features/cart/components/CartDrawer';
-import { useCart } from '@/features/cart/hooks/useCart';
-import { useWishlist } from '@/features/wishlist/hooks/useWishlist';
 import { DesktopMegaMenu } from '@/layouts/components/DesktopMegaMenu';
 import { MobileNav } from '@/layouts/components/MobileNav';
 import { useMergeGuestDataOnLogin } from '@/layouts/hooks/useMergeGuestDataOnLogin';
+import { CartDrawer } from '@/modules/cart/components/CartDrawer';
+import { useCart } from '@/modules/cart/hooks/useCart';
 import { useHeaderSearch } from '@/modules/catalog/search/hooks/useHeaderSearch';
+import { useWishlist } from '@/modules/wishlist/hooks/useWishlist';
 import { Button } from '@/shared/components/Button';
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuSeparator, DropdownMenuTrigger } from '@/shared/components/DropdownMenu';
 import { Input } from '@/shared/components/Input';

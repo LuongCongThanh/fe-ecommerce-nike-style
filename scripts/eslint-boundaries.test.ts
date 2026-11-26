@@ -24,7 +24,7 @@ const TARGETS = [
   'src/providers/AppProviders.js',
   'src/features/storefront-shell/Header.js',
   'src/layouts/Header.js',
-  'src/features/cart/useCart.js',
+  'src/modules/cart/useCart.js',
   'src/modules/cart/useCart.js',
   'src/shared/flag.js',
   'src/integrations/backend/client.js',
@@ -60,11 +60,11 @@ async function lint(file: string, importPath: string): Promise<string[]> {
 
 describe('restrictedPathZones', () => {
   it.each([
-    ['src/features/cart/useApp.js', 'src/app/_composition/AppProviders.js'],
+    ['src/modules/cart/useApp.js', 'src/app/_composition/AppProviders.js'],
     ['src/modules/cart/useApp.js', 'src/providers/AppProviders.js'],
-    ['src/features/cart/useHeader.js', 'src/features/storefront-shell/Header.js'],
+    ['src/modules/cart/useHeader.js', 'src/features/storefront-shell/Header.js'],
     ['src/modules/cart/useHeader.js', 'src/layouts/Header.js'],
-    ['src/shared/useCart.js', 'src/features/cart/useCart.js'],
+    ['src/shared/useCart.js', 'src/modules/cart/useCart.js'],
     ['src/shared/useCartNew.js', 'src/modules/cart/useCart.js'],
     ['src/integrations/backend/useLayout.js', 'src/layouts/Header.js'],
   ])('blocks %s importing %s', async (file, importPath) => {
@@ -73,10 +73,10 @@ describe('restrictedPathZones', () => {
 
   it.each([
     ['src/layouts/HeaderCart.js', 'src/modules/cart/useCart.js'],
-    ['src/features/storefront-shell/HeaderCart.js', 'src/features/cart/useCart.js'],
+    ['src/features/storefront-shell/HeaderCart.js', 'src/modules/cart/useCart.js'],
     ['src/providers/Bootstrap.js', 'src/integrations/backend/client.js'],
     ['src/modules/cart/useFlag.js', 'src/shared/flag.js'],
-    ['src/features/cart/useClient.js', 'src/integrations/backend/client.js'],
+    ['src/modules/cart/useClient.js', 'src/integrations/backend/client.js'],
     ['src/shared/useClient.js', 'src/integrations/backend/client.js'],
   ])('allows %s importing %s', async (file, importPath) => {
     await expect(lint(file, importPath)).resolves.toEqual([]);

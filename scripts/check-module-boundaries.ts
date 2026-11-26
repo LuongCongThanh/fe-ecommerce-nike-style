@@ -46,6 +46,8 @@ export interface PublicEntry {
   target: string;
   /** Named symbols; `default` for a default import. Namespace/side-effect access is never public. */
   symbols: readonly string[];
+  /** Only test files may use this entry (owner test fixtures). */
+  testOnly?: boolean;
 }
 
 export interface KnownViolation {
@@ -93,6 +95,7 @@ export const PUBLIC_ENTRIES: readonly PublicEntry[] = [
   { consumers: ['wishlist'], target: 'catalog:priceRange', symbols: ['getProductPriceRange'] },
   { consumers: ['wishlist'], target: 'catalog:variantResolution', symbols: ['getVariantAxes', 'resolveSku'] },
   { consumers: ['wishlist'], target: 'cart:hooks/useCart', symbols: ['useCart'] },
+  { consumers: ['wishlist'], target: 'cart:testing/cart.fixture', symbols: ['resetCartForTest', 'readCartItemsForTest'], testOnly: true },
   // checkout → cart/orders
   { consumers: ['checkout'], target: 'cart:hooks/useCart', symbols: ['useCart', 'CartLine'] },
   { consumers: ['checkout'], target: 'orders:queries/orderKeys', symbols: ['orderKeys'] },
@@ -142,13 +145,6 @@ export const PUBLIC_ENTRIES: readonly PublicEntry[] = [
 
 /** Exact edges that exist today and are deleted by a named delivery slice. Never add wildcards. */
 export const KNOWN_VIOLATIONS: readonly KnownViolation[] = [
-  {
-    from: 'wishlist:components/WishlistClient.test',
-    to: 'cart:stores/cart.store',
-    symbols: ['clearCart', 'resetCartState', 'useCartStore'],
-    removedBy: '41-storefront-cart-wishlist-migration',
-    reason: 'Move-to-cart test seeds and reads the private cart store; replaced by an owner test entry/fixture.',
-  },
   {
     from: 'providers:AppProviders.test',
     to: 'auth:stores/auth.store',
@@ -342,7 +338,9 @@ function checkPublicAccess(context: EdgeContext, policy: BoundaryPolicy): Violat
     return { ...at, rule: 'namespace', message: `${edge.form} access to ${to.key} bypasses the named-symbol allowlist.` };
   }
   const consumers = consumerKeys(from);
-  const entries = policy.publicEntries.filter((entry) => entry.target === to.key && entry.consumers.some((consumer) => consumers.includes(consumer)));
+  const entries = policy.publicEntries.filter(
+    (entry) => entry.target === to.key && (!entry.testOnly || edge.isTest) && entry.consumers.some((consumer) => consumers.includes(consumer)),
+  );
   if (entries.length === 0) {
     return { ...at, rule: 'private', message: `${to.key} is not a public entry for ${consumers.join(', ')}.` };
   }
