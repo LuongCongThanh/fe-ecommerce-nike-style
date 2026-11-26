@@ -109,7 +109,7 @@ Những tên dưới đây chỉ có ý nghĩa đặc biệt tại vị trí fra
 Nguồn: [Next structure và special files](https://nextjs.org/docs/app/getting-started/project-structure), [Proxy](https://nextjs.org/docs/app/api-reference/file-conventions/proxy).
 Next 16 đổi tên Middleware thành Proxy; không từ đó suy ra phải rename file của một app chưa kiểm version/config.
 Repo khai báo Next `^16.2.10` trong [package.json](../../package.json); tài liệu latest có thể đi trước bản cài thực tế.
-Checkout vẫn có [src/middleware.ts](../../src/middleware.ts), chưa có `src/proxy.ts`; ghi chú này không yêu cầu rename entry runtime đó.
+Checkout dùng [src/proxy.ts](../../src/proxy.ts) (task 32 đổi tên theo quy ước Next 16).
 
 `page.tsx` có thể export function `ProductsPage`: tên file framework và tên component không cần giống nhau.
 Không đổi thành `Page.tsx` để áp PascalCase máy móc. Tương tự giữ `not-found.tsx`, không sửa thành `NotFound.tsx`.

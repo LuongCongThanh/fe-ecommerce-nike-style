@@ -37,7 +37,7 @@ Một số flow cần phối hợp feature: shell đọc session/cart/wishlist; 
 Cây `src/shared` sau task 36:
 
 - `components/`: UI primitive thuần (trước đây `shared/ui`), không nghiệp vụ.
-- `routing/`: `routes.ts`, `auth-cookies.ts` (hằng số điều hướng và middleware, giá trị giữ nguyên).
+- `routing/`: `routes.ts`, `auth-cookies.ts` (hằng số điều hướng và proxy, giá trị giữ nguyên).
 - `styles/`: `cn.ts`, `motion.ts`, `focusRing.ts`. `formatting/currency.ts`: `formatCurrency`.
 - `feedback/notification.ts`: một owner toast. `queries/useApiMutation.ts`: cơ chế mutation client.
 - `persistence/createPersistedListStore.ts`, `pagination/pagination.ts`, `monitoring/sentry.ts`.

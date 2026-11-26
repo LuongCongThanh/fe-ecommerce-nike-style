@@ -14,7 +14,7 @@ test.describe('Checkout COD (reservation + idempotent place order + success) —
     await page.goto('/vi/cart');
     await expect(page.getByText('Backpack Commuter')).toBeVisible();
 
-    // Checkout is gated by the middleware's cookie hint. Sign in with a `returnUrl` so the login form's
+    // Checkout is gated by the proxy's cookie hint. Sign in with a `returnUrl` so the login form's
     // own client-side redirect lands on Checkout while the in-memory mock session is still alive.
     await page.goto('/vi/login?returnUrl=%2Fvi%2Fcheckout');
     await addMiddlewareLoginHint(page);

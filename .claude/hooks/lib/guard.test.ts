@@ -95,7 +95,7 @@ const rows: Row[] = [
   // --- AGENT_RUN: ask paths ---
   ['package.json', file('Edit', `${ROOT}/package.json`), ctx(), 'ask-path'],
   ['next config', file('Edit', `${ROOT}/next.config.ts`), ctx(), 'ask-path'],
-  ['middleware', file('Edit', `${ROOT}/src/middleware.ts`), ctx(), 'ask-path'],
+  ['proxy', file('Edit', `${ROOT}/src/proxy.ts`), ctx(), 'ask-path'],
   ['gitignore', file('Edit', `${ROOT}/.gitignore`), ctx(), 'ask-path'],
   // --- AGENT_RUN: allowed writes ---
   ['source file', file('Edit', `${ROOT}/src/modules/cart/Cart.tsx`), ctx(), 'allow'],

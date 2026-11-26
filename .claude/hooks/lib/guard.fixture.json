@@ -46,7 +46,7 @@
     "docs/adr/**",
     "apps/**"
   ],
-  "askPaths": ["package.json", "next.config.ts", "src/middleware.ts", ".gitignore"],
+  "askPaths": ["package.json", "next.config.ts", "src/proxy.ts", ".gitignore"],
   "phases": {
     "plan": {
       "writeOnly": ["{taskDir}/plan.md"],

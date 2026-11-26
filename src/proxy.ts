@@ -16,7 +16,7 @@ const ADMIN_PATTERN = /^\/(vi|en)\/admin/;
 
 const AUTH_ONLY_PATTERNS = [/^\/(vi|en)\/login$/, /^\/(vi|en)\/register$/];
 
-export function middleware(request: NextRequest): ReturnType<typeof intlMiddleware> {
+export function proxy(request: NextRequest): ReturnType<typeof intlMiddleware> {
   const { pathname } = request.nextUrl;
   // Serwist's fallback is a root route, outside the locale segment.
   if (pathname === '/~offline') return NextResponse.next();
@@ -32,8 +32,8 @@ export function middleware(request: NextRequest): ReturnType<typeof intlMiddlewa
     }
 
     // Optimistic UX check — KHÔNG phải authorization thật. Cookie chỉ là hint để tránh
-    // user thường thấy flash UI admin trước khi Django trả 403. Authorization thật (role,
-    // permission, ownership) phải được Django API enforce lại — middleware không decode/
+    // user thường thấy flash UI admin trước khi Backend (be-demo) trả 403. Authorization thật
+    // (role, permission, ownership) phải được Backend enforce lại — proxy không decode/
     // verify access token, chỉ đọc cookie nên có thể bị giả mạo phía nào cũng phải recheck.
     if (ADMIN_PATTERN.test(pathname)) {
       const isAdmin = request.cookies.get(USER_ROLE_COOKIE)?.value === 'true';
