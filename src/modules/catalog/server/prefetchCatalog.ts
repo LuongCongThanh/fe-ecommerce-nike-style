@@ -18,6 +18,7 @@ import {
   buildSearchQuery,
   CATALOG_REFERENCE_STALE_TIME,
   type CategoryData,
+  HOME_NEW_ARRIVALS_QUERY,
   resolveCategoryId,
   toCategoryData,
 } from '@/modules/catalog/queries/catalogQuery';
@@ -117,5 +118,16 @@ export async function prefetchProductsListing(searchParams: URLSearchParams): Pr
   };
 
   await Promise.all([categoriesRead, prefetcher.options(), loadProducts()]);
+  return prefetcher.dehydrate();
+}
+
+/**
+ * Home: the category tree for featured categories and the five newest products. Same keys and shapes as
+ * `useCategoryTree` and the new-arrivals query, so the browser adds no second cache entry. A failed read
+ * leaves its key out and the section shows its own loading/error/retry state.
+ */
+export async function prefetchHome(): Promise<DehydratedState> {
+  const prefetcher = createCatalogPrefetcher();
+  await Promise.all([prefetcher.categories(), prefetcher.products(HOME_NEW_ARRIVALS_QUERY)]);
   return prefetcher.dehydrate();
 }

@@ -1,5 +1,5 @@
 ---
-status: ready-for-agent
+status: in-progress
 blocked-by: [45-storefront-ssr-products]
 pr:
 kind: logic
