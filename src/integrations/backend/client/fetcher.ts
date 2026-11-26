@@ -1,10 +1,11 @@
 import axios, { type AxiosResponse } from 'axios';
 
 import { ApiError } from '@/integrations/backend/client/api-error';
+import { type QueryParamValue, withQueryString } from '@/integrations/backend/client/query-string';
 import { type AuthRuntimeAdapter, clearAuthRuntimeAdapter, getAuthRuntimeAdapter } from '@/integrations/backend/client/runtime';
 
 export type RequestMethod = 'GET' | 'POST' | 'PUT' | 'PATCH' | 'DELETE';
-export type QueryParamValue = string | number | boolean | null | undefined | readonly string[];
+export type { QueryParamValue };
 
 export interface ErrorEnvelope {
   message?: string;
@@ -37,29 +38,6 @@ const axiosInstance = axios.create({
   // Tự xử lý status để mọi lỗi HTTP đều được chuẩn hóa thành ApiError.
   validateStatus: () => true,
 });
-
-function withQueryString(url: string, params?: Record<string, QueryParamValue>): string {
-  if (params === undefined) return url;
-
-  const searchParams = new URLSearchParams();
-
-  for (const [key, value] of Object.entries(params)) {
-    if (value === undefined || value === null) continue;
-
-    // Arrays repeat the key (`?size=M&size=L`), the form the API's list filters expect.
-    if (Array.isArray(value)) {
-      for (const item of value as readonly string[]) searchParams.append(key, item);
-      continue;
-    }
-    searchParams.set(key, String(value));
-  }
-
-  const query = searchParams.toString();
-
-  if (query === '') return url;
-
-  return `${url}${url.includes('?') ? '&' : '?'}${query}`;
-}
 
 // Nhiều request cùng nhận 401 chỉ được dùng chung một lần refresh token.
 let inFlightRefresh: Promise<string> | null = null;

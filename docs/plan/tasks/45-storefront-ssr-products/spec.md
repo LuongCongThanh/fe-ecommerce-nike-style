@@ -1,5 +1,5 @@
 ---
-status: ready-for-agent
+status: review
 blocked-by: [44-storefront-migration-cleanup]
 pr:
 kind: logic

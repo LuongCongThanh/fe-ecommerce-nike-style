@@ -22,11 +22,18 @@ test.describe('production runtime', () => {
     await page.goto('/vi/products');
     await expect(page.getByText('Running Shoe Alpha')).toBeVisible();
 
-    // The harness records each request tagged with this run's id; the Next proxy forwards the header.
-    const records = await request.get(`${catalogOrigin}/__test/requests?requestId=${requestId}`);
-    expect(records.ok()).toBe(true);
-    expect(await records.json()).toContainEqual(expect.objectContaining({ method: 'GET', path: '/api/v1/products', requestId }));
+    // Catalog pages are server-rendered (the server reader calls the harness directly, without this
+    // header), so issue the browser-side API call explicitly through the same-origin proxy.
+    const proxied = await page.evaluate(async () => (await fetch('/api/v1/products?page=1&limit=1')).status);
+    expect(proxied).toBe(200);
 
+    // The harness records each request tagged with this run's id; the Next proxy forwards the header.
+    await expect
+      .poll(async () => {
+        const records = await request.get(`${catalogOrigin}/__test/requests?requestId=${requestId}`);
+        return records.ok() ? ((await records.json()) as Array<{ method: string; path: string }>) : [];
+      })
+      .toContainEqual(expect.objectContaining({ method: 'GET', path: '/api/v1/products', requestId }));
     // A Node-side probe gets the same fixture the browser rendered.
     const probe = await request.get(`${catalogOrigin}/api/v1/products/slug/running-shoe-alpha`);
     expect(probe.status()).toBe(200);

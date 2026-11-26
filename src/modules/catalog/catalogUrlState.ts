@@ -108,3 +108,16 @@ export function withToggledCatalogOption(searchParams: URLSearchParams, key: Cat
   next.set('page', '1');
   return next;
 }
+
+/**
+ * Next.js `searchParams` (a record whose values may be arrays) -> `URLSearchParams`, so Server
+ * Components feed the same parsers the client uses on `useSearchParams()`. Repeated keys are kept in order.
+ */
+export function toSearchParams(record: Readonly<Record<string, string | readonly string[] | undefined>>): URLSearchParams {
+  const params = new URLSearchParams();
+  for (const [key, value] of Object.entries(record)) {
+    if (value === undefined) continue;
+    for (const item of typeof value === 'string' ? [value] : value) params.append(key, item);
+  }
+  return params;
+}

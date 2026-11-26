@@ -4,8 +4,7 @@ import { useQuery } from '@tanstack/react-query';
 
 import { getProducts } from '@/integrations/backend/endpoints/catalog';
 import { catalogKeys } from '@/modules/catalog/queries/catalogKeys';
-
-const PAGE_SIZE = 12;
+import { buildSearchQuery } from '@/modules/catalog/queries/catalogQuery';
 
 /**
  * Search results — the same list call PLP uses, scoped to `q` only. Deliberately has no category,
@@ -17,6 +16,6 @@ export function useProductSearch(query: string, page: number) {
   return useQuery({
     queryKey: catalogKeys.search(q, page),
     enabled: q.length > 0,
-    queryFn: async () => getProducts({ page, limit: PAGE_SIZE, sort: 'newest', q }),
+    queryFn: async () => getProducts(buildSearchQuery(q, page)),
   });
 }

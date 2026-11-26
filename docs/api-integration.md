@@ -18,6 +18,10 @@ Workflow `contract-bump.yml` (`scripts/contract-bump.sh`) mở PR `chore/contrac
 
 Khi sửa PR breaking hoặc bump tay: kiểm release/contract cần dùng, cập nhật pin, gen:api, typecheck để tìm caller bị ảnh hưởng, xử lý break cơ học, dừng chốt quyết định nếu break đổi UI/domain, sau đó lint/build và focused tests. Không tự nâng pin theo tài liệu này. Git/PR vẫn theo CONTRIBUTING và quyền phiên hiện tại.
 
+## Public server reader (SSR)
+
+`src/integrations/backend/server/catalog.ts` đọc catalog công khai cho Server Components: `getProductsServer`, `getProductBySlugServer`, `getCategoryTreeServer`, `getSizesServer`, `getColorsServer`. Transport nằm ở `server/http.ts` (`import 'server-only'`): `fetch` thẳng tới `API_ORIGIN` (server-only, mặc định `http://localhost:8080`) + `/api/v1`, `cache: 'no-store'`, `credentials: 'omit'`, không cookie/Authorization, không đọc auth adapter hay refresh, timeout 5 giây mỗi request, không retry. Lỗi thành `ApiError` (`status` 0 cho timeout/network, code `REQUEST_TIMEOUT`/`NETWORK_ERROR`/`INVALID_RESPONSE`). Mapper thuần dùng chung với endpoint browser nằm ở `endpoints/catalog.mapper.ts`; ghép query string ở `client/query-string.ts`. Hiện chỉ `/[locale]/products` dùng reader này; category, search, PDP và home vẫn đọc client-side cho tới các slice SSR kế tiếp.
+
 ## MSW boundary
 
 `src/integrations/backend/env/config.ts` chỉ bật mocking khi flag đúng chuỗi `true`. Server adapter bật MSW qua instrumentation; browser helper bảo đảm worker sẵn sàng trước request chuyển tiếp. Unhandled requests bypass; handlers trong `src/integrations/backend/mocks/handlers.ts` giữ các flow auth/profile/address/cart/wishlist/checkout/orders chưa cutover. Catalog `/api/v1` vẫn đi API thật.
