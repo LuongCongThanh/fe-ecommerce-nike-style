@@ -1,4 +1,4 @@
-import type { StorefrontOrderStatus } from '@/lib/api/endpoints/orders';
+import type { StorefrontOrderStatus } from '@/integrations/backend/endpoints/orders';
 import { Badge } from '@/shared/components/Badge';
 
 // Mỗi trạng thái trong luồng chính (PENDING→PROCESSING→PACKED→SHIPPED→DELIVERED/CANCELLED) có màu badge

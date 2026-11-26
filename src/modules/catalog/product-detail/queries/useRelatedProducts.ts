@@ -2,8 +2,8 @@
 
 import { useQuery } from '@tanstack/react-query';
 
-import { getProducts } from '@/lib/api/endpoints/catalog';
-import type { ProductQuery, ProductSummary } from '@/lib/api/models/catalog';
+import { getProducts } from '@/integrations/backend/endpoints/catalog';
+import type { ProductQuery, ProductSummary } from '@/integrations/backend/models/catalog';
 import { catalogKeys } from '@/modules/catalog/queries/catalogKeys';
 
 const RELATED_LIMIT = 4;

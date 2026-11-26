@@ -3,7 +3,7 @@
 import { useEffect } from 'react';
 
 import { bootstrapAuth, clearAuth, getAccessToken, refreshAccessToken } from '@/features/auth/stores/auth.store';
-import { registerAuthRuntimeAdapter } from '@/lib/api/client/runtime';
+import { registerAuthRuntimeAdapter } from '@/integrations/backend/client/runtime';
 
 export function AuthRuntimeProvider({ children }: { readonly children: React.ReactNode }): React.JSX.Element {
   useEffect(() => {

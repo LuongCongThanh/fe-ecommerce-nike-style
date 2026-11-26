@@ -17,7 +17,7 @@ cd "$(dirname "$0")/.."
 
 BACKEND_REPO=LuongCongThanh/be-demo
 PIN_FILE=scripts/gen-api.mjs
-GENERATED=src/lib/api/generated/openapi.ts
+GENERATED=src/integrations/backend/generated/openapi.ts
 LABEL=breaking-contract
 BRANCH_PREFIX=chore/contract-
 DRY_RUN=${DRY_RUN:-}

@@ -1,14 +1,14 @@
 import { beforeEach, describe, expect, it, vi } from 'vitest';
-import { refreshSession } from '@/lib/api/endpoints/auth';
-import { getProfile } from '@/lib/api/endpoints/profile';
+import { refreshSession } from '@/integrations/backend/endpoints/auth';
+import { getProfile } from '@/integrations/backend/endpoints/profile';
 
 import { bootstrapAuth, clearAuth, getAuthSnapshot, setRefreshToken } from '@/features/auth/stores/auth.store';
 
-vi.mock('@/lib/api/endpoints/auth', () => ({
+vi.mock('@/integrations/backend/endpoints/auth', () => ({
   refreshSession: vi.fn(),
 }));
 
-vi.mock('@/lib/api/endpoints/profile', () => ({
+vi.mock('@/integrations/backend/endpoints/profile', () => ({
   getProfile: vi.fn(),
 }));
 

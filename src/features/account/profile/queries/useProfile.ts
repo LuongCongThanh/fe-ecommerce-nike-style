@@ -2,7 +2,7 @@
 
 import { useQuery } from '@tanstack/react-query';
 
-import { getProfile } from '@/lib/api/endpoints/profile';
+import { getProfile } from '@/integrations/backend/endpoints/profile';
 
 const profileKey = ['profile'] as const;
 

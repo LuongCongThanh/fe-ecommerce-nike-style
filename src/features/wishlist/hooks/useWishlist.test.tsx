@@ -1,10 +1,10 @@
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { act, renderHook, waitFor } from '@testing-library/react';
 import { afterAll, afterEach, beforeAll, beforeEach, describe, expect, it } from 'vitest';
-import { resetAuthRuntime } from '@/lib/api/client/fetcher';
-import { encodeAccessToken } from '@/lib/api/mocks/auth-fixtures';
-import { registerAuthRuntimeAdapter } from '@/lib/api/client/runtime';
-import { server } from '@/lib/api/testing/msw-server';
+import { resetAuthRuntime } from '@/integrations/backend/client/fetcher';
+import { encodeAccessToken } from '@/integrations/backend/mocks/auth-fixtures';
+import { registerAuthRuntimeAdapter } from '@/integrations/backend/client/runtime';
+import { server } from '@/integrations/backend/testing/msw-server';
 
 import { mergeWishlistOnLogin, useIsWishlisted, useWishlist } from '@/features/wishlist/hooks/useWishlist';
 import {
@@ -15,7 +15,7 @@ import {
   useWishlistStore,
 } from '@/features/wishlist/stores/wishlist.store';
 
-// Real seeded Products from `src/lib/api/mocks/catalog-fixtures.ts` — p-1 has a Variant, p-3 doesn't.
+// Real seeded Products from `src/integrations/backend/mocks/catalog-fixtures.ts` — p-1 has a Variant, p-3 doesn't.
 const PRODUCT_WITH_VARIANT = 'p-1';
 const PRODUCT_NO_VARIANT = 'p-3';
 // Demo account (user id 1) — `wishlist-fixtures.ts` seeds it with an empty wishlist.

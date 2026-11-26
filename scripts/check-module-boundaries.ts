@@ -31,15 +31,13 @@ const ROOTS: ReadonlyArray<{ prefix: string; unit: string; logicalPrefix?: strin
   { prefix: 'src/providers/', unit: 'providers' },
   { prefix: 'src/app/', unit: 'app' },
   { prefix: 'src/shared/', unit: 'shared' },
-  { prefix: 'src/lib/api/', unit: 'integrations' },
-  { prefix: 'src/lib/schemas/', unit: 'integrations', logicalPrefix: 'schemas/' },
   { prefix: 'src/integrations/backend/', unit: 'integrations' },
   { prefix: 'src/testing/', unit: 'testing' },
 ];
 
 const SOURCE_EXTENSIONS = ['.ts', '.tsx'];
 const RESOLVE_SUFFIXES = ['', '.ts', '.tsx', '.js', '.mjs', '.json', '/index.ts', '/index.tsx'];
-const IGNORED_DIRS = new Set(['src/lib/api/generated']);
+const IGNORED_DIRS = new Set(['src/integrations/backend/generated']);
 
 export interface PublicEntry {
   /** Unit names (`layouts`, `wishlist`, …) or one exact app file as `app:<logical path>`. */

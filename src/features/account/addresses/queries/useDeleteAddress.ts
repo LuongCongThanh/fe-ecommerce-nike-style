@@ -3,7 +3,7 @@
 import { useQueryClient } from '@tanstack/react-query';
 
 import { addressKeys } from '@/features/account/addresses/queries/addressKeys';
-import { deleteAddress } from '@/lib/api/endpoints/address';
+import { deleteAddress } from '@/integrations/backend/endpoints/address';
 import { useApiMutation } from '@/shared/queries/useApiMutation';
 
 export const useDeleteAddress = () => {

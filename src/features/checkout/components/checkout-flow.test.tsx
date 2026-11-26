@@ -1,18 +1,18 @@
 import { afterAll, afterEach, beforeAll, beforeEach, describe, expect, it, vi } from 'vitest';
-import { resetAuthRuntime } from '@/lib/api/client/fetcher';
-import { getSkusByIds } from '@/lib/api/endpoints/cart';
-import { registerAuthRuntimeAdapter } from '@/lib/api/client/runtime';
-import { encodeAccessToken } from '@/lib/api/mocks/auth-fixtures';
-import { resetMockCatalogStockForTesting } from '@/lib/api/mocks/catalog-fixtures';
-import { resetMockOrderDbForTesting } from '@/lib/api/mocks/order-fixtures';
-import { resetMockReservationsForTesting } from '@/lib/api/mocks/reservation-fixtures';
-import { server } from '@/lib/api/testing/msw-server';
+import { resetAuthRuntime } from '@/integrations/backend/client/fetcher';
+import { getSkusByIds } from '@/integrations/backend/endpoints/cart';
+import { registerAuthRuntimeAdapter } from '@/integrations/backend/client/runtime';
+import { encodeAccessToken } from '@/integrations/backend/mocks/auth-fixtures';
+import { resetMockCatalogStockForTesting } from '@/integrations/backend/mocks/catalog-fixtures';
+import { resetMockOrderDbForTesting } from '@/integrations/backend/mocks/order-fixtures';
+import { resetMockReservationsForTesting } from '@/integrations/backend/mocks/reservation-fixtures';
+import { server } from '@/integrations/backend/testing/msw-server';
 
-import { createReservation } from '@/lib/api/endpoints/checkout';
-import { getOrders, createOrder } from '@/lib/api/endpoints/orders';
-import { ApiError } from '@/shared/lib/errors/api-error';
+import { createReservation } from '@/integrations/backend/endpoints/checkout';
+import { getOrders, createOrder } from '@/integrations/backend/endpoints/orders';
+import { ApiError } from '@/integrations/backend/client/api-error';
 
-// Real seeded SKUs from `src/lib/api/mocks/catalog-fixtures.ts`.
+// Real seeded SKUs from `src/integrations/backend/mocks/catalog-fixtures.ts`.
 const SKU_HIGH_STOCK = 'p-1-0-0'; // stock 14
 const SKU_LOW_STOCK = 'p-1-0-2'; // stock 4
 const ACCOUNT_USER_ID = 1;

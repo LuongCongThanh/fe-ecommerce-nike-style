@@ -2,8 +2,8 @@
 
 import { keepPreviousData, useQuery } from '@tanstack/react-query';
 
-import { getProducts } from '@/lib/api/endpoints/catalog';
-import type { ProductQuery } from '@/lib/api/models/catalog';
+import { getProducts } from '@/integrations/backend/endpoints/catalog';
+import type { ProductQuery } from '@/integrations/backend/models/catalog';
 import type { CatalogFilters, CatalogOptionFilters } from '@/modules/catalog/catalogUrlState';
 import { toApiGender } from '@/modules/catalog/catalogUrlState';
 import { catalogKeys } from '@/modules/catalog/queries/catalogKeys';

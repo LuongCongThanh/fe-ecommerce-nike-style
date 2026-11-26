@@ -5,7 +5,7 @@
 import { motion, useReducedMotion } from 'framer-motion';
 import { useLocale, useTranslations } from 'next-intl';
 
-import type { ProductSummary } from '@/lib/api/models/catalog';
+import type { ProductSummary } from '@/integrations/backend/models/catalog';
 import { ProductCard } from '@/modules/catalog/components/ProductCard';
 import { SPRING_MOVE } from '@/shared/styles/motion';
 

@@ -3,7 +3,7 @@
 import { useQuery } from '@tanstack/react-query';
 
 import { orderKeys } from '@/features/orders/queries/orderKeys';
-import { getOrder } from '@/lib/api/endpoints/orders';
+import { getOrder } from '@/integrations/backend/endpoints/orders';
 
 export const useOrder = (id: string) =>
   useQuery({

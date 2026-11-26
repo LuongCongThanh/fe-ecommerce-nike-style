@@ -3,8 +3,8 @@
 import { useQuery } from '@tanstack/react-query';
 import { useLocale, useTranslations } from 'next-intl';
 
-import { getProducts } from '@/lib/api/endpoints/catalog';
-import type { ProductQuery, ProductSummary } from '@/lib/api/models/catalog';
+import { getProducts } from '@/integrations/backend/endpoints/catalog';
+import type { ProductQuery, ProductSummary } from '@/integrations/backend/models/catalog';
 import { ProductCard } from '@/modules/catalog/components/ProductCard';
 import { catalogKeys } from '@/modules/catalog/queries/catalogKeys';
 import { QueryState } from '@/shared/components/QueryState';

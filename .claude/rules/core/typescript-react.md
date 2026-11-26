@@ -38,7 +38,7 @@ description: General TypeScript/React naming, file-naming, import-order and comp
 | Query key factory      | `<domain>Keys`                              | `adminProductKeys`     |
 
 - A file name should reflect its main export; do not use generic names like `helpers.ts`, `common.ts`, `misc.ts` when a more specific responsibility can be named.
-- A file holding only types shared within one feature can be `types.ts`; canonical transport types must live in their domain under `src/lib/schemas`.
+- A file holding only types shared within one feature can be `types.ts`; canonical transport types must live in their domain under `src/integrations/backend/schemas`.
 - Do not bulk-rename legacy files just to match this convention; apply it to new files and rename when already touching the related boundary.
 
 ## Variable and function naming
@@ -62,8 +62,8 @@ import type { FormEvent } from 'react';
 import { useQuery } from '@tanstack/react-query';
 
 import { Button } from '@/shared/components/Button';
-import { getProducts } from '@/lib/api/endpoints/catalog';
-import type { Product } from '@/lib/schemas/catalog/catalog';
+import { getProducts } from '@/integrations/backend/endpoints/catalog';
+import type { Product } from '@/integrations/backend/schemas/catalog/catalog.schema';
 import { ROUTES } from '@/shared/routing/routes';
 
 import { ProductCard } from './ProductCard';

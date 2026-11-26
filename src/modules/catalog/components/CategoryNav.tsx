@@ -3,7 +3,7 @@ import Link from 'next/link';
 
 import { useTranslations } from 'next-intl';
 
-import type { CategoryNode } from '@/lib/api/models/catalog';
+import type { CategoryNode } from '@/integrations/backend/models/catalog';
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from '@/shared/components/Accordion';
 import { cn } from '@/shared/styles/cn';
 

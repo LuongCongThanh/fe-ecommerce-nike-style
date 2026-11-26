@@ -1,6 +1,6 @@
 # Tích hợp API hiện tại
 
-Owner: maintainer storefront cho client; `be-demo` sở hữu transport/domain phía server, `cms` sở hữu back-office. Ngày đối chiếu 18/11/2026. Không import source backend hoặc gọi API ngoài `src/lib/api`.
+Owner: maintainer storefront cho client; `be-demo` sở hữu transport/domain phía server, `cms` sở hữu back-office. Ngày đối chiếu 18/11/2026. Không import source backend hoặc gọi API ngoài `src/integrations/backend`.
 
 ## Proxy và môi trường
 
@@ -10,9 +10,9 @@ Same-origin proxy giữ cookie first-party và tránh browser gọi backend cros
 
 ## Contract pin và mapper
 
-`scripts/gen-api.mjs` pin release asset `be-demo/openapi-v0.7.0/openapi.json`; `OPENAPI_URL` có thể override URL hoặc local path để thử. `pnpm gen:api` sinh `src/lib/api/generated/openapi.ts` rồi format. Không sửa file sinh bằng tay. CI regenerate rồi kiểm diff với contract pin; cần truy cập nguồn contract.
+`scripts/gen-api.mjs` pin release asset `be-demo/openapi-v0.7.0/openapi.json`; `OPENAPI_URL` có thể override URL hoặc local path để thử. `pnpm gen:api` sinh `src/integrations/backend/generated/openapi.ts` rồi format. Không sửa file sinh bằng tay. CI regenerate rồi kiểm diff với contract pin; cần truy cập nguồn contract.
 
-Catalog endpoints dùng generated schemas cho products, product slug, categories, sizes và colors. Mapper chuyển DTO sang model trong `src/lib/api/models/catalog.ts`; null ảnh bị loại, description null thành chuỗi rỗng. Component dùng model, không đoán field từ contract mới hơn. Pin hiện tại không phải bằng chứng toàn bộ checkout/auth API đã tích hợp.
+Catalog endpoints dùng generated schemas cho products, product slug, categories, sizes và colors. Mapper chuyển DTO sang model trong `src/integrations/backend/models/catalog.ts`; null ảnh bị loại, description null thành chuỗi rỗng. Component dùng model, không đoán field từ contract mới hơn. Pin hiện tại không phải bằng chứng toàn bộ checkout/auth API đã tích hợp.
 
 Workflow `contract-bump.yml` (`scripts/contract-bump.sh`) mở PR `chore/contract-openapi-v*` khi be-demo phát hành tag mới: patch tự squash merge khi CI xanh; minor (breaking change) gắn nhãn `breaking-contract` và chờ người sửa caller trên chính nhánh đó. Mỗi lúc chỉ một PR như vậy. Cần secret `CONTRACT_BUMP_TOKEN` (PAT fine-grained cho repo này, Contents + Pull requests read/write); thiếu secret thì workflow bỏ qua.
 
@@ -20,7 +20,7 @@ Khi sửa PR breaking hoặc bump tay: kiểm release/contract cần dùng, cậ
 
 ## MSW boundary
 
-`src/lib/api/env/config.ts` chỉ bật mocking khi flag đúng chuỗi `true`. Server adapter bật MSW qua instrumentation; browser helper bảo đảm worker sẵn sàng trước request chuyển tiếp. Unhandled requests bypass; handlers trong `src/lib/api/mocks/handlers.ts` giữ các flow auth/profile/address/cart/wishlist/checkout/orders chưa cutover. Catalog `/api/v1` vẫn đi API thật.
+`src/integrations/backend/env/config.ts` chỉ bật mocking khi flag đúng chuỗi `true`. Server adapter bật MSW qua instrumentation; browser helper bảo đảm worker sẵn sàng trước request chuyển tiếp. Unhandled requests bypass; handlers trong `src/integrations/backend/mocks/handlers.ts` giữ các flow auth/profile/address/cart/wishlist/checkout/orders chưa cutover. Catalog `/api/v1` vẫn đi API thật.
 
 Fixtures và persistence chỉ hỗ trợ dev/test; không bảo đảm dữ liệu giống backend. Tắt flag không tự đổi endpoint/DTO/session. Mock refresh token nằm trong memory và session mất sau reload thật. Giữ MSW cho flow chưa có contract đã xác minh; gỡ từng handler sau cutover và regression tương ứng.
 

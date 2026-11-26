@@ -3,8 +3,8 @@
 import { useQueryClient } from '@tanstack/react-query';
 
 import { addressKeys } from '@/features/account/addresses/queries/addressKeys';
-import type { StorefrontAddressInput } from '@/lib/api/endpoints/address';
-import { createAddress, updateAddress } from '@/lib/api/endpoints/address';
+import type { StorefrontAddressInput } from '@/integrations/backend/endpoints/address';
+import { createAddress, updateAddress } from '@/integrations/backend/endpoints/address';
 import { useApiMutation } from '@/shared/queries/useApiMutation';
 
 /** Create when `id` is absent, update otherwise — one mutation for the add/edit form. */

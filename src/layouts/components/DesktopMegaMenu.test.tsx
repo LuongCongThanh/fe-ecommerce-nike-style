@@ -3,10 +3,10 @@ import userEvent from '@testing-library/user-event';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 
 import { DesktopMegaMenu } from '@/layouts/components/DesktopMegaMenu';
-import { getCategoryTree } from '@/lib/api/endpoints/catalog';
+import { getCategoryTree } from '@/integrations/backend/endpoints/catalog';
 import { renderWithProviders } from '@/testing/render';
 
-vi.mock('@/lib/api/endpoints/catalog', () => ({ getCategoryTree: vi.fn() }));
+vi.mock('@/integrations/backend/endpoints/catalog', () => ({ getCategoryTree: vi.fn() }));
 
 const TREE = [
   { id: 'c1', slug: 'men', name: 'Nam', children: [{ id: 'c11', slug: 'men-shoes', name: 'Giày nam', children: [] }] },

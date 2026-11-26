@@ -1,7 +1,7 @@
 import { setAccessToken, setRefreshToken, setUser } from '@/features/auth/stores/auth.store';
-import { forgotPassword, login, register, resetPassword } from '@/lib/api/endpoints/auth';
-import { ensureApiMockingReady } from '@/shared/lib/api-mocking';
-import type { User } from '@/shared/types/user';
+import { ensureApiMockingReady } from '@/integrations/backend/adapters/browser-bootstrap';
+import { forgotPassword, login, register, resetPassword } from '@/integrations/backend/endpoints/auth';
+import type { User } from '@/integrations/backend/models/user.types';
 
 interface LoginPayload {
   email: string;
@@ -16,7 +16,7 @@ interface RegisterPayload {
 }
 
 // No `toStorefrontUser` mapper here — `AuthSessionResponse['user']` (api-sdk's `AuthUser`) and the
-// storefront's `User` are the same `@/lib/schemas/profile` type, not two shapes that happen to match.
+// storefront's `User` are the same `@/integrations/backend/schemas/profile` type, not two shapes that happen to match.
 export async function loginAction(payload: LoginPayload): Promise<User> {
   await ensureApiMockingReady();
   const data = await login(payload);

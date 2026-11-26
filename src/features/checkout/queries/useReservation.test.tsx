@@ -1,17 +1,17 @@
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { renderHook, waitFor } from '@testing-library/react';
 import { afterAll, afterEach, beforeAll, beforeEach, describe, expect, it } from 'vitest';
-import { resetAuthRuntime } from '@/lib/api/client/fetcher';
-import { registerAuthRuntimeAdapter } from '@/lib/api/client/runtime';
-import { encodeAccessToken } from '@/lib/api/mocks/auth-fixtures';
-import { resetMockCatalogStockForTesting } from '@/lib/api/mocks/catalog-fixtures';
-import { resetMockReservationsForTesting } from '@/lib/api/mocks/reservation-fixtures';
-import { server } from '@/lib/api/testing/msw-server';
+import { resetAuthRuntime } from '@/integrations/backend/client/fetcher';
+import { registerAuthRuntimeAdapter } from '@/integrations/backend/client/runtime';
+import { encodeAccessToken } from '@/integrations/backend/mocks/auth-fixtures';
+import { resetMockCatalogStockForTesting } from '@/integrations/backend/mocks/catalog-fixtures';
+import { resetMockReservationsForTesting } from '@/integrations/backend/mocks/reservation-fixtures';
+import { server } from '@/integrations/backend/testing/msw-server';
 
 import { useReservation } from '@/features/checkout/queries/useReservation';
 import type { CartLine } from '@/features/cart/hooks/useCart';
 
-// Real seeded SKUs from `src/lib/api/mocks/catalog-fixtures.ts`.
+// Real seeded SKUs from `src/integrations/backend/mocks/catalog-fixtures.ts`.
 const SKU_HIGH_STOCK = 'p-1-0-0'; // stock 14
 const SKU_LOW_STOCK = 'p-1-0-2'; // stock 4
 const ACCOUNT_USER_ID = 1;

@@ -31,7 +31,7 @@ const eslintConfig = [
       '.husky/**',
       'public/**',
       'scripts/**',
-      'src/lib/api/generated/**',
+      'src/integrations/backend/generated/**',
       'src/**/*.d.ts',
       '.skills/**',
       '.claude/**',
@@ -318,7 +318,7 @@ const eslintConfig = [
   // Transitional storefront mocks remain until each purchasing flow has a real API cutover.
   // Preserve the existing fixture truthiness policy; do not infer removal from generated types.
   {
-    files: ['src/lib/api/mocks/**/*.ts'],
+    files: ['src/integrations/backend/mocks/**/*.ts'],
     rules: {
       'import/no-cycle': 'off',
       'import-x/no-cycle': 'off',

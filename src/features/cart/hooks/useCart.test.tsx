@@ -1,12 +1,12 @@
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { act, renderHook, waitFor } from '@testing-library/react';
 import { afterAll, afterEach, beforeAll, beforeEach, describe, expect, it } from 'vitest';
-import { server } from '@/lib/api/testing/msw-server';
+import { server } from '@/integrations/backend/testing/msw-server';
 
 import { useCart } from '@/features/cart/hooks/useCart';
 import { clearCart, initCartFromStorage, resetCartState, useCartStore } from '@/features/cart/stores/cart.store';
 
-// p-1-0-0 (stock 14) / p-1-0-2 (stock 4) — real seeded SKUs from `src/lib/api/mocks/catalog-fixtures.ts`.
+// p-1-0-0 (stock 14) / p-1-0-2 (stock 4) — real seeded SKUs from `src/integrations/backend/mocks/catalog-fixtures.ts`.
 const SKU_HIGH_STOCK = 'p-1-0-0';
 const SKU_LOW_STOCK = 'p-1-0-2';
 

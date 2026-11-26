@@ -10,7 +10,7 @@ import Link from 'next/link';
 import { AnimatePresence, motion, useReducedMotion } from 'framer-motion';
 import { ArrowLeft, RotateCcw, ShieldCheck, Truck } from 'lucide-react';
 
-import type { ProductDetail } from '@/lib/api/models/catalog';
+import type { ProductDetail } from '@/integrations/backend/models/catalog';
 import { AddToCartSection } from '@/modules/catalog/product-detail/components/AddToCartSection';
 import { MobileBuyBar } from '@/modules/catalog/product-detail/components/MobileBuyBar';
 import type { VariantSelectionState } from '@/modules/catalog/product-detail/hooks/useVariantSelection';

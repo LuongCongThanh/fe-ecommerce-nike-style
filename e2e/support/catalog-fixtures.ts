@@ -1,4 +1,4 @@
-import type { components } from '@/lib/api/generated/openapi';
+import type { components } from '@/integrations/backend/generated/openapi';
 
 type ProductListItem = components['schemas']['ProductListItemResponseDto'];
 type ProductDetail = components['schemas']['ProductDetailResponseDto'];

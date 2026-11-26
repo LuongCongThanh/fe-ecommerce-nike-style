@@ -4,9 +4,9 @@ import { useQuery } from '@tanstack/react-query';
 
 import type { CartItem } from '@/features/cart/stores/cart.store';
 import { cartPersistence, getCartItems, initCartFromStorage, replaceCartItems, useCartStore } from '@/features/cart/stores/cart.store';
-import { getSkusByIds, mergeCartAfterLogin } from '@/lib/api/endpoints/cart';
+import { ensureApiMockingReady } from '@/integrations/backend/adapters/browser-bootstrap';
+import { getSkusByIds, mergeCartAfterLogin } from '@/integrations/backend/endpoints/cart';
 import { notify } from '@/shared/feedback/notification';
-import { ensureApiMockingReady } from '@/shared/lib/api-mocking';
 
 /** Live-resolved line for display/totals — price/stock are never cached, always read from the SKU (glossary.md). */
 export interface CartLine extends CartItem {

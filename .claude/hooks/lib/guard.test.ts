@@ -62,7 +62,7 @@ const rows: Row[] = [
   ['human runs git commit', bash('git commit -m x'), human, 'allow'],
   ['human rm -rf', bash('rm -rf node_modules'), human, 'allow'],
   // --- AGENT_RUN: write deny list (one row per table group) ---
-  ['generated api', file('Edit', `${ROOT}/src/lib/api/generated/x.ts`), ctx(), 'deny-path'],
+  ['generated api', file('Edit', `${ROOT}/src/integrations/backend/generated/x.ts`), ctx(), 'deny-path'],
   ['lockfile', file('Write', `${ROOT}/pnpm-lock.yaml`), ctx(), 'deny-path'],
   ['skills-lock', file('Write', `${ROOT}/skills-lock.json`), ctx(), 'deny-path'],
   ['agent settings', file('Edit', `${ROOT}/.claude/settings.json`), ctx(), 'deny-path'],

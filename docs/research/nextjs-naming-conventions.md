@@ -189,23 +189,23 @@ Các điểm cụ thể:
 
 Bảng này giữ các quy định đã có; phần acronym/folder semantics là khuyến nghị bổ sung cần owner duyệt trước khi enforce.
 
-| Đối tượng               | Tên nên dùng                                           | Cơ sở                                            |
-| ----------------------- | ------------------------------------------------------ | ------------------------------------------------ |
-| Component               | `ProductCard.tsx`, export `ProductCard`                | Rule owner                                       |
-| Component test          | `ProductCard.test.tsx`                                 | Owner + testing rule                             |
-| Hook/query/mutation     | `useProducts.ts`, `useCreateOrder.ts`                  | Owner; prefix React cho symbol                   |
-| Hook test               | `useProducts.test.tsx` khi test render hook            | Testing rule; extension theo JSX thực tế         |
-| Utility/use case/mapper | `mergeCartItems.ts`, `variantResolution.ts`            | Owner camelCase, intent cụ thể                   |
-| Store                   | `cart.store.ts`; test `cart.store.test.ts`             | Owner cho phép suffix này và pattern có sẵn      |
-| Query key module        | `catalogKeys.ts`, export `catalogKeys`                 | Owner camelCase + `<domain>Keys`                 |
-| Schema module           | `checkoutSchema.ts`, export `CheckoutSchema`           | File camelCase, value `<Name>Schema`             |
-| Transport schema        | Domain file trong `src/lib/schemas`, giữ pattern owner | Không tạo DTO copy trong feature                 |
-| Type tập hợp            | `types.ts` trong feature hoặc `order.ts`               | Owner cho phép; chỉ tách khi có shared semantics |
-| Interface/type/props    | `Product`, `ProductCardProps`; không `IProduct`        | Owner rõ ràng                                    |
-| Enum/trạng thái         | Union hoặc `as const`; không thêm TS `enum`            | Owner cấm enum                                   |
-| Constant toàn cục       | `ORDER_STATUS_OPTIONS`                                 | Owner SCREAMING_SNAKE_CASE cho symbol            |
-| Folder thường           | `product-detail`, `storefront-shell`                   | Đề xuất thống nhất với route và folder hiện tại  |
-| E2E                     | `e2e/checkout.spec.ts`, `hero-3d.spec.ts`              | Testing owner                                    |
+| Đối tượng               | Tên nên dùng                                                            | Cơ sở                                            |
+| ----------------------- | ----------------------------------------------------------------------- | ------------------------------------------------ |
+| Component               | `ProductCard.tsx`, export `ProductCard`                                 | Rule owner                                       |
+| Component test          | `ProductCard.test.tsx`                                                  | Owner + testing rule                             |
+| Hook/query/mutation     | `useProducts.ts`, `useCreateOrder.ts`                                   | Owner; prefix React cho symbol                   |
+| Hook test               | `useProducts.test.tsx` khi test render hook                             | Testing rule; extension theo JSX thực tế         |
+| Utility/use case/mapper | `mergeCartItems.ts`, `variantResolution.ts`                             | Owner camelCase, intent cụ thể                   |
+| Store                   | `cart.store.ts`; test `cart.store.test.ts`                              | Owner cho phép suffix này và pattern có sẵn      |
+| Query key module        | `catalogKeys.ts`, export `catalogKeys`                                  | Owner camelCase + `<domain>Keys`                 |
+| Schema module           | `checkoutSchema.ts`, export `CheckoutSchema`                            | File camelCase, value `<Name>Schema`             |
+| Transport schema        | Domain file trong `src/integrations/backend/schemas`, giữ pattern owner | Không tạo DTO copy trong feature                 |
+| Type tập hợp            | `types.ts` trong feature hoặc `order.ts`                                | Owner cho phép; chỉ tách khi có shared semantics |
+| Interface/type/props    | `Product`, `ProductCardProps`; không `IProduct`                         | Owner rõ ràng                                    |
+| Enum/trạng thái         | Union hoặc `as const`; không thêm TS `enum`                             | Owner cấm enum                                   |
+| Constant toàn cục       | `ORDER_STATUS_OPTIONS`                                                  | Owner SCREAMING_SNAKE_CASE cho symbol            |
+| Folder thường           | `product-detail`, `storefront-shell`                                    | Đề xuất thống nhất với route và folder hiện tại  |
+| E2E                     | `e2e/checkout.spec.ts`, `hero-3d.spec.ts`                               | Testing owner                                    |
 
 [TypeScript/React rule](../../.claude/rules/core/typescript-react.md), [testing rule](../../.claude/rules/process/testing.md), [project structure](../../.claude/rules/apps/project-structure.md).
 Không áp `SCREAMING_SNAKE_CASE` của constant symbol cho filename; không thêm root `enums/`, `interfaces/`, `services/` chỉ vì có type mới.

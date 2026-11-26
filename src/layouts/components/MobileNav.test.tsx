@@ -2,11 +2,11 @@ import { screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 
-import { getCategoryTree } from '@/lib/api/endpoints/catalog';
+import { getCategoryTree } from '@/integrations/backend/endpoints/catalog';
 import { MobileNav } from '@/layouts/components/MobileNav';
 import { renderWithProviders } from '@/testing/render';
 
-vi.mock('@/lib/api/endpoints/catalog', () => ({ getCategoryTree: vi.fn() }));
+vi.mock('@/integrations/backend/endpoints/catalog', () => ({ getCategoryTree: vi.fn() }));
 
 const TREE = [{ id: 'c1', slug: 'men', name: 'Nam', children: [{ id: 'c2', slug: 'men-shoes', name: 'Giày nam', children: [] }] }];
 

@@ -3,7 +3,7 @@
 import { useQueryClient } from '@tanstack/react-query';
 
 import { orderKeys } from '@/features/orders/queries/orderKeys';
-import { cancelOrder } from '@/lib/api/endpoints/orders';
+import { cancelOrder } from '@/integrations/backend/endpoints/orders';
 import { useApiMutation } from '@/shared/queries/useApiMutation';
 
 export const useCancelOrder = (id: string) => {

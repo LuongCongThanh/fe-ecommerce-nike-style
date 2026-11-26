@@ -1,4 +1,4 @@
-/** Maps the free-text `color` names used by mock SKUs (`src/lib/api/mocks/catalog-fixtures.ts`) to a hex value for the PDP 3D viewer material. */
+/** Maps the free-text `color` names used by mock SKUs (`src/integrations/backend/mocks/catalog-fixtures.ts`) to a hex value for the PDP 3D viewer material. */
 const COLOR_HEX: Record<string, string> = {
   black: '#1a1a1a',
   white: '#f5f5f5',

@@ -2,15 +2,15 @@ import { act, renderHook } from '@testing-library/react';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
 import { useAuth } from '@/features/auth/session/useAuth';
-import { mergeCartAfterLogin } from '@/lib/api/endpoints/cart';
-import { mergeWishlistAfterLogin } from '@/lib/api/endpoints/wishlist';
+import { mergeCartAfterLogin } from '@/integrations/backend/endpoints/cart';
+import { mergeWishlistAfterLogin } from '@/integrations/backend/endpoints/wishlist';
 import { useMergeGuestDataOnLogin } from '@/layouts/hooks/useMergeGuestDataOnLogin';
 
 vi.mock('next/navigation', () => ({ useRouter: () => ({ push: vi.fn() }) }));
 vi.mock('next-intl', () => ({ useLocale: () => 'vi' }));
-vi.mock('@/lib/api/endpoints/cart', () => ({ mergeCartAfterLogin: vi.fn(), getSkusByIds: vi.fn().mockResolvedValue([]) }));
-vi.mock('@/lib/api/endpoints/wishlist', () => ({ mergeWishlistAfterLogin: vi.fn(), getProductsByIds: vi.fn().mockResolvedValue([]) }));
-vi.mock('@/lib/api/endpoints/auth', () => ({ logout: vi.fn().mockResolvedValue(undefined) }));
+vi.mock('@/integrations/backend/endpoints/cart', () => ({ mergeCartAfterLogin: vi.fn(), getSkusByIds: vi.fn().mockResolvedValue([]) }));
+vi.mock('@/integrations/backend/endpoints/wishlist', () => ({ mergeWishlistAfterLogin: vi.fn(), getProductsByIds: vi.fn().mockResolvedValue([]) }));
+vi.mock('@/integrations/backend/endpoints/auth', () => ({ logout: vi.fn().mockResolvedValue(undefined) }));
 
 const user = {
   id: 1,

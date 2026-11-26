@@ -6,7 +6,7 @@ import { Fragment } from 'react';
 import { ChevronRight } from 'lucide-react';
 import { useTranslations } from 'next-intl';
 
-import type { CategoryEntry } from '@/lib/api/models/catalog';
+import type { CategoryEntry } from '@/integrations/backend/models/catalog';
 import { CategoryClient } from '@/modules/catalog/category-detail/components/CategoryClient';
 import { getCategoryTrail } from '@/modules/catalog/categoryTree';
 import { FilterSidebar } from '@/modules/catalog/components/FilterSidebar';

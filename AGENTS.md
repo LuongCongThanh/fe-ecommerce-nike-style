@@ -3,10 +3,10 @@
 ## Cấu trúc dự án
 
 - Repo này là một app Next.js độc lập ở root (App Router; phục vụ khách hàng; hỗ trợ `vi` và `en`); không còn Turborepo/pnpm workspace.
-- `src/app` giữ các entry point Next.js. Code màn hình và nghiệp vụ nằm trong `src/features`, UI và tiện ích dùng xuyên nghiệp vụ nằm trong `src/shared`. HTTP và hợp đồng nằm trong `src/lib/api` và `src/lib/schemas`.
+- `src/app` giữ các entry point Next.js. Code màn hình và nghiệp vụ nằm trong `src/features`, UI và tiện ích dùng xuyên nghiệp vụ nằm trong `src/shared`. HTTP và hợp đồng nằm trong `src/integrations/backend` và `src/integrations/backend/schemas`.
 - Đặt file `*.test.ts(x)` cạnh mã hoặc điểm vào được kiểm thử. Vitest setup nằm ở `src/testing/setup.ts`; helper render dùng chung ở `src/testing/render.tsx`.
 - Catalog đọc API thật từ `be-demo`. MSW hỗ trợ các luồng storefront đang chờ API tương ứng.
-- Không import source backend hoặc gọi API trực tiếp ngoài `src/lib/api`.
+- Không import source backend hoặc gọi API trực tiếp ngoài `src/integrations/backend`.
 
 ## Nguồn sự thật
 
@@ -41,7 +41,7 @@ pnpm build
 
 - Chạy kiểm tra hẹp trước, sau đó gate cấp root tương ứng với phạm vi thay đổi.
 - Chỉ chạy `pnpm test:e2e` khi thay đổi browser flow hoặc hạ tầng E2E.
-- Không sửa thủ công file sinh tự động như `src/lib/api/generated/openapi.ts`.
+- Không sửa thủ công file sinh tự động như `src/integrations/backend/generated/openapi.ts`.
 
 ## Ranh giới triển khai
 

@@ -133,7 +133,7 @@ Avoid:
 
 ## D — Dependency Inversion
 
-- Features depend on the public contract (`@/lib/api`, `@/lib/schemas`, props/callbacks), not on an MSW fixture or the fetch implementation.
+- Features depend on the public contract (`@/integrations/backend`, `@/integrations/backend/schemas`, props/callbacks), not on an MSW fixture or the fetch implementation.
 - Runtime-specific behavior goes through an existing adapter/provider; do not check the environment in scattered places inside components.
 - Inject dependencies at the boundary when test/multi-runtime support is needed. Do not create an interface + factory just to wrap one stable pure function.
 - Lower-level packages do not import higher-level apps; dependencies always point toward a stable contract.
@@ -150,7 +150,7 @@ Avoid:
 
 ## Patterns to avoid
 
-- A repository/service layer that only forwards 1:1 to `@/lib/api` without adding a valuable boundary.
+- A repository/service layer that only forwards 1:1 to `@/integrations/backend` without adding a valuable boundary.
 - A generic base component/hook with many type parameters just to make two pieces of code look similar.
 - Overlapping boolean props that create invalid states (`isLoading`, `isError`, `isEmpty`, `hasData` all managed independently); use a union or a single source of state instead.
 - A mutable singleton outside a managed store/runtime.

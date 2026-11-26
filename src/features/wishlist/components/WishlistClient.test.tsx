@@ -1,13 +1,13 @@
 import { fireEvent, screen, waitFor } from '@testing-library/react';
 import { afterAll, afterEach, beforeAll, beforeEach, describe, expect, it, vi } from 'vitest';
-import { server } from '@/lib/api/testing/msw-server';
+import { server } from '@/integrations/backend/testing/msw-server';
 
 import { renderWithProviders } from '@/testing/render';
 import { WishlistClient } from '@/features/wishlist/components/WishlistClient';
 import { clearCart, resetCartState, useCartStore } from '@/features/cart/stores/cart.store';
 import { resetWishlistState, useWishlistStore } from '@/features/wishlist/stores/wishlist.store';
 
-// Real seeded Products from `src/lib/api/mocks/catalog-fixtures.ts`.
+// Real seeded Products from `src/integrations/backend/mocks/catalog-fixtures.ts`.
 const PRODUCT_WITH_VARIANT_SLUG = 'running-shoe-alpha'; // p-1 — has Color x Size
 const PRODUCT_WITH_VARIANT_ID = 'p-1';
 const PRODUCT_NO_VARIANT_ID = 'p-3'; // single hidden SKU, no Variant
