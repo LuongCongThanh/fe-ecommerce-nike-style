@@ -1,5 +1,5 @@
 ---
-status: review
+status: done
 blocked-by: [35-storefront-migration-rules]
 pr: #120
 kind: refactor
