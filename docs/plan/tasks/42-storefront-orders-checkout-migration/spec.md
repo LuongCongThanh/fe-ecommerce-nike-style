@@ -1,5 +1,5 @@
 ---
-status: review
+status: done
 blocked-by: [41-storefront-cart-wishlist-migration]
 pr: 135
 kind: refactor

@@ -1,7 +1,7 @@
 # Report 42
 
 - **PR:** #135
-- **Ngày merge:** (điền khi merge)
+- **Ngày merge:** 26/11/2026
 
 ## Đã làm
 
