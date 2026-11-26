@@ -1,7 +1,8 @@
 # Report 46
 
 - **PR:** #142
-- **Trạng thái:** review
+- **Ngày merge:** 26/11/2026 (squash, CI xanh)
+- **Trạng thái:** done
 
 ## Đã làm
 
