@@ -1,7 +1,7 @@
 ---
-status: review
+status: done
 blocked-by: [36-storefront-shared-migration]
-pr:
+pr: #122
 kind: refactor
 approved:
   files: []
