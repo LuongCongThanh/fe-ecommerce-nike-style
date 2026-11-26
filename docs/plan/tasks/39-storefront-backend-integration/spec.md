@@ -1,5 +1,5 @@
 ---
-status: in-progress
+status: review
 blocked-by: [38-storefront-catalog-migration]
 pr:
 kind: refactor
