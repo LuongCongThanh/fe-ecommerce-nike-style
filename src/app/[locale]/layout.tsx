@@ -1,7 +1,6 @@
 import { notFound } from 'next/navigation';
 
 import { NextIntlClientProvider } from 'next-intl';
-import { setRequestLocale } from 'next-intl/server';
 
 const locales = ['vi', 'en'];
 
@@ -19,8 +18,6 @@ export default async function LocaleLayout({
   const { locale } = await params;
 
   if (!locales.includes(locale)) notFound();
-
-  setRequestLocale(locale);
 
   return <NextIntlClientProvider>{children}</NextIntlClientProvider>;
 }

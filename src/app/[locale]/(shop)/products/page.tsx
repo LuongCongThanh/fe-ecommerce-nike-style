@@ -1,6 +1,5 @@
 // Hallmark redesign · design-system: design.md · scope: app page (functional, no enrichment)
 import { HydrationBoundary } from '@tanstack/react-query';
-import { setRequestLocale } from 'next-intl/server';
 
 import { toSearchParams } from '@/modules/catalog/catalogUrlState';
 import { FilterSidebar } from '@/modules/catalog/components/FilterSidebar';
@@ -9,13 +8,10 @@ import { prefetchProductsListing } from '@/modules/catalog/server/prefetchCatalo
 import { PageShell } from '@/shared/components/PageShell';
 
 interface ProductsPageProps {
-  readonly params: Promise<{ locale: string }>;
   readonly searchParams: Promise<Record<string, string | string[] | undefined>>;
 }
 
-export default async function ProductsPage({ params, searchParams }: ProductsPageProps) {
-  const { locale } = await params;
-  setRequestLocale(locale);
+export default async function ProductsPage({ searchParams }: ProductsPageProps) {
   const dehydratedState = await prefetchProductsListing(toSearchParams(await searchParams));
 
   return (

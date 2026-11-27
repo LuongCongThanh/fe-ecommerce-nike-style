@@ -1,8 +1,6 @@
 // Hallmark redesign · design-system: design.md · scope: app page (functional, no enrichment)
 import { redirect } from 'next/navigation';
 
-import { setRequestLocale } from 'next-intl/server';
-
 import { ResetPasswordForm } from '@/modules/auth/reset-password/components/ResetPasswordForm';
 import { isValidResetPasswordRequest } from '@/modules/auth/schemas/auth.schema';
 
@@ -13,7 +11,6 @@ interface ResetPasswordPageProps {
 
 export default async function ResetPasswordPage({ params, searchParams }: ResetPasswordPageProps) {
   const { locale, token } = await params;
-  setRequestLocale(locale);
 
   const { uid } = await searchParams;
 
