@@ -1,5 +1,5 @@
 // @vitest-environment node
-import { mkdirSync, mkdtempSync, rmSync, writeFileSync } from 'node:fs';
+import { mkdirSync, mkdtempSync, renameSync, rmSync, writeFileSync } from 'node:fs';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 
@@ -12,8 +12,8 @@ function repo(tasks: Record<string, string>): string {
   const root = mkdtempSync(join(tmpdir(), 'tasks-'));
   dirs.push(root);
   for (const [name, fm] of Object.entries(tasks)) {
-    mkdirSync(join(root, 'docs/plan/tasks', name), { recursive: true });
-    writeFileSync(join(root, 'docs/plan/tasks', name, 'spec.md'), `---\n${fm}\n---\n# Spec\n`);
+    mkdirSync(join(root, 'docs/storefront/plan/todo', name), { recursive: true });
+    writeFileSync(join(root, 'docs/storefront/plan/todo', name, 'spec.md'), `---\n${fm}\n---\n# Spec\n`);
   }
   return root;
 }
@@ -76,6 +76,24 @@ describe('selectTask (situations 1, 2)', () => {
     const selection = selectTask(readTasks(root));
     expect(selection.task?.name).toBe('04-ready');
     expect(selection.skipped).toEqual([{ name: '03-delivery', waitingFor: ['02-decision'] }]);
+  });
+  it('reads completed blockers across folders and never selects cancelled tickets', () => {
+    const root = repo({
+      '01-cancelled': 'status: ready-for-agent\nkind: docs',
+      '02-done': 'status: done\nkind: docs',
+      '03-ready': 'status: ready-for-agent\nblocked-by: [02-done]\nkind: docs',
+    });
+    for (const [name, group] of [
+      ['01-cancelled', 'wontfix'],
+      ['02-done', 'done'],
+    ] as const) {
+      mkdirSync(join(root, 'docs/storefront/plan', group), { recursive: true });
+      renameSync(join(root, 'docs/storefront/plan/todo', name), join(root, 'docs/storefront/plan', group, name));
+    }
+    const tasks = readTasks(root);
+    expect(tasks.map((task) => task.name)).toEqual(['01-cancelled', '02-done', '03-ready']);
+    expect(selectTask(tasks).task?.name).toBe('03-ready');
+    expect(selectTask(tasks, '01').task).toBeNull();
   });
   it('missing tasks dir -> empty', () => {
     expect(readTasks(mkdtempSync(join(tmpdir(), 'empty-')))).toEqual([]);

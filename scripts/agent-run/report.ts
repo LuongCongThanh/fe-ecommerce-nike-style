@@ -5,14 +5,14 @@ import { dirname, join } from 'node:path';
 import { setField } from './spec-file';
 import { SITUATION, SITUATIONS, type SituationNumber, type Stop, type TaskStatus } from './situations';
 import { hasState, readState, updateState } from './state';
-import { TASKS_DIR } from './tasks';
+import { readTasks } from './tasks';
 
 export const INBOX_FILE = '.agent-run/AGENT-INBOX.md';
-const specFile = (repoRoot: string, taskName: string) => join(repoRoot, TASKS_DIR, taskName, 'spec.md');
+const specFile = (repoRoot: string, taskName: string) => readTasks(repoRoot).find((task) => task.name === taskName)?.specPath;
 
 export function setTaskStatus(repoRoot: string, taskName: string, status: TaskStatus, extra: Record<string, string> = {}): void {
   const file = specFile(repoRoot, taskName);
-  if (!existsSync(file)) return;
+  if (!file || !existsSync(file)) return;
   let text = setField(readFileSync(file, 'utf8'), 'status', status);
   for (const [k, v] of Object.entries(extra)) text = setField(text, k, v);
   writeFileSync(file, text);

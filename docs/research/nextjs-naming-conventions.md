@@ -118,7 +118,7 @@ Next cho phép colocate file thường trong route; chỉ entry convention làm 
 
 Checkout có `(auth)`, `(shop)`, `[id]`, `[locale]`, `[slug]`, `[token]`, `_composition`, `~offline`.
 Các tên này không phải lỗi casing. `~offline` là route hiện hành; đổi tên có thể đổi URL/PWA fallback, cần kiểm owner trước.
-Xem [architecture](../architecture.md), [source app](../../src/app).
+Xem [architecture](../storefront/architecture.md), [source app](../../src/app).
 
 ## React và TypeScript không quyết định toàn bộ filename
 

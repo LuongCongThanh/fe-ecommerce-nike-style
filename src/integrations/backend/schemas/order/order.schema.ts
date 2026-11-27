@@ -10,7 +10,7 @@ import { z } from 'zod';
  */
 export const OrderStatusSchema = z.enum(['PENDING', 'PROCESSING', 'PACKED', 'SHIPPED', 'DELIVERED', 'CANCELLED', 'RETURN_REQUESTED', 'RETURNED']);
 
-/** MVP is COD-only, no payment gateway step (historical COD-only mock decision; docs/roadmap.md). */
+/** MVP is COD-only, no payment gateway step (historical COD-only mock decision; docs/storefront/roadmap.md). */
 export const OrderPaymentMethodSchema = z.enum(['cod']);
 export const OrderPaymentStatusSchema = z.enum(['pending', 'paid', 'failed', 'refunded']);
 

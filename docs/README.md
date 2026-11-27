@@ -1,28 +1,12 @@
-# Tài liệu storefront
+# Tài liệu dự án
 
-Bắt đầu ở [README](../README.md), sau đó đọc theo câu hỏi. Hiện trạng được đối chiếu source/config ngày 18/11/2026; backlog không phải cam kết đã triển khai.
+| Nhóm                               | Nội dung                                                               |
+| ---------------------------------- | ---------------------------------------------------------------------- |
+| [Storefront](storefront/README.md) | Tổng quan sản phẩm, kiến trúc, API, roadmap và toàn bộ kế hoạch/ticket |
+| [ADR](adr/)                        | Quyết định kiến trúc và lý do lựa chọn                                 |
+| [Research](research/)              | Nghiên cứu, không tự trở thành yêu cầu triển khai                      |
+| [Hướng dẫn thực thi](agents/)      | Convention, tracker, runner và UI workflow                             |
 
-| Câu hỏi                               | Nguồn chuẩn                            | Khi nào đọc                           |
-| ------------------------------------- | -------------------------------------- | ------------------------------------- |
-| Sản phẩm hiện làm được gì?            | [Overview](overview.md)                | Onboarding, đánh giá real/mock        |
-| Code, state và runtime nằm ở đâu?     | [Architecture](architecture.md)        | Sửa feature, session, locale, PWA, 3D |
-| API/proxy/contract hoạt động thế nào? | [API integration](api-integration.md)  | Đổi transport hoặc chuẩn bị cutover   |
-| Còn thiếu gì?                         | [Roadmap](roadmap.md)                  | Ưu tiên rebuild hoặc sản phẩm         |
-| Làm Git/PR/release thế nào?           | [CONTRIBUTING](../CONTRIBUTING.md)     | Khi đóng góp                          |
-| Visual nào được chấp nhận?            | [Design](../design.md)                 | Thiết kế/review UI                    |
-| Code convention nào áp dụng?          | [Rule map](agents/code-conventions.md) | Trước khi sửa code                    |
-| Task/field/status nghĩa gì?           | [Tracker](agents/issue-tracker.md)     | Viết spec, plan, report               |
-| Chạy và tiếp tục tự động ra sao?      | [Runner](agents/runner.md)             | Vận hành `agent-run`                  |
-| Chọn UI skill thế nào?                | [UI workflow](agents/ui-workflow.md)   | Thực thi công việc UI                 |
+Bắt đầu với [quickstart](../README.md). [CONTRIBUTING](../CONTRIBUTING.md) sở hữu Git/PR, [design](../design.md) sở hữu visual/interaction contract.
 
-## Kế hoạch và lịch sử
-
-[ADR 0001](adr/0001-domain-modules-and-readable-names.md) ghi quyết định tổ chức theo module nghiệp vụ với tên dễ hiểu. [Thiết kế đích và lộ trình chuyển đổi](plan/storefront-structure-migration.md) đã được duyệt về hướng kiến trúc, chưa triển khai source và chưa là task runner.
-
-[Task index](plan/README.md) chỉ điều hướng; `spec.md` giữ trạng thái. [Map rebuild](plan/tasks/07-workflow-structure-map/spec.md) điều phối các quyết định, [plan task12](plan/tasks/12-documentation-ownership/plan.md) ghi phạm vi đợt docs này.
-
-Các tài liệu legacy đã gỡ vẫn được lưu trong lịch sử Git; ADR hiện tại ghi quyết định kiến trúc mới, không khôi phục kho reference cũ. Visual/UX contract nằm ở `design.md`; runtime và regression checklist nằm ở architecture.
-
-## Ownership
-
-README sở hữu quickstart; overview sở hữu capability; architecture sở hữu runtime/cây hiện tại; API integration sở hữu transport/cutover; roadmap sở hữu việc chưa làm. CONTRIBUTING sở hữu Git, tracker sở hữu schema/lifecycle, runner sở hữu manual vận hành, `.claude/rules/` sở hữu convention và CSS sở hữu giá trị token. Tài liệu khác dẫn tới owner thay vì sao chép recipe.
+Trong bộ Storefront: overview mô tả capability; architecture mô tả code/runtime; API integration mô tả transport và cutover; roadmap giữ việc chưa làm. `spec.md` là nguồn trạng thái ticket. Tài liệu dẫn về owner thay vì chép lại nội dung.

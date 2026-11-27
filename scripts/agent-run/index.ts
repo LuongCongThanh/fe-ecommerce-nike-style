@@ -4,7 +4,7 @@
  *   pnpm agent-run [--task NN] [--provider claude|codex]
  *
  * Exit codes: 0 PR opened, 1 stopped (see .agent-run/AGENT-INBOX.md), 64 usage error.
- * Docs: docs/plan/README.md, section "Chạy agent-run".
+ * Docs: docs/agents/runner.md; task index: docs/storefront/plan/README.md.
  */
 import { readFileSync } from 'node:fs';
 import { dirname, join, resolve } from 'node:path';

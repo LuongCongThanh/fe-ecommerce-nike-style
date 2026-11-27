@@ -93,7 +93,7 @@ export async function refreshAccessToken(): Promise<string> {
 
 /**
  * Chạy 1 lần lúc app mount (AuthRuntimeProvider). Vì refresh token chỉ sống trong memory ở giai đoạn
- * mock (không cookie — xem docs/architecture.md, Session boundary (historical mock limitation): MSW browser Service Worker không forward
+ * mock (không cookie — xem docs/storefront/architecture.md, Session boundary (historical mock limitation): MSW browser Service Worker không forward
  * được Cookie theo cả 2 hướng), session KHÔNG thể phục hồi sau F5 thật — nếu memory đã trống (luôn
  * đúng ngay sau F5), coi như anonymous ngay, không gọi network. Refresh token còn sống trong memory
  * (ví dụ Fast Refresh dev, hoặc gọi lại trong cùng lần mount) mới thực sự thử refresh+lấy profile.

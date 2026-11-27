@@ -16,7 +16,7 @@ function write(path: string, contents: string): void {
 }
 
 function task(name: string, frontmatter: string, body = ''): void {
-  write(`docs/plan/tasks/${name}/spec.md`, `---\n${frontmatter}\n---\n\nPart of 07-workflow-structure-map\n\n${body}\n`);
+  write(`docs/storefront/plan/todo/${name}/spec.md`, `---\n${frontmatter}\n---\n\nPart of 07-workflow-structure-map\n\n${body}\n`);
 }
 
 beforeEach(() => {
@@ -68,6 +68,14 @@ describe('checkDocs task graph', () => {
     expect(text).toContain('blocker cycle');
   });
 
+  it('validates blockers and parent records across status folders', async () => {
+    write('docs/storefront/plan/done/07-workflow-structure-map/spec.md', '---\nstatus: done\nkind: docs\n---\n');
+    task('08-child', 'status: todo\nblocked-by: [07-workflow-structure-map]\nkind: docs');
+    expect(await checkDocs(root, { format: false })).toEqual([]);
+    write('docs/storefront/plan/wontfix/09-cancelled/spec.md', '---\nstatus: todo\nkind: docs\nblocked-by: [99-missing]\n---\n');
+    expect((await checkDocs(root, { format: false })).join('\n')).toContain('unknown blocker 99-missing');
+  });
+
   it('accepts the parser subset including multiline blockers and Wayfinder parent references', async () => {
     task('07-workflow-structure-map', 'status: in-progress\nblocked-by: []\nkind: docs\nlabels: [wayfinder:map]', '# Đồng bộ');
     task('08-child', 'status: done\nblocked-by:\n  - 07-workflow-structure-map\nkind: docs\nlabels:\n  - wayfinder:task', '# Child\n\nType: task');
@@ -78,7 +86,7 @@ describe('checkDocs task graph', () => {
 describe('checkDocs live consumers', () => {
   it('reports literal links to removed docs in live roles but ignores historical task artifacts', async () => {
     write('.agents/skills/local/SKILL.md', 'Read docs/FRONTEND-GUIDE.md\n');
-    write('docs/plan/tasks/12-history/report.md', 'Removed docs/FRONTEND-GUIDE.md\n');
+    write('docs/storefront/plan/todo/12-history/report.md', 'Removed docs/FRONTEND-GUIDE.md\n');
     const problems = await checkDocs(root, { format: false });
     expect(problems).toHaveLength(1);
     expect(problems[0]).toContain('.agents/skills/local/SKILL.md');

@@ -10,7 +10,7 @@ import { isStepDone, readState, recordBlock, updateState } from './state';
 import { on } from './testkit';
 import { makeWorld, PR_URL, reply, TASK_SPEC, type World } from './world';
 
-const spec = (w: World, task = '01-demo') => readFileSync(join(w.repo, 'docs/plan/tasks', task, 'spec.md'), 'utf8');
+const spec = (w: World, task = '01-demo') => readFileSync(join(w.repo, 'docs/storefront/plan/todo', task, 'spec.md'), 'utf8');
 const inbox = (w: World) => readFileSync(join(w.repo, '.agent-run/AGENT-INBOX.md'), 'utf8');
 const roles = (w: World) => w.claudeCalls.map((c) => c.role);
 const gatesRed = (failures: number) => {
@@ -34,7 +34,7 @@ describe('happy path (D39: script commits once, pushes, opens PR into dev, never
     const c = w.runner.calls;
     const at = (p: string) => c.findIndex((x) => x.startsWith(p));
     expect(at('git switch --no-overwrite-ignore -c feat/01-demo')).toBeGreaterThan(-1);
-    expect(at(`pnpm tokens all --project-dir ${wt} --out ${wt}/docs/plan/tasks/01-demo/metric.md`)).toBeGreaterThan(-1);
+    expect(at(`pnpm tokens all --project-dir ${wt} --out ${wt}/docs/storefront/plan/todo/01-demo/metric.md`)).toBeGreaterThan(-1);
     expect(c.filter((x) => x.startsWith('git commit'))).toEqual(['git commit -m feat(demo): add the thing']);
     expect(at('git commit')).toBeGreaterThan(at('pnpm tokens'));
     expect(at('git push -u origin feat/01-demo')).toBeGreaterThan(at('git commit'));
@@ -42,7 +42,7 @@ describe('happy path (D39: script commits once, pushes, opens PR into dev, never
     expect(c.some((x) => /\bmerge\b/.test(x) && !x.includes('merge-base'))).toBe(false);
     expect(spec(w)).toMatch(/status: review/);
     expect(readFileSync(join(w.repo, '.agent-run/prs/01-demo'), 'utf8')).toContain(PR_URL);
-    expect(readFileSync(join(wt, 'docs/plan/tasks/01-demo/spec.md'), 'utf8')).toContain('status: review');
+    expect(readFileSync(join(wt, 'docs/storefront/plan/todo/01-demo/spec.md'), 'utf8')).toContain('status: review');
     expect(w.notices.some((n) => n.includes(PR_URL))).toBe(true);
   });
 
@@ -93,7 +93,7 @@ describe('happy path (D39: script commits once, pushes, opens PR into dev, never
     const w = makeWorld();
     w.script.implementer = () => reply({ result: 'need_info', reason: 'Missing decision' });
     expect(await runAgent(w.deps, w.cfg)).toMatchObject({ kind: 'stopped', situation: 5 });
-    const specPath = join(w.repo, 'docs/plan/tasks/01-demo/spec.md');
+    const specPath = join(w.repo, 'docs/storefront/plan/todo/01-demo/spec.md');
     writeFileSync(specPath, spec(w).replace('status: needs-info', 'status: ready-for-agent'));
     updateState(w.wt('01-demo'), (state) => {
       delete state.provider;
@@ -114,7 +114,7 @@ describe('happy path (D39: script commits once, pushes, opens PR into dev, never
     expect(reviewer?.maxTurns).toBe(34);
     expect(planner?.env).toMatchObject({ AGENT_RUN: '1', AGENT_PHASE: 'plan' });
     expect(impl?.env).toMatchObject({ AGENT_PHASE: 'implement', AGENT_APPROVED: '{"paths":["package.json"],"commands":["pnpm add zod"]}' });
-    expect(impl?.env.AGENT_TASK_DIR).toBe(join(w.wt('01-demo'), 'docs/plan/tasks/01-demo'));
+    expect(impl?.env.AGENT_TASK_DIR).toBe(join(w.wt('01-demo'), 'docs/storefront/plan/todo/01-demo'));
     expect(reviewer?.env.AGENT_PHASE).toBe('review');
     expect(retro).toMatchObject({ resume: 'impl-1', maxTurns: 5, phase: 'retro' });
     expect(retro?.prompt).toContain('/mattpocock-skills:retro');
@@ -522,7 +522,7 @@ describe('retro (situation 15, D26, D43 exception)', () => {
     w.script.retro = (_r, n) =>
       n === 1 ? reply(undefined, { kind: 'max_turns', sessionId: 'impl-1', numTurns: 6 }) : reply(undefined, { sessionId: 'impl-1' });
     await runAgent(w.deps, w.cfg);
-    const specFile = join(w.repo, 'docs/plan/tasks/01-demo/spec.md');
+    const specFile = join(w.repo, 'docs/storefront/plan/todo/01-demo/spec.md');
     writeFileSync(
       specFile,
       readFileSync(specFile, 'utf8').replace('status: needs-info', 'status: ready-for-agent').replace('---\n\n#', 'retro-turns: 4\n---\n\n#'),
@@ -539,7 +539,7 @@ describe('retro (situation 15, D26, D43 exception)', () => {
     const w = makeWorld();
     w.script.retro = () => reply(undefined, { kind: 'max_turns', numTurns: 6 });
     await runAgent(w.deps, w.cfg);
-    const specFile = join(w.repo, 'docs/plan/tasks/01-demo/spec.md');
+    const specFile = join(w.repo, 'docs/storefront/plan/todo/01-demo/spec.md');
     writeFileSync(specFile, readFileSync(specFile, 'utf8').replace('status: needs-info', 'status: ready-for-agent'));
     const before = w.claudeCalls.length;
     expect(await runAgent(w.deps, w.cfg)).toMatchObject({ situation: 15 });
@@ -553,7 +553,7 @@ describe('resume (D43)', () => {
       n === 1 ? reply({ result: 'blocked', reason: 'needs_approval', requested: { paths: ['package.json'], commands: [] } }) : undefined;
   };
   const reready = (w: World, extra = '') => {
-    const f = join(w.repo, 'docs/plan/tasks/01-demo/spec.md');
+    const f = join(w.repo, 'docs/storefront/plan/todo/01-demo/spec.md');
     writeFileSync(
       f,
       readFileSync(f, 'utf8').replace('status: needs-info', 'status: ready-for-agent').replace('kind: logic', `kind: logic\n${extra}`),
@@ -613,7 +613,7 @@ describe('resume (D43)', () => {
 });
 
 const reready = (w: World, status = 'blocked') => {
-  const f = join(w.repo, 'docs/plan/tasks/01-demo/spec.md');
+  const f = join(w.repo, 'docs/storefront/plan/todo/01-demo/spec.md');
   writeFileSync(f, readFileSync(f, 'utf8').replace(`status: ${status}`, 'status: ready-for-agent'));
 };
 
@@ -667,7 +667,7 @@ describe('handoff on situations 7 and 8 (skill table)', () => {
     const [call] = handoffCalls(w);
     expect(call?.req).toMatchObject({ resume: 'impl-1', maxTurns: 3 });
     expect(call?.req.prompt).toContain('/mattpocock-skills:handoff');
-    expect(readFileSync(join(w.wt('01-demo'), 'docs/plan/tasks/01-demo/handoff.md'), 'utf8')).toContain('next: fix lint');
+    expect(readFileSync(join(w.wt('01-demo'), 'docs/storefront/plan/todo/01-demo/handoff.md'), 'utf8')).toContain('next: fix lint');
     const state = readState(w.wt('01-demo'));
     expect(state.turnsUsed).toBe(3 + 3 + 3 * 3); // planner + implementer + 3 fixes; the handoff is not counted
   });
@@ -728,7 +728,7 @@ describe('test-presence rule re-checked by the script (D38/D19)', () => {
     await runAgent(w.deps, w.cfg);
     const gateCalls = w.runner.calls.filter((c) => c.includes('verify-gates'));
     expect(gateCalls[0]).not.toContain('--task-dir');
-    expect(gateCalls[1]).toContain(`--task-dir ${join(w.wt('01-demo'), 'docs/plan/tasks/01-demo')}`);
+    expect(gateCalls[1]).toContain(`--task-dir ${join(w.wt('01-demo'), 'docs/storefront/plan/todo/01-demo')}`);
   });
 });
 

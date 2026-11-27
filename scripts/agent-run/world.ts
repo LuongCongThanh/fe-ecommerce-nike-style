@@ -56,8 +56,8 @@ export function makeWorld(opts: { tasks?: Record<string, string>; handlers?: Han
   const worktrees = repo;
   const tasks = opts.tasks ?? { '01-demo': TASK_SPEC('') };
   for (const [name, text] of Object.entries(tasks)) {
-    mkdirSync(join(repo, 'docs/plan/tasks', name), { recursive: true });
-    writeFileSync(join(repo, 'docs/plan/tasks', name, 'spec.md'), text);
+    mkdirSync(join(repo, 'docs/storefront/plan/todo', name), { recursive: true });
+    writeFileSync(join(repo, 'docs/storefront/plan/todo', name, 'spec.md'), text);
   }
   mkdirSync(join(repo, '.agent-run'), { recursive: true });
   writeFileSync(join(repo, '.agent-run/AGENT-INBOX.md'), '| Thời gian | Task | Tình huống | Việc cần làm |\n| --- | --- | --- | --- |\n');
@@ -73,7 +73,7 @@ export function makeWorld(opts: { tasks?: Record<string, string>; handlers?: Han
       branch = args[args.indexOf('-c') + 1] ?? '';
       const dir = repo;
       mkdirSync(join(dir, 'node_modules/.bin'), { recursive: true });
-      mkdirSync(join(dir, 'docs/plan/tasks'), { recursive: true });
+      mkdirSync(join(dir, 'docs/storefront/plan/todo'), { recursive: true });
       writeFileSync(join(dir, 'node_modules/.bin/tsx'), '');
       writeFileSync(join(dir, '.env.example'), 'X=1\n');
     }),
