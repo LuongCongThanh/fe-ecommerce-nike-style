@@ -147,7 +147,7 @@ describe('prefetchProductsListing', () => {
     hydrate(client, state);
     const queryFn = vi.fn();
 
-    await client.prefetchQuery({ queryKey: catalogKeys.categories(), queryFn, staleTime: 10 * 60_000 });
+    await client.query({ queryKey: catalogKeys.categories(), queryFn, staleTime: 10 * 60_000 });
 
     expect(queryFn).not.toHaveBeenCalled();
   });
