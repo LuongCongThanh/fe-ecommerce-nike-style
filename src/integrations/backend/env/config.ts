@@ -4,9 +4,11 @@
  * Values are build-time settings; see docs/storefront/api-integration.md.
  */
 function readEnv(viteKey: string, nextValue: string | undefined): string | undefined {
-  const viteEnv = (import.meta as ImportMeta & { env?: Record<string, string | undefined> }).env;
-  const fromVite = viteEnv?.[viteKey];
-  if (fromVite !== undefined) return fromVite;
+  // Vite types `import.meta.env` as always present with no string index, but under Next.js it is
+  // undefined at runtime: mark it optional and read the key without an index signature.
+  const viteEnv = (import.meta as Partial<ImportMeta>).env;
+  const fromVite: unknown = viteEnv === undefined ? undefined : Reflect.get(viteEnv, viteKey);
+  if (typeof fromVite === 'string') return fromVite;
 
   return nextValue;
 }

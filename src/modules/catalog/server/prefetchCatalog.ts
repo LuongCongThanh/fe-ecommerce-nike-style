@@ -2,7 +2,7 @@ import { unstable_rethrow } from 'next/navigation';
 
 import 'server-only';
 
-import { dehydrate, type DehydratedState, QueryClient } from '@tanstack/react-query';
+import { dehydrate, type DehydratedState, noop, QueryClient } from '@tanstack/react-query';
 
 import { ApiError } from '@/integrations/backend/client/api-error';
 import type { ProductDetail, ProductPage, ProductQuery } from '@/integrations/backend/models/catalog';
@@ -64,7 +64,7 @@ function logPrefetchFailure(key: readonly unknown[], error: unknown): void {
   console.error(`[catalog] server prefetch failed for ${JSON.stringify(key)}: ${detail}`);
 }
 
-/** Wraps a reader so a failure is logged, then rethrown for `prefetchQuery` to drop from hydration. */
+/** Wraps a reader so a failure is logged, then rethrown so `prefetchInto` keeps it out of the cache. */
 function logged<T>(key: readonly unknown[], read: () => Promise<T>): () => Promise<T> {
   return async () => {
     try {
@@ -82,61 +82,47 @@ function logged<T>(key: readonly unknown[], read: () => Promise<T>): () => Promi
   };
 }
 
+/**
+ * Reads one query into the request cache and returns what landed there. `query()` rejects on a
+ * failed read; swallowing it here keeps the failure out of the cache, so hydration omits it.
+ */
+async function prefetchInto<T>(
+  queryClient: QueryClient,
+  queryKey: readonly unknown[],
+  read: () => Promise<T>,
+  staleTime?: number,
+): Promise<T | undefined> {
+  await queryClient.query({ queryKey, queryFn: logged(queryKey, read), ...(staleTime === undefined ? {} : { staleTime }) }).catch(noop);
+  return queryClient.getQueryData<T>(queryKey);
+}
+
 export function createCatalogPrefetcher(): CatalogPrefetcher {
   const queryClient = createRequestQueryClient();
 
   return {
-    async categories() {
-      await queryClient.prefetchQuery({
-        queryKey: catalogKeys.categories(),
-        queryFn: logged(catalogKeys.categories(), async () => toCategoryData(await getCategoryTreeServer())),
-        staleTime: CATALOG_REFERENCE_STALE_TIME,
-      });
-      return queryClient.getQueryData<CategoryData>(catalogKeys.categories());
-    },
+    categories: async () =>
+      prefetchInto(queryClient, catalogKeys.categories(), async () => toCategoryData(await getCategoryTreeServer()), CATALOG_REFERENCE_STALE_TIME),
     async options() {
       await Promise.all([
-        queryClient.prefetchQuery({
-          queryKey: catalogKeys.sizes(),
-          queryFn: logged(catalogKeys.sizes(), getSizesServer),
-          staleTime: CATALOG_REFERENCE_STALE_TIME,
-        }),
-        queryClient.prefetchQuery({
-          queryKey: catalogKeys.colors(),
-          queryFn: logged(catalogKeys.colors(), getColorsServer),
-          staleTime: CATALOG_REFERENCE_STALE_TIME,
-        }),
+        prefetchInto(queryClient, catalogKeys.sizes(), getSizesServer, CATALOG_REFERENCE_STALE_TIME),
+        prefetchInto(queryClient, catalogKeys.colors(), getColorsServer, CATALOG_REFERENCE_STALE_TIME),
       ]);
     },
-    async products(query) {
-      await queryClient.prefetchQuery({
-        queryKey: catalogKeys.products(query),
-        queryFn: logged(catalogKeys.products(query), async () => getProductsServer(query)),
-      });
-      return queryClient.getQueryData<ProductPage>(catalogKeys.products(query));
-    },
+    products: async (query) => prefetchInto(queryClient, catalogKeys.products(query), async () => getProductsServer(query)),
     async search(q, page) {
       const trimmed = normalizeSearchQuery(q);
       if (trimmed.length === 0) return undefined;
-      const key = catalogKeys.search(trimmed, page);
-      await queryClient.prefetchQuery({ queryKey: key, queryFn: logged(key, async () => getProductsServer(buildSearchQuery(trimmed, page))) });
-      return queryClient.getQueryData<ProductPage>(key);
+      return prefetchInto(queryClient, catalogKeys.search(trimmed, page), async () => getProductsServer(buildSearchQuery(trimmed, page)));
     },
-    async product(slug) {
-      const key = catalogKeys.product(slug);
-      await queryClient.prefetchQuery({
-        queryKey: key,
-        queryFn: logged(key, async () => {
-          try {
-            return await getProductBySlugServer(slug);
-          } catch (error) {
-            if (error instanceof ApiError && error.status === 404) return null;
-            throw error;
-          }
-        }),
-      });
-      return queryClient.getQueryData<ProductDetail | null>(key);
-    },
+    product: async (slug) =>
+      prefetchInto(queryClient, catalogKeys.product(slug), async (): Promise<ProductDetail | null> => {
+        try {
+          return await getProductBySlugServer(slug);
+        } catch (error) {
+          if (error instanceof ApiError && error.status === 404) return null;
+          throw error;
+        }
+      }),
     dehydrate: () => dehydrate(queryClient),
   };
 }

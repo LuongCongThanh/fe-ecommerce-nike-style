@@ -1,16 +1,8 @@
 // Hallmark redesign · design-system: design.md · scope: app page (functional, no enrichment)
-import { setRequestLocale } from 'next-intl/server';
 
 import { ForgotPasswordForm } from '@/modules/auth/forgot-password/components/ForgotPasswordForm';
 
-interface ForgotPasswordPageProps {
-  readonly params: Promise<{ locale: string }>;
-}
-
-export default async function ForgotPasswordPage({ params }: ForgotPasswordPageProps) {
-  const { locale } = await params;
-  setRequestLocale(locale);
-
+export default function ForgotPasswordPage() {
   return (
     <div className="bg-card mx-auto w-full max-w-md rounded-xl border p-8 shadow-sm">
       <div className="mb-8 text-center">

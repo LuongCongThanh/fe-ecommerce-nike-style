@@ -1,5 +1,3 @@
-import { setRequestLocale } from 'next-intl/server';
-
 import { WishlistClient } from '@/modules/wishlist/components/WishlistClient';
 import { PageShell } from '@/shared/components/PageShell';
 
@@ -9,7 +7,6 @@ interface WishlistPageProps {
 
 export default async function WishlistPage({ params }: WishlistPageProps) {
   const { locale } = await params;
-  setRequestLocale(locale);
 
   return (
     <PageShell.Browse>

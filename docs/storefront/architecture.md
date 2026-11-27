@@ -51,7 +51,7 @@ Category ưu tiên slug từ path; slug lạ giữ UI không tìm thấy. Search
 
 ## Locale, PWA và kiểm chứng
 
-`next-intl` hỗ trợ `vi`/`en`. `~offline` nằm ngoài locale, còn tiếng Việt và link `/vi`; metadata từng route cần kiểm riêng. Serwist chạy production (`src/pwa/sw.ts` → `public/sw.js`), tắt ở development; không hứa offline checkout.
+`next-intl` hỗ trợ `vi`/`en`; route động lấy locale từ proxy/request config. Root layout nằm trên `[locale]`, nên chưa chuyển sang `next/root-params`; không dùng setter static-render đã deprecated. `~offline` nằm ngoài locale, còn tiếng Việt và link `/vi`; metadata từng route cần kiểm riêng. Serwist chạy production (`src/pwa/sw.ts` → `public/sw.js`), tắt ở development; không hứa offline checkout.
 
 MSW hỗ trợ flow chuyển tiếp khi bật mock. Playwright có HTTP catalog harness và cấu hình production Chromium; các slice SSR hiện có bằng chứng unit/HTTP-level, chưa có assertion production browser riêng cho SSR theo quyết định 26/11/2026. Không suy ra toàn bộ SSR/PWA đã được E2E xác minh.
 

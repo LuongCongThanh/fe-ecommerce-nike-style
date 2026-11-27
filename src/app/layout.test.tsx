@@ -5,13 +5,12 @@ import { beforeEach, describe, expect, it, vi } from 'vitest';
 import LocaleLayout from '@/app/[locale]/layout';
 import RootLayout from '@/app/layout';
 
-const { getLocale, setRequestLocale } = vi.hoisted(() => ({
+const { getLocale } = vi.hoisted(() => ({
   getLocale: vi.fn(),
-  setRequestLocale: vi.fn(),
 }));
 
 vi.mock('next/font/google', () => ({ Be_Vietnam_Pro: () => ({ variable: 'test-font' }) }));
-vi.mock('next-intl/server', () => ({ getLocale, setRequestLocale }));
+vi.mock('next-intl/server', () => ({ getLocale }));
 vi.mock('next/navigation', () => ({
   notFound: () => {
     throw new Error('NOT_FOUND');
@@ -44,7 +43,6 @@ describe('App layout provider ownership', () => {
     expect(html).toContain(`lang="${locale}"`);
     expect(html).toContain('data-locale-context');
     expect(html).toContain('Storefront');
-    expect(setRequestLocale).toHaveBeenCalledWith(locale);
   });
 
   it('rejects an unsupported locale before rendering its content', async () => {
