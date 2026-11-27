@@ -9,7 +9,7 @@ import { decide, type GuardConfig, type GuardContext, type HookInput } from './g
 
 const config = JSON.parse(readFileSync(resolve(__dirname, 'guard.fixture.json'), 'utf8')) as GuardConfig;
 const ROOT = '/work/wt/feat-x';
-const TASK = 'docs/plan/tasks/03-card';
+const TASK = 'docs/storefront/plan/todo/03-card';
 
 const ctx = (over: Partial<GuardContext> = {}): GuardContext => ({
   config,
@@ -71,7 +71,7 @@ const rows: Row[] = [
   ['agent skills', file('Write', `${ROOT}/.claude/skills/x/SKILL.md`), ctx(), 'deny-path'],
   ['.mcp.json', file('Edit', `${ROOT}/.mcp.json`), ctx(), 'deny-path'],
   ['scripts', file('Edit', `${ROOT}/scripts/agent-run/state.ts`), ctx(), 'deny-path'],
-  ['inbox', file('Write', `${ROOT}/docs/plan/AGENT-INBOX.md`), ctx(), 'deny-path'],
+  ['inbox', file('Write', `${ROOT}/docs/storefront/plan/AGENT-INBOX.md`), ctx(), 'deny-path'],
   ['.agent-run state', file('Write', `${ROOT}/.agent-run/state.json`), ctx(), 'deny-path'],
   ['husky', file('Edit', `${ROOT}/.husky/pre-commit`), ctx(), 'deny-path'],
   ['commitlint', file('Edit', `${ROOT}/commitlint.config.mjs`), ctx(), 'deny-path'],
@@ -126,7 +126,7 @@ const rows: Row[] = [
   // --- phase exceptions ---
   ['planner writes its plan.md', file('Write', `${ROOT}/${TASK}/plan.md`), ctx({ phase: 'plan' }), 'allow'],
   ['planner cannot write src', file('Write', `${ROOT}/src/a.ts`), ctx({ phase: 'plan' }), 'phase'],
-  ['planner cannot write other task plan', file('Write', `${ROOT}/docs/plan/tasks/04-x/plan.md`), ctx({ phase: 'plan' }), 'phase'],
+  ['planner cannot write other task plan', file('Write', `${ROOT}/docs/storefront/plan/todo/04-x/plan.md`), ctx({ phase: 'plan' }), 'phase'],
   ['planner cannot write spec.md', file('Write', `${ROOT}/${TASK}/spec.md`), ctx({ phase: 'plan' }), 'phase'],
   ['planner cannot write report.md', file('Write', `${ROOT}/${TASK}/report.md`), ctx({ phase: 'plan' }), 'phase'],
   ['planner has no bash', bash('pnpm test'), ctx({ phase: 'plan' }), 'command'],
@@ -273,9 +273,9 @@ const rows: Row[] = [
   ['filter then unallowed command', bash('pnpm test | tail -3 | sh'), ctx(), 'command'],
   ['planner: no filters either', bash('pnpm test | tail'), ctx({ phase: 'plan' }), 'command'],
   // --- read-only commands ---
-  ['cat spec and plan', bash('cat docs/plan/tasks/03-x/spec.md docs/plan/tasks/03-x/plan.md'), ctx(), 'allow'],
-  ['cat template; echo; cat', bash('cat .github/PULL_REQUEST_TEMPLATE.md; echo ----; cat docs/plan/tasks/03-x/report.md'), ctx(), 'allow'],
-  ['cd task dir && cat', bash('cd docs/plan/tasks/03-x && cat spec.md plan.md'), ctx(), 'allow'],
+  ['cat spec and plan', bash('cat docs/storefront/plan/todo/03-x/spec.md docs/storefront/plan/todo/03-x/plan.md'), ctx(), 'allow'],
+  ['cat template; echo; cat', bash('cat .github/PULL_REQUEST_TEMPLATE.md; echo ----; cat docs/storefront/plan/todo/03-x/report.md'), ctx(), 'allow'],
+  ['cd task dir && cat', bash('cd docs/storefront/plan/todo/03-x && cat spec.md plan.md'), ctx(), 'allow'],
   ['cd with absolute path inside worktree', bash(`cd ${ROOT}/docs && cat a.md`), ctx(), 'allow'],
   ['ls', bash('ls -la src/components'), ctx(), 'allow'],
   ['echo', bash('echo hello'), ctx(), 'allow'],
@@ -284,11 +284,11 @@ const rows: Row[] = [
   ['git show', bash('git show HEAD~1 --stat'), ctx(), 'allow'],
   ['git diff with pathspec', bash('git diff dev...HEAD -- src/a.ts'), ctx(), 'allow'],
   ['git diff piped to head', bash('git diff dev...HEAD | head -50'), ctx(), 'allow'],
-  ['reviewer cat', bash('cat docs/plan/tasks/03-x/spec.md'), ctx({ phase: 'review' }), 'allow'],
+  ['reviewer cat', bash('cat docs/storefront/plan/todo/03-x/spec.md'), ctx({ phase: 'review' }), 'allow'],
   ['reviewer git status', bash('git status'), ctx({ phase: 'review' }), 'allow'],
   ['reviewer git rev-parse', bash('git rev-parse dev'), ctx({ phase: 'review' }), 'allow'],
   ['reviewer ls', bash('ls src'), ctx({ phase: 'review' }), 'allow'],
-  ['retro cat', bash('cat docs/plan/tasks/03-x/report.md'), ctx({ phase: 'retro' }), 'allow'],
+  ['retro cat', bash('cat docs/storefront/plan/todo/03-x/report.md'), ctx({ phase: 'retro' }), 'allow'],
   ['reviewer cannot run pnpm', bash('pnpm typecheck'), ctx({ phase: 'review' }), 'command'],
   ['planner has no cat', bash('cat spec.md'), ctx({ phase: 'plan' }), 'command'],
   ['planner has no git status', bash('git status'), ctx({ phase: 'plan' }), 'command'],

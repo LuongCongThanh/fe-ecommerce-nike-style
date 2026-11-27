@@ -1,4 +1,4 @@
-/** Minimal reader for the `spec.md` frontmatter (docs/plan/README.md). Only flat `key: value` lines. */
+/** Minimal reader for the `spec.md` frontmatter (docs/storefront/plan/README.md). Only flat `key: value` lines. */
 import { readFileSync } from 'node:fs';
 import { join } from 'node:path';
 

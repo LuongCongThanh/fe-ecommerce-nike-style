@@ -5,7 +5,8 @@ import { join } from 'node:path';
 import { parseBlockedBy } from './spec-file';
 import { isTaskKind, parseFrontmatter, type TaskKind } from './spec';
 
-export const TASKS_DIR = 'docs/plan/tasks';
+export const TASKS_DIR = 'docs/storefront/plan/todo';
+export const TASK_DIRECTORIES = [TASKS_DIR, 'docs/storefront/plan/done', 'docs/storefront/plan/wontfix'] as const;
 
 export interface Task {
   /** Directory name, e.g. `03-product-card` */
@@ -16,6 +17,7 @@ export interface Task {
   kind: TaskKind | null;
   specPath: string;
   wayfinder?: boolean;
+  archived?: boolean;
 }
 
 const prDir = (root: string): string => join(root, '.agent-run', 'prs');
@@ -36,25 +38,28 @@ function isWayfinder(text: string): boolean {
 }
 
 export function readTasks(repoRoot: string): Task[] {
-  const base = join(repoRoot, TASKS_DIR);
-  if (!existsSync(base)) return [];
   const tasks: Task[] = [];
-  for (const name of readdirSync(base).sort()) {
-    const specPath = join(base, name, 'spec.md');
-    if (!existsSync(specPath)) continue;
-    const text = readFileSync(specPath, 'utf8');
-    const fm = parseFrontmatter(text);
-    tasks.push({
-      name,
-      number: /^(\d+)/.exec(name)?.[1] ?? name,
-      status: fm.status === 'ready-for-agent' && existsSync(join(prDir(repoRoot), name)) ? 'review' : (fm.status ?? 'todo'),
-      blockedBy: parseBlockedBy(text),
-      kind: isTaskKind(fm.kind) ? fm.kind : null,
-      specPath,
-      wayfinder: isWayfinder(text),
-    });
+  for (const directory of TASK_DIRECTORIES) {
+    const base = join(repoRoot, directory);
+    if (!existsSync(base)) continue;
+    for (const name of readdirSync(base).sort()) {
+      const specPath = join(base, name, 'spec.md');
+      if (!existsSync(specPath)) continue;
+      const text = readFileSync(specPath, 'utf8');
+      const fm = parseFrontmatter(text);
+      tasks.push({
+        name,
+        number: /^(\d+)/.exec(name)?.[1] ?? name,
+        status: fm.status === 'ready-for-agent' && existsSync(join(prDir(repoRoot), name)) ? 'review' : (fm.status ?? 'todo'),
+        blockedBy: parseBlockedBy(text),
+        kind: isTaskKind(fm.kind) ? fm.kind : null,
+        specPath,
+        wayfinder: isWayfinder(text),
+        archived: directory !== TASKS_DIR,
+      });
+    }
   }
-  return tasks;
+  return tasks.sort((a, b) => a.name.localeCompare(b.name));
 }
 
 export interface Selection {
@@ -67,7 +72,7 @@ export function selectTask(tasks: Task[], only?: string): Selection {
   const status = new Map(tasks.map((t) => [t.name, t.status]));
   const skipped: Selection['skipped'] = [];
   for (const t of tasks) {
-    if (t.wayfinder || t.status !== 'ready-for-agent') continue;
+    if (t.archived || t.wayfinder || t.status !== 'ready-for-agent') continue;
     if (only !== undefined && t.number !== only && t.name !== only) continue;
     const waitingFor = t.blockedBy.filter((b) => status.get(b) !== 'done');
     if (waitingFor.length > 0) {

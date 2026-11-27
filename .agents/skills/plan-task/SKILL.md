@@ -1,11 +1,11 @@
 ---
 name: plan-task
-description: Turn a storefront task's spec.md into plan.md (steps, branch, test seams, risks) before any code. Use in the plan phase of agent-run, or when asked to plan docs/plan/tasks/<NN>-*. Returns need_info with questions when the spec is ambiguous and blocked/needs_approval when the plan needs guarded files or commands.
+description: Turn a storefront task's spec.md into plan.md (steps, branch, test seams, risks) before any code. Use in the plan phase of agent-run, or when asked to plan docs/storefront/plan/todo/<NN>-*. Returns need_info with questions when the spec is ambiguous and blocked/needs_approval when the plan needs guarded files or commands.
 ---
 
 # Plan a task
 
-Input: the task directory (`AGENT_TASK_DIR`, e.g. `docs/plan/tasks/03-product-card`). Output: one file, `<task dir>/plan.md`. Write nothing else. Under Claude Code automation, the planner has no Bash access. In interactive Codex, use read-only commands when needed to inspect files.
+Input: the task directory (`AGENT_TASK_DIR`, e.g. `docs/storefront/plan/todo/03-product-card`). Output: one file, `<task dir>/plan.md`. Write nothing else. Under Claude Code automation, the planner has no Bash access. In interactive Codex, use read-only commands when needed to inspect files.
 
 ## 1. Read
 
@@ -22,7 +22,7 @@ Input: the task directory (`AGENT_TASK_DIR`, e.g. `docs/plan/tasks/03-product-ca
 
 ## 3. Write plan.md
 
-Same format as `be-demo` plans, in Vietnamese like the other docs under `docs/plan/`:
+Same format as `be-demo` plans, in Vietnamese like the other docs under `docs/storefront/plan/`:
 
 ```markdown
 # Plan <NN>: <tiêu đề lấy từ spec>

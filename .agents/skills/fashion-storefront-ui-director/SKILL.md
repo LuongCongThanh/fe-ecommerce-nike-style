@@ -76,7 +76,7 @@ principles manually and state that limitation in the handoff.
 5. **Add motion last.** Motion must explain hierarchy, confirm an action, or
    support continuity. Use existing Framer Motion first. A GSAP or 3D addition
    requires an explicit reason the simpler option cannot achieve.
-6. **Gate 3D tightly.** Current 3D exists in Hero and PDP; follow `docs/architecture.md#3d-trong-storefront` for their distinct gates. New surfaces require an explicit decision; do not add 3D to product grids, filters, cart, search, authentication, or checkout. Lazy-load
+6. **Gate 3D tightly.** Current 3D exists in Hero and PDP; follow `docs/storefront/architecture.md#3d-trong-storefront` for their distinct gates. New surfaces require an explicit decision; do not add 3D to product grids, filters, cart, search, authentication, or checkout. Lazy-load
    it; provide a poster/static image and ordinary CTAs; respect reduced motion;
    pause/offload when not visible; and ensure failure never blocks commerce.
 7. **Review and verify.** Run the relevant design audit, then the smallest

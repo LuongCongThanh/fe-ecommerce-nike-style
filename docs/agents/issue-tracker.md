@@ -1,10 +1,10 @@
 # Tracker: task Markdown cục bộ
 
-Owner: maintainer. Canonical schema/lifecycle của task; GitHub dùng cho PR/review, không dùng Issues. `spec.md` giữ trạng thái; [index](../plan/README.md) chỉ điều hướng.
+Owner: maintainer. Canonical schema/lifecycle của task; GitHub dùng cho PR/review, không dùng Issues. `spec.md` giữ trạng thái; [index](../storefront/plan/README.md) chỉ điều hướng.
 
 ## Schema và artifact
 
-Đường dẫn `docs/plan/tasks/<NN>-<kebab-name>/spec.md`. Blocker là tên thư mục chính xác. Không đổi identity hay basename để dọn docs.
+Đường dẫn task chưa hoàn tất: `docs/storefront/plan/todo/<NN>-<kebab-name>/spec.md`; task hoàn tất ở `docs/storefront/plan/done/`, ticket có quyết định hủy/bỏ ở `docs/storefront/plan/wontfix/`. Nhóm thư mục không thay thế trạng thái chi tiết trong spec. Blocker là tên thư mục chính xác. Không đổi identity hay basename để dọn docs.
 
 ```yaml
 ---
@@ -45,13 +45,13 @@ Agent nhận task tự đặt in-progress, review và done (sau khi PR merge); c
 
 ## Triage role mapping
 
-| Role của skill  | Status storefront                                                                  |
-| --------------- | ---------------------------------------------------------------------------------- |
-| needs-triage    | todo                                                                               |
-| needs-info      | needs-info                                                                         |
-| ready-for-agent | ready-for-agent                                                                    |
-| ready-for-human | ready-for-human                                                                    |
-| wontfix         | Không có status; ghi quyết định với người, không xóa hồ sơ đang có consumer/resume |
+| Role của skill  | Status storefront                                                                                     |
+| --------------- | ----------------------------------------------------------------------------------------------------- |
+| needs-triage    | todo                                                                                                  |
+| needs-info      | needs-info                                                                                            |
+| ready-for-agent | ready-for-agent                                                                                       |
+| ready-for-human | ready-for-human                                                                                       |
+| wontfix         | Không có status; ghi quyết định với người và chuyển cả hồ sơ sang `wontfix/`, giữ artifact và blocker |
 
 Labels không thay status delivery. Metadata Wayfinder có labels riêng như bên dưới. Khi skill nói publish/fetch ticket, dùng folder/spec cục bộ và quyền trạng thái repo, không gh issue.
 
@@ -86,4 +86,4 @@ Wayfinder là decision workflow riêng, không phải hàng đợi delivery. Map
 
 Frontier là child todo/ready-for-agent không còn blocker, theo thứ tự map. Phiên Wayfinder được claim in-progress/assignee ở lần ghi đầu; resolve bằng comment câu trả lời, done và pointer trong Decisions-so-far. Done ở đây nghĩa resolution đã ghi, không phải PR merge; ghi authorized execution trong Notes khi có.
 
-Runtime loại các spec có labels Wayfinder (inline hoặc dash list) hoặc body `Type: research|prototype|grilling|task` khỏi delivery selection, kể cả `--task`. Record vẫn được đọc để kiểm tra blocker đã done. Bằng chứng và giới hạn: [task11 report](../plan/tasks/11-runner-workflow/report.md).
+Runtime loại các spec có labels Wayfinder (inline hoặc dash list) hoặc body `Type: research|prototype|grilling|task` khỏi delivery selection, kể cả `--task`. Record vẫn được đọc để kiểm tra blocker đã done. Bằng chứng và giới hạn: [task11 report](../storefront/plan/done/11-runner-workflow/report.md).

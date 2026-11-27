@@ -12,7 +12,7 @@ interface ProductViewer3DProps {
  * Placeholder 3D product viewer (Decision #59) — a simple rotatable mesh recolored per the selected
  * Variant, since no real per-product 3D asset pipeline exists yet. Only ever mounted through the
  * `next/dynamic({ ssr: false })` wrapper in `ProductInfoPanel`; never import this (or `three`/
- * `@react-three/*`) from a shared route/layout above the PDP — see docs/architecture.md#3d-trong-storefront.
+ * `@react-three/*`) from a shared route/layout above the PDP — see docs/storefront/architecture.md#3d-trong-storefront.
  *
  * The shaping light is a three-point rig rather than drei's `<Environment preset>`, which fetches an
  * HDR from the pmndrs CDN at runtime: the storefront ships a service worker and an offline route, and

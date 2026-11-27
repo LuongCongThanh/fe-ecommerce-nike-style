@@ -6,6 +6,7 @@ import * as prettier from 'prettier';
 
 import { parseBlockedBy } from './agent-run/spec-file';
 import { isTaskKind, parseFrontmatter } from './agent-run/spec';
+import { TASK_DIRECTORIES } from './agent-run/tasks';
 
 const TASK_STATUSES = new Set(['todo', 'ready-for-agent', 'in-progress', 'needs-info', 'blocked', 'ready-for-human', 'review', 'done']);
 const REMOVED_DOCS = [
@@ -18,6 +19,10 @@ const REMOVED_DOCS = [
   'docs/plan/storefront-restructure-plan.md',
   'docs/plan/storefront-target-module-tree.md',
   'docs/plan/three-repo-restructure.md',
+  'docs/storefront/plan/AGENT-SYSTEM-PLAN.md',
+  'docs/storefront/plan/storefront-restructure-plan.md',
+  'docs/storefront/plan/storefront-target-module-tree.md',
+  'docs/storefront/plan/three-repo-restructure.md',
   'docs/reference/anthropic-academy-research.md',
 ] as const;
 const TEXT_EXTENSIONS = new Set(['.md', '.ts', '.tsx', '.js', '.mjs', '.json', '.toml', '.css']);
@@ -145,37 +150,40 @@ function checkLinks(root: string, markdown: string[]): string[] {
 }
 
 function checkTasks(root: string): string[] {
-  const base = join(root, 'docs/plan/tasks');
-  if (!existsSync(base)) return [];
   const problems: string[] = [];
-  const records = new Map<string, { blockers: string[]; text: string }>();
-  for (const entry of readdirSync(base, { withFileTypes: true })) {
-    if (!entry.isDirectory()) continue;
-    const spec = join(base, entry.name, 'spec.md');
-    if (!existsSync(spec)) continue;
-    const text = readFileSync(spec, 'utf8');
-    const fm = parseFrontmatter(text);
-    if (!TASK_STATUSES.has(fm.status ?? '')) problems.push(`${display(root, spec)}: invalid status ${fm.status ?? '(missing)'}`);
-    if (!isTaskKind(fm.kind)) problems.push(`${display(root, spec)}: invalid kind ${fm.kind ?? '(missing)'}`);
-    const expected = /^(\d+)/.exec(entry.name)?.[1];
-    const headingIdentity = /^# Spec\s+(\d+)\b/m.exec(text)?.[1];
-    if (expected && headingIdentity && headingIdentity !== expected) {
-      problems.push(`${display(root, spec)}: task heading identity ${headingIdentity} does not match ${expected}`);
+  const records = new Map<string, { blockers: string[]; text: string; spec: string }>();
+  for (const directory of TASK_DIRECTORIES) {
+    const base = join(root, directory);
+    if (!existsSync(base)) continue;
+    for (const entry of readdirSync(base, { withFileTypes: true })) {
+      if (!entry.isDirectory()) continue;
+      const spec = join(base, entry.name, 'spec.md');
+      if (!existsSync(spec)) continue;
+      const text = readFileSync(spec, 'utf8');
+      const fm = parseFrontmatter(text);
+      if (!TASK_STATUSES.has(fm.status ?? '')) problems.push(`${display(root, spec)}: invalid status ${fm.status ?? '(missing)'}`);
+      if (!isTaskKind(fm.kind)) problems.push(`${display(root, spec)}: invalid kind ${fm.kind ?? '(missing)'}`);
+      const expected = /^(\d+)/.exec(entry.name)?.[1];
+      const headingIdentity = /^# Spec\s+(\d+)\b/m.exec(text)?.[1];
+      if (expected && headingIdentity && headingIdentity !== expected) {
+        problems.push(`${display(root, spec)}: task heading identity ${headingIdentity} does not match ${expected}`);
+      }
+      if (records.has(entry.name)) problems.push(`${display(root, spec)}: duplicate task identity ${entry.name}`);
+      records.set(entry.name, { blockers: parseBlockedBy(text), text, spec: display(root, spec) });
     }
-    records.set(entry.name, { blockers: parseBlockedBy(text), text });
   }
-  for (const [name, record] of records) {
+  for (const record of records.values()) {
     for (const blocker of record.blockers) {
-      if (!records.has(blocker)) problems.push(`docs/plan/tasks/${name}/spec.md: unknown blocker ${blocker}`);
+      if (!records.has(blocker)) problems.push(`${record.spec}: unknown blocker ${blocker}`);
     }
     const parent = /^Part of\s+([\w-]+)\s*$/im.exec(record.text)?.[1];
-    if (parent && !records.has(parent)) problems.push(`docs/plan/tasks/${name}/spec.md: unknown Wayfinder parent ${parent}`);
+    if (parent && !records.has(parent)) problems.push(`${record.spec}: unknown Wayfinder parent ${parent}`);
   }
   const visiting = new Set<string>();
   const visited = new Set<string>();
   const visit = (name: string, path: string[]): void => {
     if (visiting.has(name)) {
-      problems.push(`docs/plan/tasks/${name}/spec.md: blocker cycle ${[...path, name].join(' -> ')}`);
+      problems.push(`${records.get(name)?.spec}: blocker cycle ${[...path, name].join(' -> ')}`);
       return;
     }
     if (visited.has(name)) return;
@@ -192,7 +200,7 @@ function checkRemovedConsumers(root: string, files: string[]): string[] {
   const problems: string[] = [];
   for (const file of files) {
     const name = display(root, file);
-    if (name.startsWith('docs/plan/tasks/')) continue;
+    if (TASK_DIRECTORIES.some((directory) => name.startsWith(`${directory}/`))) continue;
     if (name === 'scripts/check-docs.ts' || name === 'scripts/check-docs.test.ts') continue;
     if (!TEXT_EXTENSIONS.has(extname(file))) continue;
     const text = withoutFencedCode(readFileSync(file, 'utf8'));
@@ -205,7 +213,7 @@ function checkRemovedConsumers(root: string, files: string[]): string[] {
 
 function isMaintainedMarkdown(root: string, file: string): boolean {
   const name = display(root, file);
-  if (extname(file) !== '.md' || name.startsWith('docs/plan/tasks/')) return false;
+  if (extname(file) !== '.md' || TASK_DIRECTORIES.some((directory) => name.startsWith(`${directory}/`))) return false;
   if (!name.startsWith('.')) return !name.startsWith('agent/');
   if (name.startsWith('.claude/agents/') || name.startsWith('.claude/commands/') || name.startsWith('.claude/rules/')) return true;
   if (name.startsWith('.codex/agents/')) return true;

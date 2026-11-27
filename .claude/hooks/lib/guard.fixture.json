@@ -29,7 +29,7 @@
     ".agents/**",
     ".mcp.json",
     "scripts/**",
-    "docs/plan/AGENT-INBOX.md",
+    "docs/storefront/plan/AGENT-INBOX.md",
     ".agent-run/**",
     ".husky/**",
     "commitlint.config.mjs",

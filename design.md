@@ -43,6 +43,6 @@ Product card ưu tiên ảnh nhất quán, tên, giá và variant; không cạnh
 
 Motion giải thích hierarchy/continuity hoặc phản hồi thao tác; dùng Framer Motion hiện có trước khi thêm kỹ thuật. Root MotionConfig reducedMotion=user; từng interaction vẫn cần kiểm reduced motion, focus/keyboard, semantic control, alt và contrast. Không scroll-jacking hoặc ép autoplay media.
 
-3D hiện ở Hero và PDP. [Architecture](docs/architecture.md#3d-trong-storefront) sở hữu gate, disposal, shader pitfalls và baseline LCP. Scene là enhancement pixel, DOM giữ commerce/ARIA/focus; failure không chặn mua hàng. Surface mới cần lý do và quyết định riêng; không phát tán 3D sang grid/filter/cart/auth/checkout.
+3D hiện ở Hero và PDP. [Architecture](docs/storefront/architecture.md#3d-trong-storefront) sở hữu gate, disposal, shader pitfalls và baseline LCP. Scene là enhancement pixel, DOM giữ commerce/ARIA/focus; failure không chặn mua hàng. Surface mới cần lý do và quyết định riêng; không phát tán 3D sang grid/filter/cart/auth/checkout.
 
 Khi sửa UI đọc [workflow](docs/agents/ui-workflow.md), inspect route/data/messages, xác định desktop/mobile và loading/empty/error/unavailable/reduced-motion, rồi kiểm browser với viewport/state cụ thể. Pattern mới không tự đổi contract đã chấp nhận.

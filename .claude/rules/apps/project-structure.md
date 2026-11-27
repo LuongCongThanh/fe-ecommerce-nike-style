@@ -12,4 +12,4 @@ paths:
 - Use TanStack Query for server state, Zustand for shared client state, and the URL for filters, sorting and pagination.
 - Keep `*.test.ts(x)` beside the code or flow entry it exercises. Shared Vitest setup lives in `src/testing/setup.ts`, shared render support in `src/testing/render.tsx`; Playwright specs live in `e2e`.
 
-See [the current structure](../../../docs/architecture.md) for concrete paths.
+See [the current structure](../../../docs/storefront/architecture.md) for concrete paths.

@@ -17,7 +17,7 @@ import type { VariantSelectionState } from '@/modules/catalog/product-detail/hoo
 import { formatCurrency } from '@/shared/formatting/currency';
 import { SPRING_UI } from '@/shared/styles/motion';
 
-// Decision #59 / docs/architecture.md#3d-trong-storefront — three.js only ever loads for a mounted PDP, never at a
+// Decision #59 / docs/storefront/architecture.md#3d-trong-storefront — three.js only ever loads for a mounted PDP, never at a
 // higher-level route/layout, and never during SSR (WebGL has no server-side renderer).
 const ProductViewer3D = dynamic(async () => import('@/modules/catalog/product-detail/components/ProductViewer3D'), {
   ssr: false,
