@@ -1,6 +1,6 @@
 # Chiến lược kiểm thử Storefront
 
-**Trạng thái:** thiết kế đã duyệt, chưa triển khai (2026-11-28). Luật chung cho ba ứng dụng (mức rủi ro, ma trận trách nhiệm FE/BE, hành trình E2E full-stack, gate, audit) nằm ở `docs/testing/` của repo workspace [fashion-store](https://github.com/LuongCongThanh/fashion-store/tree/main/docs/testing). File này nói phần của Storefront. Danh sách kịch bản: [traceability.md](traceability.md).
+**Trạng thái:** thiết kế đã duyệt, chưa triển khai (2026-11-28). Luật chung cho ba ứng dụng (mức rủi ro, ma trận trách nhiệm Backend – CMS – Storefront, hành trình E2E full-stack, gate, audit) nằm ở `docs/testing/` của repo workspace [fashion-store](https://github.com/LuongCongThanh/fashion-store/tree/main/docs/testing). File này nói phần của Storefront. Danh sách kịch bản: [traceability.md](traceability.md).
 
 ## Storefront bảo vệ gì
 
@@ -30,13 +30,13 @@ MSW là lớp giả HTTP cho test và cho flow chuyển tiếp chưa nối API. 
 Cách viết test (đặt file, đặt tên, AAA, mock, chống flaky) theo [testing rule](../../../.claude/rules/process/testing.md). File này chỉ bổ sung:
 
 - Kiểu dữ liệu fake lấy từ schema sinh trong `src/integrations/backend`, không viết tay.
-- Không tính lại tiền trong test FE: expected là số lấy từ payload Backend giả, test chỉ kiểm hiển thị và định dạng.
-- Tên test bắt đầu bằng mã kịch bản khi có, ví dụ `it('SF-CHK-03: bấm đặt hai lần chỉ gửi một request')`.
-- Assertion theo điều người dùng thấy và request đã gửi; không snapshot cả component, không test class CSS.
-- Locator E2E theo role, label hoặc `data-testid`; không `waitForTimeout`; trace và screenshot khi fail.
+- Không tính lại tiền trong test của Storefront: expected là số lấy từ payload Backend giả, test chỉ kiểm hiển thị và định dạng.
+- Mã kịch bản (quy ước chung ở README `docs/testing/` của repo workspace) là tiền tố đặt trước mô tả hành vi theo testing rule, ví dụ `it('SF-CHK-03: sends one request when Place order is clicked twice')`.
 - Test khác module chỉ dùng public hoặc test entry được cho phép (theo [kiến trúc](../architecture.md)).
 
 ## Phi chức năng
+
+**Dự kiến, chưa có công cụ**: axe, Lighthouse, browser matrix Firefox và WebKit, và job nightly chưa được cài. Mỗi dòng dưới đây cần một ticket trước khi làm.
 
 | Hạng mục       | Cách kiểm                                                                                            | Khi chạy                             |
 | -------------- | ---------------------------------------------------------------------------------------------------- | ------------------------------------ |
@@ -52,14 +52,14 @@ Ngưỡng Lighthouse và axe đặt sau lần đo đầu tiên; trước đó ch
 
 ## CI
 
-| Giai đoạn | Chạy                                                                                                                                                 |
-| --------- | ---------------------------------------------------------------------------------------------------------------------------------------------------- |
-| PR        | `docs:check`, `lint` (gồm boundaries), `format:check`, contract diff, `typecheck`, `test`, `test:coverage` (sàn 50%), `build`, `test:e2e:production` |
-| Nightly   | E2E full-stack ở repo workspace; Firefox, WebKit; axe; Lighthouse                                                                                    |
+| Giai đoạn         | Chạy                                                                                                                                                 |
+| ----------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------- |
+| PR                | `docs:check`, `lint` (gồm boundaries), `format:check`, contract diff, `typecheck`, `test`, `test:coverage` (sàn 50%), `build`, `test:e2e:production` |
+| Nightly (dự kiến) | E2E full-stack ở repo workspace; Firefox, WebKit; axe; Lighthouse                                                                                    |
 
 ## Thứ tự làm
 
 1. P0 trên dữ liệu giả: checkout (double submit, Tính thử mới, thiếu hàng, form địa chỉ), giỏ (giới hạn 10, giá đổi), auth (refresh, hết phiên).
 2. Khi giỏ, checkout, auth nối API thật: bật J1–J4 ở workspace; giữ test MSW cho trạng thái lỗi.
 3. P1: catalog, lọc, tìm kiếm, SEO.
-4. Nightly phi chức năng.
+4. Cài công cụ và job nightly cho phần phi chức năng (cần ticket).
