@@ -9,6 +9,7 @@
 | Proxy, contract, SSR reader và cutover | [Tích hợp API](api-integration.md)   |
 | Việc chưa làm và quyết định còn mở     | [Roadmap](roadmap.md)                |
 | Ticket theo `todo`, `done`, `wontfix`  | [Kế hoạch và ticket](plan/README.md) |
+| Test gì, ở tầng nào; traceability      | [Kiểm thử](testing/strategy.md)      |
 
 ```text
 docs/storefront/
@@ -17,6 +18,9 @@ docs/storefront/
 ├── architecture.md
 ├── api-integration.md
 ├── roadmap.md
+├── testing/
+│   ├── strategy.md
+│   └── traceability.md
 └── plan/
     ├── README.md
     ├── todo/
