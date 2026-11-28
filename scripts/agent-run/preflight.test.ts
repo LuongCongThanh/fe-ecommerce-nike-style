@@ -25,7 +25,7 @@ describe('guardPreflight (situation 13)', () => {
   it('passes when the hook blocks a denied path (exit 2) and sends the event on stdin', async () => {
     const d = wt();
     const f = fakeRunner(on('', { code: 2, stderr: 'denied' }));
-    await guardPreflight({ runner: f.runner }, d, join(d, 'docs/storefront/plan/todo/01-a'));
+    await guardPreflight({ runner: f.runner }, d, join(d, 'docs/plan/tasks/todo/01-a'));
     expect(f.opts[0]?.input).toContain('"tool_name":"Edit"');
     expect(f.opts[0]?.env).toMatchObject({ AGENT_RUN: '1', AGENT_PHASE: 'implement', CLAUDE_PROJECT_DIR: d });
     expect(f.calls[0]).toContain('agent-guard.ts');

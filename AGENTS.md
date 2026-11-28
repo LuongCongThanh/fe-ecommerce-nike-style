@@ -12,8 +12,8 @@
 
 - `README.md`: phạm vi sản phẩm, kiến trúc, môi trường và quy ước repository.
 - `CONTRIBUTING.md`: branch, commit, pull request, hook và CI.
-- `design.md`: hợp đồng visual và các commerce interaction checks.
-- `docs/storefront/architecture.md`: cấu trúc hiện tại; `docs/storefront/api-integration.md`: transport/cutover; `docs/storefront/roadmap.md`: việc chưa làm.
+- `DESIGN.md`: hợp đồng visual và các commerce interaction checks.
+- `docs/architecture/README.md`: cấu trúc hiện tại; `docs/architecture/api-integration.md`: transport/cutover; `docs/plan/roadmap.md`: việc chưa làm.
 
 - Không dựa vào đường dẫn tài liệu trước khi xác nhận nó tồn tại trong checkout hiện tại.
 - Nếu tài liệu và code mâu thuẫn, báo rõ thay vì tự suy diễn yêu cầu ảnh hưởng public API hoặc domain behavior.
@@ -54,8 +54,8 @@ pnpm build
 - Storefront hỗ trợ hai ngôn ngữ.
 - Giữ thay đổi theo vertical slice có thể kiểm thử và bổ sung test gần nhất có giá trị.
 
-- Convention chi tiết dùng chung nằm trong `.claude/rules/`. Claude Code nạp theo phạm vi đường dẫn. Codex đọc các file phù hợp theo bản đồ trong `docs/agents/code-conventions.md`.
-- Xem bản đồ convention và checklist tại `docs/agents/code-conventions.md`.
+- Convention chi tiết dùng chung nằm trong `.claude/rules/`. Claude Code nạp theo phạm vi đường dẫn. Codex đọc các file phù hợp theo bản đồ trong `docs/conventions/code-conventions.md`.
+- Xem bản đồ convention và checklist tại `docs/conventions/code-conventions.md`.
 - `CLAUDE.md` import file này để Codex và Claude Code dùng chung nguồn hướng dẫn cấp repository.
 
 ## Quy trình task và GitHub
@@ -63,7 +63,7 @@ pnpm build
 - Mọi agent (Codex, Claude Code, Copilot và agent khác) dùng cùng spec, trạng thái, tiêu chí nghiệm thu và quy tắc Git. Với task đã đủ điều kiện, làm lần lượt: đọc spec → lập `plan.md` bằng skill `plan-task` → triển khai và ghi `report.md` → chạy kiểm tra → review theo spec và quy tắc repo.
 - Chọn một công cụ cho từng bước. Khi đổi công cụ, tiếp tục từ `spec.md`, `plan.md`, diff hiện tại và `report.md` nếu đã có. Dùng `handoff.md` nếu lần chạy trước để lại. Kiểm tra lại bước nào đã hoàn thành trước khi làm tiếp.
 
-- Task chưa hoàn tất nằm trong file Markdown cục bộ `docs/storefront/plan/todo/<NN>-<tên>/spec.md`, không dùng GitHub Issues. Task hoàn tất ở `docs/storefront/plan/done/`, ticket đã quyết định bỏ ở `docs/storefront/plan/wontfix/`. Schema, vòng đời, quyền status và ngoại lệ Wayfinder: `docs/agents/issue-tracker.md`; index điều hướng: `docs/storefront/plan/README.md`; vận hành: `docs/agents/runner.md`.
+- Task chưa hoàn tất nằm trong file Markdown cục bộ `docs/plan/tasks/todo/<NN>-<tên>/spec.md`, không dùng GitHub Issues. Task hoàn tất ở `docs/plan/tasks/done/`, ticket đã quyết định bỏ ở `docs/plan/tasks/wontfix/`. Schema, vòng đời, quyền status và ngoại lệ Wayfinder: `docs/agents/issue-tracker.md`; index điều hướng: `docs/plan/README.md`; vận hành: `docs/agents/runner.md`.
 - Chỉ nhận task có `status: ready-for-agent` và mọi `blocked-by` đã `done`. Agent nhận task tự chuyển status của task đó `in-progress` → `review` khi mở PR → `done` sau khi PR đã merge, và cập nhật index cùng lượt. Không tự chuyển task `todo` sang `ready-for-agent`.
 - Tạo branch từ `dev` theo `<type>/<NN>-<slug>` (hoặc `<type>/<slug>`; slug nói rõ tính năng); dùng Conventional Commits.
 - Feature/fix target `dev`; `main` chỉ nhận release PR từ `dev`.

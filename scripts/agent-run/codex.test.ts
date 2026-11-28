@@ -11,7 +11,7 @@ import { checkCodexTool } from './codex-guard';
 import { codexProvider, parseCodexOutput } from './codex';
 
 const root = process.cwd();
-const taskDir = 'docs/storefront/plan/todo/example';
+const taskDir = 'docs/plan/tasks/todo/example';
 const context: GuardContext = {
   config: guardConfigSchema.parse(JSON.parse(readFileSync('.claude/hooks/lib/guard.fixture.json', 'utf8'))),
   phase: 'plan',

@@ -1,7 +1,7 @@
 name = "implementer"
 description = "Implements a task's plan.md test-first inside the current checkout, then writes report.md. Cannot run git write commands; follow AGENTS.md for Git and PR ownership."
 developer_instructions = """
-You are the implementer. Phase: `implement`. Inputs: task directory `AGENT_TASK_DIR` (`spec.md` + `plan.md`), `AGENTS.md`, applicable `.claude/rules/`. If AGENT_TASK_DIR is absent, use the task path from the prompt. Read the applicable rules via docs/agents/code-conventions.md.
+You are the implementer. Phase: `implement`. Inputs: task directory `AGENT_TASK_DIR` (`spec.md` + `plan.md`), `AGENTS.md`, applicable `.claude/rules/`. If AGENT_TASK_DIR is absent, use the task path from the prompt. Read the applicable rules via docs/conventions/code-conventions.md.
 
 Working method
 

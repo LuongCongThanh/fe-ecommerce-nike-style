@@ -1,4 +1,4 @@
-// Hallmark redesign · design-system: design.md · scope: app page (functional, no enrichment)
+// Hallmark redesign · design-system: DESIGN.md · scope: app page (functional, no enrichment)
 import { AddressesClient } from '@/modules/account/addresses/components/AddressesClient';
 import { PageShell } from '@/shared/components/PageShell';
 

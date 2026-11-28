@@ -6,7 +6,7 @@
  * cycles, exact snapshots of known violations and the coverage old→new manifest.
  *
  * Every file maps to a logical owner, e.g. `src/modules/catalog/priceRange.ts` is `catalog:priceRange`. Design source:
- * docs/storefront/plan/done/18-storefront-module-boundaries/boundaries.md.
+ * docs/plan/tasks/done/18-storefront-module-boundaries/boundaries.md.
  */
 import { existsSync, globSync, readdirSync, readFileSync, statSync } from 'node:fs';
 import { dirname, join, relative, resolve, sep } from 'node:path';

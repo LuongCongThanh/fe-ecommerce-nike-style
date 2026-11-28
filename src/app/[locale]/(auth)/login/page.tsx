@@ -75,7 +75,7 @@ export default function LoginPage(): React.JSX.Element {
         </div>
 
         {/* Decorative pane — hidden below md so the form is never pushed off-screen on mobile.
-         * design.md § Variants: storefront stays off the brand-red-as-chrome exception too (that's
+         * DESIGN.md § Variants: storefront stays off the brand-red-as-chrome exception too (that's
          * admin-only) — this reuses `--color-surface-inverse`, the same dark treatment storefront's
          * own Hero/Newsletter/Footer already share, so the login page reads as this app's own brand,
          * not a borrowed accent. Centerpiece is a ShoppingBag (retail context) + floating heart/

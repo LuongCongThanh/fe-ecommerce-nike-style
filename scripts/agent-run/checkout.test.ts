@@ -58,7 +58,7 @@ it('switches two task branches in one Git checkout, preserving local edits and i
     writeFileSync(join(root, 'tracked.txt'), 'local edit\n');
     await expect(prep(second)).rejects.toMatchObject({ situation: 16 });
     expect(readFileSync(join(root, 'tracked.txt'), 'utf8')).toBe('local edit\n');
-    await git('add', 'tracked.txt', 'docs/storefront/plan/todo');
+    await git('add', 'tracked.txt', 'docs/plan/tasks/todo');
     await git('commit', '-qm', 'first task');
 
     expect(await prep(second)).toMatchObject({ worktree: root, fresh: true });

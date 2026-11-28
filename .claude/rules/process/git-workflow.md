@@ -104,7 +104,7 @@ Do not treat a hook failure as something to bypass; fix the underlying lint/type
 - Feature/fix PRs target `dev`; only a release PR from `dev` targets `main`.
 - The PR title follows Conventional Commits and reflects the main change.
 - Use `.github/PULL_REQUEST_TEMPLATE.md`; fill in every template section.
-- Name the task folder (`docs/storefront/plan/todo/<NN>-<name>`) in the PR body; set the task's `pr` frontmatter once the PR exists. There are no GitHub Issues to link or close.
+- Name the task folder (`docs/plan/tasks/todo/<NN>-<name>`) in the PR body; set the task's `pr` frontmatter once the PR exists. There are no GitHub Issues to link or close.
 - The PR description states the behavior, key decisions/constraints, how it was tested, screenshots for UI changes, and risks/migration if any.
 - The PR title/body must never contain the name of an AI tool, model, agent or assistant, and must never carry AI attribution in any form; CI checks against a list of common names.
 - PR comments, review comments, review summaries, release notes and GitHub discussions must also never mention an agent/assistant or describe content as AI-generated. Describe only the technical change, the decisions, the test evidence, and the actual person responsible.
@@ -113,7 +113,7 @@ Do not treat a hook failure as something to bypass; fix the underlying lint/type
 
 ## Task and traceability
 
-- The task `spec.md` (`docs/storefront/plan/todo/<NN>-<name>/spec.md`) is the source of the delivery scope. Do not silently expand the acceptance criteria.
+- The task `spec.md` (`docs/plan/tasks/todo/<NN>-<name>/spec.md`) is the source of the delivery scope. Do not silently expand the acceptance criteria.
 - Branch, commit, and PR should share the same task/domain vocabulary where possible.
 - Task state is the frontmatter `status` (see `docs/agents/issue-tracker.md`). Only a human moves `todo` to `ready-for-agent`. The agent working the task sets `in-progress`, `review` and `done` (only after the PR is merged) and updates the index in the same change.
 

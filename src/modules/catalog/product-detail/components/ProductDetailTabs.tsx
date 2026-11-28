@@ -1,4 +1,4 @@
-// Hallmark redesign · design-system: design.md · scope: app page (functional, no enrichment)
+// Hallmark redesign · design-system: DESIGN.md · scope: app page (functional, no enrichment)
 'use client';
 
 import { Check } from 'lucide-react';
@@ -20,7 +20,7 @@ const FEATURES = [
 /**
  * `FEATURES` is placeholder content with no verified source — the specs claim a material and country
  * of origin that are identical for every product. It is gated the same way the home testimonials are
- * (see `home/page.tsx`, design.md). Reviews are not shown until slice R adds them to the API.
+ * (see `home/page.tsx`, DESIGN.md). Reviews are not shown until slice R adds them to the API.
  */
 const SHOW_PLACEHOLDER_CONTENT = isMockContentEnabled();
 

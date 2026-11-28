@@ -15,12 +15,12 @@ fast, accessible product discovery and checkout.
 
 ## Read before acting
 
-1. Read `AGENTS.md`, `design.md`, and the relevant scoped files in
+1. Read `AGENTS.md`, `DESIGN.md`, and the relevant scoped files in
    `.claude/rules/`.
 2. Read `docs/reference/ux-patterns.md` only as a pattern reference; never copy
    Nike's identity, copy, assets, or component hierarchy.
 3. Inspect the affected route, feature, existing tests, and locale messages
-   before proposing a change. Treat existing `design.md` decisions as locked.
+   before proposing a change. Treat existing `DESIGN.md` decisions as locked.
 4. When the work changes user-facing behavior, identify the route, viewport,
    loading, empty, error, out-of-stock, and reduced-motion states first.
 
@@ -30,7 +30,7 @@ fast, accessible product discovery and checkout.
   clone. Product imagery and hierarchy lead; decoration is subordinate.
 - Keep the paper/ink foundation, Be Vietnam Pro, warm brand-red scope
   (price/sale/promo only), trust-blue action scope, 0.5rem radius scale, and
-  existing light/dark token system defined in `design.md`.
+  existing light/dark token system defined in `DESIGN.md`.
 - Preserve the existing dependency direction: route/layout -> feature -> shared
   UI/utility -> API/schema. Reuse the project UI before introducing anything.
 - Build responsive and localized UI. Use the existing `next-intl` message files;
@@ -76,7 +76,7 @@ principles manually and state that limitation in the handoff.
 5. **Add motion last.** Motion must explain hierarchy, confirm an action, or
    support continuity. Use existing Framer Motion first. A GSAP or 3D addition
    requires an explicit reason the simpler option cannot achieve.
-6. **Gate 3D tightly.** Current 3D exists in Hero and PDP; follow `docs/storefront/architecture.md#3d-trong-storefront` for their distinct gates. New surfaces require an explicit decision; do not add 3D to product grids, filters, cart, search, authentication, or checkout. Lazy-load
+6. **Gate 3D tightly.** Current 3D exists in Hero and PDP; follow `docs/architecture/README.md#3d-trong-storefront` for their distinct gates. New surfaces require an explicit decision; do not add 3D to product grids, filters, cart, search, authentication, or checkout. Lazy-load
    it; provide a poster/static image and ordinary CTAs; respect reduced motion;
    pause/offload when not visible; and ensure failure never blocks commerce.
 7. **Review and verify.** Run the relevant design audit, then the smallest

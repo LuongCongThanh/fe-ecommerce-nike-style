@@ -1,6 +1,6 @@
 # UI workflow và chọn skill
 
-Owner: maintainer; visual contract và commerce interaction checks ở [design](../../design.md), thực thi ở `.agents/skills/fashion-storefront-ui-director/SKILL.md` (Claude entry dùng cùng nguồn).
+Owner: maintainer; visual contract và commerce interaction checks ở [design](../../DESIGN.md), thực thi ở `.agents/skills/fashion-storefront-ui-director/SKILL.md` (Claude entry dùng cùng nguồn).
 
 Gọi `/fashion-storefront-ui-director <brief>` trong Claude hoặc `$fashion-storefront-ui-director` trong Codex; nếu skill không được harness expose thì đọc source và ghi giới hạn. Chọn ít skill phù hợp, không cài/nạp catalog toàn bộ.
 
@@ -17,4 +17,4 @@ GSAP/Scroll World/Canvas là lựa chọn khi yêu cầu có lý do riêng, khô
 
 Ví dụ: polish PLP dùng director + mobile/review, inspect URL filters và API data; không đổi transport. Sửa Hero motion dùng director + motion review, kiểm first entry/reduced motion/static fallback và LCP nếu mount đổi. Sửa PDP 3D theo architecture hiện tại; PDP có implementation riêng, không giả định mọi gate Hero đã áp dụng.
 
-Trước code chốt route/action/content source, desktop/mobile và loading/empty/error/unavailable/focus. Sau code ghi browser route/viewport/state, lệnh thực sự chạy và hạn chế. Workflow runner hiện còn gap evidence; [roadmap](../storefront/roadmap.md) giữ accepted fix. Không báo pass UI từ findings rỗng khi browser không chạy.
+Trước code chốt route/action/content source, desktop/mobile và loading/empty/error/unavailable/focus. Sau code ghi browser route/viewport/state, lệnh thực sự chạy và hạn chế. Workflow runner hiện còn gap evidence; [roadmap](../plan/roadmap.md) giữ accepted fix. Không báo pass UI từ findings rỗng khi browser không chạy.

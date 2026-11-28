@@ -1,6 +1,6 @@
 # Vận hành agent-run
 
-Owner: maintainer; hiện trạng runtime `scripts/agent-run/` ngày 18/11/2026. Schema task/report tại [tracker](issue-tracker.md), Git/PR tại [CONTRIBUTING](../../CONTRIBUTING.md). Đây là manual hiện tại; quyết định chưa chạy nằm ở [roadmap](../storefront/roadmap.md).
+Owner: maintainer; hiện trạng runtime `scripts/agent-run/` ngày 18/11/2026. Schema task/report tại [tracker](issue-tracker.md), Git/PR tại [CONTRIBUTING](../../CONTRIBUTING.md). Đây là manual hiện tại; quyết định chưa chạy nằm ở [roadmap](../plan/roadmap.md).
 
 ## Chạy và preflight
 
@@ -69,4 +69,4 @@ System plan trước đây tổng hợp quyết định từ nghiên cứu Anthr
 
 Runner loại Wayfinder labels (inline/dash list) và body Type research/prototype/grilling/task khỏi delivery selection, kể cả `--task`; spec status vẫn được giữ để xét blocker. Index chỉ điều hướng.
 
-UI dùng response schema riêng, giữ reviewer schema thường tương thích. `ok` phải có route cùng origin devserver hiện tại, viewport nguyên dương, state/actions không rỗng và screenshot PNG mới tại đường dẫn duy nhất runner cấp dưới task checkout. Runner kiểm tra path chính xác, không symlink/escape, file thường, PNG signature và timestamp (dung sai filesystem 1 giây). Browser tool phải tạo screenshot; thiếu tool phải trả blocked. blocked/need_info/malformed hoặc evidence lỗi dừng trước review/PR; server luôn được stop trong finally. Đây là bằng chứng audit cùng mô tả kiểm tra, không chứng minh mọi AC UI được kiểm tra đầy đủ hoặc attestation provider. [Report11](../storefront/plan/done/11-runner-workflow/report.md) ghi phạm vi kiểm thử. Retro hết lượt vẫn dừng xin retro-turns; chính sách mở PR với retro dang dở còn backlog.
+UI dùng response schema riêng, giữ reviewer schema thường tương thích. `ok` phải có route cùng origin devserver hiện tại, viewport nguyên dương, state/actions không rỗng và screenshot PNG mới tại đường dẫn duy nhất runner cấp dưới task checkout. Runner kiểm tra path chính xác, không symlink/escape, file thường, PNG signature và timestamp (dung sai filesystem 1 giây). Browser tool phải tạo screenshot; thiếu tool phải trả blocked. blocked/need_info/malformed hoặc evidence lỗi dừng trước review/PR; server luôn được stop trong finally. Đây là bằng chứng audit cùng mô tả kiểm tra, không chứng minh mọi AC UI được kiểm tra đầy đủ hoặc attestation provider. [Report11](../plan/tasks/done/11-runner-workflow/report.md) ghi phạm vi kiểm thử. Retro hết lượt vẫn dừng xin retro-turns; chính sách mở PR với retro dang dở còn backlog.

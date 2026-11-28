@@ -1,4 +1,4 @@
-// Hallmark redesign · design-system: design.md · scope: app page (functional, no enrichment)
+// Hallmark redesign · design-system: DESIGN.md · scope: app page (functional, no enrichment)
 // Apple Design pass · §1 a skeleton shaped like the PDP instead of a spinner · §8 sections reveal
 // in reading order · §14 reduced motion
 'use client';

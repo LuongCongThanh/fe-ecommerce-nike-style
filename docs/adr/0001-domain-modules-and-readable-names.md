@@ -4,7 +4,7 @@ status: accepted
 
 # Storefront theo module nghiệp vụ và tên diễn đạt trách nhiệm
 
-Ghi chú 27/11/2026: migration và các slice SSR 34–48 đã hoàn tất. Nội dung “chưa triển khai” bên dưới phản ánh thời điểm quyết định ban đầu; hiện trạng đọc tại [architecture](../storefront/architecture.md).
+Ghi chú 27/11/2026: migration và các slice SSR 34–48 đã hoàn tất. Nội dung “chưa triển khai” bên dưới phản ánh thời điểm quyết định ban đầu; hiện trạng đọc tại [architecture](../architecture/README.md).
 
 Ngày quyết định: 24/11/2026. Thiết kế được người dùng duyệt trong phiên thảo luận; source chưa được chuyển đổi. Storefront tiếp tục dùng Next.js App Router, tổ chức theo module nghiệp vụ và áp dụng Clean/Hexagonal chọn lọc cho logic có ranh giới thực sự cần bảo vệ. Ưu tiên tên gần gũi, trách nhiệm rõ và chuyển đổi từng phần để giữ hành vi hiện tại.
 
@@ -23,4 +23,4 @@ Module chỉ dùng public API được cho phép của module khác; không deep
 
 Đây là cấu trúc đích đã duyệt, chưa là convention đã triển khai trong executable config. Rule hiện hành tiếp tục áp dụng cho source cũ cho tới khi migration cập nhật owner và config trong cùng lát cắt. Không tự đổi contract Backend, authentication, URL, state ownership hoặc delivery status của task.
 
-Xem [thiết kế và lộ trình](../storefront/plan/done/16-storefront-refactor-map/design.md), [nghiên cứu cấu trúc](../research/nextjs-storefront-structure.md), [nghiên cứu naming và quyết định đã chốt](../research/nextjs-naming-conventions.md). [Architecture](../storefront/architecture.md) tiếp tục sở hữu mô tả hiện trạng.
+Xem [thiết kế và lộ trình](../plan/tasks/done/16-storefront-refactor-map/design.md), [nghiên cứu cấu trúc](../research/nextjs-storefront-structure.md), [nghiên cứu naming và quyết định đã chốt](../research/nextjs-naming-conventions.md). [Architecture](../architecture/README.md) tiếp tục sở hữu mô tả hiện trạng.

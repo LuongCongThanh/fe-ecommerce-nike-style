@@ -17,7 +17,7 @@ Feature branches:
 <type>/<NN>-<slug>
 ```
 
-`NN` is the task number in `docs/storefront/plan/todo/` (omit it when there is no task). Example: `feat/9-storefront-catalog-browse`. Branch off `dev`, not `main`.
+`NN` is the task number in `docs/plan/tasks/todo/` (omit it when there is no task). Example: `feat/9-storefront-catalog-browse`. Branch off `dev`, not `main`.
 
 `<type>` matches the Conventional Commits type of the change (see below).
 
@@ -32,7 +32,7 @@ Before every commit, `.husky/pre-commit` runs `lint-staged`, `pnpm lint`, `pnpm 
 ## Pull requests
 
 - PR title also follows Conventional Commits (enforced by the `Check PR title` CI job) — under squash-merge, the PR title becomes the permanent commit message on `dev`.
-- Use `.github/PULL_REQUEST_TEMPLATE.md` and fill in Type, Summary, Changes, Cách kiểm, Gap and Checklist. Name the related task folder (`docs/storefront/plan/todo/<NN>-<name>`) when there is one.
+- Use `.github/PULL_REQUEST_TEMPLATE.md` and fill in Type, Summary, Changes, Cách kiểm, Gap and Checklist. Name the related task folder (`docs/plan/tasks/todo/<NN>-<name>`) when there is one.
 - Target `dev` for regular feature/fix work. Target `main` only for a Release PR from `dev`.
 - **Merge strategy**: squash-merge for feature branches into `dev`. Regular merge (not squash) for `dev` → `main` Release PRs, so each already-squashed feature commit stays visible in `main`'s history.
 - Branch protection on `main` and `dev`: CI must pass before merging. No required reviewer approval (solo dev) — CI green is the merge gate.
@@ -44,7 +44,7 @@ Before every commit, `.husky/pre-commit` runs `lint-staged`, `pnpm lint`, `pnpm 
 ## Development workflow
 
 1. Read the task spec and current diff; continue unfinished work before starting another task. Interactive maintenance explicitly requested by the maintainer may proceed in the current checkout. Task runner eligibility still follows the task lifecycle.
-2. Locate the owning module in [the structure guide](docs/storefront/architecture.md). Keep Next.js entry points in `app`, domain code in `modules`, reusable UI in `shared`, and test support in `testing`.
+2. Locate the owning module in [the structure guide](docs/architecture/README.md). Keep Next.js entry points in `app`, domain code in `modules`, reusable UI in `shared`, and test support in `testing`.
 3. Write or update the plan for task work. Make one coherent change; update imports, related docs and tests together when moving files.
 4. Run focused checks first, then `pnpm lint`, `pnpm format:check`, `pnpm docs:check`, `pnpm typecheck`, `pnpm test` and `pnpm build` for source/config changes. Run affected E2E tests when browser behavior changes. For documentation-only work, run `pnpm docs:check`.
 5. Review the diff and record checks and limitations. For a `ready-for-agent` task any agent commits, pushes, opens a PR to `dev` and squash-merges it once required checks pass; other work does so only when requested. Never merge into `main` outside a release PR.
@@ -53,4 +53,4 @@ Delete obsolete instructions once their replacement is linked from the documenta
 
 ## Tasks
 
-Tasks are local Markdown files (`docs/storefront/plan/todo/<NN>-<name>/spec.md`), not GitHub Issues. State is the `status` frontmatter field; see `docs/storefront/plan/README.md` and `docs/agents/issue-tracker.md`.
+Tasks are local Markdown files (`docs/plan/tasks/todo/<NN>-<name>/spec.md`), not GitHub Issues. State is the `status` frontmatter field; see `docs/plan/README.md` and `docs/agents/issue-tracker.md`.

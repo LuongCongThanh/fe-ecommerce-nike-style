@@ -77,8 +77,8 @@ describe('agent-guard hook (process level)', () => {
   });
 
   it('planner may only write its own plan.md', () => {
-    const env = { ...AGENT, AGENT_PHASE: 'plan', AGENT_TASK_DIR: 'docs/storefront/plan/todo/01-x' };
-    expect(run(edit('docs/storefront/plan/todo/01-x/plan.md'), env).code).toBe(0);
+    const env = { ...AGENT, AGENT_PHASE: 'plan', AGENT_TASK_DIR: 'docs/plan/tasks/todo/01-x' };
+    expect(run(edit('docs/plan/tasks/todo/01-x/plan.md'), env).code).toBe(0);
     expect(run(edit('src/a.ts'), env).code).toBe(2);
   });
 

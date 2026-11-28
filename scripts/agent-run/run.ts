@@ -84,7 +84,7 @@ async function runTask(deps: Deps, cfg: Config, track: Track): Promise<string> {
       SITUATION.noTask,
       cfg.only
         ? `Task ${cfg.only} không ở trạng thái ready-for-agent hoặc còn blocked-by.`
-        : 'Không có task ready-for-agent. Đặt trạng thái cho một task trong docs/storefront/plan/todo.',
+        : 'Không có task ready-for-agent. Đặt trạng thái cho một task trong docs/plan/tasks/todo.',
     );
   track.task = task.name;
   track.setLockTask(task.name);

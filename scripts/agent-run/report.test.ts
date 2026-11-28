@@ -13,8 +13,8 @@ const dirs: string[] = [];
 function repo(): { root: string; spec: string; wt: string } {
   const root = mkdtempSync(join(tmpdir(), 'rep-'));
   dirs.push(root);
-  mkdirSync(join(root, 'docs/storefront/plan/todo/03-x'), { recursive: true });
-  const spec = join(root, 'docs/storefront/plan/todo/03-x/spec.md');
+  mkdirSync(join(root, 'docs/plan/tasks/todo/03-x'), { recursive: true });
+  const spec = join(root, 'docs/plan/tasks/todo/03-x/spec.md');
   writeFileSync(spec, '---\nstatus: in-progress\n---\n# Spec\n');
   mkdirSync(join(root, '.agent-run'), { recursive: true });
   writeFileSync(join(root, '.agent-run/AGENT-INBOX.md'), '| Thời gian | Task | Tình huống | Việc cần làm |\n| --- | --- | --- | --- |\n');

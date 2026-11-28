@@ -32,7 +32,7 @@ describe('classify', () => {
     ['/work/wt/feat-x/src/a/B.test.tsx', 'test'],
     ['/work/wt/feat-x/src/a/b.spec.tsx', 'test'],
     ['/work/wt/feat-x/e2e/home.spec.ts', 'test'],
-    ['/work/wt/feat-x/docs/storefront/plan/x.md', 'docs'],
+    ['/work/wt/feat-x/docs/plan/x.md', 'docs'],
     ['/work/wt/feat-x/README.md', 'docs'],
     ['/work/wt/feat-x/package.json', 'other'],
     ['/work/wt/feat-x/scripts/token-usage.ts', 'other'],
