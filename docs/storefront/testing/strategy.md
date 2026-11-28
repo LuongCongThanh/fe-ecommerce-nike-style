@@ -30,13 +30,13 @@ MSW là lớp giả HTTP cho test và cho flow chuyển tiếp chưa nối API. 
 Cách viết test (đặt file, đặt tên, AAA, mock, chống flaky) theo [testing rule](../../../.claude/rules/process/testing.md). File này chỉ bổ sung:
 
 - Kiểu dữ liệu fake lấy từ schema sinh trong `src/integrations/backend`, không viết tay.
-- Không tính lại tiền trong test FE: expected là số lấy từ payload Backend giả, test chỉ kiểm hiển thị và định dạng.
-- Tên test bắt đầu bằng mã kịch bản khi có, ví dụ `it('SF-CHK-03: bấm đặt hai lần chỉ gửi một request')`.
-- Assertion theo điều người dùng thấy và request đã gửi; không snapshot cả component, không test class CSS.
-- Locator E2E theo role, label hoặc `data-testid`; không `waitForTimeout`; trace và screenshot khi fail.
+- Không tính lại tiền trong test của Storefront: expected là số lấy từ payload Backend giả, test chỉ kiểm hiển thị và định dạng.
+- Mã kịch bản (quy ước chung ở README `docs/testing/` của repo workspace) là tiền tố đặt trước mô tả hành vi theo testing rule, ví dụ `it('SF-CHK-03: sends one request when Place order is clicked twice')`.
 - Test khác module chỉ dùng public hoặc test entry được cho phép (theo [kiến trúc](../architecture.md)).
 
 ## Phi chức năng
+
+**Dự kiến, chưa có công cụ**: axe, Lighthouse, browser matrix Firefox và WebKit, và job nightly chưa được cài. Mỗi dòng dưới đây cần một ticket trước khi làm.
 
 | Hạng mục       | Cách kiểm                                                                                            | Khi chạy                             |
 | -------------- | ---------------------------------------------------------------------------------------------------- | ------------------------------------ |
