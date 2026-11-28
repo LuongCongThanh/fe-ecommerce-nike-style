@@ -22,7 +22,7 @@ const HERO_SLIDES = [
 ] as const;
 
 // three.js only ever reaches the browser through this wrapper, and only after `useCanRender3D`
-// clears every gate — see docs/storefront/architecture.md ("three.js in the storefront").
+// clears every gate — see docs/architecture/README.md ("three.js in the storefront").
 const HeroSlides3D = dynamic(async () => import('@/modules/home/components/hero3d/HeroSlides3D'), { ssr: false });
 
 function wrapSlideIndex(index: number): number {

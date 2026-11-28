@@ -1,4 +1,4 @@
-// Hallmark redesign · design-system: design.md · scope: app page (functional, no enrichment)
+// Hallmark redesign · design-system: DESIGN.md · scope: app page (functional, no enrichment)
 // Apple Design pass · §1 feedback on press, not release · §3 the selection ring is one shared
 // element that travels · §14 reduced motion
 'use client';

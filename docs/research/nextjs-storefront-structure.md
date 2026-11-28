@@ -1,6 +1,6 @@
 # Nghiên cứu cấu trúc Next.js cho Storefront
 
-Ngày đối chiếu: 24/11/2026. Trạng thái: **khuyến nghị để thảo luận, chưa phải kiến trúc đã duyệt**. Phạm vi: tổ chức feature, server rendering và ranh giới kiểm thử; không đổi source, contract hoặc tài liệu owner. Đây là ghi chú nghiên cứu mới vì checkout chưa có thư mục research/reference. [Architecture](../storefront/architecture.md) vẫn sở hữu hiện trạng; [rule map](../agents/code-conventions.md) dẫn tới convention có hiệu lực.
+Ngày đối chiếu: 24/11/2026. Trạng thái: **khuyến nghị để thảo luận, chưa phải kiến trúc đã duyệt**. Phạm vi: tổ chức feature, server rendering và ranh giới kiểm thử; không đổi source, contract hoặc tài liệu owner. Đây là ghi chú nghiên cứu mới vì checkout chưa có thư mục research/reference. [Architecture](../architecture/README.md) vẫn sở hữu hiện trạng; [rule map](../conventions/code-conventions.md) dẫn tới convention có hiệu lực.
 
 ## Kết luận đề xuất
 

@@ -1,4 +1,4 @@
-// Hallmark redesign · design-system: design.md · scope: app page (functional, no enrichment)
+// Hallmark redesign · design-system: DESIGN.md · scope: app page (functional, no enrichment)
 // Apple Design pass · §2 direct manipulation · §3 interruptibility · §6 momentum projection
 // · §7 spatial consistency · §9 rubber-banding · §14 reduced motion
 'use client';

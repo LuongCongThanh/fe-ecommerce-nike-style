@@ -5,8 +5,8 @@ import { join } from 'node:path';
 import { parseBlockedBy } from './spec-file';
 import { isTaskKind, parseFrontmatter, type TaskKind } from './spec';
 
-export const TASKS_DIR = 'docs/storefront/plan/todo';
-export const TASK_DIRECTORIES = [TASKS_DIR, 'docs/storefront/plan/done', 'docs/storefront/plan/wontfix'] as const;
+export const TASKS_DIR = 'docs/plan/tasks/todo';
+export const TASK_DIRECTORIES = [TASKS_DIR, 'docs/plan/tasks/done', 'docs/plan/tasks/wontfix'] as const;
 
 export interface Task {
   /** Directory name, e.g. `03-product-card` */

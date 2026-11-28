@@ -62,7 +62,7 @@ branch="${BRANCH_PREFIX}$tag"
 echo "Moving openapi-v$current -> $tag ($kind)"
 git switch --quiet -C "$branch"
 sed -i "s|releases/download/openapi-v$current/|releases/download/$tag/|" "$PIN_FILE"
-sed -i "s|be-demo/openapi-v$current/openapi.json|be-demo/$tag/openapi.json|" docs/storefront/api-integration.md
+sed -i "s|be-demo/openapi-v$current/openapi.json|be-demo/$tag/openapi.json|" docs/architecture/api-integration.md
 [[ -d node_modules ]] || pnpm install --frozen-lockfile
 pnpm --silent gen:api
 
@@ -97,7 +97,7 @@ cat >"$body" <<EOF
 
 **Vì sao:** Backend vừa phát hành \`$tag\`. Workflow \`contract-bump.yml\` mở PR này tự động.
 
-**Giải pháp:** Đổi \`PINNED\` trong \`$PIN_FILE\` (và pin ghi trong \`docs/storefront/api-integration.md\`) rồi chạy \`pnpm gen:api\`.
+**Giải pháp:** Đổi \`PINNED\` trong \`$PIN_FILE\` (và pin ghi trong \`docs/architecture/api-integration.md\`) rồi chạy \`pnpm gen:api\`.
 
 **Kết quả:** $result
 
@@ -107,7 +107,7 @@ cat >"$body" <<EOF
 
 ## 📋 Changes
 
-- \`$PIN_FILE\`, \`docs/storefront/api-integration.md\` → pin trỏ tới \`$tag\`.
+- \`$PIN_FILE\`, \`docs/architecture/api-integration.md\` → pin trỏ tới \`$tag\`.
 - \`$GENERATED\` → sinh lại bằng \`pnpm gen:api\` ([so sánh tag]($compare)).
 
 ## 🔌 API / Migration / Cấu hình
@@ -142,7 +142,7 @@ Mở bởi \`scripts/contract-bump.sh\`. Diff chỉ gồm pin và file sinh tự
 EOF
 BODY=$(cat "$body") bash scripts/check-pr-body.sh
 
-git add "$PIN_FILE" docs/storefront/api-integration.md "$GENERATED"
+git add "$PIN_FILE" docs/architecture/api-integration.md "$GENERATED"
 git -c user.name='github-actions[bot]' -c user.email='41898282+github-actions[bot]@users.noreply.github.com' \
   commit --quiet -m "$title"
 

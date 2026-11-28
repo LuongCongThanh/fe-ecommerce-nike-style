@@ -1,4 +1,4 @@
-// Hallmark redesign · design-system: design.md · scope: app page (functional, no enrichment)
+// Hallmark redesign · design-system: DESIGN.md · scope: app page (functional, no enrichment)
 // Apple Design pass · §12 translucent chrome floating over content · §7 enters and leaves along the
 // same edge it belongs to · §14 reduced transparency / reduced motion
 'use client';

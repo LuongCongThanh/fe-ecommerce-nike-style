@@ -19,10 +19,8 @@ const REMOVED_DOCS = [
   'docs/plan/storefront-restructure-plan.md',
   'docs/plan/storefront-target-module-tree.md',
   'docs/plan/three-repo-restructure.md',
-  'docs/storefront/plan/AGENT-SYSTEM-PLAN.md',
-  'docs/storefront/plan/storefront-restructure-plan.md',
-  'docs/storefront/plan/storefront-target-module-tree.md',
-  'docs/storefront/plan/three-repo-restructure.md',
+  'docs/storefront/',
+  'docs/agents/code-conventions.md',
   'docs/reference/anthropic-academy-research.md',
 ] as const;
 const TEXT_EXTENSIONS = new Set(['.md', '.ts', '.tsx', '.js', '.mjs', '.json', '.toml', '.css']);

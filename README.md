@@ -19,12 +19,12 @@ Mở `http://127.0.0.1:3000`. `.env.example` mô tả URL local và mock flag; `
 Bộ onboarding gồm trang này và năm trang sau:
 
 - [Docs index](docs/README.md): tìm tài liệu theo câu hỏi và chủ sở hữu.
-- [Overview](docs/storefront/overview.md): capability hiện có, real/mock và giới hạn.
-- [Architecture](docs/storefront/architecture.md): module, data/state, locale, PWA và 3D.
-- [API integration](docs/storefront/api-integration.md): proxy, contract pin và cutover.
-- [Roadmap](docs/storefront/roadmap.md): rebuild còn mở và dependency sản phẩm.
+- [Overview](docs/business/overview.md): capability hiện có, real/mock và giới hạn.
+- [Architecture](docs/architecture/README.md): module, data/state, locale, PWA và 3D.
+- [API integration](docs/architecture/api-integration.md): proxy, contract pin và cutover.
+- [Roadmap](docs/plan/roadmap.md): rebuild còn mở và dependency sản phẩm.
 
-Khi đóng góp đọc [CONTRIBUTING](CONTRIBUTING.md); khi sửa visual đọc [design](design.md); công cụ bắt đầu từ [AGENTS](AGENTS.md).
+Khi đóng góp đọc [CONTRIBUTING](CONTRIBUTING.md); khi sửa visual đọc [design](DESIGN.md); công cụ bắt đầu từ [AGENTS](AGENTS.md).
 
 ## Kiểm tra
 

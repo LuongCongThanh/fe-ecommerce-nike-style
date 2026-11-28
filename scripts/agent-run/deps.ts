@@ -23,7 +23,7 @@ export interface Deps {
 }
 
 export interface Config {
-  /** Main checkout (holds docs/storefront/plan, `.agent-stop`, the inbox) */
+  /** Main checkout (holds docs/plan, `.agent-stop`, the inbox) */
   repoRoot: string;
   /** Run only this task (number or directory name) */
   only?: string;

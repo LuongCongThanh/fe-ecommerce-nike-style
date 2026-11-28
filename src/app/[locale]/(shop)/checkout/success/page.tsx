@@ -1,4 +1,4 @@
-// Hallmark redesign · design-system: design.md · scope: app page (functional, no enrichment)
+// Hallmark redesign · design-system: DESIGN.md · scope: app page (functional, no enrichment)
 import { CheckoutSuccess } from '@/modules/checkout/components/CheckoutSuccess';
 import { getOrderOrNull } from '@/modules/orders/services/order.service';
 

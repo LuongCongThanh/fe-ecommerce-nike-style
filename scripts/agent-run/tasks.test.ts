@@ -12,8 +12,8 @@ function repo(tasks: Record<string, string>): string {
   const root = mkdtempSync(join(tmpdir(), 'tasks-'));
   dirs.push(root);
   for (const [name, fm] of Object.entries(tasks)) {
-    mkdirSync(join(root, 'docs/storefront/plan/todo', name), { recursive: true });
-    writeFileSync(join(root, 'docs/storefront/plan/todo', name, 'spec.md'), `---\n${fm}\n---\n# Spec\n`);
+    mkdirSync(join(root, 'docs/plan/tasks/todo', name), { recursive: true });
+    writeFileSync(join(root, 'docs/plan/tasks/todo', name, 'spec.md'), `---\n${fm}\n---\n# Spec\n`);
   }
   return root;
 }
@@ -87,8 +87,8 @@ describe('selectTask (situations 1, 2)', () => {
       ['01-cancelled', 'wontfix'],
       ['02-done', 'done'],
     ] as const) {
-      mkdirSync(join(root, 'docs/storefront/plan', group), { recursive: true });
-      renameSync(join(root, 'docs/storefront/plan/todo', name), join(root, 'docs/storefront/plan', group, name));
+      mkdirSync(join(root, 'docs/plan/tasks', group), { recursive: true });
+      renameSync(join(root, 'docs/plan/tasks/todo', name), join(root, 'docs/plan/tasks', group, name));
     }
     const tasks = readTasks(root);
     expect(tasks.map((task) => task.name)).toEqual(['01-cancelled', '02-done', '03-ready']);

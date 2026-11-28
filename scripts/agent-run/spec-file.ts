@@ -1,5 +1,5 @@
 /**
- * Read/modify the frontmatter of a task `spec.md` (docs/storefront/plan/README.md).
+ * Read/modify the frontmatter of a task `spec.md` (docs/plan/README.md).
  * Only the subset the task format uses: flat `key: value`, plus lists (inline `[a, b]` or `- a` blocks)
  * for `blocked-by` and the nested `approved: {files, commands}` of D43.
  */
