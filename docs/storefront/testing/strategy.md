@@ -1,6 +1,6 @@
 # Chiến lược kiểm thử Storefront
 
-**Trạng thái:** thiết kế đã duyệt, chưa triển khai (2026-11-28). Luật chung cho ba ứng dụng (mức rủi ro, ma trận trách nhiệm FE/BE, hành trình E2E full-stack, gate, audit) nằm ở `docs/testing/` của repo workspace [fashion-store](https://github.com/LuongCongThanh/fashion-store/tree/main/docs/testing). File này nói phần của Storefront. Danh sách kịch bản: [traceability.md](traceability.md).
+**Trạng thái:** thiết kế đã duyệt, chưa triển khai (2026-11-28). Luật chung cho ba ứng dụng (mức rủi ro, ma trận trách nhiệm Backend – CMS – Storefront, hành trình E2E full-stack, gate, audit) nằm ở `docs/testing/` của repo workspace [fashion-store](https://github.com/LuongCongThanh/fashion-store/tree/main/docs/testing). File này nói phần của Storefront. Danh sách kịch bản: [traceability.md](traceability.md).
 
 ## Storefront bảo vệ gì
 
@@ -52,14 +52,14 @@ Ngưỡng Lighthouse và axe đặt sau lần đo đầu tiên; trước đó ch
 
 ## CI
 
-| Giai đoạn | Chạy                                                                                                                                                 |
-| --------- | ---------------------------------------------------------------------------------------------------------------------------------------------------- |
-| PR        | `docs:check`, `lint` (gồm boundaries), `format:check`, contract diff, `typecheck`, `test`, `test:coverage` (sàn 50%), `build`, `test:e2e:production` |
-| Nightly   | E2E full-stack ở repo workspace; Firefox, WebKit; axe; Lighthouse                                                                                    |
+| Giai đoạn         | Chạy                                                                                                                                                 |
+| ----------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------- |
+| PR                | `docs:check`, `lint` (gồm boundaries), `format:check`, contract diff, `typecheck`, `test`, `test:coverage` (sàn 50%), `build`, `test:e2e:production` |
+| Nightly (dự kiến) | E2E full-stack ở repo workspace; Firefox, WebKit; axe; Lighthouse                                                                                    |
 
 ## Thứ tự làm
 
 1. P0 trên dữ liệu giả: checkout (double submit, Tính thử mới, thiếu hàng, form địa chỉ), giỏ (giới hạn 10, giá đổi), auth (refresh, hết phiên).
 2. Khi giỏ, checkout, auth nối API thật: bật J1–J4 ở workspace; giữ test MSW cho trạng thái lỗi.
 3. P1: catalog, lọc, tìm kiếm, SEO.
-4. Nightly phi chức năng.
+4. Cài công cụ và job nightly cho phần phi chức năng (cần ticket).
